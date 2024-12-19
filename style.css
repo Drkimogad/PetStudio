@@ -1,66 +1,124 @@
+/* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f4f8;
     margin: 0;
     padding: 0;
+    color: #333;
 }
+
 #app {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 20px;
 }
+
+/* Hidden class to toggle visibility */
 .hidden {
     display: none;
 }
+
+/* Navigation Styles */
 nav {
     display: flex;
     justify-content: space-between;
-}
-nav button {
     background-color: #007bff;
-    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+nav button {
+    background-color: #fff;
+    color: #007bff;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
 }
+
 nav button:hover {
     background-color: #0056b3;
+    color: #fff;
 }
+
+/* Form Styles */
 form {
     display: flex;
     flex-direction: column;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
+
 form label {
     margin-top: 10px;
 }
+
 form input, form textarea, form button {
     margin-top: 5px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+
 form button {
     background-color: #28a745;
     color: white;
     border: none;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
+
 form button:hover {
     background-color: #218838;
 }
+
+/* Pet List Styles */
 #petList {
     display: flex;
     flex-wrap: wrap;
+    gap: 20px;
 }
-#petList .petCard {
-    background-color: white;
-    padding: 10px;
-    margin: 10px;
-    border: 1px solid #ccc;
+
+.petCard {
+    background-color: #fff;
+    padding: 20px;
     border-radius: 5px;
-    width: calc(33% - 40px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: calc(33% - 20px);
+    box-sizing: border-box;
+    position: relative;
 }
-#petList .petCard img {
-    max-width: 100%;
-    height: auto;
+
+.petCard h3 {
+    margin: 0 0 10px;
+}
+
+.petCard p {
+    margin: 5px 0;
+}
+
+.petCard button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ffc107;
+    color: #333;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.petCard button:hover {
+    background-color: #e0a800;
+}
+
+/* Gallery Styles */
+#petGallery {
+    margin-top: 10px;
 }
