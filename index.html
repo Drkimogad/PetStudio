@@ -8,46 +8,42 @@
 </head>
 <body>
     <div id="app">
-        <!-- Login Form -->
+        <!-- Login Page -->
         <div id="loginPage" class="auth-page">
             <div class="auth-container">
                 <h2>Login</h2>
                 <form id="loginForm">
                     <label for="username">Username:</label>
-                    <input type="text" id="username" placeholder="Enter your username" required>
-                    
+                    <input type="text" id="username" required><br><br>
                     <label for="password">Password:</label>
-                    <input type="password" id="password" placeholder="Enter your password" required>
-                    
-                    <button type="submit" class="btn btn-primary">Login</button>
+                    <input type="password" id="password" required><br><br>
+                    <button type="submit">Login</button>
                 </form>
                 <p>Don't have an account? <a href="#" id="signupLink">Sign Up</a></p>
             </div>
         </div>
 
-        <!-- Sign Up Form -->
+        <!-- Sign Up Form (hidden initially) -->
         <div id="signupPage" class="auth-page hidden">
             <div class="auth-container">
                 <h2>Sign Up</h2>
                 <form id="signupForm">
                     <label for="newUsername">Username:</label>
-                    <input type="text" id="newUsername" placeholder="Choose a username" required>
-                    
+                    <input type="text" id="newUsername" required><br><br>
                     <label for="newPassword">Password:</label>
-                    <input type="password" id="newPassword" placeholder="Choose a password" required>
-                    
-                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                    <input type="password" id="newPassword" required><br><br>
+                    <button type="submit">Sign Up</button>
                 </form>
                 <p>Already have an account? <a href="#" id="loginLink">Login</a></p>
             </div>
         </div>
 
-        <!-- Dashboard -->
+        <!-- Dashboard Page with Pets Profiles (hidden initially) -->
         <div id="dashboard" class="hidden">
             <nav>
-                <button id="viewPetsBtn" class="btn btn-secondary">View Pets</button>
-                <button id="addPetBtn" class="btn btn-secondary">Add Pet</button>
-                <button id="logoutBtn" class="btn btn-danger">Logout</button>
+                <button id="viewPetsBtn">View Pets</button>
+                <button id="addPetBtn">Add Pet</button>
+                <button id="logoutBtn">Logout</button>
             </nav>
             <div id="content">
                 <h2>Welcome, <span id="usernameDisplay"></span>!</h2>
@@ -55,38 +51,29 @@
             </div>
         </div>
 
-        <!-- Pet Form -->
+        <!-- Pet Form (hidden initially) -->
         <div id="petFormPage" class="hidden">
             <h2>Add/Edit Pet</h2>
             <form id="petForm">
                 <label for="petName">Name:</label>
-                <input type="text" id="petName" placeholder="Enter pet's name" required>
-                
+                <input type="text" id="petName" required><br><br>
                 <label for="petGender">Gender:</label>
-                <input type="text" id="petGender" placeholder="Enter pet's gender" required>
-                
+                <input type="text" id="petGender" required><br><br>
                 <label for="petAge">Age:</label>
-                <input type="number" id="petAge" placeholder="Enter pet's age" required>
-                
+                <input type="text" id="petAge" required><br><br>
                 <label for="petBreed">Breed:</label>
-                <input type="text" id="petBreed" placeholder="Enter pet's breed" required>
-                
+                <input type="text" id="petBreed" required><br><br>
                 <label for="petVaccinations">Vaccinations:</label>
-                <input type="text" id="petVaccinations" placeholder="Enter vaccination details" required>
-                
+                <input type="text" id="petVaccinations" required><br><br>
                 <label for="petDiet">Diet:</label>
-                <input type="text" id="petDiet" placeholder="Enter dietary details" required>
-                
+                <input type="text" id="petDiet" required><br><br>
                 <label for="petExercise">Exercise Level:</label>
-                <input type="text" id="petExercise" placeholder="Enter exercise level" required>
-                
+                <input type="text" id="petExercise" required><br><br>
                 <label for="petMedicalHistory">Medical History:</label>
-                <textarea id="petMedicalHistory" placeholder="Describe medical history" required></textarea>
-                
+                <textarea id="petMedicalHistory" required></textarea><br><br>
                 <label for="petGallery">Gallery:</label>
-                <input type="file" id="petGallery" multiple>
-                
-                <button type="submit" class="btn btn-success">Save Pet</button>
+                <input type="file" id="petGallery" multiple><br><br>
+                <button type="submit">Save Pet</button>
             </form>
         </div>
     </div>
