@@ -1,23 +1,10 @@
-/* Root Variables for Reusability */
-:root {
-    --primary-color: #007bff;
-    --primary-hover-color: #0056b3;
-    --secondary-color: #fff;
-    --text-color: #333;
-    --success-color: #28a745;
-    --success-hover-color: #218838;
-    --warning-color: #ffc107;
-    --warning-hover-color: #e0a800;
-    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 /* General Styles */
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f0f4f8;
     margin: 0;
     padding: 0;
-    color: var(--text-color);
+    color: #333;
 }
 
 #app {
@@ -26,27 +13,23 @@ body {
     padding: 20px;
 }
 
-/* Hidden class to toggle visibility */
-.hidden {
-    display: none;
-}
-
 /* Authentication Page Styles */
 .auth-page {
-    background-image: url('hero-image.jpg'); /* Replace with the path to your hero image */
+    background-image: url('your-hero-image.jpg'); /* Add your hero image path */
     background-size: cover;
     background-position: center;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
 }
 
 .auth-container {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(0, 0, 0, 0.6); /* Darkened background for readability */
     padding: 20px;
     border-radius: 10px;
-    box-shadow: var(--box-shadow);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 100%;
     max-width: 400px;
@@ -54,7 +37,7 @@ body {
 
 .auth-container h2 {
     margin-bottom: 20px;
-    color: var(--primary-color);
+    font-size: 24px;
 }
 
 .auth-container form {
@@ -64,11 +47,10 @@ body {
 
 .auth-container form label {
     margin-top: 10px;
-    font-weight: bold;
+    font-size: 14px;
 }
 
-.auth-container form input,
-.auth-container form button {
+.auth-container form input, .auth-container form button {
     margin-top: 5px;
     padding: 10px;
     border: 1px solid #ccc;
@@ -76,19 +58,19 @@ body {
 }
 
 .auth-container form button {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
+    background-color: #007bff;
+    color: white;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 .auth-container form button:hover {
-    background-color: var(--primary-hover-color);
+    background-color: #0056b3;
 }
 
 .auth-container a {
-    color: var(--primary-color);
+    color: #007bff;
     text-decoration: none;
 }
 
@@ -96,114 +78,31 @@ body {
     text-decoration: underline;
 }
 
-/* Navigation Styles */
+/* Navigation Styles for Dashboard */
 nav {
     display: flex;
     justify-content: space-between;
-    background-color: var(--primary-color);
+    background-color: #007bff;
     padding: 10px;
     border-radius: 5px;
 }
 
 nav button {
-    background-color: var(--secondary-color);
-    color: var(--primary-color);
+    background-color: #fff;
+    color: #007bff;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s;
 }
 
 nav button:hover {
-    background-color: var(--primary-hover-color);
-    color: var(--secondary-color);
+    background-color: #0056b3;
+    color: #fff;
 }
 
-/* Form Styles */
-form {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--secondary-color);
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: var(--box-shadow);
-    margin-bottom: 20px;
-}
-
-form label {
-    margin-top: 10px;
-    font-weight: bold;
-}
-
-form input,
-form textarea,
-form button {
-    margin-top: 5px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-form button {
-    background-color: var(--success-color);
-    color: var(--secondary-color);
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-form button:hover {
-    background-color: var(--success-hover-color);
-}
-
-/* Pet List Styles */
-#petList {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.petCard {
-    background-color: var(--secondary-color);
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: var(--box-shadow);
-    position: relative;
-}
-
-.petCard h3 {
-    margin: 0 0 10px;
-    color: var(--primary-color);
-}
-
-.petCard p {
-    margin: 5px 0;
-    color: var(--text-color);
-}
-
-.petCard button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: var(--warning-color);
-    color: var(--text-color);
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-.petCard button:hover {
-    background-color: var(--warning-hover-color);
-}
-
-/* Gallery Styles */
-#petGallery {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
+/* Hidden class to toggle visibility */
+.hidden {
+    display: none;
 }
