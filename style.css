@@ -15,7 +15,7 @@ body {
 
 /* Authentication Page Styles */
 .auth-page {
-    background-image: url('https://raw.github.com/Drkimogad/Petdiary/blob/main/Dog.jpg'); /* Add your hero image path */
+    background-image: url('https://raw.githubusercontent.com/Drkimogad/Petdiary/main/Dog.jpg'); /* Add your hero image path */
     background-size: cover;
     background-position: center;
     height: 100vh;
