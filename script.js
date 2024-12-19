@@ -125,15 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showPage(loginPage);
     });
 
+    // Check if the user is logged in on page load and show the appropriate page
     if (currentUser) {
         usernameDisplay.textContent = currentUser;
-        showPage(dashboard);
-        displayPets();
-    } else {
-        showPage(loginPage);
-    }
-});
-
-function editPet(index) {
-    // Logic to edit pet profile
-}
+  
