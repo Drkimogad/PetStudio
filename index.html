@@ -8,6 +8,9 @@
 </head>
 <body>
     <div id="app">
+        <!-- Message Box -->
+        <div id="messageBox" class="hidden"></div>
+
         <!-- Login Page -->
         <div id="loginPage" class="auth-page">
             <div class="auth-container">
@@ -49,32 +52,6 @@
                 <h2>Welcome, <span id="usernameDisplay"></span>!</h2>
                 <div id="petList"></div>
             </div>
-        </div>
-
-        <!-- Pet Form (hidden initially) -->
-        <div id="petFormPage" class="hidden">
-            <h2>Add/Edit Pet</h2>
-            <form id="petForm">
-                <label for="petName">Name:</label>
-                <input type="text" id="petName" required><br><br>
-                <label for="petGender">Gender:</label>
-                <input type="text" id="petGender" required><br><br>
-                <label for="petAge">Age:</label>
-                <input type="text" id="petAge" required><br><br>
-                <label for="petBreed">Breed:</label>
-                <input type="text" id="petBreed" required><br><br>
-                <label for="petVaccinations">Vaccinations:</label>
-                <input type="text" id="petVaccinations" required><br><br>
-                <label for="petDiet">Diet:</label>
-                <input type="text" id="petDiet" required><br><br>
-                <label for="petExercise">Exercise Level:</label>
-                <input type="text" id="petExercise" required><br><br>
-                <label for="petMedicalHistory">Medical History:</label>
-                <textarea id="petMedicalHistory" required></textarea><br><br>
-                <label for="petGallery">Gallery:</label>
-                <input type="file" id="petGallery" multiple><br><br>
-                <button type="submit">Save Pet</button>
-            </form>
         </div>
     </div>
     <script src="script.js"></script>
