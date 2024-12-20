@@ -1,93 +1,28 @@
-/* General Styles */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f4f8;
-    margin: 0;
-    padding: 0;
-    color: #333;
-}
-
-#app {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Message Box Styles */
-#messageBox {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-}
-
-.hidden {
-    display: none;
-}
-
-/* Authentication Page Styles */
+/* Auth Page with Colored Background */
 .auth-page {
-    background-image: url('https://raw.githubusercontent.com/Drkimogad/Petdiary/main/cat.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
+    background-color: #d0f7d1;  /* Light green background */
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* Sign Up and Login Button Styles */
+.auth-container button {
+    background-color: #333; /* Dark grey button */
     color: white;
-}
-
-.auth-container {
-    background-color: rgba(0, 0, 0, 0.6); /* Darkened background for readability */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 100%;
-    max-width: 400px;
-}
-
-.auth-container h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-}
-
-.auth-container form {
-    display: flex;
-    flex-direction: column;
-}
-
-.auth-container form label {
-    margin-top: 10px;
-    font-size: 14px;
-}
-
-.auth-container form input, .auth-container form button {
-    margin-top: 5px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.auth-container form button {
-    background-color: #007bff;
-    color: white;
+    padding: 10px 20px;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
 }
 
-.auth-container form button:hover {
-    background-color: #0056b3;
+.auth-container button:hover {
+    background-color: #444; /* Slightly darker grey when hovering */
 }
 
+/* Link Text Styles */
 .auth-container a {
     color: #007bff;
     text-decoration: none;
@@ -95,28 +30,4 @@ body {
 
 .auth-container a:hover {
     text-decoration: underline;
-}
-
-/* Navigation Styles for Dashboard */
-nav {
-    display: flex;
-    justify-content: space-between;
-    background-color: #007bff;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-nav button {
-    background-color: #fff;
-    color: #007bff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-nav button:hover {
-    background-color: #0056b3;
-    color: #fff;
 }
