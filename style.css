@@ -13,16 +13,35 @@ body {
     padding: 20px;
 }
 
+/* Message Box Styles */
+#messageBox {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.hidden {
+    display: none;
+}
+
 /* Authentication Page Styles */
 .auth-page {
-    background-image: url('https://raw.githubusercontent.com/Drkimogad/Petdiary/main/Dog.jpg'); no-repeat center center;
-    background-size: cover ;
+    background-image: url('https://raw.githubusercontent.com/Drkimogad/Petdiary/main/Dog.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
     background-position: center;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: goldenrod;
 }
 
 .auth-container {
@@ -100,9 +119,4 @@ nav button {
 nav button:hover {
     background-color: #0056b3;
     color: #fff;
-}
-
-/* Hidden class to toggle visibility */
-.hidden {
-    display: none;
 }
