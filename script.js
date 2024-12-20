@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Perform sign-up logic here (e.g., create new user)
         if (newUsername && newPassword) {
             showMessage('Sign-up successful! Please log in.');
-            // Hide the sign-up page and show the login page
             signupPage.classList.add('hidden');
             loginPage.classList.remove('hidden');
         } else {
