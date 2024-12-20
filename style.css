@@ -41,7 +41,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: goldenrod;
+    color: white ;
 }
 
 .auth-container {
