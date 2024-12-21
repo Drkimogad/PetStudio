@@ -1,59 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pet Directory</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Page Navigation</title>
+  <style>
+    /* Basic CSS for visibility control */
+    .hidden {
+      display: none;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f9f9f9;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input {
+      margin-bottom: 15px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 10px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    p {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-    <div id="app">
-        <!-- Message Box -->
-        <div id="messageBox" class="hidden"></div>
-
-        <!-- Login Page -->
-        <div id="loginPage" class="auth-page">
-            <div class="auth-container">
-                <h2>Login</h2>
-                <form id="loginForm">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" autocomplete="username" required><br><br>
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" autocomplete="current-password" required><br><br>
-                    <button type="submit">Login</button>
-                </form>
-                <p>Don't have an account? <a href="#" id="signupLink">Sign Up</a></p>
-            </div>
-        </div>
-
-        <!-- Sign Up Form (hidden initially) -->
-        <div id="signupPage" class="auth-page hidden">
-            <div class="auth-container">
-                <h2>Sign Up</h2>
-                <form id="signupForm">
-                    <label for="newUsername">Username:</label>
-                    <input type="text" id="newUsername" name="newUsername" autocomplete="username" required><br><br>
-                    <label for="newPassword">Password:</label>
-                    <input type="password" id="newPassword" name="newPassword" autocomplete="new-password" required><br><br>
-                    <button type="submit">Sign Up</button>
-                </form>
-                <p>Already have an account? <a href="#" id="loginLink">Login</a></p>
-            </div>
-        </div>
-
-        <!-- Dashboard Page with Pets Profiles (hidden initially) -->
-        <div id="dashboard" class="hidden">
-            <nav>
-                <button id="viewPetsBtn">View Pets</button>
-                <button id="addPetBtn">Add Pet</button>
-                <button id="logoutBtn">Logout</button>
-            </nav>
-            <div id="content">
-                <h2>Welcome, <span id="usernameDisplay"></span>!</h2>
-                <div id="petList"></div>
-            </div>
-        </div>
+  <div class="container">
+    <!-- Login Page -->
+    <div id="loginPage">
+      <h1>Login</h1>
+      <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        
+        <button type="submit">Login</button>
+      </form>
+      <p>Don't have an account? <a href="#" id="signupLink">Sign up here</a></p>
     </div>
-    <script src="script.js"></script>
+
+    <!-- Sign-Up Page -->
+    <div id="signupPage" class="hidden">
+      <h1>Sign Up</h1>
+      <form id="signupForm">
+        <label for="newUsername">Username:</label>
+        <input type="text" id="newUsername" name="newUsername" required>
+        
+        <label for="newPassword">Password:</label>
+        <input type="password" id="newPassword" name="newPassword" required>
+        
+        <button type="submit">Sign Up</button>
+      </form>
+      <p>Already have an account? <a href="#" id="loginLink">Log in here</a></p>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+      <h1>Welcome to Your Dashboard</h1>
+      <p>You're now logged in!</p>
+      <button id="signOutBtn">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const loginPage = document.getElementById('loginPage');
+      const signupPage = document.getElementById('signupPage');
+      const dashboard = document.getElementById('dashboard');
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+      const signOutBtn = document.getElementById('signOutBtn');
+      const signupLink = document.getElementById('signupLink');
+      const loginLink = document.getElementById('loginLink');
+
+      // Handle login form submission
+      loginForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (username && password) {
+          console.log('Login successful!');
+          dashboard.classList.remove('hidden');
+          loginPage.classList.add('hidden');
+        } else {
+          alert('Please enter both username and password.');
+        }
+      });
+
+      // Handle sign-up form submission
+      signupForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const newUsername = document.getElementById('newUsername').value;
+        const newPassword = document.getElementById('newPassword').value;
+
+        if (newUsername && newPassword) {
+          console.log('Sign up successful!');
+          localStorage.setItem('username', newUsername);
+          localStorage.setItem('password', newPassword);
+          signupForm.reset();
+          signupPage.classList.add('hidden');
+          loginPage.classList.remove('hidden');
+        } else {
+          alert('Please fill in all required fields.');
+        }
+      });
+
+      // Handle sign-out
+      signOutBtn.addEventListener('click', function () {
+        dashboard.classList.add('hidden');
+        loginPage.classList.remove('hidden');
+      });
+
+      // Navigate to sign-up page
+      signupLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        loginPage.classList.add('hidden');
+        signupPage.classList.remove('hidden');
+      });
+
+      // Navigate back to login page
+      loginLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        signupPage.classList.add('hidden');
+        loginPage.classList.remove('hidden');
+      });
+    });
+  </script>
 </body>
 </html>
