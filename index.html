@@ -29,33 +29,6 @@
       display: none;
     }
 
-    /* General Button Styling */
-    button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    .add-profile-btn {
-      background-color: #ff7f50;
-      font-size: 18px;
-      padding: 15px 30px;
-      width: 100%;
-      margin-bottom: 20px;
-    }
-
-    .add-profile-btn:hover {
-      background-color: #ff4500;
-    }
-
     .profile-section {
       display: flex;
       justify-content: space-between;
@@ -97,13 +70,20 @@
       color: #007bff;
     }
 
-    .file-button {
-      margin-top: 10px;
-      background-color: #8a2be2; /* Purple */
+    .add-profile-btn {
+      background-color: #ff7f50;
+      color: white;
+      font-size: 18px;
+      padding: 15px 30px;
+      width: 100%;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
     }
 
-    .file-button:hover {
-      background-color: #7a2ec4;
+    .add-profile-btn:hover {
+      background-color: #ff4500;
     }
 
     .care-log {
@@ -139,59 +119,45 @@
       border-radius: 4px;
     }
 
-    /* Sign Up & Login */
-    #loginPage, #signupPage {
-      max-width: 400px;
-      margin: auto;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      background-color: #fff;
+    /* Sign-up Page Styling */
+    #signupPage {
+      color: #4A148C; /* Purple */
     }
 
-    #signupPage input, #loginPage input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 4px;
-      border: 1px solid #ddd;
+    #signupForm input {
+      border-color: #4A148C;
     }
 
-    #signupPage button, #loginPage button {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      background-color: #ff7f50; /* Orange */
-      border: none;
-      border-radius: 4px;
-      color: white;
+    #signupForm button {
+      background-color: #1E88E5; /* Blue */
+      border: 2px solid #FF9800; /* Orange */
     }
 
-    #signupPage button:hover, #loginPage button:hover {
-      background-color: #ff4500;
+    #signupForm button:hover {
+      background-color: #1565C0; /* Darker Blue */
     }
 
     .welcome-message {
-      text-align: center;
+      color: #1E88E5; /* Blue */
       font-size: 24px;
+      font-weight: bold;
+      text-align: center;
       margin-bottom: 20px;
-      color: #4b0082; /* Indigo Purple */
     }
 
-    .print-button {
-      background-color: #28a745;
-      color: white;
+    /* Print Button */
+    .print-btn {
+      margin-top: 20px;
+      background-color: #4CAF50;
       padding: 10px 20px;
-      font-size: 16px;
+      color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      width: 100%;
-      margin-top: 20px;
     }
 
-    .print-button:hover {
-      background-color: #218838;
+    .print-btn:hover {
+      background-color: #45a049;
     }
   </style>
 </head>
@@ -220,10 +186,10 @@
 
   <!-- Dashboard -->
   <div id="dashboard" class="hidden">
-    <div class="welcome-message">Welcome to your Pet Diary</div>
+    <h1 class="welcome-message">Welcome to your Pet Diary</h1>
     <button class="add-profile-btn" id="addProfileBtn">+ Add Pet Profile</button>
     <div id="profileContainer"></div>
-    <button class="print-button" id="printButton">Print Page</button>
+    <button class="print-btn" id="printBtn">Print Dashboard</button>
   </div>
 
   <script>
@@ -238,7 +204,7 @@
       const loginLink = document.getElementById('loginLink');
       const addProfileBtn = document.getElementById('addProfileBtn');
       const profileContainer = document.getElementById('profileContainer');
-      const printButton = document.getElementById('printButton');
+      const printBtn = document.getElementById('printBtn');
 
       // User info (for demonstration, no backend is involved)
       let userData = JSON.parse(localStorage.getItem('userData')) || null;
@@ -270,4 +236,77 @@
 
         if (newUsername && newPassword) {
           localStorage.setItem('userData', JSON.stringify({ username: newUsername, password: newPassword }));
-          userData = { username: newUsername,
+          userData = { username: newUsername, password: newPassword };
+          signupPage.classList.add('hidden');
+          loginPage.classList.remove('hidden');
+        }
+      });
+
+      // Navigate to sign-up page
+      signupLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        loginPage.classList.add('hidden');
+        signupPage.classList.remove('hidden');
+      });
+
+      // Navigate to login page
+      loginLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        signupPage.classList.add('hidden');
+        loginPage.classList.remove('hidden');
+      });
+
+      // Add new profile
+      addProfileBtn.addEventListener('click', function () {
+        const name = prompt('Enter pet name:');
+        const breed = prompt('Enter pet breed:');
+        const dob = prompt('Enter pet date of birth (YYYY-MM-DD):');
+
+        if (name && breed && dob) {
+          petProfiles.push({
+            name,
+            breed,
+            dob,
+            vaccinations: [],
+            deworming: [],
+            photos: [],
+            files: []
+          });
+          localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+          renderProfiles();
+        }
+      });
+
+      // Render pet profiles
+      function renderProfiles() {
+        profileContainer.innerHTML = '';
+        petProfiles.forEach((profile, index) => {
+          const profileDiv = document.createElement('div');
+          profileDiv.className = 'profile-section';
+
+          profileDiv.innerHTML = `
+            <div class="profile-left">
+              <h3>${profile.name}</h3>
+              <p>Breed: ${profile.breed}</p>
+              <p>Date of Birth: ${profile.dob}</p>
+              <p class="reminder">Birthday reminder: ${new Date(profile.dob).getFullYear() + 1}</p>
+            </div>
+            <div class="profile-right">
+              <div class="gallery">
+                ${profile.photos.map(photo => `<img src="${photo}" alt="${profile.name}">`).join('')}
+              </div>
+              <button onclick="alert('File button for ${profile.name} clicked')">File</button>
+            </div>
+          `;
+          profileContainer.appendChild(profileDiv);
+        });
+      }
+
+      // Print the dashboard
+      printBtn.addEventListener('click', function () {
+        window.print();
+      });
+    });
+  </script>
+</body>
+</html>
