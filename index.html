@@ -4,301 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pet Diary</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        #dashboard {
-            display: none;
-            padding: 20px;
-        }
-
-        #signupPage, #loginPage {
-            display: none;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .pet-profile {
-            border: 2px solid #333;
-            margin-bottom: 20px;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .pet-profile img {
-            max-width: 100px;
-            max-height: 100px;
-            object-fit: cover;
-            margin-bottom: 10px;
-        }
-
-        .button {
-            padding: 10px 20px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .button:hover {
-            background-color: #2980b9;
-        }
-
-        #petList {
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .pet-profile .info {
-            margin-top: 10px;
-        }
-
-        .pet-profile .info div {
-            margin-bottom: 5px;
-        }
-
-        .reminder {
-            color: red;
-            font-weight: bold;
-        }
-
-        /* Dark Mode Styles */
-        .dark-mode {
-            background-color: #2c3e50;
-            color: white;
-        }
-
-        .dark-mode .button {
-            background-color: #e74c3c;
-        }
-
-        .dark-mode .pet-profile {
-            background-color: #34495e;
-            border-color: #ecf0f1;
-        }
-
-        .dark-mode .reminder {
-            color: #f39c12;
-        }
-
-        /* Sign-Up Form Styling */
-        .signup-form {
-            max-width: 300px;
-            margin: auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .signup-form input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        .signup-form button {
-            width: 100%;
-            padding: 10px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .signup-form button:hover {
-            background-color: #2980b9;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <!-- Login Page -->
-    <div id="loginPage">
-        <h2>Login</h2>
-        <form id="loginForm">
-            <input type="text" id="username" placeholder="Username" required><br><br>
-            <input type="password" id="password" placeholder="Password" required><br><br>
-            <button type="submit">Login</button>
-        </form>
-        <a href="#" id="signupLink">Don't have an account? Sign Up</a>
-    </div>
 
     <!-- Sign-Up Page -->
     <div id="signupPage">
         <h2>Sign Up</h2>
-        <form id="signupForm" class="signup-form">
-            <input type="text" id="newUsername" placeholder="Username" required><br><br>
-            <input type="password" id="newPassword" placeholder="Password" required><br><br>
-            <button type="submit">Sign Up</button>
+        <form id="signupForm">
+            <label for="newUsername">Username:</label>
+            <input type="text" id="newUsername" required>
+
+            <label for="newPassword">Password:</label>
+            <input type="password" id="newPassword" required>
+
+            <button type="submit" class="button">Sign Up</button>
         </form>
-        <a href="#" id="loginLink">Already have an account? Login</a>
+        <p>Already have an account? <a href="#" id="loginLink">Login here</a></p>
     </div>
 
-    <!-- Dashboard Page -->
-    <div id="dashboard">
-        <h2>Welcome to Your Pet Diary</h2>
-        <button class="button" id="toggleMode">Toggle Dark Mode</button>
-        <h3>Your Pets</h3>
-        <div id="petList"></div>
-        <button class="button" id="addProfileBtn">Add New Profile</button>
+    <!-- Login Page (Not visible initially) -->
+    <div id="loginPage" class="hidden">
+        <!-- Your login page content -->
+    </div>
 
-        <!-- Add/Edit Profile Form -->
-        <div id="profileForm" class="hidden">
-            <h3>Add/Edit Pet Profile</h3>
-            <input type="text" id="petName" placeholder="Pet Name"><br><br>
-            <input type="text" id="petBreed" placeholder="Breed"><br><br>
-            <input type="date" id="petDob" placeholder="Date of Birth"><br><br>
-            <input type="file" id="petPhotoInput" accept="image/*"><br><br>
-            <input type="text" id="foodInput" placeholder="Food Intake"><br><br>
-            <input type="text" id="exerciseInput" placeholder="Exercise Level"><br><br>
-            <button class="button" id="saveProfileBtn">Save Profile</button>
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+        <h1>Welcome to Your Pet Diary!</h1>
+        <button id="createProfileBtn" class="button">Create Profile</button>
+        <div id="profileSection" class="hidden">
+            <h2>Create a Pet Profile</h2>
+            <form id="profileForm">
+                <label for="petName">Pet Name:</label>
+                <input type="text" id="petName" required>
+
+                <label for="petBreed">Breed:</label>
+                <input type="text" id="petBreed" required>
+
+                <label for="petDob">Date of Birth:</label>
+                <input type="date" id="petDob" required>
+
+                <label for="petPhoto">Upload Photo:</label>
+                <input type="file" id="petPhoto" accept="image/*">
+
+                <label for="petBirthday">Birthday Reminder:</label>
+                <input type="date" id="petBirthday">
+
+                <button type="submit" class="button">Save Profile</button>
+            </form>
         </div>
-        <button class="button" id="printBtn">Print Page</button>
+
+        <div id="petList">
+            <!-- Pet profiles will appear here -->
+        </div>
+
+        <button id="addProfilesBtn" class="button">Add More Profiles</button>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginPage = document.getElementById('loginPage');
-            const signupPage = document.getElementById('signupPage');
-            const dashboard = document.getElementById('dashboard');
-            const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signupForm');
-            const signOutBtn = document.getElementById('signOutBtn');
-            const signupLink = document.getElementById('signupLink');
-            const loginLink = document.getElementById('loginLink');
-            const addProfileBtn = document.getElementById('addProfileBtn');
-            const profileForm = document.getElementById('profileForm');
-            const petList = document.getElementById('petList');
-            const saveProfileBtn = document.getElementById('saveProfileBtn');
-            const printBtn = document.getElementById('printBtn');
-            const toggleModeBtn = document.getElementById('toggleMode');
-            let pets = JSON.parse(localStorage.getItem('pets')) || [];
-            let isDarkMode = false;
-
-            // Handle login form submission
-            loginForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                if (username && password) {
-                    dashboard.classList.remove('hidden');
-                    loginPage.classList.add('hidden');
-                }
-            });
-
-            // Handle sign-up form submission
-            signupForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const newUsername = document.getElementById('newUsername').value;
-                const newPassword = document.getElementById('newPassword').value;
-                if (newUsername && newPassword) {
-                    signupPage.classList.add('hidden');
-                    loginPage.classList.remove('hidden');
-                }
-            });
-
-            // Add pet profile to the list
-            function renderPetProfiles() {
-                petList.innerHTML = '';
-                pets.forEach((pet, index) => {
-                    const petProfile = document.createElement('div');
-                    petProfile.classList.add('pet-profile');
-                    petProfile.innerHTML = `
-                        <div class="info">
-                            <div>Name: ${pet.name}</div>
-                            <div>Breed: ${pet.breed}</div>
-                            <div>DOB: ${pet.dob}</div>
-                            <div>Food: ${pet.food}</div>
-                            <div>Exercise: ${pet.exercise}</div>
-                            <div class="reminder">Reminder: Birthday is on ${pet.dob}</div>
-                        </div>
-                        <div><img src="${pet.photo}" alt="Pet Photo"></div>
-                        <button class="button" onclick="editPetProfile(${index})">Edit</button>
-                        <button class="button" onclick="deletePetProfile(${index})">Delete</button>
-                    `;
-                    petList.appendChild(petProfile);
-                });
-            }
-
-            // Add new profile
-            addProfileBtn.addEventListener('click', function() {
-                profileForm.classList.remove('hidden');
-            });
-
-            // Save new or edited pet profile
-            saveProfileBtn.addEventListener('click', function() {
-                const name = document.getElementById('petName').value;
-                const breed = document.getElementById('petBreed').value;
-                const dob = document.getElementById('petDob').value;
-                const food = document.getElementById('foodInput').value;
-                const exercise = document.getElementById('exerciseInput').value;
-                const photoInput = document.getElementById('petPhotoInput').files[0];
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const photoURL = e.target.result;
-                    const newPet = { name, breed, dob, food, exercise, photo: photoURL };
-                    pets.push(newPet);
-                    localStorage.setItem('pets', JSON.stringify(pets));
-                    profileForm.classList.add('hidden');
-                    renderPetProfiles();
-                };
-                if (photoInput) reader.readAsDataURL(photoInput);
-            });
-
-            // Edit existing profile
-            function editPetProfile(index) {
-                const pet = pets[index];
-                document.getElementById('petName').value = pet.name;
-                document.getElementById('petBreed').value = pet.breed;
-                document.getElementById('petDob').value = pet.dob;
-                document.getElementById('foodInput').value = pet.food;
-                document.getElementById('exerciseInput').value = pet.exercise;
-                profileForm.classList.remove('hidden');
-                pets.splice(index, 1);
-                localStorage.setItem('pets', JSON.stringify(pets));
-            }
-
-            // Delete pet profile
-            function deletePetProfile(index) {
-                pets.splice(index, 1);
-                localStorage.setItem('pets', JSON.stringify(pets));
-                renderPetProfiles();
-            }
-
-            // Toggle dark mode
-            toggleModeBtn.addEventListener('click', function() {
-                isDarkMode = !isDarkMode;
-                document.body.classList.toggle('dark-mode', isDarkMode);
-                localStorage.setItem('isDarkMode', isDarkMode);
-            });
-
-            // Print page
-            printBtn.addEventListener('click', function() {
-                window.print();
-            });
-
-            // Initialize dark mode
-            if (localStorage.getItem('isDarkMode') === 'true') {
-                document.body.classList.add('dark-mode');
-                isDarkMode = true;
-            }
-
-            // Render pet profiles on page load
-            renderPetProfiles();
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
