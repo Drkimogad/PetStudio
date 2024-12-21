@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
         userData = { username, password };
         localStorage.setItem('userData', JSON.stringify(userData));
 
-        // Redirect to Dashboard
+        // Show dashboard and hide signup page
         signupPage.classList.add('hidden');
         dashboard.classList.remove('hidden');
         usernameDisplay.textContent = username;
