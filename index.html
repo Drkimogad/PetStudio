@@ -116,30 +116,121 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Dashboard -->
-    <div id="dashboard">
-      <h1>Pet Diary Dashboard</h1>
-      <button class="add-profile-btn" id="addProfileBtn">+ Add Pet Profile</button>
-      <div id="profileContainer"></div>
-    </div>
+  <!-- Login Page -->
+  <div id="loginPage">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="#" id="signupLink">Sign up here</a></p>
+  </div>
+
+  <!-- Sign Up Page -->
+  <div id="signupPage" class="hidden">
+    <h2>Sign Up</h2>
+    <form id="signupForm">
+      <input type="text" id="newUsername" placeholder="Username" required>
+      <input type="password" id="newPassword" placeholder="Password" required>
+      <button type="submit">Sign Up</button>
+    </form>
+    <p>Already have an account? <a href="#" id="loginLink">Login here</a></p>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="hidden">
+    <h1>Pet Diary Dashboard</h1>
+    <button class="add-profile-btn" id="addProfileBtn">+ Add Pet Profile</button>
+    <div id="profileContainer"></div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const profileContainer = document.getElementById('profileContainer');
+      // Elements
+      const loginPage = document.getElementById('loginPage');
+      const signupPage = document.getElementById('signupPage');
+      const dashboard = document.getElementById('dashboard');
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+      const signupLink = document.getElementById('signupLink');
+      const loginLink = document.getElementById('loginLink');
       const addProfileBtn = document.getElementById('addProfileBtn');
+      const profileContainer = document.getElementById('profileContainer');
 
-      // Load profiles from local storage
+      // User info (for demonstration, no backend is involved)
+      let userData = JSON.parse(localStorage.getItem('userData')) || null;
       let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 
-      function saveProfiles() {
-        localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-      }
+      // Login form submit
+      loginForm.addEventListener('submit', function (event) {
+        event.preventDefault();
 
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // If login is successful (for now, it's mock)
+        if (username && password) {
+          localStorage.setItem('userData', JSON.stringify({ username, password }));
+          userData = { username, password };
+          loginPage.classList.add('hidden');
+          dashboard.classList.remove('hidden');
+          renderProfiles();
+        }
+      });
+
+      // Sign-up form submit
+      signupForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const newUsername = document.getElementById('newUsername').value;
+        const newPassword = document.getElementById('newPassword').value;
+
+        if (newUsername && newPassword) {
+          localStorage.setItem('userData', JSON.stringify({ username: newUsername, password: newPassword }));
+          userData = { username: newUsername, password: newPassword };
+          signupPage.classList.add('hidden');
+          loginPage.classList.remove('hidden');
+        }
+      });
+
+      // Navigate to sign-up page
+      signupLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        loginPage.classList.add('hidden');
+        signupPage.classList.remove('hidden');
+      });
+
+      // Navigate to login page
+      loginLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        signupPage.classList.add('hidden');
+        loginPage.classList.remove('hidden');
+      });
+
+      // Add new profile
+      addProfileBtn.addEventListener('click', function () {
+        const name = prompt('Enter pet name:');
+        const breed = prompt('Enter pet breed:');
+        const dob = prompt('Enter pet date of birth (YYYY-MM-DD):');
+
+        if (name && breed && dob) {
+          petProfiles.push({
+            name,
+            breed,
+            dob,
+            vaccinations: [],
+            deworming: [],
+            photos: []
+          });
+          localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+          renderProfiles();
+        }
+      });
+
+      // Render pet profiles
       function renderProfiles() {
         profileContainer.innerHTML = '';
-
         petProfiles.forEach((profile, index) => {
           const profileDiv = document.createElement('div');
           profileDiv.className = 'profile-section';
@@ -171,12 +262,12 @@
           profileContainer.appendChild(profileDiv);
         });
 
-        // Attach event listeners to photo upload inputs
         document.querySelectorAll('.uploadPhoto').forEach(input => {
           input.addEventListener('change', handlePhotoUpload);
         });
       }
 
+      // Handle photo upload
       function handlePhotoUpload(event) {
         const index = event.target.dataset.index;
         const file = event.target.files[0];
@@ -184,33 +275,21 @@
 
         reader.onload = function (e) {
           petProfiles[index].photos.push(e.target.result);
-          saveProfiles();
+          localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
           renderProfiles();
         };
 
         if (file) reader.readAsDataURL(file);
       }
 
-      addProfileBtn.addEventListener('click', function () {
-        const name = prompt('Enter pet name:');
-        const breed = prompt('Enter pet breed:');
-        const dob = prompt('Enter pet date of birth (YYYY-MM-DD):');
-
-        if (name && breed && dob) {
-          petProfiles.push({
-            name,
-            breed,
-            dob,
-            vaccinations: [],
-            deworming: [],
-            photos: []
-          });
-          saveProfiles();
-          renderProfiles();
-        }
-      });
-
-      renderProfiles();
+      // Initial check: if user is logged in, show dashboard
+      if (userData) {
+        loginPage.classList.add('hidden');
+        dashboard.classList.remove('hidden');
+        renderProfiles();
+      } else {
+        loginPage.classList.remove('hidden');
+      }
     });
   </script>
 </body>
