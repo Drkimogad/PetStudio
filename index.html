@@ -3,64 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pet Diary</title>
+    <title>Pet Directory</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div id="app">
+        <!-- Login Form -->
+        <div id="loginPage">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" required><br><br>
+                <label for="password">Password:</label>
+                <input type="password" id="password" required><br><br>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="signupLink">Sign Up</a></p>
+        </div>
 
-    <!-- Sign-Up Page -->
-    <div id="signupPage">
-        <h2>Sign Up</h2>
-        <form id="signupForm">
-            <label for="newUsername">Username:</label>
-            <input type="text" id="newUsername" required>
+        <!-- Sign Up Form -->
+        <div id="signupPage" class="hidden">
+            <h2>Sign Up</h2>
+            <form id="signupForm">
+                <label for="newUsername">Username:</label>
+                <input type="text" id="newUsername" required><br><br>
+                <label for="newPassword">Password:</label>
+                <input type="password" id="newPassword" required><br><br>
+                <button type="submit">Sign Up</button>
+            </form>
+            <p>Already have an account? <a href="#" id="loginLink">Login</a></p>
+        </div>
 
-            <label for="newPassword">Password:</label>
-            <input type="password" id="newPassword" required>
+        <!-- Dashboard -->
+        <div id="dashboard" class="hidden">
+            <nav>
+                <button id="viewPetsBtn">View Pets</button>
+                <button id="addPetBtn">Add Pet</button>
+                <button id="logoutBtn">Logout</button>
+            </nav>
+            <div id="content">
+                <h2>Welcome, <span id="usernameDisplay"></span>!</h2>
+                <div id="petList"></div>
+            </div>
+        </div>
 
-            <button type="submit" class="button">Sign Up</button>
-        </form>
-        <p>Already have an account? <a href="#" id="loginLink">Login here</a></p>
-    </div>
-
-    <!-- Login Page (Not visible initially) -->
-    <div id="loginPage" class="hidden">
-        <!-- Your login page content -->
-    </div>
-
-    <!-- Dashboard -->
-    <div id="dashboard" class="hidden">
-        <h1>Welcome to Your Pet Diary!</h1>
-        <button id="createProfileBtn" class="button">Create Profile</button>
-        <div id="profileSection" class="hidden">
-            <h2>Create a Pet Profile</h2>
-            <form id="profileForm">
-                <label for="petName">Pet Name:</label>
-                <input type="text" id="petName" required>
-
+        <!-- Pet Form -->
+        <div id="petFormPage" class="hidden">
+            <h2>Add/Edit Pet</h2>
+            <form id="petForm">
+                <label for="petName">Name:</label>
+                <input type="text" id="petName" required><br><br>
+                <label for="petGender">Gender:</label>
+                <input type="text" id="petGender" required><br><br>
+                <label for="petAge">Age:</label>
+                <input type="text" id="petAge" required><br><br>
                 <label for="petBreed">Breed:</label>
-                <input type="text" id="petBreed" required>
-
-                <label for="petDob">Date of Birth:</label>
-                <input type="date" id="petDob" required>
-
-                <label for="petPhoto">Upload Photo:</label>
-                <input type="file" id="petPhoto" accept="image/*">
-
-                <label for="petBirthday">Birthday Reminder:</label>
-                <input type="date" id="petBirthday">
-
-                <button type="submit" class="button">Save Profile</button>
+                <input type="text" id="petBreed" required><br><br>
+                <label for="petVaccinations">Vaccinations:</label>
+                <input type="text" id="petVaccinations" required><br><br>
+                <label for="petDiet">Diet:</label>
+                <input type="text" id="petDiet" required><br><br>
+                <label for="petExercise">Exercise Level:</label>
+                <input type="text" id="petExercise" required><br><br>
+                <label for="petMedicalHistory">Medical History:</label>
+                <textarea id="petMedicalHistory" required></textarea><br><br>
+                <label for="petGallery">Gallery:</label>
+                <input type="file" id="petGallery" multiple><br><br>
+                <button type="submit">Save Pet</button>
             </form>
         </div>
-
-        <div id="petList">
-            <!-- Pet profiles will appear here -->
-        </div>
-
-        <button id="addProfilesBtn" class="button">Add More Profiles</button>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
