@@ -1,111 +1,99 @@
-document.addEventListener('DOMContentLoaded', function() {
-
-    // Page elements
+document.addEventListener('DOMContentLoaded', () => {
     const signupPage = document.getElementById('signupPage');
+    const loginPage = document.getElementById('loginPage');
     const dashboard = document.getElementById('dashboard');
+    const signupForm = document.getElementById('signupForm');
+    const loginForm = document.getElementById('loginForm');
     const createProfileBtn = document.getElementById('createProfileBtn');
+    const profileSection = document.getElementById('profileSection');
     const profileForm = document.getElementById('profileForm');
     const petList = document.getElementById('petList');
-    const addProfilesBtn = document.getElementById('addProfilesBtn');
-    const profileSection = document.getElementById('profileSection');
 
-    // Local Storage key for pet profiles
-    const profilesKey = 'petProfiles';
+    // Local Storage Keys
+    const usersKey = 'users';
+    const profilesKey = 'profiles';
 
-    // Sign-Up Form
-    document.getElementById('signupForm').addEventListener('submit', function(event) {
+    // Helper to save to local storage
+    const saveToStorage = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+
+    // Load users from storage
+    const loadUsers = () => JSON.parse(localStorage.getItem(usersKey)) || [];
+
+    // Load profiles
+    const loadProfiles = () => JSON.parse(localStorage.getItem(profilesKey)) || [];
+
+    // Handle Sign Up
+    signupForm.addEventListener('submit', (event) => {
         event.preventDefault();
-        
-        // Save user data and redirect
-        const username = document.getElementById('newUsername').value;
-        const password = document.getElementById('newPassword').value;
+        const newUsername = document.getElementById('newUsername').value;
+        const newPassword = document.getElementById('newPassword').value;
 
-        if (username && password) {
-            localStorage.setItem('username', username);
-            localStorage.setItem('password', password);
-            signupPage.classList.add('hidden');
+        const users = loadUsers();
+        users.push({ username: newUsername, password: newPassword });
+        saveToStorage(usersKey, users);
+
+        alert('Sign up successful!');
+        signupPage.classList.add('hidden');
+        loginPage.classList.remove('hidden');
+    });
+
+    // Handle Login
+    loginForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const users = loadUsers();
+        const userExists = users.some(user => user.username === username && user.password === password);
+
+        if (userExists) {
+            alert(`Welcome, ${username}!`);
+            loginPage.classList.add('hidden');
             dashboard.classList.remove('hidden');
-            loadProfiles();
+        } else {
+            alert('Invalid username or password.');
         }
     });
 
-    // Create profile button
-    createProfileBtn.addEventListener('click', function() {
+    // Show Profile Form
+    createProfileBtn.addEventListener('click', () => {
         profileSection.classList.remove('hidden');
     });
 
-    // Save profile to local storage
-    profileForm.addEventListener('submit', function(event) {
+    // Handle Profile Form Submission
+    profileForm.addEventListener('submit', (event) => {
         event.preventDefault();
-        
         const petName = document.getElementById('petName').value;
         const petBreed = document.getElementById('petBreed').value;
         const petDob = document.getElementById('petDob').value;
         const petPhoto = document.getElementById('petPhoto').files[0];
         const petBirthday = document.getElementById('petBirthday').value;
 
-        // Prepare pet profile object
-        const petProfile = {
-            petName,
-            petBreed,
-            petDob,
-            petBirthday,
-            photo: petPhoto ? URL.createObjectURL(petPhoto) : '',
-        };
+        const profiles = loadProfiles();
+        profiles.push({ petName, petBreed, petDob, petPhoto, petBirthday });
+        saveToStorage(profilesKey, profiles);
 
-        // Get existing profiles from local storage
-        let profiles = JSON.parse(localStorage.getItem(profilesKey)) || [];
-        profiles.push(petProfile);
-        localStorage.setItem(profilesKey, JSON.stringify(profiles));
-
-        // Hide profile form and refresh profiles list
+        alert('Profile saved!');
         profileSection.classList.add('hidden');
-        loadProfiles();
+        renderProfiles();
     });
 
-    // Load profiles from local storage
-    function loadProfiles() {
-        const profiles = JSON.parse(localStorage.getItem(profilesKey)) || [];
-        petList.innerHTML = ''; // Clear current list
-        profiles.forEach((profile, index) => {
-            const petCard = document.createElement('div');
-            petCard.classList.add('pet-card');
-            petCard.innerHTML = `
-                <img src="${profile.photo}" alt="Pet photo">
-                <div class="pet-info">
-                    <h3>${profile.petName}</h3>
-                    <p>${profile.petBreed}</p>
-                    <p>${profile.petDob}</p>
-                    <p class="reminder">Birthday: ${profile.petBirthday}</p>
-                </div>
-                <div class="buttons">
-                    <button class="button edit" onclick="editProfile(${index})">Edit</button>
-                    <button class="button delete" onclick="deleteProfile(${index})">Delete</button>
-                </div>
+    // Render Profiles
+    const renderProfiles = () => {
+        const profiles = loadProfiles();
+        petList.innerHTML = '';
+        profiles.forEach(profile => {
+            const profileDiv = document.createElement('div');
+            profileDiv.classList.add('profile');
+            profileDiv.innerHTML = `
+                <h3>${profile.petName}</h3>
+                <p>Breed: ${profile.petBreed}</p>
+                <p>DOB: ${profile.petDob}</p>
+                <p>Birthday: ${profile.petBirthday || 'Not set'}</p>
             `;
-            petList.appendChild(petCard);
+            petList.appendChild(profileDiv);
         });
-    }
-
-    // Edit profile function
-    window.editProfile = function(index) {
-        const profiles = JSON.parse(localStorage.getItem(profilesKey)) || [];
-        const profile = profiles[index];
-        // Populate the form with existing profile data
-        document.getElementById('petName').value = profile.petName;
-        document.getElementById('petBreed').value = profile.petBreed;
-        document.getElementById('petDob').value = profile.petDob;
-        document.getElementById('petBirthday').value = profile.petBirthday;
     };
 
-    // Delete profile function
-    window.deleteProfile = function(index) {
-        const profiles = JSON.parse(localStorage.getItem(profilesKey)) || [];
-        profiles.splice(index, 1);
-        localStorage.setItem(profilesKey, JSON.stringify(profiles));
-        loadProfiles();
-    };
-
-    // Load profiles on page load if already exists
-    loadProfiles();
+    renderProfiles();
 });
