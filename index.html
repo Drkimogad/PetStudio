@@ -88,6 +88,38 @@
         .dark-mode .reminder {
             color: #f39c12;
         }
+
+        /* Sign-Up Form Styling */
+        .signup-form {
+            max-width: 300px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .signup-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .signup-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .signup-form button:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -103,13 +135,13 @@
         <a href="#" id="signupLink">Don't have an account? Sign Up</a>
     </div>
 
-    <!-- Signup Page -->
+    <!-- Sign-Up Page -->
     <div id="signupPage">
         <h2>Sign Up</h2>
-        <form id="signupForm">
+        <form id="signupForm" class="signup-form">
             <input type="text" id="newUsername" placeholder="Username" required><br><br>
             <input type="password" id="newPassword" placeholder="Password" required><br><br>
-            <button type="submit" class="button">Sign Up</button>
+            <button type="submit">Sign Up</button>
         </form>
         <a href="#" id="loginLink">Already have an account? Login</a>
     </div>
