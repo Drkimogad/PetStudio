@@ -1,144 +1,52 @@
-/* General styles */
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f9;
+    background-color: #f9f9f9;
     color: #333;
 }
 
-/* Login and Sign-up Form Styles */
-form {
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    margin: 0 auto;
-}
-
-input {
-    padding: 10px;
-    margin: 5px 0;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-}
-
-button {
-    padding: 10px;
-    margin: 10px 0;
-    background-color: #4A90E2; /* Blue */
-    color: white;
+/* Buttons */
+.button {
+    background-color: #4CAF50; /* Green */
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #1c70b7;
-}
-
-a {
-    color: #FF7F50; /* Orange */
-}
-
-#loginPage, #signupPage {
-    display: block;
-    margin: 20px auto;
-    width: 100%;
-    max-width: 400px;
-}
-
-/* Dashboard Styles */
-#dashboard {
-    padding: 20px;
-    background-color: #fff;
-}
-
-#viewPetsBtn, #addPetBtn, #logoutBtn {
-    margin: 10px;
-    padding: 10px;
-    background-color: #FF7F50; /* Orange */
     color: white;
-    border: none;
-    border-radius: 5px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
     cursor: pointer;
+    border-radius: 5px;
 }
 
-#viewPetsBtn:hover, #addPetBtn:hover, #logoutBtn:hover {
-    background-color: #e56743;
-}
-
-/* Hidden Class */
+/* Hidden elements */
 .hidden {
     display: none;
 }
 
-/* Pet Form Styles */
-#petFormPage form {
-    display: flex;
-    flex-direction: column;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-#petFormPage input, #petFormPage textarea {
-    margin: 5px 0;
-    padding: 10px;
-    border: 2px solid #ccc;
+/* Pages */
+#signupPage, #loginPage, #dashboard {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
     border-radius: 5px;
-}
-
-#petFormPage button {
-    background-color: #4A90E2; /* Blue */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    cursor: pointer;
-}
-
-#petFormPage button:hover {
-    background-color: #1c70b7;
-}
-
-/* Profile Cards */
-#petList {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.petCard {
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    padding: 15px;
-    width: 250px;
     background-color: #fff;
 }
 
-.petCard button {
-    margin-top: 10px;
-    background-color: #FF7F50; /* Orange */
-    color: white;
-    border: none;
+/* Form Styles */
+form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+form input[type="text"], form input[type="password"], form input[type="date"], form input[type="file"], textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    cursor: pointer;
-}
-
-.petCard button:hover {
-    background-color: #e56743;
-}
-
-/* Add Profile Button */
-#addProfileBtn {
-    background-color: #4A90E2; /* Blue */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#addProfileBtn:hover {
-    background-color: #1c70b7;
 }
