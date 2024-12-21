@@ -42,7 +42,8 @@
         <h1>Welcome to Your Pet Diary!</h1>
         <button id="createProfileBtn" class="button">Create Profile</button>
 
-        <div id="profileSection" class="hidden">
+        <!-- Profile Form -->
+        <div id="profileFormSection" class="hidden">
             <h2>Create a Pet Profile</h2>
             <form id="profileForm">
                 <label for="petName">Pet Name:</label>
@@ -64,11 +65,12 @@
             </form>
         </div>
 
+        <!-- Pet Profiles List -->
         <div id="petList">
-            <!-- Pet profiles will appear here -->
+            <!-- Saved pet profiles will appear here -->
         </div>
 
-        <button id="addProfilesBtn" class="button">Add More Profiles</button>
+        <button id="addProfilesBtn" class="button hidden">Add More Profiles</button>
     </div>
 
     <script src="script.js"></script>
