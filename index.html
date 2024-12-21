@@ -3,190 +3,214 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multi-Page Navigation</title>
+  <title>Pet Diary Dashboard</title>
   <style>
-    /* Basic CSS for visibility control */
-    .hidden {
-      display: none;
-    }
-    
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      background-color: #f9f9f9;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: #f9f9f9;
     }
 
     .container {
-      width: 100%;
-      max-width: 400px;
-      padding: 20px;
+      width: 90%;
+      max-width: 1200px;
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
     }
 
-    h1, h2 {
-      text-align: center;
+    .hidden {
+      display: none;
     }
 
-    form {
+    .profile-section {
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
     }
 
-    label {
-      margin-bottom: 5px;
-      font-weight: bold;
+    .profile-left, .profile-right {
+      width: 48%;
     }
 
-    input {
-      margin-bottom: 15px;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ddd;
+    .profile-left {
+      padding-right: 10px;
+      border-right: 1px solid #ddd;
+    }
+
+    .profile-right {
+      padding-left: 10px;
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .gallery img {
+      width: 48%;
+      height: auto;
       border-radius: 4px;
+      border: 1px solid #ddd;
     }
 
-    button {
-      padding: 10px;
+    .reminder {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .add-profile-btn {
+      margin: 10px 0;
+      padding: 10px 20px;
       font-size: 16px;
-      color: #fff;
       background-color: #007bff;
+      color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
 
-    button:hover {
+    .add-profile-btn:hover {
       background-color: #0056b3;
     }
 
-    p {
-      text-align: center;
-      margin-top: 10px;
+    .care-log {
+      margin-top: 20px;
     }
 
-    a {
-      color: #007bff;
-      text-decoration: none;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
     }
 
-    a:hover {
-      text-decoration: underline;
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Login Page -->
-    <div id="loginPage">
-      <h1>Login</h1>
-      <form id="loginForm">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        
-        <button type="submit">Login</button>
-      </form>
-      <p>Don't have an account? <a href="#" id="signupLink">Sign up here</a></p>
-    </div>
-
-    <!-- Sign-Up Page -->
-    <div id="signupPage" class="hidden">
-      <h1>Sign Up</h1>
-      <form id="signupForm">
-        <label for="newUsername">Username:</label>
-        <input type="text" id="newUsername" name="newUsername" required>
-        
-        <label for="newPassword">Password:</label>
-        <input type="password" id="newPassword" name="newPassword" required>
-        
-        <button type="submit">Sign Up</button>
-      </form>
-      <p>Already have an account? <a href="#" id="loginLink">Log in here</a></p>
-    </div>
-
     <!-- Dashboard -->
-    <div id="dashboard" class="hidden">
-      <h1>Welcome to Your Dashboard</h1>
-      <p>You're now logged in!</p>
-      <button id="signOutBtn">Sign Out</button>
+    <div id="dashboard">
+      <h1>Pet Diary Dashboard</h1>
+      <button class="add-profile-btn" id="addProfileBtn">+ Add Pet Profile</button>
+      <div id="profileContainer"></div>
     </div>
   </div>
 
-  <!-- JavaScript -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const loginPage = document.getElementById('loginPage');
-      const signupPage = document.getElementById('signupPage');
-      const dashboard = document.getElementById('dashboard');
-      const loginForm = document.getElementById('loginForm');
-      const signupForm = document.getElementById('signupForm');
-      const signOutBtn = document.getElementById('signOutBtn');
-      const signupLink = document.getElementById('signupLink');
-      const loginLink = document.getElementById('loginLink');
+      const profileContainer = document.getElementById('profileContainer');
+      const addProfileBtn = document.getElementById('addProfileBtn');
 
-      // Handle login form submission
-      loginForm.addEventListener('submit', function (event) {
-        event.preventDefault();
+      // Load profiles from local storage
+      let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+      function saveProfiles() {
+        localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+      }
 
-        if (username && password) {
-          console.log('Login successful!');
-          dashboard.classList.remove('hidden');
-          loginPage.classList.add('hidden');
-        } else {
-          alert('Please enter both username and password.');
+      function renderProfiles() {
+        profileContainer.innerHTML = '';
+
+        petProfiles.forEach((profile, index) => {
+          const profileDiv = document.createElement('div');
+          profileDiv.className = 'profile-section';
+
+          profileDiv.innerHTML = `
+            <div class="profile-left">
+              <h2>${profile.name}</h2>
+              <p><strong>Breed:</strong> ${profile.breed}</p>
+              <p><strong>Date of Birth:</strong> ${profile.dob}</p>
+              <h3>Vaccinations</h3>
+              <ul>
+                ${profile.vaccinations.map(v => `<li>${v}</li>`).join('')}
+              </ul>
+              <h3>Deworming</h3>
+              <ul>
+                ${profile.deworming.map(d => `<li>${d}</li>`).join('')}
+              </ul>
+              <p class="reminder">🎉 ${profile.name}'s Birthday: ${profile.dob}</p>
+            </div>
+            <div class="profile-right">
+              <h3>Gallery</h3>
+              <div class="gallery">
+                ${profile.photos.map(photo => `<img src="${photo}" alt="${profile.name}'s Photo">`).join('')}
+              </div>
+              <input type="file" accept="image/*" data-index="${index}" class="uploadPhoto">
+            </div>
+          `;
+
+          profileContainer.appendChild(profileDiv);
+        });
+
+        // Attach event listeners to photo upload inputs
+        document.querySelectorAll('.uploadPhoto').forEach(input => {
+          input.addEventListener('change', handlePhotoUpload);
+        });
+      }
+
+      function handlePhotoUpload(event) {
+        const index = event.target.dataset.index;
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          petProfiles[index].photos.push(e.target.result);
+          saveProfiles();
+          renderProfiles();
+        };
+
+        if (file) reader.readAsDataURL(file);
+      }
+
+      addProfileBtn.addEventListener('click', function () {
+        const name = prompt('Enter pet name:');
+        const breed = prompt('Enter pet breed:');
+        const dob = prompt('Enter pet date of birth (YYYY-MM-DD):');
+
+        if (name && breed && dob) {
+          petProfiles.push({
+            name,
+            breed,
+            dob,
+            vaccinations: [],
+            deworming: [],
+            photos: []
+          });
+          saveProfiles();
+          renderProfiles();
         }
       });
 
-      // Handle sign-up form submission
-      signupForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        const newUsername = document.getElementById('newUsername').value;
-        const newPassword = document.getElementById('newPassword').value;
-
-        if (newUsername && newPassword) {
-          console.log('Sign up successful!');
-          localStorage.setItem('username', newUsername);
-          localStorage.setItem('password', newPassword);
-          signupForm.reset();
-          signupPage.classList.add('hidden');
-          loginPage.classList.remove('hidden');
-        } else {
-          alert('Please fill in all required fields.');
-        }
-      });
-
-      // Handle sign-out
-      signOutBtn.addEventListener('click', function () {
-        dashboard.classList.add('hidden');
-        loginPage.classList.remove('hidden');
-      });
-
-      // Navigate to sign-up page
-      signupLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        loginPage.classList.add('hidden');
-        signupPage.classList.remove('hidden');
-      });
-
-      // Navigate back to login page
-      loginLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        signupPage.classList.add('hidden');
-        loginPage.classList.remove('hidden');
-      });
+      renderProfiles();
     });
   </script>
 </body>
