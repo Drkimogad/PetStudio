@@ -1,52 +1,63 @@
-/* General Styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f9f9f9;
+    box-sizing: border-box;
+    background-color: #f4f4f9;
     color: #333;
 }
 
-/* Buttons */
-.button {
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 10px 20px;
+h1, h2 {
+    color: #4a90e2;
     text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
+}
+
+button {
+    background-color: #ff7f50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px 0;
     cursor: pointer;
     border-radius: 5px;
 }
 
-/* Hidden elements */
+button:hover {
+    background-color: #ff5733;
+}
+
 .hidden {
     display: none;
 }
 
-/* Pages */
 #signupPage, #loginPage, #dashboard {
-    max-width: 500px;
-    margin: 50px auto;
+    max-width: 600px;
+    margin: 0 auto;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #fff;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin-top: 50px;
 }
 
-/* Form Styles */
-form label {
+#profileFormSection {
+    margin-top: 20px;
+}
+
+#petList {
+    margin-top: 20px;
+}
+
+.pet-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    background: #f9f9f9;
+}
+
+.pet-card img {
+    max-width: 100px;
     display: block;
-    margin-bottom: 5px;
-}
-
-form input[type="text"], form input[type="password"], form input[type="date"], form input[type="file"], textarea {
-    width: 100%;
-    padding: 8px;
     margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
 }
