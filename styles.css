@@ -51,6 +51,7 @@ a:hover {
 #dashboard {
     text-align: center;
     padding: 20px;
+    display: none;
 }
 
 #dashboard h1 {
