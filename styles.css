@@ -1,0 +1,90 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+h1, h2 {
+    color: #3498db; /* Blue */
+}
+
+#signupPage, #loginPage, #dashboard {
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+}
+
+.hidden {
+    display: none;
+}
+
+.button {
+    padding: 10px 20px;
+    background-color: #3498db; /* Blue */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.button:hover {
+    background-color: #2980b9; /* Darker blue */
+}
+
+input[type="text"], input[type="date"], input[type="file"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+#petList {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.pet-card {
+    width: 200px;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 2px solid #ccc;
+    background-color: #ecf0f1;
+}
+
+.pet-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.pet-card .pet-info {
+    text-align: center;
+}
+
+.pet-card .reminder {
+    font-weight: bold;
+    color: #e74c3c; /* Red */
+}
+
+.pet-card .buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pet-card .buttons button {
+    padding: 5px;
+    font-size: 14px;
+}
+
+.pet-card .buttons button.edit {
+    background-color: #f39c12; /* Orange */
+}
+
+.pet-card .buttons button.delete {
+    background-color: #e74c3c; /* Red */
+}
