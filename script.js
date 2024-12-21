@@ -1,73 +1,97 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const signupPage = document.getElementById("signupPage");
-    const loginPage = document.getElementById("loginPage");
-    const dashboard = document.getElementById("dashboard");
-    const profileFormSection = document.getElementById("profileFormSection");
-    const createProfileBtn = document.getElementById("createProfileBtn");
-    const addProfilesBtn = document.getElementById("addProfilesBtn");
-    const petList = document.getElementById("petList");
+document.addEventListener('DOMContentLoaded', function () {
+    const signupPage = document.getElementById('signupPage');
+    const dashboard = document.getElementById('dashboard');
+    const createProfileBtn = document.getElementById('createProfileBtn');
+    const profileSection = document.getElementById('profileSection');
+    const profileForm = document.getElementById('profileForm');
+    const petList = document.getElementById('petList');
+    const addProfilesBtn = document.getElementById('addProfilesBtn');
+    const usernameDisplay = document.getElementById('usernameDisplay');
 
-    // User authentication
-    const signupForm = document.getElementById("signupForm");
-    const loginForm = document.getElementById("loginForm");
+    let userData = JSON.parse(localStorage.getItem('userData')) || null;
+    let pets = JSON.parse(localStorage.getItem('pets')) || [];
 
-    signupForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        signupPage.classList.add("hidden");
-        loginPage.classList.remove("hidden");
+    // Sign-Up Form Handling
+    document.getElementById('signupForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const username = document.getElementById('newUsername').value;
+        const password = document.getElementById('newPassword').value;
+
+        // Save user data in local storage
+        userData = { username, password };
+        localStorage.setItem('userData', JSON.stringify(userData));
+
+        // Redirect to Dashboard
+        signupPage.classList.add('hidden');
+        dashboard.classList.remove('hidden');
+        usernameDisplay.textContent = username;
+
+        displayPets();
     });
 
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        loginPage.classList.add("hidden");
-        dashboard.classList.remove("hidden");
+    // Create Pet Profile Form Handling
+    createProfileBtn.addEventListener('click', function () {
+        profileSection.classList.remove('hidden');
     });
 
-    // Create Profile
-    createProfileBtn.addEventListener("click", () => {
-        profileFormSection.classList.remove("hidden");
-    });
+    profileForm.addEventListener('submit', function (event) {
+        event.preventDefault();
 
-    document.getElementById("profileForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        const petName = document.getElementById("petName").value;
-        const petBreed = document.getElementById("petBreed").value;
-        const petDob = document.getElementById("petDob").value;
-        const petBirthday = document.getElementById("petBirthday").value;
-        const petPhoto = document.getElementById("petPhoto").files[0];
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const petProfile = document.createElement("div");
-            petProfile.classList.add("pet-card");
-            petProfile.innerHTML = `
-                <img src="${event.target.result}" alt="${petName}" />
-                <p><strong>Name:</strong> ${petName}</p>
-                <p><strong>Breed:</strong> ${petBreed}</p>
-                <p><strong>Date of Birth:</strong> ${petDob}</p>
-                <p><strong>Birthday Reminder:</strong> ${petBirthday}</p>
-                <button class="deleteBtn">Delete</button>
-            `;
-
-            petList.appendChild(petProfile);
-
-            // Delete Profile
-            petProfile.querySelector(".deleteBtn").addEventListener("click", () => {
-                petList.removeChild(petProfile);
-            });
-        };
-
-        if (petPhoto) {
-            reader.readAsDataURL(petPhoto);
+        const petName = document.getElementById('petName').value;
+        const petBreed = document.getElementById('petBreed').value;
+        const petDob = document.getElementById('petDob').value;
+        const petBirthday = document.getElementById('petBirthday').value;
+        const petPhoto = document.getElementById('petPhoto').files;
+        
+        let petPhotos = [];
+        for (let i = 0; i < petPhoto.length; i++) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                petPhotos.push(e.target.result);
+                if (petPhotos.length === petPhoto.length) {
+                    savePetProfile(petName, petBreed, petDob, petBirthday, petPhotos);
+                }
+            }
+            reader.readAsDataURL(petPhoto[i]);
         }
-
-        profileFormSection.classList.add("hidden");
-        addProfilesBtn.classList.remove("hidden");
     });
 
-    // Add More Profiles
-    addProfilesBtn.addEventListener("click", () => {
-        profileFormSection.classList.remove("hidden");
+    function savePetProfile(petName, petBreed, petDob, petBirthday, petPhotos) {
+        const newPet = { petName, petBreed, petDob, petBirthday, petPhotos };
+        pets.push(newPet);
+        localStorage.setItem('pets', JSON.stringify(pets));
+
+        profileSection.classList.add('hidden');
+        displayPets();
+    }
+
+    function displayPets() {
+        petList.innerHTML = '';
+        pets.forEach((pet, index) => {
+            const petCard = document.createElement('div');
+            petCard.classList.add('petCard');
+            petCard.innerHTML = `
+                <h3>${pet.petName}</h3>
+                <p>Breed: ${pet.petBreed}</p>
+                <p>Date of Birth: ${pet.petDob}</p>
+                <p>Birthday: ${pet.petBirthday}</p>
+                <div id="petGalleryContainer">
+                    ${pet.petPhotos.map(photo => `<img src="${photo}" alt="Pet Photo">`).join('')}
+                </div>
+                <button class="deleteBtn" onclick="deletePet(${index})">Delete</button>
+            `;
+            petList.appendChild(petCard);
+        });
+    }
+
+    // Add Profiles Button
+    addProfilesBtn.addEventListener('click', function () {
+        profileSection.classList.remove('hidden');
     });
+
+    window.deletePet = function(index) {
+        pets.splice(index, 1);
+        localStorage.setItem('pets', JSON.stringify(pets));
+        displayPets();
+    };
 });
