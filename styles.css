@@ -1,90 +1,144 @@
+/* General styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #f4f4f9;
+    color: #333;
 }
 
-h1, h2 {
-    color: #3498db; /* Blue */
+/* Login and Sign-up Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin: 0 auto;
 }
 
-#signupPage, #loginPage, #dashboard {
-    padding: 20px;
-    max-width: 800px;
-    margin: auto;
+input {
+    padding: 10px;
+    margin: 5px 0;
+    border: 2px solid #ccc;
+    border-radius: 5px;
 }
 
-.hidden {
-    display: none;
-}
-
-.button {
-    padding: 10px 20px;
-    background-color: #3498db; /* Blue */
+button {
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #4A90E2; /* Blue */
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
 }
 
-.button:hover {
-    background-color: #2980b9; /* Darker blue */
+button:hover {
+    background-color: #1c70b7;
 }
 
-input[type="text"], input[type="date"], input[type="file"], input[type="password"] {
+a {
+    color: #FF7F50; /* Orange */
+}
+
+#loginPage, #signupPage {
+    display: block;
+    margin: 20px auto;
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    max-width: 400px;
 }
 
+/* Dashboard Styles */
+#dashboard {
+    padding: 20px;
+    background-color: #fff;
+}
+
+#viewPetsBtn, #addPetBtn, #logoutBtn {
+    margin: 10px;
+    padding: 10px;
+    background-color: #FF7F50; /* Orange */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#viewPetsBtn:hover, #addPetBtn:hover, #logoutBtn:hover {
+    background-color: #e56743;
+}
+
+/* Hidden Class */
+.hidden {
+    display: none;
+}
+
+/* Pet Form Styles */
+#petFormPage form {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#petFormPage input, #petFormPage textarea {
+    margin: 5px 0;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+#petFormPage button {
+    background-color: #4A90E2; /* Blue */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#petFormPage button:hover {
+    background-color: #1c70b7;
+}
+
+/* Profile Cards */
 #petList {
     display: flex;
     flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
 }
 
-.pet-card {
-    width: 200px;
-    margin: 10px;
-    padding: 10px;
-    border-radius: 5px;
+.petCard {
     border: 2px solid #ccc;
-    background-color: #ecf0f1;
+    border-radius: 10px;
+    padding: 15px;
+    width: 250px;
+    background-color: #fff;
 }
 
-.pet-card img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    margin-bottom: 10px;
+.petCard button {
+    margin-top: 10px;
+    background-color: #FF7F50; /* Orange */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
-.pet-card .pet-info {
-    text-align: center;
+.petCard button:hover {
+    background-color: #e56743;
 }
 
-.pet-card .reminder {
-    font-weight: bold;
-    color: #e74c3c; /* Red */
+/* Add Profile Button */
+#addProfileBtn {
+    background-color: #4A90E2; /* Blue */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
-.pet-card .buttons {
-    display: flex;
-    justify-content: space-between;
-}
-
-.pet-card .buttons button {
-    padding: 5px;
-    font-size: 14px;
-}
-
-.pet-card .buttons button.edit {
-    background-color: #f39c12; /* Orange */
-}
-
-.pet-card .buttons button.delete {
-    background-color: #e74c3c; /* Red */
+#addProfileBtn:hover {
+    background-color: #1c70b7;
 }
