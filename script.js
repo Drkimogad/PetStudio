@@ -11,7 +11,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const profileForm = document.getElementById("profileForm");
     const petList = document.getElementById("petList");
 
-    let petProfiles = [];
+    let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || []; // Load saved profiles
+
+    // Function to render profiles
+    function renderProfiles() {
+        petList.innerHTML = ''; // Clear the list
+        petProfiles.forEach(profile => {
+            const petCard = document.createElement("div");
+            petCard.classList.add("petCard");
+            petCard.innerHTML = `
+                <h3>${profile.name}</h3>
+                <p>Breed: ${profile.breed}</p>
+                <p>DOB: ${profile.dob}</p>
+                <p>Birthday: ${profile.birthday}</p>
+                <div>
+                    ${profile.gallery.map(img => `<img src="${img}" alt="Pet Photo">`).join('')}
+                </div>
+                <button class="deleteBtn">Delete</button>
+                <button class="printBtn">Print</button>
+            `;
+
+            petCard.querySelector(".deleteBtn").addEventListener("click", () => {
+                petProfiles = petProfiles.filter(pet => pet.name !== profile.name); // Remove profile from array
+                localStorage.setItem('petProfiles', JSON.stringify(petProfiles)); // Save to localStorage
+                renderProfiles(); // Re-render the profiles
+            });
+
+            petCard.querySelector(".printBtn").addEventListener("click", () => {
+                // Clone the specific pet profile content for printing
+                const printContent = petCard.cloneNode(true);
+                printContent.querySelector(".deleteBtn").style.display = "none"; // Hide delete button in print
+                printContent.querySelector(".printBtn").style.display = "none"; // Hide print button in print
+
+                const printWindow = window.open('', '', 'height=500,width=800');
+                printWindow.document.write('<html><head><title>Print Profile</title></head><body>');
+                printWindow.document.write(printContent.innerHTML);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+            });
+
+            petList.appendChild(petCard);
+        });
+    }
 
     // Handle sign-up
     signupForm.addEventListener("submit", (e) => {
@@ -33,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Login successful!");
             loginPage.classList.add("hidden");
             dashboard.classList.remove("hidden");
+            renderProfiles(); // Load profiles when logged in
         } else {
             alert("Invalid username or password.");
         }
@@ -48,44 +91,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const petName = document.getElementById("petName").value;
         const petBreed = document.getElementById("petBreed").value;
         const petDob = document.getElementById("petDob").value;
-        const petGallery = Array.from(document.getElementById("petGallery").files);
+        const petGallery = Array.from(document.getElementById("petGallery").files).map(file => URL.createObjectURL(file)); // Save image URLs
         const petBirthday = document.getElementById("petBirthday").value;
 
-        const petCard = document.createElement("div");
-        petCard.classList.add("petCard");
-        petCard.innerHTML = `
-            <h3>${petName}</h3>
-            <p>Breed: ${petBreed}</p>
-            <p>DOB: ${petDob}</p>
-            <p>Birthday: ${petBirthday}</p>
-            <div class="gallery">
-                ${petGallery
-                    .map((file) => `<img src="${URL.createObjectURL(file)}" alt="Pet Photo" class="printable-img">`)
-                    .join("")}
-            </div>
-            <button class="deleteBtn">Delete</button>
-            <button class="printBtn" onclick="printProfile(${petProfiles.length})">Print</button>
-        `;
+        const newProfile = {
+            name: petName,
+            breed: petBreed,
+            dob: petDob,
+            birthday: petBirthday,
+            gallery: petGallery
+        };
 
-        petCard.querySelector(".deleteBtn").addEventListener("click", () => {
-            petList.removeChild(petCard);
-        });
-
-        petList.appendChild(petCard);
+        petProfiles.push(newProfile); // Add new profile to array
+        localStorage.setItem('petProfiles', JSON.stringify(petProfiles)); // Save to localStorage
+        renderProfiles(); // Re-render the profiles
         profileSection.classList.add("hidden");
         profileForm.reset();
     });
 
-    // Print profile function
-    window.printProfile = (index) => {
-        const petCard = petList.children[index];
-        const printWindow = window.open('', '', 'height=600,width=800');
-        printWindow.document.write('<html><head><title>Print Profile</title>');
-        printWindow.document.write('<style>.printable-img { max-width: 100%; height: auto; }</style>');
-        printWindow.document.write('</head><body>');
-        printWindow.document.write(petCard.innerHTML); // Only the relevant profile content
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        printWindow.print();
-    };
+    // Initial rendering of profiles (if any)
+    if (petProfiles.length > 0) {
+        renderProfiles();
+    }
 });
