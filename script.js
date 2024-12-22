@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     .join("")}
             </div>
             <button class="deleteBtn">Delete</button>
-            <button class="printBtn" onclick="window.print()">Print</button>
+            <button class="printBtn" onclick="printProfile('${petName}', '${petBreed}', '${petDob}', '${petBirthday}')">Print</button>
         `;
 
         petCard.querySelector(".deleteBtn").addEventListener("click", () => {
@@ -75,6 +75,22 @@ document.addEventListener("DOMContentLoaded", () => {
         profileSection.classList.add("hidden");
         profileForm.reset();
     });
+
+    // Function to print the relevant pet profile
+    window.printProfile = function(petName, petBreed, petDob, petBirthday) {
+        const content = `
+            <h3>${petName}</h3>
+            <p>Breed: ${petBreed}</p>
+            <p>DOB: ${petDob}</p>
+            <p>Birthday: ${petBirthday}</p>
+        `;
+        const printWindow = window.open('', '', 'height=600,width=800');
+        printWindow.document.write('<html><head><title>Print Profile</title></head><body>');
+        printWindow.document.write(content);
+        printWindow.document.write('<br><button onclick="window.print()">Print</button>');
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+    };
 
     // Function to toggle between pages (sign-up, login, dashboard)
     function togglePages() {
