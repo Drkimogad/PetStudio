@@ -75,4 +75,17 @@ document.addEventListener("DOMContentLoaded", () => {
         profileSection.classList.add("hidden");
         profileForm.reset();
     });
+
+    // Function to toggle between pages (sign-up, login, dashboard)
+    function togglePages() {
+        if (localStorage.getItem("username")) {
+            signupPage.classList.add("hidden");
+            loginPage.classList.add("hidden");
+            dashboard.classList.remove("hidden");
+        } else {
+            signupPage.classList.remove("hidden");
+        }
+    }
+
+    togglePages();
 });
