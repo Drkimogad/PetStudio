@@ -60,11 +60,11 @@ document.addEventListener("DOMContentLoaded", () => {
             <p>Birthday: ${petBirthday}</p>
             <div>
                 ${petGallery
-                    .map((file) => `<img src="${URL.createObjectURL(file)}" alt="Pet Photo">`)
+                    .map((file) => `<img src="${URL.createObjectURL(file)}" alt="Pet Photo" class="pet-photo">`)
                     .join("")}
             </div>
             <button class="deleteBtn">Delete</button>
-            <button class="printBtn" onclick="printProfile('${petName}', '${petBreed}', '${petDob}', '${petBirthday}')">Print</button>
+            <button class="printBtn" onclick="printProfile('${petName}', '${petBreed}', '${petDob}', '${petBirthday}', ${JSON.stringify(petGallery)})">Print</button>
         `;
 
         petCard.querySelector(".deleteBtn").addEventListener("click", () => {
@@ -77,12 +77,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Function to print the relevant pet profile
-    window.printProfile = function(petName, petBreed, petDob, petBirthday) {
+    window.printProfile = function(petName, petBreed, petDob, petBirthday, petGallery) {
         const content = `
             <h3>${petName}</h3>
             <p>Breed: ${petBreed}</p>
             <p>DOB: ${petDob}</p>
             <p>Birthday: ${petBirthday}</p>
+            <div>
+                ${petGallery
+                    .map((imageUrl) => `<img src="${imageUrl}" alt="Pet Photo" class="pet-photo">`)
+                    .join("")}
+            </div>
         `;
         const printWindow = window.open('', '', 'height=600,width=800');
         printWindow.document.write('<html><head><title>Print Profile</title></head><body>');
