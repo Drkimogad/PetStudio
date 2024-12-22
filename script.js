@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const profileSection = document.getElementById("profileSection");
     const profileForm = document.getElementById("profileForm");
     const petList = document.getElementById("petList");
-    const addProfilesBtn = document.getElementById("addProfilesBtn");
 
     let petProfiles = [];
 
@@ -42,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Handle profile creation
     createProfileBtn.addEventListener("click", () => {
         profileSection.classList.remove("hidden");
-        addProfilesBtn.classList.remove("hidden");
     });
 
     profileForm.addEventListener("submit", (e) => {
@@ -66,30 +64,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     .join("")}
             </div>
             <button class="deleteBtn">Delete</button>
+            <button class="printBtn" onclick="window.print()">Print</button>
         `;
 
         petCard.querySelector(".deleteBtn").addEventListener("click", () => {
             petList.removeChild(petCard);
         });
 
-        petCard.addEventListener("click", () => {
-            const petDetailsWindow = window.open("", "_blank");
-            petDetailsWindow.document.write(`
-                <h1>${petName}</h1>
-                <p>Breed: ${petBreed}</p>
-                <p>DOB: ${petDob}</p>
-                <p>Birthday: ${petBirthday}</p>
-                <div>${petGallery.map((file) => `<img src="${URL.createObjectURL(file)}" alt="Pet Photo">`).join("")}</div>
-                <button onclick="window.print()">Print</button>
-            `);
-        });
-
         petList.appendChild(petCard);
         profileSection.classList.add("hidden");
         profileForm.reset();
-    });
-
-    addProfilesBtn.addEventListener("click", () => {
-        profileSection.classList.remove("hidden");
     });
 });
