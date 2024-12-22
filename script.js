@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <p>Birthday: ${petBirthday}</p>
             <div class="gallery">
                 ${petGallery
-                    .map((file) => `<img src="${URL.createObjectURL(file)}" alt="Pet Photo">`)
+                    .map((file) => `<img src="${URL.createObjectURL(file)}" alt="Pet Photo" class="printable-img">`)
                     .join("")}
             </div>
             <button class="deleteBtn">Delete</button>
@@ -80,8 +80,10 @@ document.addEventListener("DOMContentLoaded", () => {
     window.printProfile = (index) => {
         const petCard = petList.children[index];
         const printWindow = window.open('', '', 'height=600,width=800');
-        printWindow.document.write('<html><head><title>Print Profile</title></head><body>');
-        printWindow.document.write(petCard.innerHTML);
+        printWindow.document.write('<html><head><title>Print Profile</title>');
+        printWindow.document.write('<style>.printable-img { max-width: 100%; height: auto; }</style>');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(petCard.innerHTML); // Only the relevant profile content
         printWindow.document.write('</body></html>');
         printWindow.document.close();
         printWindow.print();
