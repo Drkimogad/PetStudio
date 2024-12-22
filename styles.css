@@ -114,18 +114,24 @@ input {
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
+    margin-bottom: 10px; /* Adds space between print button and footer */
 }
 
 .printBtn:hover {
     background-color: #0056b3;
 }
 
+#petList {
+    margin-bottom: 80px; /* Adds space at the bottom to ensure print button isn't hidden */
+}
+
 footer {
-    background-color: #6a0dad;
+    position: relative;
+    padding: 20px;
+    background-color: #6a0dad; /* Footer background color */
     color: white;
-    padding: 10px;
     text-align: center;
-    position: fixed;
     width: 100%;
     bottom: 0;
+    margin-top: 20px; /* Adjusts the gap between profiles and footer */
 }
