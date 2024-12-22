@@ -1,115 +1,73 @@
-/* Global Styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
     margin: 0;
     padding: 0;
+    background-color: #f5f5f5;
 }
 
-/* Button Styles */
+h1 {
+    color: #6a0dad;
+    text-align: center;
+    margin-top: 20px;
+}
+
+h2 {
+    color: #007bff;
+    text-align: center;
+}
+
+form {
+    margin: 20px auto;
+    max-width: 300px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
 .button {
-    background-color: #6a5acd; /* Purple */
+    background-color: #ffa500;
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
-    margin: 5px;
+    width: 100%;
 }
 
 .button:hover {
-    background-color: #483d8b; /* Darker purple */
+    background-color: #e69500;
 }
 
-/* Link Styles */
-a {
-    color: #ff6347; /* Orange */
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* Sign-Up Page */
-#signupPage {
-    padding: 20px;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    width: 300px;
-    margin: 50px auto;
-}
-
-#signupPage h2 {
-    color: #6a5acd;
-}
-
-/* Dashboard Styles */
-#dashboard {
-    text-align: center;
-    padding: 20px;
+.hidden {
     display: none;
 }
 
-#dashboard h1 {
-    color: #6a5acd;
+#dashboard {
+    padding: 20px;
+    background-color: #ffffff;
 }
 
-#profileSection {
+#profileSection, #petList {
     margin-top: 20px;
 }
 
 #petList {
-    margin-top: 30px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-}
-
-.petCard {
-    border: 2px solid #ddd;
-    padding: 15px;
-    margin: 10px;
-    border-radius: 8px;
-    width: 250px;
-    text-align: center;
-}
-
-.petCard img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
-
-/* Gallery Styles */
-#petGalleryContainer {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 15px;
-}
-
-#petGalleryContainer img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
-
-/* Profile List Styles */
-#petList .petCard button {
-    background-color: #ff6347; /* Orange */
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-top: 10px;
-}
-
-#petList .petCard button:hover {
-    background-color: #e5533d; /* Darker orange */
+    gap: 15px;
 }
