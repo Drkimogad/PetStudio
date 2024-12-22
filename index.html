@@ -49,16 +49,14 @@
                 <label for="petDob">Date of Birth:</label>
                 <input type="date" id="petDob" required>
                 <label for="petGallery">Upload Photos:</label>
-                <input type="file" id="petGallery" multiple>
+                <input type="file" id="petGallery" multiple accept="image/*">
                 <label for="petBirthday">Birthday Reminder:</label>
                 <input type="date" id="petBirthday">
                 <button type="submit" class="button">Save Profile</button>
             </form>
         </div>
-        <div id="petList">
-            <!-- Pet profiles will appear here -->
-        </div>
-        <button id="addProfilesBtn" class="button">Add More Profiles</button>
+        <div id="petList"></div>
+        <button id="addProfilesBtn" class="button hidden">Add More Profiles</button>
     </div>
 
     <script src="script.js"></script>
