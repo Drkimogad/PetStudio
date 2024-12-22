@@ -10,8 +10,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const profileSection = document.getElementById("profileSection");
     const profileForm = document.getElementById("profileForm");
     const petList = document.getElementById("petList");
+    const addProfilesBtn = document.getElementById("addProfilesBtn");
 
-    // Handle sign-up form submission
+    let petProfiles = [];
+
+    // Handle sign-up
     signupForm.addEventListener("submit", (e) => {
         e.preventDefault();
         localStorage.setItem("username", document.getElementById("newUsername").value);
@@ -21,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loginPage.classList.remove("hidden");
     });
 
-    // Handle login form submission
+    // Handle login
     loginForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const username = document.getElementById("username").value;
@@ -38,7 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Handle profile creation
     createProfileBtn.addEventListener("click", () => {
-        profileSection.classList.toggle("hidden");
+        profileSection.classList.remove("hidden");
+        addProfilesBtn.classList.remove("hidden");
     });
 
     profileForm.addEventListener("submit", (e) => {
@@ -46,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const petName = document.getElementById("petName").value;
         const petBreed = document.getElementById("petBreed").value;
         const petDob = document.getElementById("petDob").value;
-        const petGallery = document.getElementById("petGallery").files;
+        const petGallery = Array.from(document.getElementById("petGallery").files);
         const petBirthday = document.getElementById("petBirthday").value;
 
         const petCard = document.createElement("div");
@@ -56,9 +60,36 @@ document.addEventListener("DOMContentLoaded", () => {
             <p>Breed: ${petBreed}</p>
             <p>DOB: ${petDob}</p>
             <p>Birthday: ${petBirthday}</p>
+            <div>
+                ${petGallery
+                    .map((file) => `<img src="${URL.createObjectURL(file)}" alt="Pet Photo">`)
+                    .join("")}
+            </div>
+            <button class="deleteBtn">Delete</button>
         `;
+
+        petCard.querySelector(".deleteBtn").addEventListener("click", () => {
+            petList.removeChild(petCard);
+        });
+
+        petCard.addEventListener("click", () => {
+            const petDetailsWindow = window.open("", "_blank");
+            petDetailsWindow.document.write(`
+                <h1>${petName}</h1>
+                <p>Breed: ${petBreed}</p>
+                <p>DOB: ${petDob}</p>
+                <p>Birthday: ${petBirthday}</p>
+                <div>${petGallery.map((file) => `<img src="${URL.createObjectURL(file)}" alt="Pet Photo">`).join("")}</div>
+                <button onclick="window.print()">Print</button>
+            `);
+        });
+
         petList.appendChild(petCard);
-        profileSection.reset();
         profileSection.classList.add("hidden");
+        profileForm.reset();
+    });
+
+    addProfilesBtn.addEventListener("click", () => {
+        profileSection.classList.remove("hidden");
     });
 });
