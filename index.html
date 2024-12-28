@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetStudio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+    <!-- Sign-Up Page -->
+    <div id="signupPage">
+        <h1>PetStudio</h1>
+        <h2>Sign Up</h2>
+        <form id="signupForm" autocomplete="on">
+            <label for="newUsername">Username:</label>
+            <input type="text" id="newUsername" name="username" autocomplete="username" required>
+            <label for="newPassword">Password:</label>
+            <input type="password" id="newPassword" name="password" autocomplete="new-password" required>
+            <button type="submit" class="button">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="#" id="loginLink">Login here</a></p>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="hidden">
+        <h1>PetStudio</h1>
+        <h2>Login</h2>
+        <form id="loginForm" autocomplete="on">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" autocomplete="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required>
+            <button type="submit" class="button">Login</button>
+        </form>
+        <p>Don't have an account? <a href="#" id="signupLink">Sign Up here</a></p>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+        <h1>Welcome to Your PetStudio!</h1>
+        <button id="createProfileBtn" class="button">Create Profile</button>
+        <div id="profileSection" class="hidden">
+            <h2>Create a Pet Profile</h2>
+            <form id="profileForm" autocomplete="on">
+                <label for="petName">Pet Name:</label>
+                <input type="text" id="petName" name="petName" required>
+                <label for="petBreed">Breed:</label>
+                <input type="text" id="petBreed" name="petBreed" required>
+                <label for="petDob">Date of Birth:</label>
+                <input type="date" id="petDob" name="petDob" required>
+                <label for="petGallery">Upload Photos:</label>
+                <input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
+                <label for="petBirthday">Birthday Reminder:</label>
+                <input type="date" id="petBirthday" name="petBirthday">
+                <button type="submit" class="button">Save Profile</button>
+            </form>
+        </div>
+        <div id="petList"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 PetStudio. All rights reserved.</p>
+    </footer>
+
+    <!-- Add the service worker registration inside a <script> tag at the end of the body -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(function (error) {
+                console.log('Service Worker registration failed:', error);
+            });
+        }
+    </script>
+
+    <script src="script.js"></script>  <!-- Your custom JS file -->
+</body>
+</html>
