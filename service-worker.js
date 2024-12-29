@@ -1,4 +1,4 @@
-const CACHE_NAME = 'PetStudio-cache-v1';
+const CACHE_NAME = 'PetStudio-cache-v1'; 
 const urlsToCache = [
     '/',
     '/index.html',
@@ -12,6 +12,7 @@ const urlsToCache = [
 
 // Install event: Cache necessary assets
 self.addEventListener('install', (event) => {
+    self.skipWaiting();  // Forces the new service worker to take control immediately
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             console.log('Caching assets...');
@@ -25,9 +26,11 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             if (cachedResponse) {
-                return cachedResponse; // Return cached response if available
+                return cachedResponse;  // Return cached response if available
             }
-            return fetch(event.request); // Otherwise fetch from network
+            return fetch(event.request).catch(() => {
+                return caches.match('/offline.html'); // Fallback page if offline
+            });  // Try to fetch from the network, fallback if offline
         })
     );
 });
