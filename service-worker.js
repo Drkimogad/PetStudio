@@ -4,7 +4,6 @@ const urlsToCache = [
     '/index.html',
     '/styles.css',
     '/script.js',
-    '/manifest.json',
     '/service-worker.js',
     'https://drkimogad.github.io/PetStudio/manifest.json',
     'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
