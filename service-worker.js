@@ -7,39 +7,41 @@ const urlsToCache = [
     '/service-worker.js',
     'https://drkimogad.github.io/PetStudio/manifest.json',
     'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
-    'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png'// The manifest URL is cachedd other resources as needed
+    'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png' // Add other resources as needed
 ];
 
 // Install event: Cache necessary assets
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(PetStudio-cache-v1).then((cache) => {
+        caches.open(CACHE_NAME).then((cache) => {
+            console.log('Caching assets...');
             return cache.addAll(urlsToCache);
         })
     );
 });
 
-// Fetch event: Serve assets from cache, including manifest
+// Fetch event: Serve assets from cache or fetch from network if not cached
 self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             if (cachedResponse) {
-                return cachedResponse;
+                return cachedResponse; // Return cached response if available
             }
-            return fetch(event.request);
+            return fetch(event.request); // Otherwise fetch from network
         })
     );
 });
 
 // Activate event: Clean up old caches
 self.addEventListener('activate', (event) => {
-    const cacheWhitelist = [PetStudio-cache-v1];
+    const cacheWhitelist = [CACHE_NAME]; // Only keep the current cache
     event.waitUntil(
-        caches.keys().then((PetStudio-cache-v1) => {
+        caches.keys().then((cacheNames) => {
             return Promise.all(
-                cacheNames.map((PetStudio-cache-v1) => {
-                    if (!cacheWhitelist.includes(PetStudio-cache-v1)) {
-                        return caches.delete(PetStudio-cache-v1);
+                cacheNames.map((cacheName) => {
+                    // Delete any old cache not in the whitelist
+                    if (!cacheWhitelist.includes(cacheName)) {
+                        return caches.delete(cacheName);
                     }
                 })
             );
