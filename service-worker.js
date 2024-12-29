@@ -5,7 +5,7 @@ const urlsToCache = [
     '/styles.css',
     '/script.js',
     '/service-worker.js',
-    'https://drkimogad.github.io/PetStudio/manifest.json', // Add the manifest URL here
+    'https://drkimogad.github.io/PetStudio/manifest.json', // The manifest URL is cached
     // Add other resources as needed
 ];
 
