@@ -1,7 +1,7 @@
 {
-  "name": "KG PetStudio App",
+  "name": "PetStudio",
   "short_name": "PetStudio",
-  "description": "Create your pets amazing galleries with their birthday reminder",
+  "description": "Create your pets amazing galleries with their birthdays reminder",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
