@@ -4,6 +4,7 @@ const urlsToCache = [
     '/index.html',
     '/styles.css',
     '/script.js',
+    '/manifest.json',
     '/service-worker.js',
     'https://drkimogad.github.io/PetStudio/manifest.json', // The manifest URL is cached
     // Add other resources as needed
