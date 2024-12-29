@@ -7,7 +7,8 @@ const urlsToCache = [
     '/manifest.json',
     '/service-worker.js',
     'https://drkimogad.github.io/PetStudio/manifest.json',
-    'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png'// The manifest URL is cachedd other resources as needed
+    'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png'
+    'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png'// The manifest URL is cachedd other resources as needed
 ];
 
 // Install event: Cache necessary assets
