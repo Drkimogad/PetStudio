@@ -1,4 +1,4 @@
-const CACHE_NAME = 'petstudio-cache-v1';
+const CACHE_NAME = 'PetStudio-cache-v1';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -13,7 +13,7 @@ const urlsToCache = [
 // Install event: Cache necessary assets
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
+        caches.open(PetStudio-cache-v1).then((cache) => {
             return cache.addAll(urlsToCache);
         })
     );
