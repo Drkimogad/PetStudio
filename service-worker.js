@@ -1,4 +1,4 @@
-const CACHE_NAME = 'PetStudio-cache-v1'; 
+const CACHE_NAME = 'PetStudio-cache-v1';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -8,7 +8,7 @@ const urlsToCache = [
     'https://drkimogad.github.io/PetStudio/manifest.json',
     'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
     'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png',
-    '/offline.html'  // Add the offline page to be cached
+    '/offline.html' // Add your offline page here
 ];
 
 // Install event: Cache necessary assets
@@ -27,11 +27,15 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             if (cachedResponse) {
-                return cachedResponse;  // Return cached response if available
+                return cachedResponse; // Return cached response if available
             }
+
+            // If not in cache, try to fetch from the network
             return fetch(event.request).catch(() => {
-                // Fallback to the offline page if the user is offline
-                return caches.match('/offline.html');
+                // If the network request fails (e.g., offline), show the offline page
+                if (event.request.url.endsWith('/') || event.request.url.endsWith('.html')) {
+                    return caches.match('/offline.html'); // Return offline page for HTML files
+                }
             });
         })
     );
@@ -44,9 +48,8 @@ self.addEventListener('activate', (event) => {
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
-                    // Delete any old cache not in the whitelist
                     if (!cacheWhitelist.includes(cacheName)) {
-                        return caches.delete(cacheName);
+                        return caches.delete(cacheName); // Delete old caches
                     }
                 })
             );
