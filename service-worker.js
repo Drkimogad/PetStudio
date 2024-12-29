@@ -1,4 +1,4 @@
-const CACHE_NAME = 'petStudio-cache-v1';
+const CACHE_NAME = 'PetStudio-cache-v1';
 const urlsToCache = [
     '/',
     '/index.html',
