@@ -7,8 +7,8 @@ const urlsToCache = [
     '/service-worker.js',
     'https://drkimogad.github.io/PetStudio/manifest.json',
     'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
-    'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png', 
-    '/offline.html'// Add other resources as needed
+    'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png',
+    '/offline.html'  // Add the offline page to be cached
 ];
 
 // Install event: Cache necessary assets
@@ -30,8 +30,9 @@ self.addEventListener('fetch', (event) => {
                 return cachedResponse;  // Return cached response if available
             }
             return fetch(event.request).catch(() => {
-                return caches.match('/offline.html'); // Fallback page if offline
-            });  // Try to fetch from the network, fallback if offline
+                // Fallback to the offline page if the user is offline
+                return caches.match('/offline.html');
+            });
         })
     );
 });
