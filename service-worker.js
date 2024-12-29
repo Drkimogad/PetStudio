@@ -33,13 +33,13 @@ self.addEventListener('fetch', (event) => {
 
 // Activate event: Clean up old caches
 self.addEventListener('activate', (event) => {
-    const cacheWhitelist = [CACHE_NAME];
+    const cacheWhitelist = [PetStudio-cache-v1];
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
+        caches.keys().then((PetStudio-cache-v1) => {
             return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (!cacheWhitelist.includes(cacheName)) {
-                        return caches.delete(cacheName);
+                cacheNames.map((PetStudio-cache-v1) => {
+                    if (!cacheWhitelist.includes(PetStudio-cache-v1)) {
+                        return caches.delete(PetStudio-cache-v1);
                     }
                 })
             );
