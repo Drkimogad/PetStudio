@@ -1,21 +1,15 @@
-
 {
-  "name": "karim",
+  "name": "PetStudio-App",
   "version": "1.0.0",
-  "description": "# My Project",
-  "main": "index.js",
+  "description": "A web app to create your pet gallery with a birthday reminder",
   "scripts": {
     "start": "live-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["Birthday reminder", "PetStudio", "PWA"],
+  "author": "Karim Gad",
   "license": "ISC",
   "devDependencies": {
     "live-server": "^1.2.2"
-  },
-  "dependencies": {
-    "ms": "^2.1.3"
   }
 }
-
