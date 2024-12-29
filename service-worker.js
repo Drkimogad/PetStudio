@@ -6,6 +6,9 @@ const urlsToCache = [
     '/script.js',
     '/service-worker.js',
     'https://drkimogad.github.io/PetStudio/manifest.json',
+    'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
+    'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png',
+    'https://drkimogad.github.io/PetStudio/favicon.ico',
     '/offline.html' // Add your offline page here
 ];
 
