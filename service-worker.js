@@ -1,10 +1,10 @@
 const CACHE_NAME = 'PetStudio-cache-v1';
 const urlsToCache = [
-    '/',  // Index page
-    '/index.html',  // Index HTML page
-    '/styles.css',  // CSS file
-    '/script.js',  // JS file
-    '/service-worker.js',  // Service Worker script
+    'https://drkimogad.github.io/PetStudio/',
+    'https://drkimogad.github.io/PetStudio/index.html',
+    'https://drkimogad.github.io/PetStudio/styles.css',
+    'https://drkimogad.github.io/PetStudio/script.js',
+    'https://drkimogad.github.io/PetStudio/service-worker.js',
     'https://drkimogad.github.io/PetStudio/manifest.json',  // Absolute URL for manifest.json
     'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',  // Absolute URL for icon
     'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png',  // Absolute URL for icon
