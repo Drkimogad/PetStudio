@@ -8,22 +8,24 @@ const urlsToCache = [
     'https://drkimogad.github.io/PetStudio/manifest.json',
     'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
     'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png',
-    'https://drkimogad.github.io/PetStudio/favicon.ico',
+    'https://drkimogad.github.io/PetStudio/favicon.ico', // Favicon URL
     'https://drkimogad.github.io/PetStudio/offline.html'  // Offline page
 ];
 
 // Install event: Cache necessary assets
 self.addEventListener('install', (event) => {
-    self.skipWaiting();  // Forces the new service worker to take control immediately
+    self.skipWaiting(); // Forces the new service worker to take control immediately
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             console.log('Opening cache:', CACHE_NAME);
             console.log('Caching assets:', urlsToCache); // Log URLs being cached
-            return cache.addAll(urlsToCache).then(() => {
-                console.log('Assets successfully cached!');
-            }).catch((err) => {
-                console.error('Error caching assets:', err); // Log any errors
-            });
+            return cache.addAll(urlsToCache)
+                .then(() => {
+                    console.log('Assets successfully cached!');
+                })
+                .catch((err) => {
+                    console.error('Error caching assets:', err); // Log any errors
+                });
         })
     );
 });
@@ -31,43 +33,18 @@ self.addEventListener('install', (event) => {
 // Fetch event: Serve assets from cache or fetch from network if not cached
 self.addEventListener('fetch', (event) => {
     console.log('Fetch event for:', event.request.url); // Log every fetch request
-
-    // For HTML pages (including offline.html), use cache-first strategy
-    if (event.request.url.endsWith('.html')) {
-        event.respondWith(
-            caches.match(event.request).then((cachedResponse) => {
-                if (cachedResponse) {
-                    console.log('Serving from cache:', event.request.url);
-                    return cachedResponse; // Return cached response if available
-                }
-
-                // If not in cache, fetch from network
-                console.log('Fetching from network:', event.request.url);
-                return fetch(event.request).catch(() => {
-                    // If network fails (e.g., offline), show the offline page
-                    console.log('Network request failed, returning offline page');
-                    return caches.match('/offline.html'); // Return offline page for HTML files
-                });
-            }).catch((err) => {
-                console.error('Error fetching:', err);
-            })
-        );
-    } else {
-        // For other assets (JS, CSS, images), use cache-first strategy
-        event.respondWith(
-            caches.match(event.request).then((cachedResponse) => {
-                if (cachedResponse) {
-                    console.log('Serving from cache:', event.request.url);
-                    return cachedResponse; // Return cached response if available
-                }
-
-                console.log('Fetching from network:', event.request.url);
-                return fetch(event.request); // If not in cache, fetch from network
-            }).catch((err) => {
-                console.error('Error fetching:', err);
-            })
-        );
-    }
+    event.respondWith(
+        caches.match(event.request).then((cachedResponse) => {
+            if (cachedResponse) {
+                console.log('Serving from cache:', event.request.url);
+                return cachedResponse; // Return cached response if available
+            }
+            console.log('Fetching from network:', event.request.url);
+            return fetch(event.request); // If not in cache, fetch from network
+        }).catch((err) => {
+            console.error('Error fetching:', err);
+        })
+    );
 });
 
 // Activate event: Clean up old caches
