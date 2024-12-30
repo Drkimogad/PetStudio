@@ -1,14 +1,15 @@
 const CACHE_NAME = 'PetStudio-cache-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/script.js',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
-  '/favicon.ico',
-  '/offline.html'
+    'https://drkimogad.github.io/PetStudio/',
+    'https://drkimogad.github.io/PetStudio/index.html',
+    'https://drkimogad.github.io/PetStudio/styles.css',
+    'https://drkimogad.github.io/PetStudio/script.js',
+    'https://drkimogad.github.io/PetStudio/service-worker.js',
+    'https://drkimogad.github.io/PetStudio/manifest.json',
+    'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
+    'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png',
+    'https://drkimogad.github.io/PetStudio/favicon.ico', // Favicon URL
+    'https://drkimogad.github.io/PetStudio/offline.html'  // Offline page
 ];
 
 // Install event: Cache necessary assets
