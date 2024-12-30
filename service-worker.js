@@ -14,21 +14,25 @@ const urlsToCache = [
 
 // Install event: Cache necessary assets
 self.addEventListener('install', (event) => {
-    self.skipWaiting();  // Forces the new service worker to take control immediately
-
+    self.skipWaiting(); // Forces the new service worker to take control immediately
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             console.log('Opening cache:', CACHE_NAME);
-            console.log('Caching assets:', urlsToCache); // Log URLs being cached
-            return cache.addAll(urlsToCache).catch((err) => {
-                console.error('Error caching assets:', err); // Log any errors
-            });
+            console.log('Caching assets:', urlsToCache);
+            return Promise.all(urlsToCache.map(url => {
+                return cache.add(url).then(() => {
+                    console.log('Successfully cached:', url);
+                }).catch((err) => {
+                    console.error('Error caching asset:', url, err);
+                });
+            }));
         })
     );
 });
 
 // Fetch event: Serve assets from cache or fetch from network if not cached
 self.addEventListener('fetch', (event) => {
+    console.log('Fetching:', event.request.url);
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             if (cachedResponse) {
@@ -38,9 +42,9 @@ self.addEventListener('fetch', (event) => {
 
             // If not in cache, try to fetch from the network
             return fetch(event.request).catch(() => {
-                console.log('Network request failed. Serving offline page.');
                 // If the network request fails (e.g., offline), show the offline page
                 if (event.request.url.endsWith('/') || event.request.url.endsWith('.html')) {
+                    console.log('Network failed, showing offline page...');
                     return caches.match('/offline.html'); // Return offline page for HTML files
                 }
             });
