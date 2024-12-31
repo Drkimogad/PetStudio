@@ -1,14 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const signupPage = document.getElementById("signupPage");
-    const loginPage = document.getElementById("loginPage");
-    const dashboard = document.getElementById("dashboard");
-
-    const signupForm = document.getElementById("signupForm");
-    const loginForm = document.getElementById("loginForm");
-
-    const createProfileBtn = document.getElementById("createProfileBtn");
-    const profileSection = document.getElementById("profileSection");
-    const profileForm = document.getElementById("profileForm");
     const petList = document.getElementById("petList");
 
     let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || []; // Load saved profiles
@@ -24,15 +14,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p>Breed: ${profile.breed}</p>
                 <p>DOB: ${profile.dob}</p>
                 <p>Birthday: ${profile.birthday}</p>
-                <div>
-                    ${profile.gallery.map(img => `<img src="${img}" alt="Pet Photo">`).join('')}
+                <div class="image-gallery">
+                    ${profile.gallery.map(img => `<img src="${img}" alt="Pet Photo" class="profile-image">`).join('')}
                 </div>
                 <button class="deleteBtn">Delete</button>
                 <button class="printBtn">Print</button>
             `;
 
             petCard.querySelector(".deleteBtn").addEventListener("click", () => {
-                petProfiles = petProfiles.filter(pet => pet.id !== profile.id); // Remove profile by id
+                petProfiles = petProfiles.filter(pet => pet.name !== profile.name); // Remove profile from array
                 localStorage.setItem('petProfiles', JSON.stringify(petProfiles)); // Save to localStorage
                 renderProfiles(); // Re-render the profiles
             });
@@ -43,8 +33,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 printContent.querySelector(".deleteBtn").style.display = "none"; // Hide delete button in print
                 printContent.querySelector(".printBtn").style.display = "none"; // Hide print button in print
 
+                // Ensure the images fit the page on print
                 const printWindow = window.open('', '', 'height=500,width=800');
-                printWindow.document.write('<html><head><title>Print Profile</title></head><body>');
+                printWindow.document.write('<html><head><title>Print Profile</title><style>');
+                printWindow.document.write(`
+                    .profile-image {
+                        width: 100%;
+                        max-width: 500px;
+                        height: auto;
+                    }
+                    body {
+                        font-family: Arial, sans-serif;
+                    }
+                    h3 {
+                        color: #6a0dad;
+                    }
+                    p {
+                        font-size: 14px;
+                        color: #333;
+                    }
+                `);
+                printWindow.document.write('</style></head><body>');
                 printWindow.document.write(printContent.innerHTML);
                 printWindow.document.write('</body></html>');
                 printWindow.document.close();
@@ -55,65 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Handle Signup Form
-    signupForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const username = event.target.username.value;
-        const password = event.target.password.value;
-
-        // Save user to localStorage (for simplicity)
-        localStorage.setItem('username', username);
-        localStorage.setItem('password', password);
-
-        // Show login page after signup
-        signupPage.classList.add('hidden');
-        loginPage.classList.remove('hidden');
-    });
-
-    // Handle Login Form
-    loginForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const username = event.target.username.value;
-        const password = event.target.password.value;
-
-        if (username === localStorage.getItem('username') && password === localStorage.getItem('password')) {
-            // Successfully logged in
-            loginPage.classList.add('hidden');
-            dashboard.classList.remove('hidden');
-            renderProfiles(); // Render profiles on dashboard
-        } else {
-            alert('Invalid credentials!');
-        }
-    });
-
-    // Handle Create Profile Button
-    createProfileBtn.addEventListener("click", () => {
-        profileSection.classList.remove('hidden');
-    });
-
-    // Handle Profile Form Submission
-    profileForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const name = event.target.petName.value;
-        const breed = event.target.petBreed.value;
-        const dob = event.target.petDob.value;
-        const birthday = event.target.petBirthday.value;
-        const gallery = Array.from(event.target.petGallery.files).map(file => URL.createObjectURL(file));
-
-        const newProfile = {
-            id: Date.now(), // Use timestamp as unique ID
-            name,
-            breed,
-            dob,
-            birthday,
-            gallery
-        };
-
-        petProfiles.push(newProfile);
-        localStorage.setItem('petProfiles', JSON.stringify(petProfiles)); // Save to localStorage
-
-        renderProfiles(); // Re-render profiles
-        profileForm.reset();
-        profileSection.classList.add('hidden');
-    });
+    // Initial rendering of profiles (if any)
+    if (petProfiles.length > 0) {
+        renderProfiles();
+    }
 });
