@@ -1,106 +1,126 @@
-body {
-    font-family: Arial, sans-serif;
+/* Reset margins and paddings for consistent layout */
+* {
     margin: 0;
     padding: 0;
-    background-color: #f5f5f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
-}
-
-h1, h2 {
-    text-align: center;
-}
-
-h1 {
-    color: #6a0dad;
-}
-
-h2 {
-    color: #007bff;
-}
-
-form {
-    margin: 0 auto;
-    max-width: 600px; /* Increase max-width for larger form */
-    width: 100%;
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
 }
 
-label {
-    display: block;
-    margin-bottom: 10px; /* Increase margin for labels */
+/* Set up a flex container for each page */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f7f7f7;
+    flex-direction: column;
+    background-color: #f2f2f2;
+}
+
+/* Ensure that the header and footer align properly */
+header, footer {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    background-color: #e6e6e6;
+    color: #333;
+}
+
+header {
+    font-size: 24px;
     font-weight: bold;
 }
 
-input {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 20px; /* Increased margin between input fields */
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
+footer {
+    font-size: 14px;
 }
 
-.button {
-    background-color: #ffa500;
-    color: white;
+/* Sign-up and Login pages layout */
+#signupPage, #loginPage {
+    display: none;
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+#signupPage.active, #loginPage.active {
+    display: block;
+}
+
+/* Main Dashboard layout */
+#dashboard {
+    display: none;
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+#dashboard.active {
+    display: block;
+}
+
+/* Pet profiles and other sections */
+#petList {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+.petCard {
     padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.petCard img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+button {
+    padding: 8px 16px;
+    margin-top: 10px;
+    background-color: #4CAF50;
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Form styles */
+input[type="text"], input[type="password"], input[type="file"], input[type="date"], input[type="submit"] {
     width: 100%;
-    font-size: 16px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
-.button:hover {
-    background-color: #e69500;
+input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
 }
 
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Hide sections by default */
 .hidden {
     display: none;
 }
 
-#signupPage, #loginPage {
-    width: 100%;
-    max-width: 600px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#signupPage {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#loginPage {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-#dashboard {
-    padding: 20px;
-    background-color: #ffffff;
-}
-
-footer {
-    position: relative;
-    padding: 20px;
-    background-color: #6a0dad;
-    color: white;
-    text-align: center;
-    width: 100%;
-    bottom: 0;
-    margin-top: 20px;
-}
