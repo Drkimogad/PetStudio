@@ -1,77 +1,67 @@
-/* Basic Layout */
+/* General Styles */
 body {
+    background-color: #f5f5f5; /* Light grey background */
+    color: #333; /* Dark grey text for contrast */
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    margin: 0;
-    padding: 0;
-    text-align: center;
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #28a745;
+h1, h2 {
+    color: #6a0dad; /* Deep purple headers */
+}
+
+/* Button Styles */
+.button {
+    background-color: #FFA500; /* Original orange */
     color: white;
     border: none;
+    padding: 10px 20px;
     cursor: pointer;
     font-size: 16px;
 }
 
-button:hover {
-    background-color: #218838;
+.button:hover {
+    background-color: #E69500; /* Darker orange */
 }
 
-.hidden {
-    display: none;
+/* Link Styles */
+a {
+    color: #007bff; /* Blue for links */
+    text-decoration: none;
 }
 
-h1, h2 {
-    color: #28a745;
+a:hover {
+    color: #0056b3; /* Darker blue on hover */
 }
 
-#signupPage, #loginPage, #dashboard {
+/* Footer */
+footer {
+    background-color: #6a0dad; /* Deep purple footer */
+    color: white;
     padding: 20px;
-    margin-top: 20px;
+    text-align: center;
 }
 
-#petList {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
+/* Profile Cards */
 .petCard {
-    background-color: #fff;
-    margin: 10px;
+    background-color: white;
     padding: 20px;
-    border-radius: 8px;
-    width: 200px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.petCard img {
-    width: 100%;
-    height: auto;
-}
-
-.petCard button {
-    background-color: red;
-    margin-top: 10px;
-}
-
-.petCard .printBtn {
-    background-color: #007bff;
-}
-
-/* Print Styling */
-@media print {
-    body {
-        font-size: 16px;
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    /* For tablets */
+    .petCard img {
+        width: 100%; /* Make images fit within the page */
+        max-width: 100%; /* Ensure they don’t overflow */
     }
-    .hidden {
-        display: none !important;
-    }
-    .petCard button {
-        display: none;
+}
+
+@media (min-width: 768px) {
+    /* For larger screens */
+    .petCard img {
+        width: 60%; /* Limit image width on larger screens */
+        height: auto;
     }
 }
