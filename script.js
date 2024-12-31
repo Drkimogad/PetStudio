@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
 
             petCard.querySelector(".deleteBtn").addEventListener("click", () => {
-                petProfiles = petProfiles.filter(pet => pet.name !== profile.name); // Remove profile from array
+                petProfiles = petProfiles.filter(pet => pet.id !== profile.id); // Remove profile by id
                 localStorage.setItem('petProfiles', JSON.stringify(petProfiles)); // Save to localStorage
                 renderProfiles(); // Re-render the profiles
             });
@@ -55,62 +55,65 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Handle sign-up
-    signupForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        localStorage.setItem("username", document.getElementById("newUsername").value);
-        localStorage.setItem("password", document.getElementById("newPassword").value);
-        alert("Sign-up successful! Please log in.");
-        signupPage.classList.add("hidden");
-        loginPage.classList.remove("hidden");
+    // Handle Signup Form
+    signupForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const username = event.target.username.value;
+        const password = event.target.password.value;
+
+        // Save user to localStorage (for simplicity)
+        localStorage.setItem('username', username);
+        localStorage.setItem('password', password);
+
+        // Show login page after signup
+        signupPage.classList.add('hidden');
+        loginPage.classList.remove('hidden');
     });
 
-    // Handle login
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
+    // Handle Login Form
+    loginForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const username = event.target.username.value;
+        const password = event.target.password.value;
 
-        if (username === localStorage.getItem("username") && password === localStorage.getItem("password")) {
-            alert("Login successful!");
-            loginPage.classList.add("hidden");
-            dashboard.classList.remove("hidden");
-            renderProfiles(); // Load profiles when logged in
+        if (username === localStorage.getItem('username') && password === localStorage.getItem('password')) {
+            // Successfully logged in
+            loginPage.classList.add('hidden');
+            dashboard.classList.remove('hidden');
+            renderProfiles(); // Render profiles on dashboard
         } else {
-            alert("Invalid username or password.");
+            alert('Invalid credentials!');
         }
     });
 
-    // Handle profile creation
+    // Handle Create Profile Button
     createProfileBtn.addEventListener("click", () => {
-        profileSection.classList.remove("hidden");
+        profileSection.classList.remove('hidden');
     });
 
-    profileForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const petName = document.getElementById("petName").value;
-        const petBreed = document.getElementById("petBreed").value;
-        const petDob = document.getElementById("petDob").value;
-        const petGallery = Array.from(document.getElementById("petGallery").files).map(file => URL.createObjectURL(file)); // Save image URLs
-        const petBirthday = document.getElementById("petBirthday").value;
+    // Handle Profile Form Submission
+    profileForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = event.target.petName.value;
+        const breed = event.target.petBreed.value;
+        const dob = event.target.petDob.value;
+        const birthday = event.target.petBirthday.value;
+        const gallery = Array.from(event.target.petGallery.files).map(file => URL.createObjectURL(file));
 
         const newProfile = {
-            name: petName,
-            breed: petBreed,
-            dob: petDob,
-            birthday: petBirthday,
-            gallery: petGallery
+            id: Date.now(), // Use timestamp as unique ID
+            name,
+            breed,
+            dob,
+            birthday,
+            gallery
         };
 
-        petProfiles.push(newProfile); // Add new profile to array
+        petProfiles.push(newProfile);
         localStorage.setItem('petProfiles', JSON.stringify(petProfiles)); // Save to localStorage
-        renderProfiles(); // Re-render the profiles
-        profileSection.classList.add("hidden");
-        profileForm.reset();
-    });
 
-    // Initial rendering of profiles (if any)
-    if (petProfiles.length > 0) {
-        renderProfiles();
-    }
+        renderProfiles(); // Re-render profiles
+        profileForm.reset();
+        profileSection.classList.add('hidden');
+    });
 });
