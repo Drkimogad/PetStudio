@@ -61,8 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("username", document.getElementById("newUsername").value);
         localStorage.setItem("password", document.getElementById("newPassword").value);
         alert("Sign-up successful! Please log in.");
-        signupPage.classList.add("hidden");
-        loginPage.classList.remove("hidden");
+        signupPage.classList.remove("active");
+        loginPage.classList.add("active");
     });
 
     // Handle login
@@ -73,8 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (username === localStorage.getItem("username") && password === localStorage.getItem("password")) {
             alert("Login successful!");
-            loginPage.classList.add("hidden");
-            dashboard.classList.remove("hidden");
+            loginPage.classList.remove("active");
+            dashboard.classList.add("active");
             renderProfiles(); // Load profiles when logged in
         } else {
             alert("Invalid username or password.");
@@ -102,15 +102,10 @@ document.addEventListener("DOMContentLoaded", () => {
             gallery: petGallery
         };
 
-        petProfiles.push(newProfile); // Add new profile to array
+        petProfiles.push(newProfile);
         localStorage.setItem('petProfiles', JSON.stringify(petProfiles)); // Save to localStorage
-        renderProfiles(); // Re-render the profiles
-        profileSection.classList.add("hidden");
-        profileForm.reset();
-    });
 
-    // Initial rendering of profiles (if any)
-    if (petProfiles.length > 0) {
-        renderProfiles();
-    }
+        profileSection.classList.add("hidden");
+        renderProfiles(); // Re-render profiles
+    });
 });
