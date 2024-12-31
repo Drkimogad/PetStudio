@@ -4,7 +4,6 @@ const urlsToCache = [
     'https://drkimogad.github.io/PetStudio/index.html',
     'https://drkimogad.github.io/PetStudio/styles.css',
     'https://drkimogad.github.io/PetStudio/script.js',
-    'https://drkimogad.github.io/PetStudio/service-worker.js',
     'https://drkimogad.github.io/PetStudio/manifest.json',
     'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
     'https://drkimogad.github.io/PetStudio/favicon.ico',
