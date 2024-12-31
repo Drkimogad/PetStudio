@@ -1,4 +1,4 @@
-const CACHE_NAME = 'PetStudio-cache-v1';
+const CACHE_NAME = 'PetStudio-cache-v2'; // Update cache version
 const urlsToCache = [
     'https://drkimogad.github.io/PetStudio/',
     'https://drkimogad.github.io/PetStudio/index.html',
@@ -8,23 +8,23 @@ const urlsToCache = [
     'https://drkimogad.github.io/PetStudio/manifest.json',
     'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
     'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png',
-    'https://drkimogad.github.io/PetStudio/favicon.ico', // Favicon URL
+    'https://drkimogad.github.io/PetStudio/favicon.ico',
     'https://drkimogad.github.io/PetStudio/offline.html'  // Offline page
 ];
 
 // Install event: Cache necessary assets
 self.addEventListener('install', (event) => {
     self.skipWaiting(); // Forces the new service worker to take control immediately
+
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            console.log('Opening cache:', CACHE_NAME);
-            console.log('Caching assets:', urlsToCache); // Log URLs being cached
+            console.log('Caching assets during install');
             return cache.addAll(urlsToCache)
                 .then(() => {
                     console.log('Assets successfully cached!');
                 })
                 .catch((err) => {
-                    console.error('Error caching assets:', err); // Log any errors
+                    console.error('Error caching assets:', err);
                 });
         })
     );
@@ -32,24 +32,30 @@ self.addEventListener('install', (event) => {
 
 // Fetch event: Serve assets from cache or fetch from network if not cached
 self.addEventListener('fetch', (event) => {
-    console.log('Fetch event for:', event.request.url); // Log every fetch request
+    console.log('Fetching request for:', event.request.url);
+
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             if (cachedResponse) {
                 console.log('Serving from cache:', event.request.url);
-                return cachedResponse; // Return cached response if available
+                return cachedResponse; // Serve from cache
             }
+
             console.log('Fetching from network:', event.request.url);
-            return fetch(event.request); // If not in cache, fetch from network
+            return fetch(event.request).catch(() => {
+                // Offline fallback if fetch fails (e.g., user is offline)
+                return caches.match('/offline.html');  // Ensure offline.html is cached
+            });
         }).catch((err) => {
             console.error('Error fetching:', err);
         })
     );
 });
 
-// Activate event: Clean up old caches
+// Activate event: Clean up old caches and take control immediately
 self.addEventListener('activate', (event) => {
-    const cacheWhitelist = [CACHE_NAME]; // Only keep the current cache
+    const cacheWhitelist = [CACHE_NAME];  // Only keep the current cache
+
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
@@ -60,6 +66,21 @@ self.addEventListener('activate', (event) => {
                     }
                 })
             );
+        }).then(() => {
+            console.log('Service Worker activated and ready');
+            self.clients.claim();  // Claim clients immediately after activation
         })
     );
+});
+
+// Optional: Log cache contents for debugging
+self.addEventListener('activate', (event) => {
+    console.log('Activated service worker. Cache contents:');
+    caches.open(CACHE_NAME).then((cache) => {
+        cache.keys().then((requestUrls) => {
+            requestUrls.forEach((url) => {
+                console.log(url);  // Log each cached URL
+            });
+        });
+    });
 });
