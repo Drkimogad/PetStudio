@@ -1,67 +1,106 @@
-/* General Styles */
 body {
-    background-color: #f5f5f5; /* Light grey background */
-    color: #333; /* Dark grey text for contrast */
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
 }
 
 h1, h2 {
-    color: #6a0dad; /* Deep purple headers */
+    text-align: center;
 }
 
-/* Button Styles */
+h1 {
+    color: #6a0dad;
+}
+
+h2 {
+    color: #007bff;
+}
+
+form {
+    margin: 0 auto;
+    max-width: 600px; /* Increase max-width for larger form */
+    width: 100%;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px; /* Increase margin for labels */
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px; /* Increased margin between input fields */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
 .button {
-    background-color: #FFA500; /* Original orange */
+    background-color: #ffa500;
     color: white;
+    padding: 15px;
     border: none;
-    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
+    width: 100%;
     font-size: 16px;
 }
 
 .button:hover {
-    background-color: #E69500; /* Darker orange */
+    background-color: #e69500;
 }
 
-/* Link Styles */
-a {
-    color: #007bff; /* Blue for links */
-    text-decoration: none;
+.hidden {
+    display: none;
 }
 
-a:hover {
-    color: #0056b3; /* Darker blue on hover */
+#signupPage, #loginPage {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Footer */
+#signupPage {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#loginPage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#dashboard {
+    padding: 20px;
+    background-color: #ffffff;
+}
+
 footer {
-    background-color: #6a0dad; /* Deep purple footer */
+    position: relative;
+    padding: 20px;
+    background-color: #6a0dad;
     color: white;
-    padding: 20px;
     text-align: center;
-}
-
-/* Profile Cards */
-.petCard {
-    background-color: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Media Queries for Responsiveness */
-@media (max-width: 768px) {
-    /* For tablets */
-    .petCard img {
-        width: 100%; /* Make images fit within the page */
-        max-width: 100%; /* Ensure they don’t overflow */
-    }
-}
-
-@media (min-width: 768px) {
-    /* For larger screens */
-    .petCard img {
-        width: 60%; /* Limit image width on larger screens */
-        height: auto;
-    }
+    width: 100%;
+    bottom: 0;
+    margin-top: 20px;
 }
