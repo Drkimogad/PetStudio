@@ -1,13 +1,13 @@
 const CACHE_NAME = 'PetStudio-cache-v2'; // Update cache version
 const urlsToCache = [
-    'https://drkimogad.github.io/PetStudio/',
-    'https://drkimogad.github.io/PetStudio/index.html',
+    'https://drkimogad.github.io/PetStudio/',                // Main page URL
+    'https://drkimogad.github.io/PetStudio/index.html',      // Ensure main HTML page is cached
     'https://drkimogad.github.io/PetStudio/styles.css',
     'https://drkimogad.github.io/PetStudio/script.js',
     'https://drkimogad.github.io/PetStudio/manifest.json',
     'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
     'https://drkimogad.github.io/PetStudio/favicon.ico',
-    'https://drkimogad.github.io/PetStudio/offline.html'  // Offline page
+    'https://drkimogad.github.io/PetStudio/offline.html'     // Ensure offline page is cached
 ];
 
 // Install event: Cache necessary assets
@@ -20,6 +20,12 @@ self.addEventListener('install', (event) => {
             return cache.addAll(urlsToCache)
                 .then(() => {
                     console.log('Assets successfully cached!');
+                    // Debugging: List cached URLs
+                    cache.keys().then((requestUrls) => {
+                        requestUrls.forEach((url) => {
+                            console.log('Cached URL:', url);
+                        });
+                    });
                 })
                 .catch((err) => {
                     console.error('Error caching assets:', err);
@@ -39,6 +45,11 @@ self.addEventListener('fetch', (event) => {
                 return cachedResponse; // Serve from cache
             }
 
+            // If the request is for an HTML file (navigation), return the offline page
+            if (event.request.mode === 'navigate') {
+                return caches.match('/offline.html');  // Ensure offline.html is cached
+            }
+
             console.log('Fetching from network:', event.request.url);
             return fetch(event.request).catch(() => {
                 // Offline fallback if fetch fails (e.g., user is offline)
@@ -46,6 +57,8 @@ self.addEventListener('fetch', (event) => {
             });
         }).catch((err) => {
             console.error('Error fetching:', err);
+            // In case of any unexpected errors, fallback to offline.html
+            return caches.match('/offline.html');
         })
     );
 });
@@ -69,16 +82,4 @@ self.addEventListener('activate', (event) => {
             self.clients.claim();  // Claim clients immediately after activation
         })
     );
-});
-
-// Optional: Log cache contents for debugging
-self.addEventListener('activate', (event) => {
-    console.log('Activated service worker. Cache contents:');
-    caches.open(CACHE_NAME).then((cache) => {
-        cache.keys().then((requestUrls) => {
-            requestUrls.forEach((url) => {
-                console.log(url);  // Log each cached URL
-            });
-        });
-    });
 });
