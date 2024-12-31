@@ -2,7 +2,7 @@
     "name": "KG_PetStudio",
     "short_name": "PetStudio",
     "description": "Create your pets amazing galleries with their birthdays reminder",
-    "start_url": "https://drkimogad.github.io/PetStudio/manifest.json",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#4CAF50",
