@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p>DOB: ${profile.dob}</p>
                 <p>Birthday: ${profile.birthday}</p>
                 <div>
-                    ${profile.gallery.map(img => `<img src="${img}" alt="Pet Photo" class="pet-image">`).join('')}
+                    ${profile.gallery.map(img => `<img src="${img}" alt="Pet Photo">`).join('')}
                 </div>
                 <button class="deleteBtn">Delete</button>
                 <button class="printBtn">Print</button>
@@ -61,8 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("username", document.getElementById("newUsername").value);
         localStorage.setItem("password", document.getElementById("newPassword").value);
         alert("Sign-up successful! Please log in.");
-        signupPage.classList.remove("active");
-        loginPage.classList.add("active");
+        signupPage.classList.add("hidden");
+        loginPage.classList.remove("hidden");
     });
 
     // Handle login
@@ -73,8 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (username === localStorage.getItem("username") && password === localStorage.getItem("password")) {
             alert("Login successful!");
-            loginPage.classList.remove("active");
-            dashboard.classList.add("active");
+            loginPage.classList.add("hidden");
+            dashboard.classList.remove("hidden");
             renderProfiles(); // Load profiles when logged in
         } else {
             alert("Invalid username or password.");
@@ -102,10 +102,15 @@ document.addEventListener("DOMContentLoaded", () => {
             gallery: petGallery
         };
 
-        petProfiles.push(newProfile);
+        petProfiles.push(newProfile); // Add new profile to array
         localStorage.setItem('petProfiles', JSON.stringify(petProfiles)); // Save to localStorage
-
+        renderProfiles(); // Re-render the profiles
         profileSection.classList.add("hidden");
-        renderProfiles(); // Re-render profiles
+        profileForm.reset();
     });
+
+    // Initial rendering of profiles (if any)
+    if (petProfiles.length > 0) {
+        renderProfiles();
+    }
 });
