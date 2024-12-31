@@ -7,7 +7,6 @@ const urlsToCache = [
     'https://drkimogad.github.io/PetStudio/service-worker.js',
     'https://drkimogad.github.io/PetStudio/manifest.json',
     'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
-    'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png',
     'https://drkimogad.github.io/PetStudio/favicon.ico',
     'https://drkimogad.github.io/PetStudio/offline.html'  // Offline page
 ];
