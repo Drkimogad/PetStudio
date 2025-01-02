@@ -86,8 +86,10 @@ input {
 
 .petCard img {
     max-width: 100%;
-    border-radius: 5px;
+    height: auto;
+    width: 100%;
     margin-bottom: 10px;
+    page-break-inside: avoid;
 }
 
 .deleteBtn {
@@ -136,43 +138,50 @@ footer {
     margin-top: 20px; /* Adjusts the gap between profiles and footer */
 }
 
-/* Print-specific adjustments */
+/* Print-specific styles */
 @media print {
-    /* Ensures images are properly scaled within their container */
-    .petCard img {
-        max-width: 100%;  /* Ensures images scale within their container */
-        height: auto;     /* Prevents images from being stretched */
-    }
-
-    /* Adjust the font size for readability during printing */
-    .petCard h3, .petCard p {
-        font-size: 16px;  /* Increase font size to improve readability */
-    }
-
-    /* Prevent page break inside each pet profile */
-    .petCard {
-        page-break-inside: avoid; /* Avoid splitting the card content */
-    }
-
-    /* Reduce margins and padding for mobile devices to fit the page */
     body {
-        padding: 5px;   /* Reduces padding around the page */
-        margin: 0;      /* Removes default margin */
+        background-color: white;
     }
 
     .petCard {
-        padding: 10px;  /* Reduces padding inside each profile card */
-        margin: 0;      /* Reduces margins around profile cards */
+        page-break-inside: avoid;
+        padding: 10px;
+        margin: 0;
+        width: 100%;
+        font-size: 16px; /* Increase font size for print */
     }
 
-    /* Adjust images scaling for larger devices like tablets or desktops */
-    @media print and (min-width: 768px) {
-        .petCard img {
-            max-width: 90%;  /* Images fit well on desktop-sized pages */
-        }
+    .petCard h3, .petCard p {
+        font-size: 16px; /* Adjust font size for readability */
+    }
 
-        .petCard h3, .petCard p {
-            font-size: 18px; /* Slightly larger font for desktops */
+    .petCard img {
+        max-width: 100%;
+        height: auto;
+        width: 100%;
+        page-break-inside: avoid;
+    }
+
+    footer {
+        display: none; /* Hide footer on print */
+    }
+
+    .printBtn {
+        display: none; /* Hide print button on print */
+    }
+
+    /* Adjustments for print on larger screens (tablets and desktops) */
+    @media print and (min-width: 768px) {
+        .petCard {
+            width: 90%; /* Ensures the card fits better on larger screens */
+        }
+    }
+
+    /* Adjustments for print on mobile (portrait mode) */
+    @media print and (max-width: 767px) {
+        .petCard {
+            width: 100%; /* Ensures the card takes the full width on mobile */
         }
     }
 }
