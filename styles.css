@@ -85,11 +85,9 @@ input {
 }
 
 .petCard img {
-    max-width: 100%;
-    height: auto;
-    width: 100%;
+    max-width: 100%; /* Ensures images fit within the available width */
+    border-radius: 5px;
     margin-bottom: 10px;
-    page-break-inside: avoid;
 }
 
 .deleteBtn {
@@ -138,50 +136,29 @@ footer {
     margin-top: 20px; /* Adjusts the gap between profiles and footer */
 }
 
-/* Print-specific styles */
+/* Print styles - specifically for handling image scaling and visibility */
 @media print {
-    body {
-        background-color: white;
-    }
-
-    .petCard {
-        page-break-inside: avoid;
-        padding: 10px;
-        margin: 0;
-        width: 100%;
-        font-size: 16px; /* Increase font size for print */
-    }
-
-    .petCard h3, .petCard p {
-        font-size: 16px; /* Adjust font size for readability */
-    }
-
+    /* Ensuring images do not overflow */
     .petCard img {
-        max-width: 100%;
-        height: auto;
-        width: 100%;
-        page-break-inside: avoid;
+        max-width: 100%; /* Scale images to fit within page */
+        height: auto; /* Ensure the height adjusts automatically */
+        page-break-inside: avoid; /* Prevent images from breaking across pages */
     }
 
-    footer {
-        display: none; /* Hide footer on print */
+    /* Avoid cutting off content in print, ensuring content fits on a single page */
+    .petCard {
+        page-break-inside: avoid; /* Prevent profile cards from splitting across pages */
+        margin: 0;
+        padding: 0;
     }
 
-    .printBtn {
-        display: none; /* Hide print button on print */
+    /* Adjust font size in print */
+    .petCard h3, .petCard p {
+        font-size: 12pt; /* Resize text to fit better */
     }
 
-    /* Adjustments for print on larger screens (tablets and desktops) */
-    @media print and (min-width: 768px) {
-        .petCard {
-            width: 90%; /* Ensures the card fits better on larger screens */
-        }
-    }
-
-    /* Adjustments for print on mobile (portrait mode) */
-    @media print and (max-width: 767px) {
-        .petCard {
-            width: 100%; /* Ensures the card takes the full width on mobile */
-        }
+    /* General adjustments for printing */
+    body {
+        font-size: 12pt; /* Adjust font size for print */
     }
 }
