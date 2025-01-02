@@ -86,7 +86,9 @@ input {
 }
 
 .petCard img {
-    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+    max-width: 90%;
     height: auto;
     object-fit: contain;
 }
@@ -141,10 +143,10 @@ footer {
 @media print {
     /* Adjust image scaling to fit the page better */
     .petCard img {
-        width: 110%;        /* Increase width by 10% */
+        width: 95%;         /* Increase width to 95% */
         height: auto;       /* Maintain aspect ratio */
-        max-height: 110%;   /* Increase max height by 10% */
         object-fit: contain;
+        margin: 0 auto;     /* Center images */
     }
 
     /* Adjust font size for printing */
@@ -162,5 +164,32 @@ footer {
         page-break-inside: avoid;  /* Prevent profile cards from splitting across pages */
         page-break-after: always;  /* Ensure each card starts on a new page */
         margin-bottom: 0; /* Remove margin to avoid extra space */
+    }
+}
+
+/* Phone screen optimization */
+@media screen and (max-width: 600px) {
+    form {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .petCard {
+        padding: 10px;
+        margin: 5px;
+        width: calc(100% - 10px);
+    }
+
+    .petCard h3, .petCard p {
+        font-size: 16pt;     /* Smaller font size for smaller screens */
+    }
+
+    .printBtn, .deleteBtn {
+        padding: 8px;        /* Smaller padding for buttons */
+    }
+
+    footer {
+        padding: 10px;
+        font-size: 14pt;     /* Smaller font size for footer */
     }
 }
