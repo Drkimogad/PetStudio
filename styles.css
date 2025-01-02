@@ -85,10 +85,10 @@ input {
 }
 
 .petCard img {
-    max-width: 100%; /* Ensure image fits within the card */
-    height: auto; /* Maintain aspect ratio */
+    max-width: 100%; /* Ensures images fit within the available width */
+    height: auto; /* Ensures aspect ratio is maintained */
     margin-bottom: 10px;
-    display: block; /* Block level for better control */
+    display: block; /* Ensures images are block-level for better control */
     margin-left: auto;
     margin-right: auto;
 }
@@ -139,32 +139,44 @@ footer {
     margin-top: 20px; /* Adjusts the gap between profiles and footer */
 }
 
-/* Print styles */
+/* Print styles - specifically for handling image scaling and visibility */
 @media print {
+    /* Adjust image scaling for portrait images */
     .petCard img {
-        max-width: 80%; /* Reduce width for print */
-        max-height: 300px; /* Constrain height */
-        object-fit: contain; /* Maintain aspect ratio without cropping */
-        margin: 0 auto; /* Center the image */
-        page-break-inside: avoid; /* Prevent splitting images across pages */
+        max-width: 100%; /* Ensure the image width fits the page */
+        height: auto; /* Maintain aspect ratio */
+        object-fit: contain; /* Prevent distortion and maintain the aspect ratio */
+        page-break-inside: avoid; /* Prevent images from breaking across pages */
+        margin: 0 auto; /* Center the image horizontally */
     }
 
+    /* Avoid landscape images spanning multiple pages */
     .petCard {
-        page-break-inside: avoid; /* Ensure card doesn't split across pages */
-        margin-bottom: 20px; /* Add space between cards */
+        page-break-inside: avoid; /* Prevent profile cards from splitting across pages */
+        margin: 0;
+        padding: 0;
     }
 
-    .petCard h3 {
-        font-size: 16pt; /* Larger font size for titles */
+    /* Adjust font size in print */
+    .petCard h3, .petCard p {
+        font-size: 14pt; /* Resize text for better fit on the page */
     }
 
-    .petCard p {
-        font-size: 14pt; /* Adjust font size for better readability */
-        font-weight: bold; /* Make details stand out */
-        line-height: 1.5; /* Improve spacing between lines */
+    /* Fix layout issues for landscape images */
+    .petCard img {
+        max-height: 70%; /* Set a max height to ensure the image doesn't overflow */
+        width: auto; /* Let the width adjust accordingly to maintain aspect ratio */
+        object-fit: contain; /* Ensure the entire image is visible without distortion */
     }
 
+    /* General adjustments for printing */
     body {
-        font-size: 12pt; /* General adjustment for print readability */
+        font-size: 12pt; /* Adjust font size for print */
+    }
+
+    /* Ensure content fits on one page */
+    .petCard {
+        page-break-inside: avoid; /* Prevent splitting of the pet card */
+        overflow: hidden; /* Ensure no content overflows */
     }
 }
