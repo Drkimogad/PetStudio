@@ -135,3 +135,44 @@ footer {
     bottom: 0;
     margin-top: 20px; /* Adjusts the gap between profiles and footer */
 }
+
+/* Print-specific adjustments */
+@media print {
+    /* Ensures images are properly scaled within their container */
+    .petCard img {
+        max-width: 100%;  /* Ensures images scale within their container */
+        height: auto;     /* Prevents images from being stretched */
+    }
+
+    /* Adjust the font size for readability during printing */
+    .petCard h3, .petCard p {
+        font-size: 16px;  /* Increase font size to improve readability */
+    }
+
+    /* Prevent page break inside each pet profile */
+    .petCard {
+        page-break-inside: avoid; /* Avoid splitting the card content */
+    }
+
+    /* Reduce margins and padding for mobile devices to fit the page */
+    body {
+        padding: 5px;   /* Reduces padding around the page */
+        margin: 0;      /* Removes default margin */
+    }
+
+    .petCard {
+        padding: 10px;  /* Reduces padding inside each profile card */
+        margin: 0;      /* Reduces margins around profile cards */
+    }
+
+    /* Adjust images scaling for larger devices like tablets or desktops */
+    @media print and (min-width: 768px) {
+        .petCard img {
+            max-width: 90%;  /* Images fit well on desktop-sized pages */
+        }
+
+        .petCard h3, .petCard p {
+            font-size: 18px; /* Slightly larger font for desktops */
+        }
+    }
+}
