@@ -144,9 +144,9 @@ footer {
     /* Ensure images are visible and centered */
     .petCard img {
         width: 100%;                 /* Set width to 100% */
-        max-width: 130%;             /* Ensure max-width is 100% */
-        height: 80%;                /* Maintain aspect ratio */
-        max-height: 80vh;            /* Prevent images from spanning multiple pages */
+        max-width: 150%;             /* Ensure max-width is 100% */
+        height: 100%;                /* Maintain aspect ratio */
+        max-height: 100vh;            /* Prevent images from spanning multiple pages */
         object-fit: contain;
         margin: 0 auto;              /* Center images */
     }
@@ -205,8 +205,8 @@ footer {
 /* Tablet screens */
 @media screen and (min-width: 601px) and (max-width: 1024px) {
     .petCard img {
-        max-width: 160%;              /* Scale images to fit better */
-        max-height: 90vh;            /* Prevent images from spanning multiple pages */
+        max-width: 180%;              /* Scale images to fit better */
+        max-height: 100vh;            /* Prevent images from spanning multiple pages */
     }
 }
 
