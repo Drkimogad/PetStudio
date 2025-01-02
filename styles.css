@@ -85,7 +85,7 @@ input {
 }
 
 .petCard img {
-    max-width: 100%; /* Ensures images fit within the available width */
+    max-width: 70%; /* Ensures images fit within the available width */
     height: auto; /* Ensures aspect ratio is maintained */
     margin-bottom: 10px;
     display: block; /* Ensures images are block-level for better control */
@@ -143,7 +143,7 @@ footer {
 @media print {
     /* Adjust image scaling to fit the page better */
     .petCard img {
-        max-width: 90%; /* Reduce the image width to fit better on the page */
+        max-width: 70%; /* Reduce the image width to fit better on the page */
         height: auto;
         page-break-inside: avoid; /* Prevent images from breaking across pages */
         margin: 0 auto; /* Center images in print view */
