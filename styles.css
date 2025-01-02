@@ -141,9 +141,9 @@ footer {
 @media print {
     /* Adjust image scaling to fit the page better */
     .petCard img {
-        width: auto;        /* Allow width to adjust automatically */
+        width: 100%;        /* Allow width to adjust automatically */
         height: 100%;       /* Limit the height to the page */
-        max-height: 90%;    /* Prevent images from spilling over */
+        max-height: auto;    /* Prevent images from spilling over */
         object-fit: contain;
     }
 
@@ -151,7 +151,7 @@ footer {
     .petCard img {
         width: 50%;         /* Reduce width to fit landscape images */
         height: auto;       /* Maintain aspect ratio */
-        max-height: 80%;    /* Prevent height from becoming too large */
+        max-height: 50%;    /* Prevent height from becoming too large */
         object-fit: contain;
     }
 
@@ -162,7 +162,7 @@ footer {
 
     /* Adjust pet profile details for printing */
     .petCard h3, .petCard p {
-        font-size: 14pt;     /* Make profile details larger in print */
+        font-size: 20pt;     /* Make profile details larger in print */
     }
 
     /* Avoid breaking the pet cards across pages */
