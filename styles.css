@@ -88,7 +88,7 @@ input {
 .petCard img {
     display: block;
     margin: 0 auto;
-    max-width: 90%;
+    max-width: 100%;
     height: auto;
     object-fit: contain;
 }
@@ -143,27 +143,28 @@ footer {
 @media print {
     /* Adjust image scaling to fit the page better */
     .petCard img {
-        width: 95%;         /* Increase width to 95% */
-        height: auto;       /* Maintain aspect ratio */
+        width: 100%;                /* Increase width */
+        max-width: none;            /* Remove max-width constraint */
+        height: auto;               /* Maintain aspect ratio */
         object-fit: contain;
-        margin: 0 auto;     /* Center images */
+        margin: 0 auto;             /* Center images */
     }
 
     /* Adjust font size for printing */
     body {
-        font-size: 12pt;    /* Adjust font size for printing */
+        font-size: 12pt;            /* Adjust font size for printing */
     }
 
     /* Adjust pet profile details for printing */
     .petCard h3, .petCard p {
-        font-size: 20pt;     /* Make profile details larger in print */
+        font-size: 20pt;            /* Make profile details larger in print */
     }
 
     /* Avoid breaking the pet cards across pages */
     .petCard {
-        page-break-inside: avoid;  /* Prevent profile cards from splitting across pages */
-        page-break-after: always;  /* Ensure each card starts on a new page */
-        margin-bottom: 0; /* Remove margin to avoid extra space */
+        page-break-inside: avoid;   /* Prevent profile cards from splitting across pages */
+        page-break-after: always;   /* Ensure each card starts on a new page */
+        margin-bottom: 0;           /* Remove margin to avoid extra space */
     }
 }
 
@@ -181,15 +182,15 @@ footer {
     }
 
     .petCard h3, .petCard p {
-        font-size: 16pt;     /* Smaller font size for smaller screens */
+        font-size: 16pt;            /* Smaller font size for smaller screens */
     }
 
     .printBtn, .deleteBtn {
-        padding: 8px;        /* Smaller padding for buttons */
+        padding: 8px;               /* Smaller padding for buttons */
     }
 
     footer {
         padding: 10px;
-        font-size: 14pt;     /* Smaller font size for footer */
+        font-size: 14pt;            /* Smaller font size for footer */
     }
 }
