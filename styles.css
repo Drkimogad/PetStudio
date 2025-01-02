@@ -205,8 +205,8 @@ footer {
 /* Tablet screens */
 @media screen and (min-width: 601px) and (max-width: 1024px) {
     .petCard img {
-        max-width: 140%;              /* Scale images to fit better */
-        max-height: 70vh;            /* Prevent images from spanning multiple pages */
+        max-width: 160%;              /* Scale images to fit better */
+        max-height: 90vh;            /* Prevent images from spanning multiple pages */
     }
 }
 
