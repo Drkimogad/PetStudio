@@ -13,6 +13,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || []; // Load saved profiles
 
+    // Highlighted part - Add this code for the login link redirection
+    document.getElementById("loginLink").addEventListener("click", (e) => {
+        e.preventDefault(); // Prevents the default link behavior
+        document.getElementById("signupPage").classList.add("hidden"); // Hides the sign-up page
+        document.getElementById("loginPage").classList.remove("hidden"); // Shows the login page
+    });
+
     // Function to render profiles
     function renderProfiles() {
         petList.innerHTML = ''; // Clear the list
