@@ -142,14 +142,6 @@ footer {
     /* Adjust image scaling to fit the page better */
     .petCard img {
         width: 100%;        /* Allow width to adjust automatically */
-        height: 100%;       /* Limit the height to the page */
-        max-height: auto;    /* Prevent images from spilling over */
-        object-fit: contain;
-    }
-
-    /* Landscape image adjustments */
-    .petCard img {
-        width: 50%;         /* Reduce width to fit landscape images */
         height: auto;       /* Maintain aspect ratio */
         max-height: 50%;    /* Prevent height from becoming too large */
         object-fit: contain;
@@ -168,5 +160,12 @@ footer {
     /* Avoid breaking the pet cards across pages */
     .petCard {
         page-break-inside: avoid;  /* Prevent profile cards from splitting across pages */
+        margin-bottom: 20px; /* Add space between cards to prevent overlap */
+    }
+
+    /* Ensure sections do not overlap */
+    .section {
+        page-break-before: auto; /* Avoid breaking sections across pages */
+        margin-bottom: 20px; /* Add space between sections */
     }
 }
