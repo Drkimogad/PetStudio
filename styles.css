@@ -143,7 +143,7 @@ footer {
 @media print {
     /* Ensure images are visible and centered */
     .petCard img {
-        width: 95%;                  /* Increase width */
+        width: 90%;                  /* Reduce width slightly */
         max-width: none;             /* Remove max-width constraint */
         height: auto;                /* Maintain aspect ratio */
         object-fit: contain;
@@ -219,7 +219,7 @@ footer {
     }
 
     .petCard img {
-        max-width: 95%;              /* Increase image size for larger screens */
+        max-width: 90%;              /* Reduce image size slightly */
         height: auto;
     }
 
