@@ -141,30 +141,30 @@ footer {
 
 /* Print styles - specifically for handling image scaling and visibility */
 @media print {
-    /* Adjust image scaling to fit the page better */
+    /* Ensure images are visible and centered */
     .petCard img {
-        width: 100%;                /* Increase width */
-        max-width: none;            /* Remove max-width constraint */
-        height: auto;               /* Maintain aspect ratio */
+        width: 95%;                  /* Increase width */
+        max-width: none;             /* Remove max-width constraint */
+        height: auto;                /* Maintain aspect ratio */
         object-fit: contain;
-        margin: 0 auto;             /* Center images */
+        margin: 0 auto;              /* Center images */
     }
 
     /* Adjust font size for printing */
     body {
-        font-size: 12pt;            /* Adjust font size for printing */
+        font-size: 12pt;             /* Adjust font size for printing */
     }
 
     /* Adjust pet profile details for printing */
     .petCard h3, .petCard p {
-        font-size: 20pt;            /* Make profile details larger in print */
+        font-size: 20pt;             /* Make profile details larger in print */
     }
 
-    /* Avoid breaking the pet cards across pages */
+    /* Ensure each card starts on a new page */
     .petCard {
-        page-break-inside: avoid;   /* Prevent profile cards from splitting across pages */
-        page-break-after: always;   /* Ensure each card starts on a new page */
-        margin-bottom: 0;           /* Remove margin to avoid extra space */
+        page-break-inside: avoid;    /* Prevent profile cards from splitting across pages */
+        page-break-after: always;    /* Ensure each card starts on a new page */
+        margin-bottom: 0;            /* Remove margin to avoid extra space */
     }
 }
 
@@ -182,15 +182,53 @@ footer {
     }
 
     .petCard h3, .petCard p {
-        font-size: 16pt;            /* Smaller font size for smaller screens */
+        font-size: 16pt;             /* Smaller font size for smaller screens */
+    }
+
+    .petCard img {
+        max-width: 100%;             /* Ensure images fit within the screen width */
+        height: auto;
     }
 
     .printBtn, .deleteBtn {
-        padding: 8px;               /* Smaller padding for buttons */
+        padding: 8px;                /* Smaller padding for buttons */
     }
 
     footer {
         padding: 10px;
-        font-size: 14pt;            /* Smaller font size for footer */
+        font-size: 14pt;             /* Smaller font size for footer */
+    }
+}
+
+/* Tablet screens */
+@media screen and (min-width: 601px) and (max-width: 1024px) {
+    /* Current styles are optimized for tablets, no changes needed */
+}
+
+/* Desktop screens */
+@media screen and (min-width: 1025px) {
+    /* Ensure layout is optimized for larger screens */
+    .petCard {
+        padding: 15px;
+        margin: 10px;
+        width: calc(100% - 20px);
+    }
+
+    .petCard h3, .petCard p {
+        font-size: 18pt;             /* Adjust font size for larger screens */
+    }
+
+    .petCard img {
+        max-width: 95%;              /* Increase image size for larger screens */
+        height: auto;
+    }
+
+    .printBtn, .deleteBtn {
+        padding: 10px;               /* Adjust padding for buttons */
+    }
+
+    footer {
+        padding: 15px;
+        font-size: 16pt;             /* Adjust font size for footer */
     }
 }
