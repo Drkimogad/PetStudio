@@ -85,10 +85,10 @@ input {
 }
 
 .petCard img {
-    max-width: 100%; /* Ensures images fit within the available width */
-    height: auto; /* Ensures aspect ratio is maintained */
+    max-width: 100%; /* Ensure image fits within the card */
+    height: auto; /* Maintain aspect ratio */
     margin-bottom: 10px;
-    display: block; /* Ensures images are block-level for better control */
+    display: block; /* Block level for better control */
     margin-left: auto;
     margin-right: auto;
 }
@@ -139,30 +139,32 @@ footer {
     margin-top: 20px; /* Adjusts the gap between profiles and footer */
 }
 
-/* Print styles - specifically for handling image scaling and visibility */
+/* Print styles */
 @media print {
-    /* Adjust image scaling to fit the page better */
     .petCard img {
-        max-width: 40%; /* Reduce the image width to fit better on the page */
-        height: auto;
-        page-break-inside: avoid; /* Prevent images from breaking across pages */
-        margin: 0 auto; /* Center images in print view */
+        max-width: 80%; /* Reduce width for print */
+        max-height: 300px; /* Constrain height */
+        object-fit: contain; /* Maintain aspect ratio without cropping */
+        margin: 0 auto; /* Center the image */
+        page-break-inside: avoid; /* Prevent splitting images across pages */
     }
 
-    /* Avoid cutting off content in print, ensuring content fits on a single page */
     .petCard {
-        page-break-inside: avoid; /* Prevent profile cards from splitting across pages */
-        margin: 0;
-        padding: 0;
+        page-break-inside: avoid; /* Ensure card doesn't split across pages */
+        margin-bottom: 20px; /* Add space between cards */
     }
 
-    /* Adjust font size in print */
-    .petCard h3, .petCard p {
-        font-size: 12pt; /* Resize text to fit better */
+    .petCard h3 {
+        font-size: 16pt; /* Larger font size for titles */
     }
 
-    /* General adjustments for printing */
+    .petCard p {
+        font-size: 14pt; /* Adjust font size for better readability */
+        font-weight: bold; /* Make details stand out */
+        line-height: 1.5; /* Improve spacing between lines */
+    }
+
     body {
-        font-size: 12pt; /* Adjust font size for print */
+        font-size: 12pt; /* General adjustment for print readability */
     }
 }
