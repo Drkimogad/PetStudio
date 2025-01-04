@@ -184,21 +184,6 @@ footer {
     }
 }
 
-
-        max-height: 70vh;            /* Prevent images from spanning multiple pages */
-        height: auto;                /* Adjust height to maintain aspect ratio */
-    }
-
-    .printBtn, .deleteBtn {
-        padding: 10px;               /* Adjust padding for buttons */
-    }
-
-    footer {
-        padding: 15px;
-        font-size: 16pt;             /* Adjust font size for footer */
-    }
-}
-
 /* Phone screen optimization */
 @media screen and (max-width: 612px) {
     .petCard img {
