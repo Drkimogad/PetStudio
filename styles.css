@@ -185,7 +185,7 @@ footer {
 }
 
 /* Phone screen optimization */
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 612px) {
     form {
         margin: 10px;
         padding: 15px;
@@ -203,8 +203,8 @@ footer {
 
     .petCard img {
         max-width: 100%;             /* Ensure images fit within the screen width */
-        height: 60%;
-        max-height: 60vh;            /* Prevent images from overlapping pages */
+        height: 100%;
+        max-height: 90vh;            /* Prevent images from overlapping pages */
     }
 
     .printBtn, .deleteBtn {
@@ -220,14 +220,14 @@ footer {
 /* Tablet screens */
 @media screen and (min-width: 601px) and (max-width: 1024px) {
     .petCard {
-        width: 90%;                /* Increased width to use more of the screen */
+        width: 100%;                /* Increased width to use more of the screen */
         margin-left: auto;
         margin-right: auto;
     }
 
     .petCard img {
         max-width: 100%;            /* Ensure image fits within the screen */
-        max-height: 60vh;           /* Prevent image overflow */
+        max-height: 90vh;           /* Prevent image overflow */
     }
 
     .printBtn, .deleteBtn {
