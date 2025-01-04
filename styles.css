@@ -154,12 +154,12 @@ footer {
 
     /* Adjust font size for printing */
     body {
-        font-size: 16pt;             /* Increased font size for better readability */
+        font-size: 12pt;             /* Decreased font size for better print layout */
     }
 
     /* Adjust pet profile details for printing */
     .petCard h3, .petCard p {
-        font-size: 18pt;             /* Increased font size for better readability */
+        font-size: 14pt;             /* Adjusted font size for better print layout */
     }
 
     /* Ensure each card starts on a new page */
