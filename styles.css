@@ -141,14 +141,15 @@ footer {
 
 /* Print styles - specifically for handling image scaling and visibility */
 @media print {
-    /* Ensure images are visible and centered */
+    /* Ensure images are resized properly and centered */
     .petCard img {
-        width: 100%;                 /* Set width to 100% */
-        max-width: 150%;             /* Ensure max-width is 100% */
-        height: 100%;                /* Maintain aspect ratio */
-        max-height: 100vh;            /* Prevent images from spanning multiple pages */
-        object-fit: contain;
-        margin: 0 auto;              /* Center images */
+        width: 100%;                 /* Ensure image takes up full width */
+        max-width: 100%;             /* Prevent overflow */
+        height: auto;                /* Maintain aspect ratio */
+        max-height: 90vh;            /* Prevent images from overflowing */
+        object-fit: contain;         /* Ensure the image is contained */
+        margin: 0 auto;              /* Center the images */
+        display: block;              /* Block display for centering */
     }
 
     /* Adjust font size for printing */
@@ -158,7 +159,7 @@ footer {
 
     /* Adjust pet profile details for printing */
     .petCard h3, .petCard p {
-        font-size: 20pt;             /* Make profile details larger in print */
+        font-size: 16pt;             /* Make profile details larger in print */
     }
 
     /* Ensure each card starts on a new page */
@@ -166,6 +167,20 @@ footer {
         page-break-inside: avoid;    /* Prevent profile cards from splitting across pages */
         page-break-after: always;    /* Ensure each card starts on a new page */
         margin-bottom: 0;            /* Remove margin to avoid extra space */
+    }
+
+    /* Ensuring the print button and other irrelevant elements are hidden */
+    .printBtn, .deleteBtn {
+        display: none;               /* Hide buttons in print view */
+    }
+
+    /* Adjust margins for a clean print */
+    #petList {
+        margin-bottom: 0; /* Avoid extra space at the bottom */
+    }
+
+    footer {
+        display: none; /* Hide footer for the print view */
     }
 }
 
