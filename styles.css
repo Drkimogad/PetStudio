@@ -184,11 +184,30 @@ footer {
     }
 }
 
+
+        max-height: 70vh;            /* Prevent images from spanning multiple pages */
+        height: auto;                /* Adjust height to maintain aspect ratio */
+    }
+
+    .printBtn, .deleteBtn {
+        padding: 10px;               /* Adjust padding for buttons */
+    }
+
+    footer {
+        padding: 15px;
+        font-size: 16pt;             /* Adjust font size for footer */
+    }
+}
+
 /* Phone screen optimization */
 @media screen and (max-width: 612px) {
-    form {
-        margin: 10px;
-        padding: 15px;
+    .petCard img {
+        max-width: 100%;             /* Ensure images fit within the screen width */
+        height: auto;                /* Maintain aspect ratio */
+        max-height: 60vh;            /* Prevent images from overlapping pages */
+        object-fit: contain;         /* Ensure images are contained */
+        margin: 0 auto;              /* Center the image */
+        display: block;              /* Center image in the block */
     }
 
     .petCard {
@@ -199,12 +218,6 @@ footer {
 
     .petCard h3, .petCard p {
         font-size: 16pt;             /* Smaller font size for smaller screens */
-    }
-
-    .petCard img {
-        max-width: 100%;             /* Ensure images fit within the screen width */
-        height: 100%;
-        max-height: 60vh;            /* Prevent images from overlapping pages */
     }
 
     .printBtn, .deleteBtn {
@@ -219,15 +232,18 @@ footer {
 
 /* Tablet screens */
 @media screen and (min-width: 601px) and (max-width: 1024px) {
+    .petCard img {
+        max-width: 100%;            /* Ensure image fits within the screen */
+        max-height: 70vh;           /* Prevent image overflow */
+        object-fit: contain;        /* Ensure images are contained */
+        margin: 0 auto;             /* Center image horizontally */
+        display: block;             /* Block display for centering */
+    }
+
     .petCard {
         width: 100%;                /* Increased width to use more of the screen */
         margin-left: auto;
         margin-right: auto;
-    }
-
-    .petCard img {
-        max-width: 100%;            /* Ensure image fits within the screen */
-        max-height: 70vh;           /* Prevent image overflow */
     }
 
     .printBtn, .deleteBtn {
@@ -237,33 +253,5 @@ footer {
     footer {
         padding: 15px;
         font-size: 15pt;             /* Adjust font size for footer */
-    }
-}
-
-/* Desktop screens */
-@media screen and (min-width: 1025px) {
-    .petCard {
-        padding: 15px;
-        margin: 10px;
-        width: calc(100% - 20px);
-    }
-
-    .petCard h3, .petCard p {
-        font-size: 18pt;             /* Adjust font size for larger screens */
-    }
-
-    .petCard img {
-        max-width: 100%;              /* Ensure image does not exceed container width */
-        max-height: 70vh;            /* Prevent images from spanning multiple pages */
-        height: auto;                /* Adjust height to maintain aspect ratio */
-    }
-
-    .printBtn, .deleteBtn {
-        padding: 10px;               /* Adjust padding for buttons */
-    }
-
-    footer {
-        padding: 15px;
-        font-size: 16pt;             /* Adjust font size for footer */
     }
 }
