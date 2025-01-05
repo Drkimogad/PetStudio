@@ -93,6 +93,19 @@ input {
     object-fit: contain;
 }
 
+/* Add height constraints for all images */
+.petCard img {
+    max-height: 60vh; /* Increased specificity for height */
+}
+
+/* New rule specifically for landscape images */
+.petCard img.landscape {
+    max-width: 100%; /* Ensure landscape images take full width */
+    max-height: 45vh; /* Reduce max height for landscape images */
+    object-fit: cover; /* Ensures a better cropping for wide images */
+}
+
+/* Delete Button */
 .deleteBtn {
     background-color: #ff0000;
     color: white;
@@ -139,44 +152,32 @@ footer {
     margin-top: 20px; /* Adjusts the gap between profiles and footer */
 }
 
-/* Print styles - specifically for handling image scaling and visibility */
+/* Print styles */
 @media print {
-    /* Ensure images are resized properly and centered */
     .petCard img {
         width: 100%;                 /* Ensure image takes up full width */
         max-width: 100%;             /* Prevent overflow */
+        max-height: 50vh;            /* Adjusted to ensure better containment */
         height: auto;                /* Maintain aspect ratio */
-        max-height: 70vh;            /* Ensure only one image per page */
         object-fit: contain;         /* Ensure the image is contained */
         margin: 0 auto;              /* Center the images */
         display: block;              /* Block display for centering */
     }
 
-    /* Adjust font size for printing */
-    body {
-        font-size: 20pt;             /* Decreased font size for better print layout */
+    /* Add specific rule for landscape images in print */
+    .petCard img.landscape {
+        max-width: 100%;
+        max-height: 40vh; /* Lower height for wide images */
     }
 
-    /* Adjust pet profile details for printing */
-    .petCard h3, .petCard p {
-        font-size: 26pt;             /* Adjusted font size for better print layout */
-    }
-
-    /* Ensure each card starts on a new page */
     .petCard {
         page-break-inside: avoid;    /* Prevent profile cards from splitting across pages */
         page-break-after: always;    /* Ensure each card starts on a new page */
         margin-bottom: 0;            /* Remove margin to avoid extra space */
     }
 
-    /* Ensuring the print button and other irrelevant elements are hidden */
     .printBtn, .deleteBtn {
         display: none;               /* Hide buttons in print view */
-    }
-
-    /* Adjust margins for a clean print */
-    #petList {
-        margin-bottom: 0; /* Avoid extra space at the bottom */
     }
 
     footer {
@@ -184,60 +185,30 @@ footer {
     }
 }
 
-/* Tablet screens */
-@media screen and (min-width: 601px) and (max-width: 1024px) {
-    .petCard img {
-        max-width: 100%;            /* Ensure image fits within the screen */
-        width: auto;                /* Allow width to adjust based on height */
-        max-height: 70vh;           /* Limit max-height to prevent overflow */
-        object-fit: contain;        /* Ensure images are contained */
-        margin: 0 auto;             /* Center image horizontally */
-        display: block;             /* Block display for centering */
-    }
-
-    .petCard {
-        width: 100%;                /* Use full width of the container */
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .printBtn, .deleteBtn {
-        padding: 10px;              /* Adjust padding for buttons */
-    }
-
-    footer {
-        padding: 15px;
-        font-size: 15pt;             /* Adjust font size for footer */
-    }
-}
-
-/* Phone screen optimization */
+/* Mobile Screens */
 @media screen and (max-width: 612px) {
     .petCard img {
         max-width: 100%;             /* Ensure images fit within the screen width */
-        height: auto;                /* Maintain aspect ratio */
-        max-height: 70vh;            /* Prevent images from overlapping */
+        max-height: 55vh;            /* Prevent images from overlapping pages */
         object-fit: contain;         /* Ensure images are contained */
         margin: 0 auto;              /* Center the image */
-        display: block;              /* Center image in the block */
     }
 
-    .petCard {
-        padding: 10px;
-        margin: 5px;
-        width: calc(100% - 10px);
+    .petCard img.landscape {
+        max-height: 40vh; /* Adjust for smaller landscapes */
+    }
+}
+
+/* Tablet Screens */
+@media screen and (min-width: 601px) and (max-width: 1024px) {
+    .petCard img {
+        max-width: 100%;             /* Ensure image fits within the screen */
+        max-height: 60vh;            /* Prevent image overflow */
+        object-fit: contain;         /* Ensure images are contained */
+        margin: 0 auto;              /* Center image horizontally */
     }
 
-    .petCard h3, .petCard p {
-        font-size: 16pt;             /* Smaller font size for smaller screens */
-    }
-
-    .printBtn, .deleteBtn {
-        padding: 8px;                /* Smaller padding for buttons */
-    }
-
-    footer {
-        padding: 10px;
-        font-size: 14pt;             /* Smaller font size for footer */
+    .petCard img.landscape {
+        max-height: 50vh; /* Adjust landscape height for tablets */
     }
 }
