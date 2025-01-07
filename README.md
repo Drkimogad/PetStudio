@@ -1,6 +1,6 @@
 # PetStudio Web App:
 
-App Overview:
+App overview:
 PetStudio is a simple web application that allows users to sign up, log in, create pet profiles, and manage a collection of pet information. The app functions as a Progressive Web App (PWA), storing user data locally for offline use.
 
 Key Features:
