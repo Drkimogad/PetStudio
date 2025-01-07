@@ -65,6 +65,17 @@ input {
     text-align: center;
     margin-top: 10px; /* Adjust margin as needed */
 }
+/* Centralize the login link text on signup page */
+#signupPage p {
+    text-align: center;
+    margin-top: 10px; /* Adjust margin as needed */
+}
+
+/* Centralize the signup link text on login page */
+#loginPage p {
+    text-align: center;
+    margin-top: 10px; /* Adjust margin as needed */
+}
 
 .hidden {
     display: none;
