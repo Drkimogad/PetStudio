@@ -54,6 +54,12 @@ input {
 .button:hover {
     background-color: #e69500;
 }
+/* Add this to centralize the login link */
+#loginLink {
+    display: block;
+    text-align: center;
+    margin-top: 10px; /* Adjust margin as needed */
+}
 
 .hidden {
     display: none;
