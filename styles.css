@@ -162,8 +162,6 @@ footer {
         object-fit: contain;         /* Ensure the image is contained */
         margin: 0 auto;              /* Center the images */
         display: block;              /* Block display for centering */
-        page-break-inside: avoid;    /* Prevent profile cards from splitting across pages */
-        page-break-after: avoid;     /* Ensure each card does not break across pages */
     }
 
     /* Add specific rule for landscape images in print */
@@ -184,6 +182,15 @@ footer {
 
     footer {
         display: none; /* Hide footer for the print view */
+    }
+
+    .petDetails {
+        page-break-inside: avoid;    /* Prevent details from splitting across pages */
+    }
+
+    .petGallery {
+        page-break-inside: avoid;    /* Prevent gallery from splitting across pages */
+        page-break-after: always;    /* Ensure gallery starts on a new page */
     }
 
     /* Additional rules to prevent overlapping */
