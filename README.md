@@ -1,7 +1,7 @@
 # Pet Health Tracker Web App
 
 ## Description
-This is a Progressive Web App (PWA) designed to help pet owners manage their pets' profiles, including details about breed, date of birth, vaccination history, and more.
+This is a Progressive Web App (PWA) designed to help pet owners manage their pets' photos with a birthday reminder within a few days prior the birthdate, and more.
 
 ## License
 
