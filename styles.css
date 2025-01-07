@@ -103,13 +103,13 @@ input {
     max-width: 100%;
     height: auto;
     object-fit: contain;
-    max-height: 40vh; /* Adjusts to prevent overflow */
+    max-height: 30vh; /* Adjusted to prevent overflow */
 }
 
 /* New rule specifically for landscape images */
 .petCard .petGallery img.landscape {
     max-width: 100%; /* Ensure landscape images take full width */
-    max-height: 30vh; /* Reduce max height for landscape images */
+    max-height: 25vh; /* Reduce max height for landscape images */
     object-fit: cover; /* Ensures a better cropping for wide images */
 }
 
@@ -165,7 +165,7 @@ footer {
     .petCard img {
         width: 100%;                 /* Ensure image takes up full width */
         max-width: 100%;             /* Prevent overflow */
-        max-height: 40vh;            /* Reduced max height to ensure better containment */
+        max-height: 30vh;            /* Reduced max height to ensure better containment */
         height: auto;                /* Maintain aspect ratio */
         object-fit: contain;         /* Ensure the image is contained */
         margin: 0 auto;              /* Center the images */
@@ -175,7 +175,7 @@ footer {
     /* Add specific rule for landscape images in print */
     .petCard .petGallery img.landscape {
         max-width: 100%;
-        max-height: 30vh; /* Lower height for wide images */
+        max-height: 25vh; /* Lower height for wide images */
     }
 
     .petCard {
@@ -212,13 +212,13 @@ footer {
 @media screen and (max-width: 612px) {
     .petCard .petGallery img {
         max-width: 100%;             /* Ensure images fit within the screen width */
-        max-height: 40vh;            /* Prevent images from overlapping pages */
+        max-height: 30vh;            /* Prevent images from overlapping pages */
         object-fit: contain;         /* Ensure images are contained */
         margin: 0 auto;              /* Center the image */
     }
 
     .petCard .petGallery img.landscape {
-        max-height: 30vh; /* Adjust for smaller landscapes */
+        max-height: 25vh; /* Adjust for smaller landscapes */
     }
 }
 
@@ -226,13 +226,13 @@ footer {
 @media screen and (min-width: 601px) and (max-width: 1024px) {
     .petCard .petGallery img {
         max-width: 100%;             /* Ensure image fits within the screen */
-        max-height: 50vh;            /* Prevent image overflow */
+        max-height: 40vh;            /* Prevent image overflow */
         object-fit: contain;         /* Ensure images are contained */
         margin: 0 auto;              /* Center image horizontally */
     }
 
     .petCard .petGallery img.landscape {
-        max-height: 40vh; /* Adjust landscape height for tablets */
+        max-height: 35vh; /* Adjust landscape height for tablets */
     }
 }
 
@@ -240,12 +240,12 @@ footer {
 @media screen and (min-width: 1025px) {
     .petCard .petGallery img {
         max-width: 100%;             /* Ensure images fit within the screen */
-        max-height: 60vh;            /* Prevent image overflow */
+        max-height: 50vh;            /* Prevent image overflow */
         object-fit: contain;         /* Ensure images are contained */
         margin: 0 auto;              /* Center image horizontally */
     }
 
     .petCard .petGallery img.landscape {
-        max-height: 50vh; /* Adjust landscape height for desktops */
+        max-height: 40vh; /* Adjust landscape height for desktops */
     }
 }
