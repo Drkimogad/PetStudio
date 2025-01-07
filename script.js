@@ -27,11 +27,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const petCard = document.createElement("div");
             petCard.classList.add("petCard");
             petCard.innerHTML = `
-                <h3>${profile.name}</h3>
-                <p>Breed: ${profile.breed}</p>
-                <p>DOB: ${profile.dob}</p>
-                <p>Birthday: ${profile.birthday}</p>
-                <div>
+                <div class="petDetails">
+                    <h3>${profile.name}</h3>
+                    <p>Breed: ${profile.breed}</p>
+                    <p>DOB: ${profile.dob}</p>
+                    <p>Birthday: ${profile.birthday}</p>
+                </div>
+                <div class="petGallery">
                     ${profile.gallery.map(img => `<img src="${img}" alt="Pet Photo">`).join('')}
                 </div>
                 <button class="deleteBtn">Delete</button>
