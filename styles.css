@@ -235,3 +235,17 @@ footer {
         max-height: 40vh; /* Adjust landscape height for tablets */
     }
 }
+
+/* Desktop Screens */
+@media screen and (min-width: 1025px) {
+    .petCard .petGallery img {
+        max-width: 100%;             /* Ensure images fit within the screen */
+        max-height: 60vh;            /* Prevent image overflow */
+        object-fit: contain;         /* Ensure images are contained */
+        margin: 0 auto;              /* Center image horizontally */
+    }
+
+    .petCard .petGallery img.landscape {
+        max-height: 50vh; /* Adjust landscape height for desktops */
+    }
+}
