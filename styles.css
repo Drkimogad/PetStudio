@@ -1,3 +1,10 @@
+/* Ensure consistent box sizing */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 /* General Styling */
 body {
     font-family: Arial, sans-serif;
@@ -54,17 +61,20 @@ input {
 .button:hover {
     background-color: #e69500;
 }
+
 /* Add this to centralize the login link */
 #loginLink {
     display: block;
     text-align: center;
     margin-top: 10px; /* Adjust margin as needed */
 }
+
 /* Centralize the login link text */
 #signupPage p {
     text-align: center;
     margin-top: 10px; /* Adjust margin as needed */
 }
+
 /* Centralize the login link text on signup page */
 #signupPage p {
     text-align: center;
@@ -93,9 +103,9 @@ input {
     margin: 10px;
     background-color: #ffffff;
     width: calc(100% - 20px);
-    position: relative;
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Ensure content does not overflow */
 }
 
 .petCard h3 {
