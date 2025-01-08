@@ -175,33 +175,47 @@ footer {
 
 /* Print styles */
 @media print {
+    /* Prevent pet cards from splitting across pages */
+    .petCard {
+        page-break-inside: avoid;
+        page-break-after: always;
+        margin-bottom: 0;
+    }
+
+    /* Ensure images fit within the printable area */
     .petCard img {
-        width: 100%;                 /* Ensure image takes up full width */
+        width: 100%;                 /* Full width */
         max-width: 100%;             /* Prevent overflow */
         max-height: 25vh;            /* Optimized height for printing */
         height: auto;                /* Maintain aspect ratio */
-        object-fit: contain;         /* Ensure the image is contained */
-        margin: 0 auto;              /* Center the images */
-        display: block;              /* Block display for centering */
+        object-fit: contain;         /* Ensure image is fully visible */
+        display: block;              /* Display image as a block */
+        margin: 0 auto;              /* Center images */
+        page-break-inside: avoid;    /* Prevent image from breaking across pages */
     }
 
-    .petCard .petGallery img.landscape {
+    /* Prevent individual sections in petCard from splitting across pages */
+    .petDetails, .petGallery {
+        page-break-inside: avoid;    /* Avoid breaking these sections */
+    }
+
+    /* Specific rule for images inside galleries */
+    .petGallery img {
         max-width: 100%;
-        max-height: 20vh;            /* Reduced height for landscape images */
+        max-height: 20vh;            /* Slightly reduce height for better fit */
+        object-fit: cover;           /* Ensure image fills space neatly */
+        margin: 5px auto;            /* Center images with spacing */
+        page-break-inside: avoid;    /* Prevent splitting across pages */
     }
 
-    .petCard {
-        page-break-inside: avoid;    /* Prevent profile cards from splitting across pages */
-        page-break-after: always;    /* Ensure each card starts on a new page */
-        margin-bottom: 0;            /* Remove margin to avoid extra space */
-    }
-
+    /* Hide unnecessary buttons during print */
     .printBtn, .deleteBtn {
-        display: none;               /* Hide buttons in print view */
+        display: none;
     }
 
+    /* Hide footer for print */
     footer {
-        display: none;               /* Hide footer for the print view */
+        display: none;
     }
 
     .petDetails {
