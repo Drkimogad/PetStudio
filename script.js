@@ -184,7 +184,7 @@ function subscribeUserToPushNotifications(registration) {
                 // If not subscribed, create a new subscription
                 registration.pushManager.subscribe({
                     userVisibleOnly: true, // Ensures notifications are visible to the user
-                    applicationServerKey: urlB64ToUint8Array('<BFT2ZAIuHo5wtIgax8uovZ-mHaZqR8dJz5kaQRsS0JpzeKCqX6Y_27E_R2YFoD_1Z4J93j2BU5rc4hVHT76qbrU>') // Replace with your VAPID public key
+                    applicationServerKey: urlB64ToUint8Array('BFT2ZAIuHo5wtIgax8uovZ-mHaZqR8dJz5kaQRsS0JpzeKCqX6Y_27E_R2YFoD_1Z4J93j2BU5rc4hVHT76qbrU') // Replace with your VAPID public key
                 })
                 .then(function(newSubscription) {
                     console.log('Subscribed to push notifications:', newSubscription);
