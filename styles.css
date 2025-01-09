@@ -87,6 +87,7 @@ input {
     display: flex;
     flex-direction: column;
     overflow: hidden; /* Ensure content does not overflow */
+    position: relative; /* Ensures delete button is positioned correctly */
 }
 
 .petCard h3 {
@@ -140,12 +141,14 @@ input {
     position: absolute;
     top: 10px;
     right: 10px;
+    z-index: 10; /* Ensure it appears above other elements */
 }
 
 .deleteBtn:hover {
     background-color: #cc0000;
 }
 
+/* Print Button */
 .printBtn {
     background-color: #007bff;
     color: white;
@@ -210,6 +213,12 @@ footer {
     .petCard .petGallery img {
         max-height: 20vh; /* Smaller height to fit within phone screens */
         object-fit: contain; /* Ensure the entire image is visible */
+    }
+
+    .deleteBtn {
+        padding: 5px 8px; /* Slightly smaller padding for phones */
+        top: 5px; /* Adjust spacing */
+        right: 5px;
     }
 }
 
