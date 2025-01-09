@@ -110,23 +110,22 @@ input {
     page-break-inside: avoid; /* Prevents gallery from breaking across pages */
 }
 
-/* Updated Section */
+/* Updated Section: Responsive and adaptive images */
 .petCard .petGallery img {
     display: block;
     margin: 5px auto; /* Center images */
     max-width: 100%; /* Ensure images scale properly */
     height: auto; /* Maintain aspect ratio */
-    object-fit: contain; /* Ensure full image visibility */
-    max-height: 30vh; /* Adjusted height to prevent overflow */
-    border-radius: 5px; /* New: Adds rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* New: Subtle shadow */
-    aspect-ratio: 3 / 4; /* New: Maintain consistent aspect ratio */
+    object-fit: cover; /* Cover the available space while maintaining aspect */
+    max-height: 30vh; /* Height constraint for most devices */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    aspect-ratio: 3 / 4; /* Keep consistent portrait aspect ratio */
 }
 
 /* Landscape-specific adjustments */
 .petCard .petGallery img.landscape {
-    max-width: 100%;
-    max-height: 25vh;
+    max-height: 25vh; /* Slightly smaller height for landscape images */
     object-fit: cover;
 }
 
@@ -179,96 +178,52 @@ footer {
 
 /* Print styles */
 @media print {
-    /* Prevent pet cards from splitting across pages */
     .petCard {
         page-break-inside: avoid;
         page-break-after: always;
         margin-bottom: 0;
     }
 
-    /* Ensure images fit within the printable area */
     .petCard img {
-        width: 100%;                 /* Full width */
-        max-width: 100%;             /* Prevent overflow */
-        max-height: 18vh;            /* Updated: Optimized height for printing */
-        height: auto;                /* Maintain aspect ratio */
-        object-fit: contain;         /* Ensure image is fully visible */
-        display: block;              /* Display image as a block */
-        margin: 0 auto;              /* Center images */
-        page-break-inside: avoid;    /* Prevent image from breaking across pages */
+        max-height: 18vh; /* Reduced height for print to prevent spanning */
+        object-fit: contain;
+        page-break-inside: avoid; /* Ensure images don't break across pages */
     }
 
-    /* Prevent individual sections in petCard from splitting across pages */
-    .petDetails, .petGallery {
-        page-break-inside: avoid;    /* Avoid breaking these sections */
-    }
-
-    /* Specific rule for images inside galleries */
     .petGallery img {
-        max-width: 100%;
-        max-height: 20vh;            /* Slightly reduce height for better fit */
-        object-fit: cover;           /* Ensure image fills space neatly */
-        margin: 5px auto;            /* Center images with spacing */
-        page-break-inside: avoid;    /* Prevent splitting across pages */
+        max-height: 18vh; /* Consistent height for images in print */
+        object-fit: contain;
+        page-break-inside: avoid;
     }
 
-    /* Hide unnecessary buttons during print */
     .printBtn, .deleteBtn {
         display: none;
     }
 
-    /* Hide footer for print */
     footer {
         display: none;
-    }
-
-    .petDetails {
-        page-break-inside: avoid;    /* Prevent details from splitting across pages */
-    }
-
-    .petGallery {
-        page-break-inside: avoid;    /* Prevent gallery from splitting across pages */
     }
 }
 
 /* Mobile Screens */
-@media screen and (max-width: 612px) {
+@media screen and (max-width: 480px) {
     .petCard .petGallery img {
-        max-width: 100%;             
-        max-height: 25vh;            
-        object-fit: contain;         
-        margin: 0 auto;              
-    }
-
-    .petCard .petGallery img.landscape {
-        max-height: 20vh;
+        max-height: 20vh; /* Smaller height to fit within phone screens */
+        object-fit: contain; /* Ensure the entire image is visible */
     }
 }
 
 /* Tablet Screens */
-@media screen and (min-width: 601px) and (max-width: 1024px) {
+@media screen and (min-width: 481px) and (max-width: 1024px) {
     .petCard .petGallery img {
-        max-width: 100%;             
-        max-height: 40vh;            
-        object-fit: contain;         
-        margin: 0 auto;              
-    }
-
-    .petCard .petGallery img.landscape {
-        max-height: 35vh;
+        max-height: 25vh; /* Adjusted height for tablets */
+        object-fit: contain;
     }
 }
 
 /* Desktop Screens */
 @media screen and (min-width: 1025px) {
     .petCard .petGallery img {
-        max-width: 100%;             
-        max-height: 50vh;            
-        object-fit: contain;         
-        margin: 0 auto;              
-    }
-
-    .petCard .petGallery img.landscape {
-        max-height: 40vh;
+        max-height: 40vh; /* Allow larger images on bigger screens */
     }
 }
