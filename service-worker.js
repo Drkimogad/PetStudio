@@ -83,3 +83,19 @@ self.addEventListener('activate', (event) => {
         })
     );
 });
+
+// **UPDATED SECTION FOR PUSH NOTIFICATIONS**
+
+self.addEventListener('push', (event) => {
+    const options = {
+        body: event.data ? event.data.text() : 'You have a new reminder!',
+        icon: 'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
+        badge: 'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
+    };
+
+    event.waitUntil(
+        self.registration.showNotification('PetStudio Reminder', options)
+    );
+});
+
+// **END OF UPDATED SECTION**
