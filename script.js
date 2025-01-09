@@ -147,3 +147,69 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
     loginPage.classList.remove("hidden");
     alert("You have been logged out.");
 });
+
+// Check if service workers and Push Notification API are supported by the browser
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+    // Register the service worker
+    navigator.serviceWorker.register('service-worker.js')
+        .then(function(registration) {
+            console.log('Service Worker registered with scope:', registration.scope);
+
+            // Ask the user for permission to send push notifications
+            Notification.requestPermission().then(function(permission) {
+                if (permission === 'granted') {
+                    console.log('Notification permission granted.');
+
+                    // Subscribe the user to push notifications
+                    subscribeUserToPushNotifications(registration);
+                } else {
+                    console.log('Notification permission denied.');
+                }
+            });
+
+        }).catch(function(error) {
+            console.log('Service Worker registration failed:', error);
+        });
+}
+
+// Function to subscribe the user to push notifications
+function subscribeUserToPushNotifications(registration) {
+    // Check if the user is already subscribed
+    registration.pushManager.getSubscription()
+        .then(function(subscription) {
+            if (subscription) {
+                console.log('Already subscribed to push notifications:', subscription);
+                // You can send the subscription details to your server here if needed
+            } else {
+                // If not subscribed, create a new subscription
+                registration.pushManager.subscribe({
+                    userVisibleOnly: true, // Ensures notifications are visible to the user
+                    applicationServerKey: urlB64ToUint8Array('<YOUR_PUBLIC_VAPID_KEY>') // Replace with your VAPID public key
+                })
+                .then(function(newSubscription) {
+                    console.log('Subscribed to push notifications:', newSubscription);
+                    // You can send the subscription details to your server here if needed
+                })
+                .catch(function(error) {
+                    console.error('Failed to subscribe to push notifications:', error);
+                });
+            }
+        })
+        .catch(function(error) {
+            console.error('Error during subscription check:', error);
+        });
+}
+
+// Helper function to convert the VAPID public key from Base64 to Uint8Array
+function urlB64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+        .replace(/\-/g, '+')
+        .replace(/\_/g, '/');
+    const rawData = atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; i++) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
