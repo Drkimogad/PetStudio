@@ -135,3 +135,15 @@ document.addEventListener("DOMContentLoaded", () => {
         renderProfiles();
     }
 });
+
+// Logout functionality
+document.getElementById("logoutBtn").addEventListener("click", () => {
+    // Clear user credentials from localStorage
+    localStorage.removeItem("username");
+    localStorage.removeItem("password");
+
+    // Hide dashboard and show the login page
+    dashboard.classList.add("hidden");
+    loginPage.classList.remove("hidden");
+    alert("You have been logged out.");
+});
