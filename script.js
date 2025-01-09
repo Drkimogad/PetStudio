@@ -231,7 +231,7 @@ if ('serviceWorker' in navigator) {
       console.log('Subscribed:', subscription);
 
       // Send subscription to the server
-      await fetch('/subscribe', {
+      await fetch('http://localhost:5000/subscribe', {
         method: 'POST',
         body: JSON.stringify(subscription),
         headers: { 'Content-Type': 'application/json' },
