@@ -237,6 +237,7 @@ footer {
     }
 }
 
-.hidden {
-    display: none;
+#logoutButton {
+    display: block; /* Ensure it's not hidden */
+    visibility: visible; /* Ensure it's not hidden */
 }
