@@ -236,3 +236,7 @@ footer {
         max-height: 40vh; /* Allow larger images on bigger screens */
     }
 }
+
+.hidden {
+    display: none;
+}
