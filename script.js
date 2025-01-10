@@ -13,6 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let petProfiles = JSON.parse(localStorage.getItem("petProfiles")) || []; // Load saved profiles
 
+    
+    // Initially hide the logout button
+    logoutBtn.style.display = 'none';
+    
     // Redirect to login page from signup
     document.getElementById("loginLink").addEventListener("click", (e) => {
         e.preventDefault();
@@ -74,8 +78,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             petList.appendChild(petCard);
         });
-    }
 
+        // Show the logout button if there are saved profiles
+        if (petProfiles.length > 0) {
+            logoutBtn.style.display = 'inline-block'; // Show the logout button
+        }
+    }
     // Handle sign-up
     signupForm.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -143,8 +151,8 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
     localStorage.removeItem("password");
 
     // Hide dashboard and show the login page
-    dashboard.classList.add("hidden");
-    loginPage.classList.remove("hidden");
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("loginPage").classList.remove("hidden");
     alert("You have been logged out.");
 });
 
