@@ -231,7 +231,7 @@ if ('serviceWorker' in navigator) {
       console.log('Subscribed:', subscription);
 
       // Send subscription to the server
-      await fetch('http://localhost:5000/subscribe', {
+      await fetch('https://pet-studio-jp3x006k3-drkimogad-s-projects.vercel.app//subscribe', {
         method: 'POST',
         body: JSON.stringify(subscription),
         headers: { 'Content-Type': 'application/json' },
