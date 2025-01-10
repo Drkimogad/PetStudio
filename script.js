@@ -79,11 +79,21 @@ document.addEventListener("DOMContentLoaded", () => {
             petList.appendChild(petCard);
         });
 
-        // Show the logout button if there are saved profiles
-        if (petProfiles.length > 0) {
-            logoutBtn.style.display = 'inline-block'; // Show the logout button
-        }
+    // Show the logout button if there are saved profiles
+    if (petProfiles.length > 0) {
+        logoutBtn.classList.remove('hidden'); // Remove the hidden class to show the logout button
+    } else {
+        logoutBtn.classList.add('hidden'); // Hide the logout button if there are no profiles
     }
+}
+
+// Initial rendering of profiles
+if (petProfiles.length > 0) {
+    renderProfiles(); // Call renderProfiles to display existing profiles
+} else {
+    logoutBtn.classList.add('hidden'); // Hide the logout button initially if no profiles are present
+}
+    
     // Handle sign-up
     signupForm.addEventListener("submit", (e) => {
         e.preventDefault();
