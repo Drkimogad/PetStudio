@@ -6,27 +6,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const signupForm = document.getElementById("signupForm");
     const loginForm = document.getElementById("loginForm");
+
+    const createProfileBtn = document.getElementById("createProfileBtn");
+    const profileSection = document.getElementById("profileSection");
+    const profileForm = document.getElementById("profileForm");
     const petList = document.getElementById("petList");
 
-    let petProfiles = JSON.parse(localStorage.getItem("petProfiles")) || [];
-
-    // Initially hide the logout button
+    let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || []; // Load saved profiles
     logoutBtn.style.display = 'none';
 
-    // Render profiles
+    // Function to render profiles
     function renderProfiles() {
         petList.innerHTML = ''; // Clear the list
         petProfiles.forEach(profile => {
             const petCard = document.createElement("div");
             petCard.classList.add("petCard");
             petCard.innerHTML = `
-                <div class="petDetails">
-                    <h3>${profile.name}</h3>
-                    <p>Breed: ${profile.breed}</p>
-                    <p>DOB: ${profile.dob}</p>
-                    <p>Birthday: ${profile.birthday}</p>
-                </div>
-                <div class="petGallery">
+                <h3>${profile.name}</h3>
+                <p>Breed: ${profile.breed}</p>
+                <p>DOB: ${profile.dob}</p>
+                <p>Birthday: ${profile.birthday}</p>
+                <div>
                     ${profile.gallery.map(img => `<img src="${img}" alt="Pet Photo">`).join('')}
                 </div>
                 <button class="deleteBtn">Delete</button>
@@ -34,31 +34,19 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
 
             petCard.querySelector(".deleteBtn").addEventListener("click", () => {
-                petProfiles = petProfiles.filter(pet => pet.name !== profile.name);
-                localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-                renderProfiles();
+                petProfiles = petProfiles.filter(pet => pet.name !== profile.name); // Remove profile from array
+                localStorage.setItem('petProfiles', JSON.stringify(petProfiles)); // Save to localStorage
+                renderProfiles(); // Re-render the profiles
             });
 
             petCard.querySelector(".printBtn").addEventListener("click", () => {
+                // Clone the specific pet profile content for printing
                 const printContent = petCard.cloneNode(true);
-                printContent.querySelector(".deleteBtn").style.display = "none";
-                printContent.querySelector(".printBtn").style.display = "none";
+                printContent.querySelector(".deleteBtn").style.display = "none"; // Hide delete button in print
+                printContent.querySelector(".printBtn").style.display = "none"; // Hide print button in print
 
-                printContent.querySelectorAll("img").forEach(img => {
-                    img.style.maxWidth = "100%";
-                    img.style.height = "auto";
-                    img.style.objectFit = "contain";
-                });
-
-                const printWindow = window.open("", "", "height=500,width=800");
-                printWindow.document.write('<html><head><title>Print Profile</title>');
-                printWindow.document.write('<style>');
-                printWindow.document.write(`
-                    body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
-                    .petCard img { max-width: 100%; height: auto; object-fit: contain; }
-                    .deleteBtn, .printBtn { display: none; }
-                `);
-                printWindow.document.write('</style></head><body>');
+                const printWindow = window.open('', '', 'height=500,width=800');
+                printWindow.document.write('<html><head><title>Print Profile</title></head><body>');
                 printWindow.document.write(printContent.innerHTML);
                 printWindow.document.write('</body></html>');
                 printWindow.document.close();
@@ -67,8 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             petList.appendChild(petCard);
         });
-
-        // Show the logout button if there are saved profiles
+               // Show the logout button if there are saved profiles
         if (petProfiles.length > 0) {
             logoutBtn.style.display = 'block';
         } else {
@@ -76,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Sign-up handler
+    // Handle sign-up
     signupForm.addEventListener("submit", (e) => {
         e.preventDefault();
         localStorage.setItem("username", document.getElementById("newUsername").value);
@@ -86,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loginPage.classList.remove("hidden");
     });
 
-    // Login handler
+    // Handle login
     loginForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const username = document.getElementById("username").value;
@@ -96,13 +83,47 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Login successful!");
             loginPage.classList.add("hidden");
             dashboard.classList.remove("hidden");
-            renderProfiles();
+            renderProfiles(); // Load profiles when logged in
         } else {
             alert("Invalid username or password.");
         }
     });
 
-    // Logout handler
+    // Handle profile creation
+    createProfileBtn.addEventListener("click", () => {
+        profileSection.classList.remove("hidden");
+    });
+
+    profileForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const petName = document.getElementById("petName").value;
+        const petBreed = document.getElementById("petBreed").value;
+        const petDob = document.getElementById("petDob").value;
+        const petGallery = Array.from(document.getElementById("petGallery").files).map(file => URL.createObjectURL(file)); // Save image URLs
+        const petBirthday = document.getElementById("petBirthday").value;
+
+        const newProfile = {
+            name: petName,
+            breed: petBreed,
+            dob: petDob,
+            birthday: petBirthday,
+            gallery: petGallery
+        };
+
+        petProfiles.push(newProfile); // Add new profile to array
+        localStorage.setItem('petProfiles', JSON.stringify(petProfiles)); // Save to localStorage
+        renderProfiles(); // Re-render the profiles
+        profileSection.classList.add("hidden");
+        profileForm.reset();
+    });
+
+    // Initial rendering of profiles (if any)
+    if (petProfiles.length > 0) {
+        renderProfiles();
+    }
+});
+
+// Logout handler
     logoutBtn.addEventListener("click", () => {
         localStorage.removeItem("username");
         localStorage.removeItem("password");
