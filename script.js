@@ -254,7 +254,7 @@ function urlB64ToUint8Array(base64String) {
 const publicVapidKey = 'BFT2ZAIuHo5wtIgax8uovZ-mHaZqR8dJz5kaQRsS0JpzeKCqX6Y_27E_R2YFoD_1Z4J93j2BU5rc4hVHT76qbrU';
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
+  navigator.serviceWorker.register('service-worker.js')
     .then(async registration => {
       console.log('Service Worker registered.');
 
