@@ -156,14 +156,31 @@ if (petProfiles.length > 0) {
 
 // Logout functionality
 document.getElementById("logoutBtn").addEventListener("click", () => {
-    // Clear user credentials from localStorage
+    // Clear all user-specific data
     localStorage.removeItem("username");
     localStorage.removeItem("password");
 
-    // Hide dashboard and show the login page
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("loginPage").classList.remove("hidden");
+    // Optionally clear profiles if tied to user session
+    // localStorage.removeItem("petProfiles");
+
+    // Redirect to login page
+    dashboard.classList.add("hidden");
+    loginPage.classList.remove("hidden");
+
+    // Update UI elements
+    updateLogoutButton();
     alert("You have been logged out.");
+});
+
+// Centralized function to manage logout button visibility
+function updateLogoutButton() {
+    const isLoggedIn = !!localStorage.getItem("username");
+    logoutBtn.style.display = isLoggedIn ? "block" : "none";
+}
+
+// Call this function on page load
+document.addEventListener("DOMContentLoaded", () => {
+    updateLogoutButton();
 });
 
 // Check if service workers and Push Notification API are supported by the browser
