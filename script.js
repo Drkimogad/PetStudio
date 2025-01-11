@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const signupPage = document.getElementById("signupPage");
     const loginPage = document.getElementById("loginPage");
     const dashboard = document.getElementById("dashboard");
+    const logoutBtn = document.getElementById("logoutBtn");
 
     const signupForm = document.getElementById("signupForm");
     const loginForm = document.getElementById("loginForm");
@@ -120,6 +121,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (petProfiles.length > 0) {
         renderProfiles();
     }
+});
+// Select the logout button element
+const logoutBtn = document.getElementById("logoutBtn");
+
+// Add an event listener to handle the logout action
+logoutBtn.addEventListener("click", function () {
+    // Clear any user data from localStorage/sessionStorage
+    localStorage.removeItem("loggedInUser"); // Example key, adjust as needed
+
+    // Hide the dashboard
+    document.getElementById("dashboard").classList.add("hidden");
+
+    // Show the login page
+    document.getElementById("loginPage").classList.remove("hidden");
+
+    // Optionally log or display a message
+    console.log("User logged out successfully");
 });
 
 // Handle logout functionality
