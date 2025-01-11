@@ -122,6 +122,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+// Handle logout functionality
+document.getElementById("logoutBtn").addEventListener("click", function () {
+    // Clear any user data in localStorage/sessionStorage if applicable
+    localStorage.removeItem("loggedInUser"); // Example key, adjust as per your implementation
+
+    // Hide the dashboard and show the login page
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("loginPage").classList.remove("hidden");
+
+    // Optionally, show a message or log the event
+    console.log("User logged out successfully");
+});
 
 // Check if service workers and Push Notification API are supported by the browser
 if ('serviceWorker' in navigator && 'PushManager' in window) {
