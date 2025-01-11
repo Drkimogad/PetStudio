@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const signupPage = document.getElementById("signupPage");
     const loginPage = document.getElementById("loginPage");
     const dashboard = document.getElementById("dashboard");
-    const logoutBtn = document.getElementById("logoutBtn");
 
     const signupForm = document.getElementById("signupForm");
     const loginForm = document.getElementById("loginForm");
@@ -13,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const petList = document.getElementById("petList");
 
     let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || []; // Load saved profiles
-    logoutBtn.style.display = 'none';
 
     // Function to render profiles
     function renderProfiles() {
@@ -55,13 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             petList.appendChild(petCard);
         });
-               // Show the logout button if there are saved profiles
-        if (petProfiles.length > 0) {
-            logoutBtn.style.display = 'block';
-        } else {
-            logoutBtn.style.display = 'none';
-        }
-    }
 
     // Handle sign-up
     signupForm.addEventListener("submit", (e) => {
@@ -118,28 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Initial rendering of profiles (if any)
-    if (petProfiles.length > 0) {
-        renderProfiles();
-    }
-});
-
-// Logout handler
-    logoutBtn.addEventListener("click", () => {
-        localStorage.removeItem("username");
-        localStorage.removeItem("password");
-        dashboard.classList.add("hidden");
-        loginPage.classList.remove("hidden");
-        updateLogoutButton();
-        alert("You have been logged out.");
-    });
-
-    // Function to toggle logout button visibility
-    function updateLogoutButton() {
-        const isLoggedIn = !!localStorage.getItem("username");
-        logoutBtn.style.display = isLoggedIn ? "block" : "none";
-    }
-
-    // Initial rendering of profiles if any
     if (petProfiles.length > 0) {
         renderProfiles();
     }
