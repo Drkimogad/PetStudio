@@ -2,28 +2,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const signupPage = document.getElementById("signupPage");
     const loginPage = document.getElementById("loginPage");
     const dashboard = document.getElementById("dashboard");
-    const logoutBtn = document.getElementById("logoutBtn"); // Ensure logoutBtn is defined here
+    const logoutBtn = document.getElementById("logoutBtn");
 
     const signupForm = document.getElementById("signupForm");
     const loginForm = document.getElementById("loginForm");
-    const createProfileBtn = document.getElementById("createProfileBtn");
-    const profileSection = document.getElementById("profileSection");
-    const profileForm = document.getElementById("profileForm");
     const petList = document.getElementById("petList");
 
-    let petProfiles = JSON.parse(localStorage.getItem("petProfiles")) || []; // Load saved profiles
+    let petProfiles = JSON.parse(localStorage.getItem("petProfiles")) || [];
 
     // Initially hide the logout button
     logoutBtn.style.display = 'none';
-    
-    // Redirect to login page from signup
-    document.getElementById("loginLink").addEventListener("click", (e) => {
-        e.preventDefault();
-        signupPage.classList.add("hidden");
-        loginPage.classList.remove("hidden");
-    });
 
-    // Function to render profiles
+    // Render profiles
     function renderProfiles() {
         petList.innerHTML = ''; // Clear the list
         petProfiles.forEach(profile => {
@@ -80,13 +70,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Show the logout button if there are saved profiles
         if (petProfiles.length > 0) {
-            logoutBtn.classList.remove('hidden'); // Remove the hidden class to show the logout button
+            logoutBtn.style.display = 'block';
         } else {
-            logoutBtn.classList.add('hidden'); // Hide the logout button if there are no profiles
+            logoutBtn.style.display = 'none';
         }
     }
 
-    // Handle sign-up
+    // Sign-up handler
     signupForm.addEventListener("submit", (e) => {
         e.preventDefault();
         localStorage.setItem("username", document.getElementById("newUsername").value);
@@ -96,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loginPage.classList.remove("hidden");
     });
 
-    // Handle login
+    // Login handler
     loginForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const username = document.getElementById("username").value;
@@ -112,40 +102,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Logout functionality
+    // Logout handler
     logoutBtn.addEventListener("click", () => {
-        // Clear all user-specific data
         localStorage.removeItem("username");
         localStorage.removeItem("password");
-
-        // Optionally clear profiles if tied to user session
-        // localStorage.removeItem("petProfiles");
-
-        // Redirect to login page
         dashboard.classList.add("hidden");
         loginPage.classList.remove("hidden");
-
-        // Update UI elements
         updateLogoutButton();
         alert("You have been logged out.");
     });
 
-    // Centralized function to manage logout button visibility
+    // Function to toggle logout button visibility
     function updateLogoutButton() {
         const isLoggedIn = !!localStorage.getItem("username");
         logoutBtn.style.display = isLoggedIn ? "block" : "none";
     }
 
-    // Call this function on page load
-    document.addEventListener("DOMContentLoaded", () => {
-        updateLogoutButton();
-    });
-
-    // Initial rendering of profiles
+    // Initial rendering of profiles if any
     if (petProfiles.length > 0) {
-        renderProfiles(); // Call renderProfiles to display existing profiles
-    } else {
-        logoutBtn.classList.add('hidden'); // Hide the logout button initially if no profiles are present
+        renderProfiles();
     }
 });
 
