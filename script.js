@@ -2,10 +2,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const signupPage = document.getElementById("signupPage");
     const loginPage = document.getElementById("loginPage");
     const dashboard = document.getElementById("dashboard");
+    const logoutBtn = document.getElementById("logoutBtn"); // Ensure logoutBtn is defined here
 
     const signupForm = document.getElementById("signupForm");
     const loginForm = document.getElementById("loginForm");
-
     const createProfileBtn = document.getElementById("createProfileBtn");
     const profileSection = document.getElementById("profileSection");
     const profileForm = document.getElementById("profileForm");
@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let petProfiles = JSON.parse(localStorage.getItem("petProfiles")) || []; // Load saved profiles
 
-    
     // Initially hide the logout button
     logoutBtn.style.display = 'none';
     
@@ -79,21 +78,14 @@ document.addEventListener("DOMContentLoaded", () => {
             petList.appendChild(petCard);
         });
 
-    // Show the logout button if there are saved profiles
-    if (petProfiles.length > 0) {
-        logoutBtn.classList.remove('hidden'); // Remove the hidden class to show the logout button
-    } else {
-        logoutBtn.classList.add('hidden'); // Hide the logout button if there are no profiles
+        // Show the logout button if there are saved profiles
+        if (petProfiles.length > 0) {
+            logoutBtn.classList.remove('hidden'); // Remove the hidden class to show the logout button
+        } else {
+            logoutBtn.classList.add('hidden'); // Hide the logout button if there are no profiles
+        }
     }
-}
 
-// Initial rendering of profiles
-if (petProfiles.length > 0) {
-    renderProfiles(); // Call renderProfiles to display existing profiles
-} else {
-    logoutBtn.classList.add('hidden'); // Hide the logout button initially if no profiles are present
-}
-    
     // Handle sign-up
     signupForm.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -120,67 +112,41 @@ if (petProfiles.length > 0) {
         }
     });
 
-    // Handle profile creation
-    createProfileBtn.addEventListener("click", () => {
-        profileSection.classList.remove("hidden");
+    // Logout functionality
+    logoutBtn.addEventListener("click", () => {
+        // Clear all user-specific data
+        localStorage.removeItem("username");
+        localStorage.removeItem("password");
+
+        // Optionally clear profiles if tied to user session
+        // localStorage.removeItem("petProfiles");
+
+        // Redirect to login page
+        dashboard.classList.add("hidden");
+        loginPage.classList.remove("hidden");
+
+        // Update UI elements
+        updateLogoutButton();
+        alert("You have been logged out.");
     });
 
-    profileForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const petName = document.getElementById("petName").value;
-        const petBreed = document.getElementById("petBreed").value;
-        const petDob = document.getElementById("petDob").value;
-        const petGallery = Array.from(document.getElementById("petGallery").files).map(file => URL.createObjectURL(file));
-        const petBirthday = document.getElementById("petBirthday").value;
+    // Centralized function to manage logout button visibility
+    function updateLogoutButton() {
+        const isLoggedIn = !!localStorage.getItem("username");
+        logoutBtn.style.display = isLoggedIn ? "block" : "none";
+    }
 
-        const newProfile = {
-            name: petName,
-            breed: petBreed,
-            dob: petDob,
-            birthday: petBirthday,
-            gallery: petGallery
-        };
-
-        petProfiles.push(newProfile);
-        localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-        renderProfiles();
-        profileSection.classList.add("hidden");
-        profileForm.reset();
+    // Call this function on page load
+    document.addEventListener("DOMContentLoaded", () => {
+        updateLogoutButton();
     });
 
     // Initial rendering of profiles
     if (petProfiles.length > 0) {
-        renderProfiles();
+        renderProfiles(); // Call renderProfiles to display existing profiles
+    } else {
+        logoutBtn.classList.add('hidden'); // Hide the logout button initially if no profiles are present
     }
-});
-
-// Logout functionality
-document.getElementById("logoutBtn").addEventListener("click", () => {
-    // Clear all user-specific data
-    localStorage.removeItem("username");
-    localStorage.removeItem("password");
-
-    // Optionally clear profiles if tied to user session
-    // localStorage.removeItem("petProfiles");
-
-    // Redirect to login page
-    dashboard.classList.add("hidden");
-    loginPage.classList.remove("hidden");
-
-    // Update UI elements
-    updateLogoutButton();
-    alert("You have been logged out.");
-});
-
-// Centralized function to manage logout button visibility
-function updateLogoutButton() {
-    const isLoggedIn = !!localStorage.getItem("username");
-    logoutBtn.style.display = isLoggedIn ? "block" : "none";
-}
-
-// Call this function on page load
-document.addEventListener("DOMContentLoaded", () => {
-    updateLogoutButton();
 });
 
 // Check if service workers and Push Notification API are supported by the browser
