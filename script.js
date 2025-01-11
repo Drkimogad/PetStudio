@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Check if service workers and Push Notification API are supported by the browser
 if ('serviceWorker' in navigator && 'PushManager' in window) {
     // Register the service worker
-    navigator.serviceWorker.register('service-worker.js')
+    navigator.serviceWorker.register('/sw.js')
         .then(function(registration) {
             console.log('Service Worker registered with scope:', registration.scope);
 
