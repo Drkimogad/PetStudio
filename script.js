@@ -13,6 +13,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || []; // Load saved profiles
 
+    // Highlighted part - Add this code for the login link redirection
+    document.getElementById("loginLink").addEventListener("click", (e) => {
+        e.preventDefault(); // Prevents the default link behavior
+        document.getElementById("signupPage").classList.add("hidden"); // Hides the sign-up page
+        document.getElementById("loginPage").classList.remove("hidden"); // Shows the login page
+    });
+
     // Function to render profiles
     function renderProfiles() {
         petList.innerHTML = ''; // Clear the list
@@ -53,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             petList.appendChild(petCard);
         });
+    }
 
     // Handle sign-up
     signupForm.addEventListener("submit", (e) => {
@@ -113,6 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderProfiles();
     }
 });
+
 
 // Check if service workers and Push Notification API are supported by the browser
 if ('serviceWorker' in navigator && 'PushManager' in window) {
