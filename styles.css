@@ -5,16 +5,6 @@ body {
     padding: 0;
     background-color: #f5f5f5;
 }
-#loginLinkContainer {
-    display: flex; /* Enables flexbox layout */
-    justify-content: center; /* Centers content horizontally */
-    align-items: center; /* Centers content vertically */
-    height: 50px; /* Optional: Adjust height as needed */
-    margin-top: 20px; /* Adds spacing from the elements above */
-    font-size: 16px; /* Adjust the text size if necessary */
-    color: #555555; /* Optional: Style the text color */
-}
-
 
 h1, h2 {
     text-align: center;
@@ -68,6 +58,7 @@ input {
 .hidden {
     display: none;
 }
+
 #logoutBtn {
     display: none; /* Hide the button initially */
 }
@@ -290,14 +281,15 @@ footer {
     .printBtn, .deleteBtn {
         padding: 10px;               /* Adjust padding for buttons */
     }
+}
+
+/* Centralized styling for "Already have an account? Login here" */
 #loginLinkContainer {
-    text-align: center; /* Centers the text horizontally */
+    display: flex; /* Enables flexbox layout */
+    justify-content: center; /* Centers content horizontally */
+    align-items: center; /* Centers content vertically */
+    height: 50px; /* Optional: Adjust height as needed */
     margin-top: 20px; /* Adds spacing from the elements above */
     font-size: 16px; /* Adjust the text size if necessary */
     color: #555555; /* Optional: Style the text color */
-}
-    footer {
-        padding: 15px;
-        font-size: 16pt;             /* Adjust font size for footer */
-    }
 }
