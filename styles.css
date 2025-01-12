@@ -286,7 +286,12 @@ footer {
     .printBtn, .deleteBtn {
         padding: 10px;               /* Adjust padding for buttons */
     }
-
+#loginLinkContainer {
+    text-align: center; /* Centers the text horizontally */
+    margin-top: 20px; /* Adds spacing from the elements above */
+    font-size: 16px; /* Adjust the text size if necessary */
+    color: #555555; /* Optional: Style the text color */
+}
     footer {
         padding: 15px;
         font-size: 16pt;             /* Adjust font size for footer */
