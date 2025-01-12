@@ -58,6 +58,9 @@ input {
 .hidden {
     display: none;
 }
+#logoutBtn {
+    display: none; /* Hide the button initially */
+}
 
 #dashboard {
     padding: 20px;
