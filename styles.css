@@ -285,11 +285,13 @@ footer {
 
 /* Centralized styling for "Already have an account? Login here" */
 #loginLinkContainer {
-    display: flex; /* Enables flexbox layout */
-    justify-content: center; /* Centers content horizontally */
-    align-items: center; /* Centers content vertically */
-    height: 50px; /* Optional: Adjust height as needed */
-    margin-top: 20px; /* Adds spacing from the elements above */
-    font-size: 16px; /* Adjust the text size if necessary */
-    color: #555555; /* Optional: Style the text color */
+    display: flex;
+    justify-content: center;  /* Centers the content horizontally */
+    align-items: center;      /* Centers the content vertically (if the container has height) */
+    text-align: center;       /* Centers text inside the container */
+    margin-top: 20px;         /* Adds spacing from the elements above */
+    font-size: 16px;          /* Adjust the text size if necessary */
+    color: #555555;           /* Optional: Style the text color */
+    height: 100%;             /* Ensure it has a height to allow vertical centering */
 }
+
