@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const petList = document.getElementById("petList");
 
     let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || []; // Load saved profiles
-
+    logoutBtn.style.display = "none";
+    
     // Highlighted part - Add this code for the login link redirection
     document.getElementById("loginLink").addEventListener("click", (e) => {
         e.preventDefault(); // Prevents the default link behavior
@@ -83,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Login successful!");
             loginPage.classList.add("hidden");
             dashboard.classList.remove("hidden");
+            logoutBtn.style.display = "block"; // Show the logout button
             renderProfiles(); // Load profiles when logged in
         } else {
             alert("Invalid username or password.");
@@ -135,6 +137,7 @@ logoutBtn.addEventListener("click", function () {
 
     // Show the login page
     document.getElementById("loginPage").classList.remove("hidden");
+    logoutBtn.style.display = "none"; // Hide the logout button
 
     // Optionally log or display a message
     console.log("User logged out successfully");
