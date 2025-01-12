@@ -5,6 +5,12 @@ body {
     padding: 0;
     background-color: #f5f5f5;
 }
+#loginLinkContainer {
+    text-align: center; /* Centers the text horizontally */
+    margin-top: 20px; /* Adds spacing from the elements above */
+    font-size: 16px; /* Adjust the text size if necessary */
+    color: #555555; /* Optional: Style the text color */
+}
 
 h1, h2 {
     text-align: center;
@@ -39,13 +45,6 @@ input {
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
-}
-
-#loginLinkContainer {
-    text-align: center; /* Centers the text horizontally */
-    margin-top: 20px; /* Adds spacing from the elements above */
-    font-size: 16px; /* Adjust the text size if necessary */
-    color: #555555; /* Optional: Style the text color */
 }
 
 .button {
