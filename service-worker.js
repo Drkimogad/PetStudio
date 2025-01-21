@@ -99,3 +99,10 @@ self.addEventListener('push', (event) => {
 });
 
 // **END OF UPDATED SECTION**
+
+// NEW: Check for updates and fetch new service worker
+self.addEventListener('message', (event) => {
+    if (event.data.action === 'skipWaiting') {
+        self.skipWaiting(); // Skip waiting and immediately activate the new service worker
+    }
+});
