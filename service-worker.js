@@ -1,4 +1,4 @@
-const CACHE_NAME = 'PetStudio-cache-v3'; // Update cache version
+const CACHE_NAME = 'PetStudio-cache-v4'; // Update cache version
 const urlsToCache = [
     'https://drkimogad.github.io/PetStudio/',                // Main page URL
     'https://drkimogad.github.io/PetStudio/index.html',      // Ensure main HTML page is cached
