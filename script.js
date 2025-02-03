@@ -124,6 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderProfiles();
     }
 });
+
 // Select the logout button element
 const logoutBtn = document.getElementById("logoutBtn");
 
@@ -143,7 +144,6 @@ logoutBtn.addEventListener("click", function () {
     console.log("User logged out successfully");
 });
 
-
 // Check if service workers and Push Notification API are supported by the browser
 if ('serviceWorker' in navigator && 'PushManager' in window) {
     // Register the service worker
@@ -151,16 +151,17 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
         .then(function(registration) {
             console.log('Service Worker registered with scope:', registration.scope);
 
-            // Ask the user for permission to send push notifications
-            Notification.requestPermission().then(function(permission) {
-                if (permission === 'granted') {
-                    console.log('Notification permission granted.');
-
-                    // Subscribe the user to push notifications
-                    subscribeUserToPushNotifications(registration);
-                } else {
-                    console.log('Notification permission denied.');
-                }
+            // Ask the user for permission to send push notifications on button click
+            document.getElementById('enableNotificationsButton').addEventListener('click', () => {
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === 'granted') {
+                        console.log('Notification permission granted.');
+                        // Subscribe the user to push notifications
+                        subscribeUserToPushNotifications(registration);
+                    } else {
+                        console.log('Notification permission denied.');
+                    }
+                });
             });
 
         }).catch(function(error) {
@@ -242,7 +243,6 @@ function urlBase64ToUint8Array(base64String) {
   const rawData = window.atob(base64);
   return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
 }
-
 
 //JavaScript Snippet to Check for Updates
 if ('serviceWorker' in navigator) {
