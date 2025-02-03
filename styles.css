@@ -295,3 +295,20 @@ footer {
     height: 100%;             /* Ensure it has a height to allow vertical centering */
 }
 
+/* New styling for the enable notifications button */
+#enableNotificationsButton {
+    background-color: #32cd32; /* Lime green background */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block; /* Ensure it occupies its own line */
+    margin: 20px auto; /* Center the button horizontally */
+    width: 200px; /* Optional: Fixed width for uniformity */
+    font-size: 16px; /* Increase font size for better visibility */
+}
+
+#enableNotificationsButton:hover {
+    background-color: #28a745; /* Darker shade for hover effect */
+}
