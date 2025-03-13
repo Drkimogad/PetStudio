@@ -68,35 +68,10 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Push notification event
-self.addEventListener('push', (event) => {
-    const options = {
-        body: event.data ? event.data.text() : 'You have a new reminder!',
-        icon: '/icons/icon-192x192.png',
-        badge: '/icons/icon-192x192.png',
-    };
-
-    event.waitUntil(
-        self.registration.showNotification('PetStudio Reminder', options)
-    );
-});
-
-// Push notification click event
-self.addEventListener('notificationclick', (event) => {
-    event.notification.close(); // Close notification on click
-    event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-            if (clientList.length > 0) {
-                return clientList[0].focus();
-            }
-            return clients.openWindow('/'); // Open app if no window is open
-        })
-    );
-});
 
 // (Optional) Cache API responses for offline support
 self.addEventListener('fetch', (event) => {
-    if (event.request.url.includes("https://pet-studio.vercel.app/api/save-subscription")) {
+    if (event.request.url.includes("firebase/app")) {
         event.respondWith(
             caches.open("api-cache").then((cache) => {
                 return fetch(event.request)
