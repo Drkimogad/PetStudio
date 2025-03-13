@@ -146,40 +146,57 @@ logoutBtn.addEventListener("click", function () {
 
 // Push notifications settings//
 
-import { initializeApp } from 'firebase/app';
-import { getMessaging, getToken } from 'firebase/messaging';
-import { firebaseConfig } from './firebase-config'; // Firebase config imported
+// The VAPID public key you obtained from Firebase Console
+const vapidKey = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk'; // Replace this with your actual VAPID public key
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
-
-// Request permission and get the FCM token
-const requestNotificationPermission = async () => {
-  try {
-    const token = await getToken(messaging, {
-      vapidKey: 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk', // Replace this with actual VAPID Key from Firebase Console
+// Function to subscribe the user to push notifications
+function subscribeUserToPushNotifications(registration) {
+  // Check if the user is already subscribed
+  registration.pushManager.getSubscription()
+    .then(function(subscription) {
+      if (subscription) {
+        console.log('Already subscribed to push notifications:', subscription);
+      } else {
+        // If not subscribed, create a new subscription
+        registration.pushManager.subscribe({
+          userVisibleOnly: true, // Ensures notifications are visible to the user
+          applicationServerKey: urlBase64ToUint8Array(vapidKey) // Use your VAPID public key here
+        })
+        .then(function(newSubscription) {
+          console.log('Subscribed to push notifications:', newSubscription);
+          // You can send the subscription object to your server here if needed
+        })
+        .catch(function(error) {
+          console.error('Failed to subscribe to push notifications:', error);
+        });
+      }
+    })
+    .catch(function(error) {
+      console.error('Error during subscription check:', error);
     });
+}
 
-    if (token) {
-      console.log('FCM Token:', token);
-      // Send this token to your server to send notifications
-    } else {
-      console.log('No registration token available.');
-    }
-  } catch (error) {
-    console.error('Permission denied or error:', error);
+// Helper function to convert the Base64 URL-encoded string into a Uint8Array
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/\_/g, '/');
+  const rawData = atob(base64); // Decoding base64 string into binary data
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; i++) {
+    outputArray[i] = rawData.charCodeAt(i); // Filling output array with the binary data
   }
-};
+  return outputArray;
+}
 
-// Call the function to request notification permission
-requestNotificationPermission();
-
-// Register service worker for Firebase messaging
+// Register service worker and subscribe to notifications
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/firebase-messaging-sw.js')
     .then(function(registration) {
       console.log('Service Worker registered with scope:', registration.scope);
+      // Call the function to subscribe to notifications
+      subscribeUserToPushNotifications(registration);
     })
     .catch(function(error) {
       console.log('Service Worker registration failed:', error);
