@@ -144,6 +144,51 @@ logoutBtn.addEventListener("click", function () {
     console.log("User logged out successfully");
 });
 
+// Purpose: This file contains the main logic for requesting notification permissions and retrieving the FCM token for your app //
+
+// app.js or index.js (your main JavaScript file)
+import { initializeApp } from 'firebase/app';
+import { getMessaging, getToken } from 'firebase/messaging';
+import { firebaseConfig } from './firebase-config'; // Firebase config imported
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
+
+// Request permission and get the FCM token
+const requestNotificationPermission = async () => {
+  try {
+    const token = await getToken(messaging, {
+      vapidKey: 'YOUR_VAPID_KEY', // Replace this with actual VAPID Key from Firebase Console
+    });
+
+    if (token) {
+      console.log('FCM Token:', token);
+      // Send this token to your server to send notifications
+    } else {
+      console.log('No registration token available.');
+    }
+  } catch (error) {
+    console.error('Permission denied or error:', error);
+  }
+};
+
+// Call the function to request notification permission
+requestNotificationPermission();
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    .then(function(registration) {
+      console.log('Service Worker registered with scope:', registration.scope);
+    })
+    .catch(function(error) {
+      console.log('Service Worker registration failed:', error);
+    });
+}
+// end of added code //
+
+
 // Check if service workers and Push Notification API are supported by the browser
 if ('serviceWorker' in navigator && 'PushManager' in window) {
     // Register the service worker
