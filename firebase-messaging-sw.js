@@ -7,7 +7,7 @@ onBackgroundMessage(messaging, (payload) => {
   const { title, body } = payload.notification;
   self.registration.showNotification(title, {
     body,
-    icon: '/icon-192x192.png', // Adjust as per your path
+    icon: '/icons/icon-192x192.png', // Adjust as per your path
   });
 });
 
