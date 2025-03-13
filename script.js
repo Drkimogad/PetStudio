@@ -147,7 +147,7 @@ logoutBtn.addEventListener("click", function () {
 // Check if service workers and Push Notification API are supported by the browser
 if ('serviceWorker' in navigator && 'PushManager' in window) {
     // Register the service worker
-    navigator.serviceWorker.register('service-worker.js')
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
         .then(function(registration) {
             console.log('Service Worker registered with scope:', registration.scope);
 
