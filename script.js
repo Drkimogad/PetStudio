@@ -156,15 +156,18 @@ function subscribeUserToPushNotifications(registration) {
     .then(function(subscription) {
       if (subscription) {
         console.log('Already subscribed to push notifications:', subscription);
+        // Send the subscription to your server
+        sendSubscriptionToServer(subscription);
       } else {
         // If not subscribed, create a new subscription
         registration.pushManager.subscribe({
           userVisibleOnly: true, // Ensures notifications are visible to the user
-          applicationServerKey: urlBase64ToUint8Array(vapidKey) // Use your VAPID public key here
+          applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
         })
         .then(function(newSubscription) {
           console.log('Subscribed to push notifications:', newSubscription);
-          // You can send the subscription object to your server here if needed
+          // Send the new subscription to your server
+          sendSubscriptionToServer(newSubscription);
         })
         .catch(function(error) {
           console.error('Failed to subscribe to push notifications:', error);
@@ -174,6 +177,23 @@ function subscribeUserToPushNotifications(registration) {
     .catch(function(error) {
       console.error('Error during subscription check:', error);
     });
+}
+
+function sendSubscriptionToServer(subscription) {
+  fetch('/api/save-subscription', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ subscription }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Subscription sent to server:', data);
+  })
+  .catch(error => {
+    console.error('Error sending subscription to server:', error);
+  });
 }
 
 // Helper function to convert the Base64 URL-encoded string into a Uint8Array
