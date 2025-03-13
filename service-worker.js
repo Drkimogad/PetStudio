@@ -96,7 +96,7 @@ self.addEventListener('notificationclick', (event) => {
 
 // (Optional) Cache API responses for offline support
 self.addEventListener('fetch', (event) => {
-    if (event.request.url.includes("https://api.example.com")) {
+    if (event.request.url.includes("https://pet-studio.vercel.app/api/save-subscription")) {
         event.respondWith(
             caches.open("api-cache").then((cache) => {
                 return fetch(event.request)
