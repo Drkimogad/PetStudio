@@ -158,7 +158,7 @@ const messaging = getMessaging(app);
 const requestNotificationPermission = async () => {
   try {
     const token = await getToken(messaging, {
-      vapidKey: 'YOUR_VAPID_KEY', // Replace this with actual VAPID Key from Firebase Console
+      vapidKey: 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk', // Replace this with actual VAPID Key from Firebase Console
     });
 
     if (token) {
