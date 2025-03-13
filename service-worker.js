@@ -1,4 +1,4 @@
-const CACHE_NAME = 'PetStudio-cache-v5'; // Update cache version
+const CACHE_NAME = 'PetStudio-cache-v5'; // Update cache version 
 const urlsToCache = [
     '/',
     '/index.html',
@@ -29,6 +29,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
     console.log('Fetching:', event.request.url);
 
+    // First, try serving from the cache
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             if (cachedResponse) {
@@ -36,8 +37,10 @@ self.addEventListener('fetch', (event) => {
                 return cachedResponse;
             }
 
+            // If not cached, try fetching from the network
             return fetch(event.request)
                 .catch(() => {
+                    // If offline, serve from cached index.html or offline.html
                     if (event.request.mode === 'navigate') {
                         return caches.match('/index.html'); // Serve app shell when offline
                     }
@@ -68,12 +71,11 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-
-// (Optional) Cache API responses for offline support
+// Optional: Cache Firebase API responses for offline support
 self.addEventListener('fetch', (event) => {
-    if (event.request.url.includes("firebase/app")) {
+    if (event.request.url.includes('firebase/app')) {
         event.respondWith(
-            caches.open("api-cache").then((cache) => {
+            caches.open('api-cache').then((cache) => {
                 return fetch(event.request)
                     .then((response) => {
                         cache.put(event.request, response.clone());
