@@ -144,9 +144,8 @@ logoutBtn.addEventListener("click", function () {
     console.log("User logged out successfully");
 });
 
-// Purpose: This file contains the main logic for requesting notification permissions and retrieving the FCM token for your app //
+// Push notifications settings//
 
-// app.js or index.js (your main JavaScript file)
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken } from 'firebase/messaging';
 import { firebaseConfig } from './firebase-config'; // Firebase config imported
@@ -176,7 +175,7 @@ const requestNotificationPermission = async () => {
 // Call the function to request notification permission
 requestNotificationPermission();
 
-// Register service worker
+// Register service worker for Firebase messaging
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/firebase-messaging-sw.js')
     .then(function(registration) {
@@ -186,107 +185,19 @@ if ('serviceWorker' in navigator) {
       console.log('Service Worker registration failed:', error);
     });
 }
-// end of added code //
 
-
-// Check if service workers and Push Notification API are supported by the browser
+// (Optional) Request notification permission through a UI element
 if ('serviceWorker' in navigator && 'PushManager' in window) {
-    // Register the service worker
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-        .then(function(registration) {
-            console.log('Service Worker registered with scope:', registration.scope);
-
-            // Ask the user for permission to send push notifications on button click
-            document.getElementById('enableNotificationsButton').addEventListener('click', () => {
-                Notification.requestPermission().then(function(permission) {
-                    if (permission === 'granted') {
-                        console.log('Notification permission granted.');
-                        // Subscribe the user to push notifications
-                        subscribeUserToPushNotifications(registration);
-                    } else {
-                        console.log('Notification permission denied.');
-                    }
-                });
-            });
-
-        }).catch(function(error) {
-            console.log('Service Worker registration failed:', error);
-        });
-}
-
-// Function to subscribe the user to push notifications
-function subscribeUserToPushNotifications(registration) {
-    // Check if the user is already subscribed
-    registration.pushManager.getSubscription()
-        .then(function(subscription) {
-            if (subscription) {
-                console.log('Already subscribed to push notifications:', subscription);
-                // You can send the subscription details to your server here if needed
-            } else {
-                // If not subscribed, create a new subscription
-                registration.pushManager.subscribe({
-                    userVisibleOnly: true, // Ensures notifications are visible to the user
-                    applicationServerKey: urlB64ToUint8Array('BFT2ZAIuHo5wtIgax8uovZ-mHaZqR8dJz5kaQRsS0JpzeKCqX6Y_27E_R2YFoD_1Z4J93j2BU5rc4hVHT76qbrU') // Replace with your VAPID public key
-                })
-                .then(function(newSubscription) {
-                    console.log('Subscribed to push notifications:', newSubscription);
-                    // You can send the subscription details to your server here if needed
-                })
-                .catch(function(error) {
-                    console.error('Failed to subscribe to push notifications:', error);
-                });
-            }
-        })
-        .catch(function(error) {
-            console.error('Error during subscription check:', error);
-        });
-}
-
-// Helper function to convert the VAPID public key from Base64 to Uint8Array
-function urlB64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding)
-        .replace(/\-/g, '+')
-        .replace(/\_/g, '/');
-    const rawData = atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-    for (let i = 0; i < rawData.length; i++) {
-        outputArray[i] = rawData.charCodeAt(i);
-    }
-    return outputArray;
-}
-
-// Modify your script.js file to send the subscription data to your server
-
-const publicVapidKey = 'BFT2ZAIuHo5wtIgax8uovZ-mHaZqR8dJz5kaQRsS0JpzeKCqX6Y_27E_R2YFoD_1Z4J93j2BU5rc4hVHT76qbrU';
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js')
-    .then(async registration => {
-      console.log('Service Worker registered.');
-
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
-      });
-
-      console.log('Subscribed:', subscription);
-
-      // Send subscription to the server
-      await fetch('https://pet-studio.vercel.app/api/save-subscription', {
-        method: 'POST',
-        body: JSON.stringify(subscription),
-        headers: { 'Content-Type': 'application/json' },
-      });
-    })
-    .catch(console.error);
-}
-
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
+  document.getElementById('enableNotificationsButton').addEventListener('click', () => {
+    Notification.requestPermission().then(function(permission) {
+      if (permission === 'granted') {
+        console.log('Notification permission granted.');
+        // Notification permission granted, token will be automatically retrieved in requestNotificationPermission
+      } else {
+        console.log('Notification permission denied.');
+      }
+    });
+  });
 }
 
 //JavaScript Snippet to Check for Updates
