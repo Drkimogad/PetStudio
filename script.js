@@ -174,7 +174,7 @@ function subscribeUserToPushNotifications(registration) {
 
 // Function to send subscription to server
 function sendSubscriptionToServer(subscription) {
-    fetch('https://drkimogad.github.io/PetStudio/api/save-subscription.js', {
+    fetch('https://pet-studio.vercel.app/api/save-subscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ subscription }),
