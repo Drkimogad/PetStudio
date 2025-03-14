@@ -1,15 +1,8 @@
 {
-  "version": 2,
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    }
-  ],
-  "crons": [
-    {
-      "path": "/api/send-reminder",
-      "schedule": "0 * * * *"
-    }
-  ]
+    "crons": [
+        {
+            "path": "/api/send-reminder.js",
+            "schedule": "0 * * * *"
+        }
+    ]
 }
