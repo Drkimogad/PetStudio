@@ -32,7 +32,7 @@ self.addEventListener('notificationclick', (event) => {
             if (clientList.length > 0) {
                 return clientList[0].focus();
             }
-            return clients.openWindow('/'); // Open app if no window is open
+            return clients.openWindow('/signin'); // Open app if no window is open
         })
     );
 });
