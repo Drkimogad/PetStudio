@@ -174,7 +174,7 @@ function subscribeUserToPushNotifications(registration) {
 
 // Function to send subscription to server
 function sendSubscriptionToServer(subscription) {
-    fetch('https://drkimogad.github.io/PetStudio/api/send-reminders.js', {
+    fetch('https://drkimogad.github.io/PetStudio/firebase-messaging-sw.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ subscription }),
