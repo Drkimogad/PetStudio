@@ -180,7 +180,7 @@ function subscribeUserToPushNotifications(registration) {
 }
 
 function sendSubscriptionToServer(subscription) {
-  fetch('/api/save-subscription', {
+  fetch('https://drkimogad.github.io/PetStudio/api/save-subscription', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -212,7 +212,7 @@ function urlBase64ToUint8Array(base64String) {
 
 // Register service worker and subscribe to notifications
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/firebase-messaging-sw.js')
+  navigator.serviceWorker.register('https://drkimogad.github.io/PetStudio/firebase-messaging-sw.js')
     .then(function(registration) {
       console.log('Service Worker registered with scope:', registration.scope);
       // Call the function to subscribe to notifications
