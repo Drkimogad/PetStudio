@@ -1,5 +1,9 @@
-export async function GET(req) {
-  try {
+    export default async function handler(req, res) {
+    if (req.method !== "GET") {
+        return res.status(405).json({ error: "Method Not Allowed" });
+    }
+    res.status(200).json({ message: "Reminder API working!" });
+    }
     // Get today's date in YYYY-MM-DD format
     const now = new Date();
     const today = now.toISOString().split('T')[0];
