@@ -1,23 +1,26 @@
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins or restrict to your domain
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS'); // Allow specific HTTP methods
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
-  if (req.method === 'OPTIONS') {
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS"); // Allow specific HTTP methods
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
     return res.status(200).end(); // Handle preflight requests
   }
 
-  if (req.method === 'POST') {
+  if (req.method === "POST") {
     try {
       const subscription = req.body;
-      console.log('Received subscription:', subscription);
-      res.status(200).json({ message: 'Subscription saved successfully' });
+      if (!subscription) {
+        throw new Error("No subscription data received.");
+      }
+
+      console.log("Received subscription:", subscription);
+      return res.status(200).json({ message: "Subscription saved successfully" });
     } catch (error) {
-      console.error('Error saving subscription:', error);
-      res.status(500).json({ error: 'Failed to save subscription' });
+      console.error("Error saving subscription:", error.message);
+      return res.status(500).json({ error: `Failed to save subscription: ${error.message}` });
     }
   } else {
-    res.status(405).json({ error: 'Method Not Allowed' });
+    return res.status(405).json({ error: "Method Not Allowed" });
   }
 }
-
