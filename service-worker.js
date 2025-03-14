@@ -30,6 +30,10 @@ self.addEventListener('install', (event) => {
 
 // Fetch event: Serve from cache first, fallback to network or offline.html
 self.addEventListener('fetch', (event) => {
+    if (event.request.method !== 'GET') {
+        return; // Ignore non-GET requests (POST, PUT, DELETE)
+    }
+    
     const url = new URL(event.request.url);
     
     // Cache API responses separately
