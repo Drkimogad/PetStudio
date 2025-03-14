@@ -222,6 +222,16 @@ if ('serviceWorker' in navigator) {
       console.log('Service Worker registration failed:', error);
     });
 }
+// for caching the assets and offline functionality //
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('https://drkimogad.github.io/PetStudio/service-worker.js').then(function(registration) {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                }).catch(function(error) {
+                    console.log('Service Worker registration failed:', error);
+                });
+            });
+        }
 
 // (Optional) Request notification permission through a UI element
 if ('serviceWorker' in navigator && 'PushManager' in window) {
