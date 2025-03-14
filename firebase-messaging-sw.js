@@ -1,5 +1,5 @@
 import { onBackgroundMessage } from 'firebase/messaging';
-import { messaging } from './firebase-config'; // Import messaging from firebase config
+import { messaging } from 'https://drkimogad.github.io/PetStudio/firebase-config'; // Import messaging from firebase config
 
 // Handle background notifications
 onBackgroundMessage(messaging, (payload) => {
@@ -7,7 +7,7 @@ onBackgroundMessage(messaging, (payload) => {
   const { title, body } = payload.notification;
   self.registration.showNotification(title, {
     body,
-    icon: '/icons/icon-192x192.png', // Adjust as per your path
+    icon: 'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png', // Adjust as per your path
   });
 });
 
@@ -15,8 +15,8 @@ onBackgroundMessage(messaging, (payload) => {
 self.addEventListener('push', (event) => {
     const options = {
         body: event.data ? event.data.text() : 'You have a new reminder!',
-        icon: '/icons/icon-192x192.png', // Ensure this path is correct
-        badge: '/icons/icon-192x192.png', // Ensure this path is correct
+        icon: 'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png', // Ensure this path is correct
+        badge: 'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png', // Ensure this path is correct
     };
 
     event.waitUntil(
