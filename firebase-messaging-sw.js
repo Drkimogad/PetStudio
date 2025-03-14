@@ -1,5 +1,5 @@
 import { onBackgroundMessage } from 'firebase/messaging';
-import { messaging } from 'https://drkimogad.github.io/PetStudio/firebase-config'; // Import messaging from firebase config
+import { messaging } from 'https://drkimogad.github.io/PetStudio/firebase-config.js'; // Import messaging from firebase config
 
 // Handle background notifications
 onBackgroundMessage(messaging, (payload) => {
@@ -15,12 +15,15 @@ onBackgroundMessage(messaging, (payload) => {
 self.addEventListener('push', (event) => {
     const options = {
         body: event.data ? event.data.text() : 'You have a new reminder!',
-        icon: 'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png', // Ensure this path is correct
-        badge: 'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png', // Ensure this path is correct
+        icon: 'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
+        badge: 'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
     };
 
     event.waitUntil(
         self.registration.showNotification('PetStudio Reminder', options)
+            .catch((error) => {
+                console.error('Error showing notification:', error);
+            })
     );
 });
 
