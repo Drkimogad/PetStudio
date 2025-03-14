@@ -145,132 +145,84 @@ logoutBtn.addEventListener("click", function () {
 });
 
 // Push notifications settings//
+// The VAPID public key from Firebase Console
+const vapidKey = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk'; 
 
-// The VAPID public key you obtained from Firebase Console
-const vapidKey = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk'; // Replace this with your actual VAPID public key
-
-// Function to subscribe the user to push notifications
+// Function to subscribe to push notifications
 function subscribeUserToPushNotifications(registration) {
-  // Check if the user is already subscribed
-  registration.pushManager.getSubscription()
-    .then(function(subscription) {
-      if (subscription) {
-        console.log('Already subscribed to push notifications:', subscription);
-        // Send the subscription to your server
-        sendSubscriptionToServer(subscription);
-      } else {
-        // If not subscribed, create a new subscription
-        registration.pushManager.subscribe({
-          userVisibleOnly: true, // Ensures notifications are visible to the user
-          applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+    registration.pushManager.getSubscription()
+        .then(subscription => {
+            if (subscription) {
+                console.log('Already subscribed:', subscription);
+                sendSubscriptionToServer(subscription);
+            } else {
+                registration.pushManager.subscribe({
+                    userVisibleOnly: true, 
+                    applicationServerKey: urlBase64ToUint8Array(vapidKey), // Fixed reference
+                })
+                .then(newSubscription => {
+                    console.log('Subscribed to push notifications:', newSubscription);
+                    sendSubscriptionToServer(newSubscription);
+                })
+                .catch(error => {
+                    console.error('Push subscription failed:', error);
+                });
+            }
         })
-        .then(function(newSubscription) {
-          console.log('Subscribed to push notifications:', newSubscription);
-          // Send the new subscription to your server
-          sendSubscriptionToServer(newSubscription);
-        })
-        .catch(function(error) {
-          console.error('Failed to subscribe to push notifications:', error);
-        });
-      }
-    })
-    .catch(function(error) {
-      console.error('Error during subscription check:', error);
-    });
+        .catch(error => console.error('Subscription check failed:', error));
 }
 
+// Function to send subscription to server
 function sendSubscriptionToServer(subscription) {
-  fetch('https://drkimogad.github.io/PetStudio/api/save-subscription', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ subscription }),
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Subscription sent to server:', data);
-  })
-  .catch(error => {
-    console.error('Error sending subscription to server:', error);
-  });
-}
-
-// Helper function to convert the Base64 URL-encoded string into a Uint8Array
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding)
-    .replace(/\-/g, '+')
-    .replace(/\_/g, '/');
-  const rawData = atob(base64); // Decoding base64 string into binary data
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; i++) {
-    outputArray[i] = rawData.charCodeAt(i); // Filling output array with the binary data
-  }
-  return outputArray;
-}
-
-// Register service worker and subscribe to notifications
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('https://drkimogad.github.io/PetStudio/firebase-messaging-sw.js')
-    .then(function(registration) {
-      console.log('Service Worker registered with scope:', registration.scope);
-      // Call the function to subscribe to notifications
-      subscribeUserToPushNotifications(registration);
+    fetch('https://drkimogad.github.io/PetStudio/api/save-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscription }),
     })
-    .catch(function(error) {
-      console.log('Service Worker registration failed:', error);
-    });
-}
-// for caching the assets and offline functionality //
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('https://drkimogad.github.io/PetStudio/service-worker.js').then(function(registration) {
-                    console.log('Service Worker registered with scope:', registration.scope);
-                }).catch(function(error) {
-                    console.log('Service Worker registration failed:', error);
-                });
-            });
-        }
-
-// (Optional) Request notification permission through a UI element
-if ('serviceWorker' in navigator && 'PushManager' in window) {
-  document.getElementById('enableNotificationsButton').addEventListener('click', () => {
-    Notification.requestPermission().then(function(permission) {
-      if (permission === 'granted') {
-        console.log('Notification permission granted.');
-        // Notification permission granted, token will be automatically retrieved in requestNotificationPermission
-      } else {
-        console.log('Notification permission denied.');
-      }
-    });
-  });
+    .then(response => response.json())
+    .then(data => console.log('Subscription sent:', data))
+    .catch(error => console.error('Error sending subscription:', error));
 }
 
-//JavaScript Snippet to Check for Updates
+// Convert VAPID key
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/\_/g, '/');
+    const rawData = atob(base64);
+    return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
+}
+
+// Register service worker and handle both push & caching
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('https://drkimogad.github.io/PetStudio/service-worker.js')
-            .then((registration) => {
-                console.log('Service Worker registered with scope:', registration.scope);
-                // Check for service worker updates
-                registration.update();
+    navigator.serviceWorker.register('https://drkimogad.github.io/PetStudio/service-worker.js')
+        .then(registration => {
+            console.log('Service Worker registered:', registration.scope);
+            subscribeUserToPushNotifications(registration); // Subscribe user to push notifications
 
-                // Listen for when a new service worker is available and update it
-                registration.addEventListener('updatefound', () => {
-                    const installingWorker = registration.installing;
-                    installingWorker.addEventListener('statechange', () => {
-                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            // New version available, notify user and skip waiting
-                            if (confirm('A new version of the app is available. Would you like to update?')) {
-                                installingWorker.postMessage({ action: 'skipWaiting' });
-                            }
-                        }
-                    });
+            // Check for service worker updates
+            registration.addEventListener('updatefound', () => {
+                const installingWorker = registration.installing;
+                installingWorker.addEventListener('statechange', () => {
+                    if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        installingWorker.postMessage({ action: 'skipWaiting' });
+                    }
                 });
-            })
-            .catch((error) => {
-                console.error('Error registering service worker:', error);
             });
+        })
+        .catch(error => console.error('Service Worker registration failed:', error));
+
+    // Listen for controller changes (meaning a new SW is active)
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        console.log('New service worker activated, reloading page...');
+        location.reload(); // Ensures the latest version loads
+    });
+}
+
+// Handle notification permission
+if ('Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window) {
+    document.getElementById('enableNotificationsButton').addEventListener('click', () => {
+        Notification.requestPermission().then(permission => {
+            console.log(permission === 'granted' ? 'Notifications enabled.' : 'Notifications denied.');
+        });
     });
 }
