@@ -1,14 +1,16 @@
 const CACHE_NAME = 'PetStudio-cache-v5'; // Update cache version 
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/styles.css',
-    '/script.js',
-    '/manifest.json',
-    '/icons/icon-192x192.png',
-    '/icons/icon-512x512.png',
-    '/favicon.ico',
-    '/offline.html' // Ensure offline page is cached
+    'https://drkimogad.github.io/PetStudio/',
+    'https://drkimogad.github.io/PetStudio/index.html',
+    'https://drkimogad.github.io/PetStudio/styles.css',
+    'https://drkimogad.github.io/PetStudio/script.js',
+    'https://drkimogad.github.io/PetStudio/manifest.json',
+    'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
+    'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png',
+    'https://drkimogad.github.io/PetStudio/favicon.ico',
+    'https://drkimogad.github.io/PetStudio/firebase-config.js',
+    'https://drkimogad.github.io/PetStudio/firebase-messaging-sw.js'
+    'https://drkimogad.github.io/PetStudio/offline.html' // Ensure offline page is cached
 ];
 
 // Install event: Cache necessary assets
