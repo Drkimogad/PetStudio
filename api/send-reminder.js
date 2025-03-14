@@ -5,7 +5,7 @@ export async function GET(req) {
     const today = now.toISOString().split('T')[0];
 
     // Fetch reminders from your backend API (which gets data from Firestore)
-    const response = await fetch(`https://pet-studio.vercel.app/api/get-reminders?date=${today}`);
+    const response = await fetch(`https://firestore.googleapis.com/v1/projects/swiftreach2025/databases/(default)/documents/reminders?where=date=${today}`);
     if (!response.ok) {
       throw new Error('Failed to fetch reminders');
     }
