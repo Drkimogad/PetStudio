@@ -15,6 +15,7 @@ export default async function handler(req, res) {
       }
 
       console.log("Received subscription:", subscription);
+      res.setHeader('Content-Type', 'application/json'); // Ensure JSON response
       return res.status(200).json({ message: "Subscription saved successfully" });
     } catch (error) {
       console.error("Error saving subscription:", error.message);
