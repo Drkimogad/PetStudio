@@ -9,14 +9,19 @@ export default async function handler(req, res) {
 
   if (req.method === "POST") {
     try {
-      const subscription = req.body.subscription;
+      const subscription = req.body.subscription; 
       if (!subscription) {
         throw new Error("No subscription data received.");
       }
 
       console.log("Received subscription:", subscription);
-      res.setHeader('Content-Type', 'application/json'); // Ensure JSON response
-      return res.status(200).json({ message: "Subscription saved successfully" });
+
+      // Debug response before sending
+      const responseData = { message: "Subscription saved successfully" };
+      console.log("Response being sent:", responseData); // 🔹 Add this log
+
+      res.setHeader("Content-Type", "application/json"); // Ensure JSON response
+      return res.status(200).json(responseData);
     } catch (error) {
       console.error("Error saving subscription:", error.message);
       return res.status(500).json({ error: `Failed to save subscription: ${error.message}` });
