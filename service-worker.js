@@ -64,15 +64,3 @@ self.addEventListener('activate', (event) => {
         )
     );
 });
-
-// Handle updates and force refresh
-self.addEventListener('message', (event) => {
-    if (event.data === 'skipWaiting') {
-        self.skipWaiting();
-        self.clients.claim().then(() => {
-            self.clients.matchAll().then(clients => {
-                clients.forEach(client => client.postMessage('reload'));
-            });
-        });
-    }
-});
