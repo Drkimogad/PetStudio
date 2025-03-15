@@ -1,5 +1,4 @@
 const CACHE_NAME = 'PetStudio-cache-v6'; // Update cache version 
-const API_CACHE_NAME = 'api-cache-v1';
 const urlsToCache = [
     'https://drkimogad.github.io/PetStudio/',
     'https://drkimogad.github.io/PetStudio/index.html',
@@ -14,77 +13,66 @@ const urlsToCache = [
     'https://drkimogad.github.io/PetStudio/offline.html' // Ensure offline page is cached
 ];
 
-// Install event: Cache necessary assets
+// Install event: Precache static assets
 self.addEventListener('install', (event) => {
-    self.skipWaiting(); // Activate new SW immediately
-
+    self.skipWaiting();
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            console.log('Caching assets during install');
-            return cache.addAll(urlsToCache);
-        }).catch((err) => {
-            console.error('Error caching assets:', err);
+        caches.open(CACHE_NAME).then(async (cache) => {
+            for (const url of urlsToCache) {
+                try {
+                    console.log(`Caching: ${url}`);
+                    await cache.add(url);
+                    console.log(`Cached successfully: ${url}`);
+                } catch (error) {
+                    console.warn(`Failed to cache ${url}:`, error);
+                }
+            }
         })
-    );
+    ); 
 });
 
-// Fetch event: Serve from cache first, fallback to network or offline.html
+// Fetch event: Serve from cache, then update cache
 self.addEventListener('fetch', (event) => {
-    if (event.request.method !== 'GET') {
-        return; // Ignore non-GET requests (POST, PUT, DELETE)
-    }
-    
-    const url = new URL(event.request.url);
-    
-    // Cache API responses separately
-    if (url.origin.includes('firebase') || url.pathname.includes('/api/')) {
-        event.respondWith(
-            caches.open(API_CACHE_NAME).then((cache) => {
-                return fetch(event.request).then((response) => {
-                    cache.put(event.request, response.clone());
-                    return response;
-                }).catch(() => caches.match(event.request));
-            })
-        );
-        return;
-    }
-    
-    // Serve cached assets
     event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            return cachedResponse || fetch(event.request).catch(() => {
+        caches.match(event.request).then(cachedResponse => {
+            if (cachedResponse) return cachedResponse;
+            return fetch(event.request).then(networkResponse => {
+                if (!networkResponse || !networkResponse.ok) throw new Error('Network response not ok');
+                return caches.open(CACHE_NAME).then(cache => {
+                    cache.put(event.request, networkResponse.clone());
+                    return networkResponse;
+                });
+            }).catch(() => {
                 if (event.request.mode === 'navigate') {
-                    return caches.match('/offline.html');
+                    return caches.match('index.html') || caches.match(OFFLINE_URL);
                 }
+                return caches.match('/offline.html');
             });
         })
     );
 });
 
-// Activate event: Clean up old caches
+// Activate event: Cleanup old caches
 self.addEventListener('activate', (event) => {
-    const cacheWhitelist = [CACHE_NAME, API_CACHE_NAME];
-
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (!cacheWhitelist.includes(cacheName)) {
-                        console.log('Deleting old cache:', cacheName);
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        }).then(() => {
-            console.log('Service Worker activated');
-            self.clients.claim(); // Take control immediately
-        })
+        caches.keys().then(cacheNames => 
+            Promise.all(
+                cacheNames.map(cacheName => 
+                    cacheName !== CACHE_NAME ? caches.delete(cacheName) : null
+                )
+            ).then(() => self.clients.claim())
+        )
     );
 });
 
-// Check for updates and fetch new service worker
+// Handle updates and force refresh
 self.addEventListener('message', (event) => {
-    if (event.data.action === 'skipWaiting') {
+    if (event.data === 'skipWaiting') {
         self.skipWaiting();
+        self.clients.claim().then(() => {
+            self.clients.matchAll().then(clients => {
+                clients.forEach(client => client.postMessage('reload'));
+            });
+        });
     }
 });
