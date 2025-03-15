@@ -1,79 +1,80 @@
 import admin from "firebase-admin";
 
-// Initialize Firebase Admin SDK (if not already initialized)
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_ADMIN_CREDENTIALS)),
-  });
-}
+// Allow only client-side Firebase usage (no Admin SDK)
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
 
-// Function to send push notification
-async function sendNotification(subscriptionToken, petName) {
-  const payload = {
-    notification: {
-      title: "Pet Reminder",
-      body: `It's time to check on ${petName}!`,
-    },
-    token: subscriptionToken,
-  };
+// Initialize Firebase (only needed if not already initialized)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "swiftreach2025",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
+};
 
-  try {
-    const response = await admin.messaging().send(payload);
-    console.log("Notification sent successfully:", response);
-    return { success: true, message: "Notification sent" };
-  } catch (error) {
-    console.error("Error sending notification:", error);
-    return { success: false, error: error.message };
-  }
-}
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-// Main API handler
 export default async function handler(req, res) {
-  // Allow only POST requests
-  if (req.method !== "POST") {
+  if (req.method !== "GET") {
+    res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins (update this for security)
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  // Set CORS headers (allow frontend access)
-  res.setHeader("Access-Control-Allow-Origin", "https://drkimogad.github.io");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
   try {
-    // Fetch all reminders from Firestore
-    const db = admin.firestore();
-    const remindersSnapshot = await db.collection("reminders").get();
+    // Get today's date
+    const now = new Date();
+    const today = now.toISOString().split("T")[0];
 
-    if (remindersSnapshot.empty) {
-      return res.status(404).json({ error: "No reminders found" });
+    // Fetch reminders from Firestore (client-side)
+    const remindersCollection = collection(db, "reminders");
+    const snapshot = await getDocs(remindersCollection);
+
+    // Process fetched reminders
+    const reminders = snapshot.docs
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      .filter((reminder) => reminder.date === today);
+
+    if (reminders.length === 0) {
+      console.log("No reminders for today.");
+      return res.status(200).json({ message: "No reminders today" });
     }
 
-    let notifications = [];
-
-    remindersSnapshot.forEach((doc) => {
-      const { subscriptionToken, petName, date } = doc.data();
-
-      if (!subscriptionToken) {
-        console.warn(`Missing subscription token for reminder ${doc.id}`);
-        return;
-      }
-
-      const today = new Date().toISOString().split("T")[0];
-      if (date === today) {
-        notifications.push(sendNotification(subscriptionToken, petName));
+    // Send Notifications via Firebase Cloud Messaging (FCM)
+    const notifications = reminders.map((reminder) => {
+      if (reminder.subscriptionToken) {
+        return fetch("https://fcm.googleapis.com/fcm/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `key=BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk	`, // 🔴 Replace with your actual FCM Server Key
+          },
+          body: JSON.stringify({
+            to: reminder.subscriptionToken,
+            notification: {
+              title: "Pet Birthday Reminder! 🎉",
+              body: `It's ${reminder.petName}'s birthday today! 🎂🐶`,
+            },
+          }),
+        });
+      } else {
+        console.warn(`Missing subscription token for ${reminder.petName}`);
+        return Promise.resolve();
       }
     });
 
-    // Wait for all notifications to be sent
-    const results = await Promise.all(notifications);
-
-    return res.status(200).json({ message: "Reminders processed", results });
+    await Promise.all(notifications);
+    console.log("Reminders sent successfully!");
+    return res.status(200).json({ message: "Reminders sent" });
   } catch (error) {
-    console.error("Error processing reminders:", error);
-    return res.status(500).json({ error: "Internal Server Error", details: error.message });
+    console.error("Error sending reminders:", error);
+    return res.status(500).json({ error: "Failed to send reminders" });
   }
 }
