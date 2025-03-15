@@ -1,20 +1,28 @@
 export default async function handler(req, res) {
-  // ✅ Allow only GET or POST methods
-  if (req.method !== "GET" && req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
+    // Allow CORS for requests from GitHub Pages
+    res.setHeader("Access-Control-Allow-Origin", "https://drkimogad.github.io");
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // ✅ Fix CORS issue
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    if (req.method === "OPTIONS") {
+        return res.status(200).end(); // Handle preflight request
+    }
 
-  // ✅ Handle CORS preflight requests
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+    if (req.method !== "POST") {
+        return res.status(405).json({ error: "Method Not Allowed" });
+    }
 
-  try {
+    try {
+        console.log("Sending reminders...");
+
+        // Simulating a reminder response (Replace with your actual logic)
+        res.status(200).json({ message: "Reminders sent successfully!" });
+    } catch (error) {
+        console.error("Error sending reminders:", error);
+        res.status(500).json({ error: "Failed to send reminders" });
+    }
+}
+
     // Get today's date in YYYY-MM-DD format
     const now = new Date();
     const today = now.toISOString().split('T')[0];
