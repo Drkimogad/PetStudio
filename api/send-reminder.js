@@ -20,7 +20,7 @@ export default async function handler(req, res) {
                 id: doc.name.split('/').pop(),
                 ...doc.fields
             }))
-            .filter(reminder => reminder.date?.stringValue === today); // ✅ Filter reminders for today
+            .filter(reminder => new Date(reminder.date?.stringValue).toISOString().split('T')[0] <= today);
 
         if (reminders.length === 0) {
             console.log('No reminders for today.');
