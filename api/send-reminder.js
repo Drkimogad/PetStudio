@@ -9,9 +9,18 @@
     const today = now.toISOString().split('T')[0];
 
     // Fetch reminders from your backend API (which gets data from Firestore)
-    const response = await fetch(`https://firestore.googleapis.com/v1/projects/swiftreach2025/databases/(default)/documents/reminders?where=date=${today}`);
+    const response = await fetch(`https://firestore.googleapis.com/v1/projects/swiftreach2025/databases/(default)/documents/reminders`);
     if (!response.ok) {
-      throw new Error('Failed to fetch reminders');
+    throw new Error('Failed to fetch reminders');
+    }
+
+    const data = await response.json();
+    const reminders = data.documents
+    .map(doc => ({
+    id: doc.name.split('/').pop(),
+    ...doc.fields
+    }))
+    .filter(reminder => reminder.date?.stringValue === today); // ✅ Filter reminders for today
     }
 
     const reminders = await response.json();
