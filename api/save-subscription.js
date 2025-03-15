@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
   if (req.method === "POST") {
     try {
-      const subscription = req.body;
+      const subscription = req.body.subscription;
       if (!subscription) {
         throw new Error("No subscription data received.");
       }
