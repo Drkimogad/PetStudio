@@ -12,7 +12,7 @@ const firebaseConfig = {
   storageBucket: "swiftreach2025.firebasestorage.app",
   messagingSenderId: "540185558422",
   appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
-  measurementId: "G-SNBPRVBPNM"
+  measurementId: "G-SNBPRVBPNM",
 };
 
 const app = initializeApp(firebaseConfig);
