@@ -13,7 +13,6 @@ const firebaseConfig = {
   messagingSenderId: "540185558422",
   appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
   measurementId: "G-SNBPRVBPNM"
-  vapidKey: "BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk" // Your VAPID key,
 };
 
 const app = initializeApp(firebaseConfig);
