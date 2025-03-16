@@ -1,5 +1,9 @@
 import admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
+console.log("🔥 Firebase Debugging: ");
+console.log("✅ Private Key Loaded:", !!process.env.FIREBASE_PRIVATE_KEY);
+console.log("🔹 Project ID:", process.env.FIREBASE_PROJECT_ID);
+console.log("🔹 Client Email:", process.env.FIREBASE_CLIENT_EMAIL);
 
 if (!admin.apps.length) {
   admin.initializeApp({
