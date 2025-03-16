@@ -1,80 +1,73 @@
 import admin from "firebase-admin";
+import { getFirestore } from "firebase-admin/firestore";
+import { readFileSync } from "fs";
+import path from "path";
 
-// Allow only client-side Firebase usage (no Admin SDK)
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+// Initialize Firebase Admin if not already initialized
+if (!admin.apps.length) {
+  const serviceAccountPath = path.resolve(process.cwd(), "firebase-adminsdk.json"); // Ensure this path is correct
+  const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, "utf8"));
 
-// Initialize Firebase (only needed if not already initialized)
-const firebaseConfig = {
-  apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-  authDomain: "swiftreach2025.firebaseapp.com",
-  projectId: "swiftreach2025",
-  storageBucket: "swiftreach2025.firebasestorage.app",
-  messagingSenderId: "540185558422",
-  appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
-  measurementId: "G-SNBPRVBPNM",
-};
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = getFirestore();
 
 export default async function handler(req, res) {
+  // Allow only GET requests
   if (req.method !== "GET") {
-    res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins (update this for security)
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type"); 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end(); // ✅ Handle preflight request
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    return res.status(405).json({ error: "Method Not Allowed" });
   }
 
   try {
-    // Get today's date
-    const now = new Date();
-    const today = now.toISOString().split("T")[0];
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split("T")[0];
 
-    // Fetch reminders from Firestore (client-side)
-    const remindersCollection = collection(db, "reminders");
-    const snapshot = await getDocs(remindersCollection);
+    // Fetch reminders from Firestore
+    const remindersSnapshot = await db.collection("reminders").where("date", "==", today).get();
 
-    // Process fetched reminders
-    const reminders = snapshot.docs
-      .map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }))
-      .filter((reminder) => reminder.date === today);
-
-    if (reminders.length === 0) {
+    if (remindersSnapshot.empty) {
       console.log("No reminders for today.");
       return res.status(200).json({ message: "No reminders today" });
     }
 
-    // Send Notifications via Firebase Cloud Messaging (FCM)
-    const notifications = reminders.map((reminder) => {
+    // Prepare notifications
+    const fcmServerKey = "BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk"; // 🔴 Replace with actual Firebase server key
+    const notifications = [];
+
+    remindersSnapshot.forEach((doc) => {
+      const reminder = doc.data();
       if (reminder.subscriptionToken) {
-        return fetch("https://fcm.googleapis.com/fcm/send", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `key=BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk	`, // 🔴 Replace with your actual FCM Server Key
-          },
-          body: JSON.stringify({
-            to: reminder.subscriptionToken,
-            notification: {
-              title: "Pet Birthday Reminder! 🎉",
-              body: `It's ${reminder.petName}'s birthday today! 🎂🐶`,
+        notifications.push(
+          fetch("https://fcm.googleapis.com/fcm/send", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `key=${fcmServerKey}`,
             },
-          }),
-        });
+            body: JSON.stringify({
+              to: reminder.subscriptionToken,
+              notification: {
+                title: "🎉 Pet Birthday Reminder!",
+                body: `It's ${reminder.petName}'s birthday today! 🎂🐶`,
+              },
+            }),
+          })
+        );
       } else {
         console.warn(`Missing subscription token for ${reminder.petName}`);
-        return Promise.resolve();
       }
     });
 
     await Promise.all(notifications);
     console.log("Reminders sent successfully!");
     return res.status(200).json({ message: "Reminders sent" });
+
   } catch (error) {
     console.error("Error sending reminders:", error);
     return res.status(500).json({ error: "Failed to send reminders" });
