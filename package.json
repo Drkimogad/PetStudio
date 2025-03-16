@@ -1,6 +1,7 @@
 {
   "name": "PetStudio-App",
   "version": "1.0.0",
+  "type": "module",  // ✅ Add this line
   "description": "A web app to create your pet gallery with a birthday reminder",
   "scripts": {
     "start": "live-server",
