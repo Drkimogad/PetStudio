@@ -1,2 +1,4 @@
 node_modules/
 firebase-adminsdk.json
+# Ignore firebase.json to prevent it from being uploaded to the repository
+firebase.json
