@@ -1,6 +1,5 @@
 import admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
-
 console.log("🔥 Firebase Debugging: ");
 console.log("✅ Private Key Loaded:", !!process.env.FIREBASE_PRIVATE_KEY);
 console.log("🔹 Project ID:", process.env.FIREBASE_PROJECT_ID);
@@ -75,10 +74,28 @@ export default async function handler(req, res) {
     // Extract reminder data
     let reminders = [];
     remindersSnapshot.forEach((doc) => {
-      reminders.push(doc.data());
+      const reminder = doc.data();
+      reminders.push(reminder);
+
+      // Send push notification
+      const message = {
+        notification: {
+          title: 'PetStudio Reminder',
+          body: `Reminder: ${reminder.message}`,
+        },
+        token: reminder.token, // Assuming you store the token in the reminder document
+      };
+
+      admin.messaging().send(message)
+        .then((response) => {
+          console.log('Successfully sent message:', response);
+        })
+        .catch((error) => {
+          console.error('Error sending message:', error);
+        });
     });
 
-    console.log("Reminders found:", reminders);
+    console.log("Reminders found and notifications sent:", reminders);
 
     return res.status(200).json({ reminders });
   } catch (error) {
