@@ -1,3 +1,5 @@
+importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js');
 import { messaging } from 'https://drkimogad.github.io/PetStudio/firebase-config.js'; // Ensure proper export in firebase-config.js
 
 // Push notification event - Handles background messages
