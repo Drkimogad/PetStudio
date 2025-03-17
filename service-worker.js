@@ -38,10 +38,15 @@ self.addEventListener('fetch', (event) => {
             if (cachedResponse) return cachedResponse;
             return fetch(event.request).then(networkResponse => {
                 if (!networkResponse || !networkResponse.ok) throw new Error('Network response not ok');
-                return caches.open(CACHE_NAME).then(cache => {
-                    cache.put(event.request, networkResponse.clone());
+                // Only cache GET requests
+                if (event.request.method === 'GET') {
+                    return caches.open(CACHE_NAME).then(cache => {
+                        cache.put(event.request, networkResponse.clone());
+                        return networkResponse;
+                    });
+                } else {
                     return networkResponse;
-                });
+                }
             }).catch(() => {
                 if (event.request.mode === 'navigate') {
                     return caches.match('index.html') || caches.match(OFFLINE_URL);
