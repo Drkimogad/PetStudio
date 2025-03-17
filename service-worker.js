@@ -9,7 +9,6 @@ const urlsToCache = [
     'https://drkimogad.github.io/PetStudio/icons/icon-512x512.png',
     'https://drkimogad.github.io/PetStudio/favicon.ico',
     'https://drkimogad.github.io/PetStudio/firebase-config.js',
-    'https://drkimogad.github.io/PetStudio/vercel.js',
     'https://drkimogad.github.io/PetStudio/firebase-messaging-sw.js',
     'https://drkimogad.github.io/PetStudio/offline.html' // Ensure offline page is cached
 ];
