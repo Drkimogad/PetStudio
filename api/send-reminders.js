@@ -31,7 +31,7 @@ if (!admin.apps.length) {
         type: process.env.FIREBASE_TYPE,
         projectId: process.env.FIREBASE_PROJECT_ID,
         privateKeyId: process.env.FIREBASE_PRIVATE_KEY_ID,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"), // Replace \\n with \n
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
         clientId: process.env.FIREBASE_CLIENT_ID,
         authUri: process.env.FIREBASE_AUTH_URI,
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
       // Send push notification
       const message = {
         notification: {
-          title: 'PetStudio Reminder',
+          title: `Reminder for ${reminder.petname || 'your pet'}`, // Use petname if available
           body: `Reminder: ${reminder.message}`,
         },
         token: reminder.token, // Assuming you store the token in the reminder document
