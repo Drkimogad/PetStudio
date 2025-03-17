@@ -77,11 +77,14 @@ export default async function handler(req, res) {
       const reminder = doc.data();
       reminders.push(reminder);
 
+      // Construct the personalized message
+      const notificationMessage = `It's ${reminder.petname}'s birthday today. We wish our pawsome friend a fabulous day! 🐾🎉`;
+
       // Send push notification
       const message = {
         notification: {
-          title: `Reminder for ${reminder.petname || 'your pet'}`, // Use petname if available
-          body: `Reminder: ${reminder.message}`,
+          title: 'PetStudio Reminder',
+          body: notificationMessage,
         },
         token: reminder.token, // Assuming you store the token in the reminder document
       };
