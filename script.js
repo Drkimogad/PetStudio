@@ -194,7 +194,7 @@ function urlBase64ToUint8Array(base64String) {
 
 // Register service worker and handle both push & caching
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('https://drkimogad.github.io/PetStudio/service-worker.js')
+    navigator.serviceWorker.register('./service-worker.js')
         .then(registration => {
             console.log('Service Worker registered:', registration.scope);
             subscribeUserToPushNotifications(registration); // Subscribe user to push notifications
