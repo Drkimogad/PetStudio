@@ -192,11 +192,11 @@ function urlBase64ToUint8Array(base64String) {
     return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
 }
 
-// Register service worker and handle both push & caching
+// Register service worker for caching and handle push notifications
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js')
         .then(registration => {
-            console.log('Service Worker registered:', registration.scope);
+            console.log('Caching Service Worker registered:', registration.scope);
             subscribeUserToPushNotifications(registration); // Subscribe user to push notifications
 
             // Check for service worker updates
@@ -216,6 +216,25 @@ if ('serviceWorker' in navigator) {
         console.log('New service worker activated, reloading page...');
         location.reload(); // Ensures the latest version loads
     });
+}
+
+// Register Firebase service worker for push notifications
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./firebase-messaging-sw.js')
+        .then(registration => {
+            console.log('Firebase Service Worker registered:', registration.scope);
+
+            // Optional: Handle updates for Firebase service worker if needed
+            registration.addEventListener('updatefound', () => {
+                const installingWorker = registration.installing;
+                installingWorker.addEventListener('statechange', () => {
+                    if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        installingWorker.postMessage({ action: 'skipWaiting' });
+                    }
+                });
+            });
+        })
+        .catch(error => console.error('Firebase Service Worker registration failed:', error));
 }
 
 // Handle notification permission
