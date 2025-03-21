@@ -69,24 +69,11 @@
         <p>&copy; 2024 PetStudio. All rights reserved.</p>
     </footer>
 
-    <!-- Service Worker -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(function(registration) {
-            console.log('Service Worker registered with scope:', registration.scope);
-          })
-          .catch(function(error) {
-            console.log('Service Worker registration failed:', error);
-          });
-      }
-    </script>
-
     <!-- Custom Scripts -->
     <script src="script.js" defer></script>
     <script src="save-subscription.js" defer></script>
     <script src="send-reminders.js" defer></script>
     <script src="firebase-config.js" type="module" defer></script>
-    <script src="firebase-messaging-sw.js" defer></script>
+    
 </body>
 </html>
