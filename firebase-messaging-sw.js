@@ -1,6 +1,6 @@
 importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js');
-import { messaging } from 'https://drkimogad.github.io/PetStudio/firebase-config.js'; // Ensure proper export in firebase-config.js
+import { messaging } from './firebase-config.js'; // Ensure proper export in firebase-config.js
 
 // Push notification event - Handles background messages
 self.addEventListener('push', (event) => {
@@ -22,8 +22,8 @@ self.addEventListener('push', (event) => {
 
     const options = {
         body: notificationData.body,
-        icon: 'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
-        badge: 'https://drkimogad.github.io/PetStudio/icons/icon-192x192.png',
+        icon: './icons/icon-192x192.png',
+        badge: './icons/icon-192x192.png',
     };
 
     event.waitUntil(
