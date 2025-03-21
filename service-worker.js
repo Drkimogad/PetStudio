@@ -1,3 +1,4 @@
+// the best sw.js template for future use.
 const CACHE_NAME = 'PetStudio-cache-v6'; // Update cache version 
 const urlsToCache = [
     './PetStudio/',
@@ -13,6 +14,8 @@ const urlsToCache = [
     './vercel.json',
     './offline.html' // Ensure offline page is cached
 ];
+
+const TIMEOUT = 5000; // Network request timeout in milliseconds
 
 // Install event: Precache static assets
 self.addEventListener('install', (event) => {
@@ -32,27 +35,31 @@ self.addEventListener('install', (event) => {
     ); 
 });
 
-// Fetch event: Serve from cache, then update cache
+// Fetch event: Serve from cache, then update cache with timeout
 self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request).then(cachedResponse => {
             if (cachedResponse) return cachedResponse;
-            return fetch(event.request).then(networkResponse => {
-                if (!networkResponse || !networkResponse.ok) throw new Error('Network response not ok');
-                // Only cache GET requests
-                if (event.request.method === 'GET') {
-                    return caches.open(CACHE_NAME).then(cache => {
-                        cache.put(event.request, networkResponse.clone());
-                        return networkResponse;
-                    });
-                } else {
-                    return networkResponse;
-                }
-            }).catch(() => {
-                if (event.request.mode === 'navigate') {
-                    return caches.match('index.html') || caches.match(OFFLINE_URL);
-                }
-                return caches.match('/offline.html');
+
+            return new Promise((resolve, reject) => {
+                const timeoutId = setTimeout(reject, TIMEOUT);
+                fetch(event.request).then(networkResponse => {
+                    clearTimeout(timeoutId);
+                    if (!networkResponse || !networkResponse.ok) throw new Error('Network response not ok');
+                    // Only cache GET requests
+                    if (event.request.method === 'GET') {
+                        caches.open(CACHE_NAME).then(cache => {
+                            cache.put(event.request, networkResponse.clone());
+                        });
+                    }
+                    resolve(networkResponse);
+                }).catch(() => {
+                    if (event.request.mode === 'navigate') {
+                        caches.match('index.html').then(resolve);
+                    } else {
+                        caches.match('/offline.html').then(resolve);
+                    }
+                });
             });
         })
     );
@@ -69,4 +76,21 @@ self.addEventListener('activate', (event) => {
             ).then(() => self.clients.claim())
         )
     );
+});
+
+// Listen for messages from the client
+self.addEventListener('message', (event) => {
+    if (event.data === 'skipWaiting') {
+        self.skipWaiting();
+    }
+});
+
+// Notify clients about the new service worker
+self.addEventListener('updatefound', () => {
+    const newWorker = self.installing;
+    newWorker.onstatechange = () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            newWorker.postMessage({ action: 'newVersion' });
+        }
+    };
 });
