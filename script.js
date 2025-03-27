@@ -243,47 +243,88 @@ document.addEventListener("DOMContentLoaded", () => {
         renderProfiles();
     });
 
-    // ======================
-    // UNCHANGED: Auth Logic
-    // ======================
-    document.getElementById("loginLink").addEventListener("click", (e) => {
-        e.preventDefault();
-        document.getElementById("signupPage").classList.add("hidden");
-        document.getElementById("loginPage").classList.remove("hidden");
-    });
+ // ======================
+// Auth Flow Fixes
+// ======================
 
-    signupForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        localStorage.setItem("username", document.getElementById("newUsername").value);
-        localStorage.setItem("password", document.getElementById("newPassword").value);
-        alert("Sign-up successful! Please log in.");
+// 1. Signup Form Handler (Updated)
+signupForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const username = document.getElementById("newUsername").value;
+    const password = document.getElementById("newPassword").value;
+
+    // Basic validation
+    if (!username || !password) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    localStorage.setItem("petStudio_username", username);
+    localStorage.setItem("petStudio_password", password);
+    
+    // Clear form and redirect
+    signupForm.reset();
+    signupPage.classList.add("hidden");
+    loginPage.classList.remove("hidden");
+    
+    // Auto-fill login for convenience
+    document.getElementById("username").value = username;
+    document.getElementById("password").value = password;
+});
+
+// 2. Login Form Handler (Updated)
+loginForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const storedUser = localStorage.getItem("petStudio_username");
+    const storedPass = localStorage.getItem("petStudio_password");
+
+    if (username === storedUser && password === storedPass) {
+        // Set session flag
+        localStorage.setItem("petStudio_loggedIn", "true");
+        
+        // Redirect to dashboard
+        loginPage.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+        logoutBtn.style.display = "block";
+        renderProfiles();
+    } else {
+        alert("Invalid credentials. Please try again.");
+    }
+});
+
+// 3. Page Load Check (NEW)
+function checkAuthState() {
+    const isLoggedIn = localStorage.getItem("petStudio_loggedIn") === "true";
+    
+    if (isLoggedIn) {
+        loginPage.classList.add("hidden");
         signupPage.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+        logoutBtn.style.display = "block";
+        renderProfiles();
+    } else {
         loginPage.classList.remove("hidden");
-    });
-
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-
-        if (username === localStorage.getItem("username") && password === localStorage.getItem("password")) {
-            alert("Login successful!");
-            loginPage.classList.add("hidden");
-            dashboard.classList.remove("hidden");
-            logoutBtn.style.display = "block";
-            renderProfiles();
-        } else {
-            alert("Invalid username or password.");
-        }
-    });
-
-    logoutBtn.addEventListener("click", function () {
-        localStorage.removeItem("loggedInUser");
-        document.getElementById("dashboard").classList.add("hidden");
-        document.getElementById("loginPage").classList.remove("hidden");
+        signupPage.classList.add("hidden");
+        dashboard.classList.add("hidden");
         logoutBtn.style.display = "none";
-        console.log("User logged out successfully");
-    });
+    }
+}
+
+// 4. Logout Handler (Updated)
+logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("petStudio_loggedIn");
+    dashboard.classList.add("hidden");
+    loginPage.classList.remove("hidden");
+    logoutBtn.style.display = "none";
+});
+
+// Initialize auth state on load
+document.addEventListener("DOMContentLoaded", () => {
+    checkAuthState(); // NEW: Check auth status on page load
+    
+});
 
     // ======================
     // UNCHANGED: Service Worker/Push Notifications
