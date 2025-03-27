@@ -243,61 +243,73 @@ document.addEventListener("DOMContentLoaded", () => {
         renderProfiles();
     });
 
- // ======================
-// Auth Flow Fixes
+// ======================
+// Consolidated Auth Flow Fix
 // ======================
 
-// 1. Signup Form Handler (Updated)
+// 1. Signup Form Handler - Fixed Version
 signupForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const username = document.getElementById("newUsername").value;
-    const password = document.getElementById("newPassword").value;
+    const username = document.getElementById("newUsername").value.trim();
+    const password = document.getElementById("newPassword").value.trim();
 
-    // Basic validation
     if (!username || !password) {
         alert("Please fill all fields");
         return;
     }
 
+    // Save credentials and immediately show login
     localStorage.setItem("petStudio_username", username);
     localStorage.setItem("petStudio_password", password);
     
-    // Clear form and redirect
-    signupForm.reset();
-    signupPage.classList.add("hidden");
-    loginPage.classList.remove("hidden");
+    // Visual feedback before redirect
+    alert("Account created successfully! Redirecting to login...");
     
-    // Auto-fill login for convenience
-    document.getElementById("username").value = username;
-    document.getElementById("password").value = password;
+    // Force redraw before hiding
+    setTimeout(() => {
+        signupPage.classList.add("hidden");
+        loginPage.classList.remove("hidden");
+        document.getElementById("username").value = username;
+        document.getElementById("password").focus();
+    }, 100);
 });
 
-// 2. Login Form Handler (Updated)
+// 2. Login Form Handler - Debuggable Version
 loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
     const storedUser = localStorage.getItem("petStudio_username");
     const storedPass = localStorage.getItem("petStudio_password");
 
+    console.log("Login attempt:", { username, storedUser }); // Debug line
+
     if (username === storedUser && password === storedPass) {
-        // Set session flag
         localStorage.setItem("petStudio_loggedIn", "true");
         
-        // Redirect to dashboard
+        // Verify elements before manipulation
+        console.log("Elements:", { 
+            loginPage, 
+            dashboard,
+            logoutBtn 
+        }); // Debug line
+        
         loginPage.classList.add("hidden");
         dashboard.classList.remove("hidden");
         logoutBtn.style.display = "block";
         renderProfiles();
     } else {
-        alert("Invalid credentials. Please try again.");
+        alert(`Login failed. ${!storedUser ? "No account found" : "Invalid password"}`);
     }
 });
 
-// 3. Page Load Check (NEW)
-function checkAuthState() {
+// 3. Unified Initialization
+function initializeApp() {
+    // Check auth state first
     const isLoggedIn = localStorage.getItem("petStudio_loggedIn") === "true";
     
+    console.log("Initial auth state:", isLoggedIn); // Debug line
+
     if (isLoggedIn) {
         loginPage.classList.add("hidden");
         signupPage.classList.add("hidden");
@@ -305,26 +317,19 @@ function checkAuthState() {
         logoutBtn.style.display = "block";
         renderProfiles();
     } else {
+        // Default to login page
         loginPage.classList.remove("hidden");
         signupPage.classList.add("hidden");
         dashboard.classList.add("hidden");
         logoutBtn.style.display = "none";
     }
+
+    // Load profiles if any
+    if (petProfiles.length > 0) renderProfiles();
 }
 
-// 4. Logout Handler (Updated)
-logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("petStudio_loggedIn");
-    dashboard.classList.add("hidden");
-    loginPage.classList.remove("hidden");
-    logoutBtn.style.display = "none";
-});
-
-// Initialize auth state on load
-document.addEventListener("DOMContentLoaded", () => {
-    checkAuthState(); // NEW: Check auth status on page load
-    
-});
+// Single DOMContentLoaded listener
+document.addEventListener("DOMContentLoaded", initializeApp);
 
     // ======================
     // UNCHANGED: Service Worker/Push Notifications
