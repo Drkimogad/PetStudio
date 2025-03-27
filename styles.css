@@ -312,3 +312,66 @@ footer {
 #enableNotificationsButton:hover {
     background-color: #28a745; /* Darker shade for hover effect */
 }
+
+/* Add Profile Button */
+.add-profile-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px;
+    transition: background 0.3s;
+}
+
+.add-profile-btn:hover {
+    background: #45a049;
+}
+
+/* Profile Card Layout */
+.petCard {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background: white;
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.countdown {
+    color: #e91e63;
+    font-weight: bold;
+}
+
+/* Mood Tracker */
+.mood-buttons {
+    margin: 10px 0;
+}
+
+.mood-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin: 0 5px;
+    transition: transform 0.2s;
+}
+
+.mood-btn:hover {
+    transform: scale(1.2);
+}
+
+.mood-history {
+    background: #f5f5f5;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
