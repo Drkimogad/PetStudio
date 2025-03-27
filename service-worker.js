@@ -1,96 +1,81 @@
-// the best sw.js template for future use.
-const CACHE_NAME = 'PetStudio-cache-v6'; // Update cache version 
-const urlsToCache = [
-    './PetStudio/',
-    './index.html',
-    './styles.css',
-    './script.js',
-    './manifest.json',
-    './icons/icon-192x192.png',
-    './icons/icon-512x512.png',
-    './favicon.ico',
-    './firebase-config.js',
-    './firebase.json',
-    './vercel.json',
-    './offline.html' // Ensure offline page is cached
+const CACHE_NAME = 'PetStudio-cache-v6';
+const API_CACHE = 'api-cache-v1';
+const FONT_CACHE = 'fonts-cache-v1';
+
+const OFFLINE_URL = '/offline.html';
+const CORE_ASSETS = [
+    '/',
+    '/index.html',
+    '/styles.css',
+    '/script.js',
+    '/manifest.json',
+    '/icons/icon-192x192.png',
+    '/icons/icon-512x512.png',
+    OFFLINE_URL
 ];
 
-const TIMEOUT = 5000; // Network request timeout in milliseconds
-
-// Install event: Precache static assets
+// Install: Precaching
 self.addEventListener('install', (event) => {
-    self.skipWaiting();
     event.waitUntil(
-        caches.open(CACHE_NAME).then(async (cache) => {
-            for (const url of urlsToCache) {
-                try {
-                    console.log(`Caching: ${url}`);
-                    await cache.add(url);
-                    console.log(`Cached successfully: ${url}`);
-                } catch (error) {
-                    console.warn(`Failed to cache ${url}:`, error);
-                }
-            }
-        })
-    ); 
-});
-
-// Fetch event: Serve from cache, then update cache with timeout
-self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        caches.match(event.request).then(cachedResponse => {
-            if (cachedResponse) return cachedResponse;
-
-            return new Promise((resolve, reject) => {
-                const timeoutId = setTimeout(reject, TIMEOUT);
-                fetch(event.request).then(networkResponse => {
-                    clearTimeout(timeoutId);
-                    if (!networkResponse || !networkResponse.ok) throw new Error('Network response not ok');
-                    // Only cache GET requests
-                    if (event.request.method === 'GET') {
-                        caches.open(CACHE_NAME).then(cache => {
-                            cache.put(event.request, networkResponse.clone());
-                        });
-                    }
-                    resolve(networkResponse);
-                }).catch(() => {
-                    if (event.request.mode === 'navigate') {
-                        caches.match('index.html').then(resolve);
-                    } else {
-                        caches.match('/offline.html').then(resolve);
-                    }
-                });
-            });
-        })
+        caches.open(CACHE_NAME).then(cache => 
+            Promise.all(
+                CORE_ASSETS.map(url => 
+                    fetch(url).then(res => 
+                        res.ok ? cache.put(url, res) : null
+                    ).catch(console.warn)
+            )
+        ).then(() => self.skipWaiting())
     );
 });
 
-// Activate event: Cleanup old caches
+// Fetch: Optimized strategies
+self.addEventListener('fetch', (event) => {
+    const { request } = event;
+    const url = new URL(request.url);
+
+    // Cache-first for static assets
+    if (CORE_ASSETS.includes(url.pathname)) {
+        event.respondWith(caches.match(request));
+        return;
+    }
+
+    // Network-first for HTML
+    if (request.mode === 'navigate') {
+        event.respondWith(
+            fetch(request).catch(() => caches.match(OFFLINE_URL))
+        );
+        return;
+    }
+
+    // API caching
+    if (url.pathname.startsWith('/api/')) {
+        event.respondWith(
+            fetch(request).then(networkResponse => {
+                const clone = networkResponse.clone();
+                caches.open(API_CACHE).then(cache => cache.put(request, clone));
+                return networkResponse;
+            }).catch(() => caches.match(request))
+        );
+        return;
+    }
+
+    // Default: Network with cache fallback
+    event.respondWith(
+        fetch(request).catch(() => caches.match(request))
+    );
+});
+
+// Activate: Cleanup
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then(cacheNames => 
+        caches.keys().then(keys => 
             Promise.all(
-                cacheNames.map(cacheName => 
-                    cacheName !== CACHE_NAME ? caches.delete(cacheName) : null
+                keys.map(key => 
+                    ![CACHE_NAME, API_CACHE, FONT_CACHE].includes(key) 
+                        ? caches.delete(key) 
+                        : null
                 )
-            ).then(() => self.clients.claim())
-        )
+            )
+        ).then(() => self.clients.claim())
     );
-});
-
-// Listen for messages from the client
-self.addEventListener('message', (event) => {
-    if (event.data === 'skipWaiting') {
-        self.skipWaiting();
-    }
-});
-
-// Notify clients about the new service worker
-self.addEventListener('updatefound', () => {
-    const newWorker = self.installing;
-    newWorker.onstatechange = () => {
-        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            newWorker.postMessage({ action: 'newVersion' });
-        }
-    };
 });
