@@ -1,8 +1,8 @@
-/* General Styling */
+/* ======== YOUR EXISTING STYLES ======== */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 0 0 80px; /* NEW: Padding for fixed footer */
     background-color: #f5f5f5;
 }
 
@@ -283,54 +283,144 @@ footer {
     }
 }
 
-/* Centralized styling for "Already have an account? Login here" */
-#loginLinkContainer {
+/* ======== ENHANCEMENTS ======== */
+/* NEW: Fixed Footer */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 15px 0;
+    background-color: #6a0dad;
+    color: white;
+    text-align: center;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+
+/* NEW: Gallery Grid */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.gallery-item {
+    position: relative;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+.cover-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: gold;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
     display: flex;
-    justify-content: center;  /* Centers the content horizontally */
-    align-items: center;      /* Centers the content vertically (if the container has height) */
-    text-align: center;       /* Centers text inside the container */
-    margin-top: 20px;         /* Adds spacing from the elements above */
-    font-size: 16px;          /* Adjust the text size if necessary */
-    color: #555555;           /* Optional: Style the text color */
-    height: 100%;             /* Ensure it has a height to allow vertical centering */
-}
-
-/* New styling for the enable notifications button */
-#enableNotificationsButton {
-    background-color: #32cd32; /* Lime green background */
-    color: white;
-    padding: 10px 20px;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
-    display: block; /* Ensure it occupies its own line */
-    margin: 20px auto; /* Center the button horizontally */
-    width: 200px; /* Optional: Fixed width for uniformity */
-    font-size: 16px; /* Increase font size for better visibility */
 }
 
-#enableNotificationsButton:hover {
-    background-color: #28a745; /* Darker shade for hover effect */
-}
-
-/* Add Profile Button */
-.add-profile-btn {
-    background: #4CAF50;
+.cover-btn.active {
+    background: orange;
     color: white;
+}
+
+/* NEW: Mood Tracker */
+.mood-tracker {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #e0e0e0;
+}
+
+.mood-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.mood-history {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #ccc;
+    font-size: 0.9em;
+    color: #555;
+}
+
+/* NEW: Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.action-buttons button {
+    flex: 1;
+    min-width: 80px;
+    padding: 8px;
+    font-size: 14px;
     border: none;
-    padding: 10px 15px;
     border-radius: 4px;
+    color: white;
     cursor: pointer;
-    font-size: 16px;
-    margin: 10px;
-    transition: background 0.3s;
+    transition: opacity 0.2s;
 }
 
-.add-profile-btn:hover {
-    background: #45a049;
+.action-buttons button:hover {
+    opacity: 0.9;
 }
 
-/* Profile Card Layout */
+.editBtn { background: #6a0dad; } /* Your purple */
+.deleteBtn { background: #dc3545; }
+.printBtn { background: #007bff; }
+.shareBtn { background: #ffa500; } /* Your orange */
+
+/* NEW: Print Optimizations */
+@media print {
+    body {
+        padding-bottom: 0;
+    }
+    
+    footer {
+        display: none;
+    }
+    
+    .petCard {
+        break-inside: avoid;
+        margin-bottom: 20pt;
+        page-break-inside: avoid;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    .gallery-item img {
+        max-height: 2.5in !important;
+    }
+}
 .petCard {
     border: 1px solid #ddd;
     border-radius: 8px;
