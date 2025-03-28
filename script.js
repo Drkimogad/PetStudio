@@ -21,19 +21,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentEditIndex = null;
 
     // ======================
-    // Add Pet Profile Button Event Listeners
+    // NEW: Button Event Listeners
     // ======================
-    createProfileBtn.addEventListener("click", () => {
+    addPetProfileBtn.addEventListener("click", () => {
         isEditing = false;
         profileForm.reset();
         profileSection.classList.remove("hidden");
-    });
-    //  =======≈==================
-    // Add logout btn eventlistener
-    // =============================
-    logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("petStudio_loggedIn");
-    location.reload();
     });
 
     // ======================
@@ -44,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
         petProfiles.forEach((profile, index) => {
             const petCard = document.createElement("div");
             petCard.classList.add("petCard");
-            
+
             petCard.innerHTML = `
                 <div class="profile-header">
                     <h3>${profile.name}</h3>
@@ -55,17 +48,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p><strong>DOB:</strong> ${profile.dob}</p>
                     <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
                 </div>
-
                 <div class="gallery-grid">
                     ${profile.gallery.map((img, imgIndex) => `
                         <div class="gallery-item">
                             <img src="${img}" alt="Pet Photo">
-                            <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}" 
+                            <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
                                     data-index="${imgIndex}">★</button>
                         </div>
                     `).join('')}
                 </div>
-
                 <div class="mood-tracker">
                     <div class="mood-buttons">
                         <span>Log Mood:</span>
@@ -77,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         ${renderMoodHistory(profile)}
                     </div>
                 </div>
-
                 <div class="action-buttons">
                     <button class="editBtn">✏️ Edit</button>
                     <button class="deleteBtn">🗑️ Delete</button>
@@ -88,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
             petCard.querySelector(".editBtn").addEventListener("click", () => openEditForm(index));
             petCard.querySelector(".deleteBtn").addEventListener("click", () => deleteProfile(index));
             petCard.querySelector(".printBtn").addEventListener("click", () => printProfile(profile));
-            
+
             petCard.querySelectorAll(".mood-btn").forEach(btn => {
                 btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
             });
@@ -129,12 +119,12 @@ document.addEventListener("DOMContentLoaded", () => {
         isEditing = true;
         currentEditIndex = index;
         const profile = petProfiles[index];
-        
+
         document.getElementById("petName").value = profile.name;
         document.getElementById("petBreed").value = profile.breed;
         document.getElementById("petDob").value = profile.dob;
         document.getElementById("petBirthday").value = profile.birthday;
-        
+
         profileSection.classList.remove("hidden");
     }
 
@@ -163,18 +153,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     <h1>${profile.name}'s Profile</h1>
                     <p>Generated on ${new Date().toLocaleDateString()}</p>
                 </div>
-                
                 <div class="print-details">
                     <p><strong>Breed:</strong> ${profile.breed}</p>
                     <p><strong>Date of Birth:</strong> ${profile.dob}</p>
                     <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
                 </div>
-                
                 <h3>Gallery</h3>
                 <div class="print-gallery">
                     ${profile.gallery.map(img => `<img src="${img}" alt="Pet photo">`).join('')}
                 </div>
-                
                 <script>
                     window.onload = function() {
                         setTimeout(function() {
@@ -191,12 +178,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function logMood(profileIndex, mood) {
         const today = new Date().toISOString().split('T')[0];
         if (!petProfiles[profileIndex].moodLog) petProfiles[profileIndex].moodLog = [];
-        
+
         petProfiles[profileIndex].moodLog.push({
             date: today,
             mood: mood
         });
-        
+
         localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
         renderProfiles();
     }
@@ -212,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ======================
     profileForm.addEventListener("submit", (e) => {
         e.preventDefault();
-        
+
         const newProfile = {
             name: document.getElementById("petName").value,
             breed: document.getElementById("petBreed").value,
@@ -228,99 +215,99 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             petProfiles.push(newProfile);
         }
-        
+
         localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
         profileSection.classList.add("hidden");
         profileForm.reset();
         renderProfiles();
     });
 
-// ======================
-// Consolidated Auth Flow Fix
-// ======================
-// 1. Signup Form Handler - Fixed Version
-signupForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const username = document.getElementById("newUsername").value.trim();
-    const password = document.getElementById("newPassword").value.trim();
+    // ======================
+    // Consolidated Auth Flow Fix
+    // ======================
+    // 1. Signup Form Handler - Fixed Version
+    signupForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const username = document.getElementById("newUsername").value.trim();
+        const password = document.getElementById("newPassword").value.trim();
 
-    if (!username || !password) {
-        alert("Please fill all fields");
-        return;
+        if (!username || !password) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        // Save credentials and immediately show login
+        localStorage.setItem("petStudio_username", username);
+        localStorage.setItem("petStudio_password", password);
+
+        // Visual feedback before redirect
+        alert("Account created successfully! Redirecting to login...");
+
+        // Force redraw before hiding
+        setTimeout(() => {
+            signupPage.classList.add("hidden");
+            loginPage.classList.remove("hidden");
+            document.getElementById("username").value = username;
+            document.getElementById("password").focus();
+        }, 100);
+    });
+
+    // 2. Login Form Handler - Debuggable Version
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const storedUser = localStorage.getItem("petStudio_username");
+        const storedPass = localStorage.getItem("petStudio_password");
+
+        console.log("Login attempt:", { username, storedUser }); // Debug line
+
+        if (username === storedUser && password === storedPass) {
+            localStorage.setItem("petStudio_loggedIn", "true");
+
+            // Verify elements before manipulation
+            console.log("Elements:", { 
+                loginPage, 
+                dashboard,
+                logoutBtn 
+            }); // Debug line
+
+            loginPage.classList.add("hidden");
+            dashboard.classList.remove("hidden");
+            logoutBtn.style.display = "block";
+            renderProfiles();
+        } else {
+            alert(`Login failed. ${!storedUser ? "No account found" : "Invalid password"}`);
+        }
+    });
+
+    // 3. Unified Initialization
+    function initializeApp() {
+        // Check auth state first
+        const isLoggedIn = localStorage.getItem("petStudio_loggedIn") === "true";
+
+        console.log("Initial auth state:", isLoggedIn); // Debug line
+
+        if (isLoggedIn) {
+            loginPage.classList.add("hidden");
+            signupPage.classList.add("hidden");
+            dashboard.classList.remove("hidden");
+            logoutBtn.style.display = "block";
+            renderProfiles();
+        } else {
+            // Default to login page
+            loginPage.classList.remove("hidden");
+            signupPage.classList.add("hidden");
+            dashboard.classList.add("hidden");
+            logoutBtn.style.display = "none";
+        }
+
+        // Load profiles if any
+        if (petProfiles.length > 0) renderProfiles();
     }
 
-    // Save credentials and immediately show login
-    localStorage.setItem("petStudio_username", username);
-    localStorage.setItem("petStudio_password", password);
-    
-    // Visual feedback before redirect
-    alert("Account created successfully! Redirecting to login...");
-    
-    // Force redraw before hiding
-    setTimeout(() => {
-        signupPage.classList.add("hidden");
-        loginPage.classList.remove("hidden");
-        document.getElementById("username").value = username;
-        document.getElementById("password").focus();
-    }, 100);
-});
-
-// 2. Login Form Handler - Debuggable Version
-loginForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const storedUser = localStorage.getItem("petStudio_username");
-    const storedPass = localStorage.getItem("petStudio_password");
-
-    console.log("Login attempt:", { username, storedUser }); // Debug line
-
-    if (username === storedUser && password === storedPass) {
-        localStorage.setItem("petStudio_loggedIn", "true");
-        
-        // Verify elements before manipulation
-        console.log("Elements:", { 
-            loginPage, 
-            dashboard,
-            logoutBtn 
-        }); // Debug line
-        
-        loginPage.classList.add("hidden");
-        dashboard.classList.remove("hidden");
-        logoutBtn.style.display = "block";
-        renderProfiles();
-    } else {
-        alert(`Login failed. ${!storedUser ? "No account found" : "Invalid password"}`);
-    }
-});
-
-// 3. Unified Initialization
-function initializeApp() {
-    // Check auth state first
-    const isLoggedIn = localStorage.getItem("petStudio_loggedIn") === "true";
-    
-    console.log("Initial auth state:", isLoggedIn); // Debug line
-
-    if (isLoggedIn) {
-        loginPage.classList.add("hidden");
-        signupPage.classList.add("hidden");
-        dashboard.classList.remove("hidden");
-        logoutBtn.style.display = "block";
-        renderProfiles();
-    } else {
-        // Default to login page
-        loginPage.classList.remove("hidden");
-        signupPage.classList.add("hidden");
-        dashboard.classList.add("hidden");
-        logoutBtn.style.display = "none";
-    }
-
-    // Load profiles if any
-    if (petProfiles.length > 0) renderProfiles();
-}
-
-// Single DOMContentLoaded listener
-document.addEventListener("DOMContentLoaded", initializeApp);
+    // Single DOMContentLoaded listener
+    document.addEventListener("DOMContentLoaded", initializeApp);
 
     // ======================
     // UNCHANGED: Service Worker/Push Notifications
