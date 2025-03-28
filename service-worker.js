@@ -19,20 +19,19 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => 
             Promise.all(
-                CORE_ASSETS.map(url => 
-                    fetch(url, { method: 'GET' }) // Ensure it's a GET request
-                        .then(res => {
-                            if (res.ok) {
-                                return cache.put(url, res);
-                            }
-                            return null;
-                        })
-                        .catch(console.warn)
-                )
+                CORE_ASSETS.map(url => {
+                    // Ensure you're only fetching and caching GET requests
+                    return fetch(url, { method: 'GET' })
+                        .then(res => 
+                            res.ok ? cache.put(url, res) : null
+                        )
+                        .catch(console.warn);
+                })
             ).then(() => self.skipWaiting())
         )
     );
 });
+
 
 // Fetch: Optimized strategies
 self.addEventListener('fetch', (event) => {
