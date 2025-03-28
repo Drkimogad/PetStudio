@@ -23,8 +23,9 @@ self.addEventListener('install', (event) => {
                     fetch(url).then(res => 
                         res.ok ? cache.put(url, res) : null
                     ).catch(console.warn)
-            )
-        ).then(() => self.skipWaiting())
+                )
+            ).then(() => self.skipWaiting())
+        )
     );
 });
 
