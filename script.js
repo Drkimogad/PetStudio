@@ -246,7 +246,14 @@ document.addEventListener("DOMContentLoaded", () => {
 // ======================
 // Consolidated Auth Flow Fix
 // ======================
-
+const header = document.querySelector("header");
+if (header) {
+    header.appendChild(addNewProfileBtn);
+} else {
+    console.error("Header element not found!");
+    // Fallback: Add button to body or another container
+    document.body.insertAdjacentElement('afterbegin', addNewProfileBtn);
+}
 // 1. Signup Form Handler - Fixed Version
 signupForm.addEventListener("submit", (e) => {
     e.preventDefault();
