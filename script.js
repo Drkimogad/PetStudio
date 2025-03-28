@@ -28,6 +28,13 @@ document.addEventListener("DOMContentLoaded", () => {
         profileForm.reset();
         profileSection.classList.remove("hidden");
     });
+    //  =======≈==================
+    // Add logout btn eventlistener
+    // =============================
+    logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("petStudio_loggedIn");
+    location.reload();
+    });
 
     // ======================
     // UPDATED: Enhanced Profile Rendering
