@@ -1,4 +1,5 @@
-/* ======== YOUR EXISTING STYLES ======== */
+/* Other existing styles... */
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -550,4 +551,32 @@ footer {
 .cover-btn.active {
     background: gold;
     color: black;
+}
+
+/* NEW: Banner Image CSS */
+.banner {
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+    margin-bottom: 20px;
+    max-width: 100%; /* Ensure banner fits within its container */
+}
+
+.banner-image {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    object-fit: cover;
+}
+
+.banner-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 1.5em;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
 }
