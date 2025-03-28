@@ -395,7 +395,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // ======================
     logoutBtn.addEventListener("click", () => {
         localStorage.removeItem("petStudio_loggedIn");
-        signupPage.classList.remove("hidden");
+        loginPage.classList.remove("hidden");
+        signupPage.classList.add("hidden");
         dashboard.classList.add("hidden");
     });
 });
