@@ -58,22 +58,26 @@
                 <button type="submit" class="button">Save Profile</button>
             </form>
         </div>
+        
+        <!-- Added pet list container -->
+        <div id="petList" class="pet-list"></div>
+        
         <!-- Logout button -->
         <button id="logoutBtn" class="button">Logout</button>
     </div>
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2024 PetStudio. All rights reserved.</p>
+        <p>&copy; 2025 PetStudio. All rights reserved.</p>
     </footer>
 
-    <!-- Custom Scripts -->
-    <script src="script.js" defer></script>
-    <!-- Include Firebase CDN -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js"></script>
+    <!-- Firebase CDN should be before your custom scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
     
+    <!-- Custom Scripts -->
+    <script src="script.js"></script>
 </body>
 </html>
