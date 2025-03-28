@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentEditIndex = null;
 
     // ======================
-    // NEW: Button Event Listeners
+    // Button Event Listeners
     // ======================
     addPetProfileBtn.addEventListener("click", () => {
         isEditing = false;
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ======================
-    // UPDATED: Enhanced Profile Rendering
+    // Enhanced Profile Rendering
     // ======================
     function renderProfiles() {
         petList.innerHTML = '';
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ======================
-    // NEW: Helper Functions
+    // Helper Functions
     // ======================
     function getCountdown(birthday) {
         const today = new Date();
@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ======================
-    // UPDATED: Form Handling
+    // Form Handling
     // ======================
     profileForm.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -382,4 +382,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialization
     // ======================
     if (petProfiles.length > 0) renderProfiles();
+
+    // ======================
+    // Logout Button Functionality
+    // ======================
+    logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("petStudio_loggedIn");
+        location.reload();
+    });
 });
