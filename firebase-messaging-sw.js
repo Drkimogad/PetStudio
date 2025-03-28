@@ -1,7 +1,11 @@
 importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js');
-import { messaging } from './firebase-config.js'; // Ensure proper export in firebase-config.js
 
+import { messaging } from './firebase-config.js'; // Ensure proper export in firebase-config.js
+import { auth } from './firebase-config.js'; // Ensure proper export in firebase-config.js
+import { db } from './firebase-config.js'; // Ensure proper export in firebase-config.js
+
+// firebase cloud messaging section //
 // Push notification event - Handles background messages
 self.addEventListener('push', (event) => {
     let notificationData = { title: 'PetStudio Reminder', body: 'You have a new reminder!' };
@@ -47,3 +51,71 @@ self.addEventListener('notificationclick', (event) => {
         })
     );
 });
+
+
+// ----------------------
+// SECTION 2: AUTH
+// ----------------------
+
+// This is an example of handling authentication inside a service worker.
+// Optional Feature: This section helps to sync user tokens in the background.
+
+self.addEventListener('fetch', async (event) => {
+    if (event.request.url.includes('/token-sync')) {
+        event.respondWith((async () => {
+            const userToken = await getUserAuthToken(); // Get auth token logic (e.g., from IndexedDB)
+            return new Response(JSON.stringify({ token: userToken }), {
+                headers: { 'Content-Type': 'application/json' },
+            });
+        })());
+    }
+});
+
+// Sample async function to retrieve user token (this assumes token storage in IndexedDB)
+async function getUserAuthToken() {
+    const dbPromise = indexedDB.open('firebase-auth-db', 1);
+    return new Promise((resolve, reject) => {
+        dbPromise.onsuccess = (event) => {
+            const db = event.target.result;
+            const transaction = db.transaction('tokens', 'readonly');
+            const store = transaction.objectStore('tokens');
+            const request = store.get('authToken');
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject('Failed to retrieve token.');
+        };
+    });
+}
+
+// ----------------------
+// SECTION 3: DATABASE
+// ----------------------
+
+// This is an example of Firestore logic inside a service worker.
+// Optional Feature: Background data sync functionality (e.g., pet data sync)
+async function syncPetData() {
+    const db = firebase.firestore();
+    const petData = await getPetDataFromIndexedDB(); // Fetch data from IndexedDB
+
+    petData.forEach((pet) => {
+        db.collection('pets').doc(pet.id).set({
+            name: pet.name,
+            exerciseTime: pet.exerciseTime,
+            caloriesBurned: pet.caloriesBurned,
+        }).catch((error) => {
+            console.error('Error syncing pet data to Firestore:', error);
+        });
+    });
+}
+
+// Placeholder function to simulate fetching pet data from IndexedDB
+async function getPetDataFromIndexedDB() {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve([
+                { id: 'pet1', name: 'Buddy', exerciseTime: 60, caloriesBurned: 200 },
+                { id: 'pet2', name: 'Luna', exerciseTime: 45, caloriesBurned: 150 },
+            ]);
+        }, 1000); // Simulated data fetch delay
+    });
+}
+
