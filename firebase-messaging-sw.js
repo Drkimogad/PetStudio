@@ -1,6 +1,9 @@
-importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js');
-
+// To avoid using a bundler and resolve specifier relative path replace all Firebase imports with these //
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+/////////////////////////////////////////////////////////////////////////////////////////////////
 import { messaging } from './firebase-config.js'; // Ensure proper export in firebase-config.js
 import { auth } from './firebase-config.js'; // Ensure proper export in firebase-config.js
 import { db } from './firebase-config.js'; // Ensure proper export in firebase-config.js
