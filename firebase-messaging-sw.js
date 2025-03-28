@@ -1,10 +1,10 @@
 // Firebase service worker
 // Make sure you have included the Firebase compat versions before this script:
 // To avoid using a bundler and resolve specifier relative path replace all Firebase imports with these //
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
+<script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Firebase initialization (if not already initialized globally)
 if (!firebase.apps.length) {
