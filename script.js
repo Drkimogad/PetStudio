@@ -20,8 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     addNewProfileBtn.textContent = "+ Add New Profile";
     addNewProfileBtn.id = "addNewProfileBtn";
     addNewProfileBtn.classList.add("add-profile-btn");
-    document.querySelector("header").appendChild(addNewProfileBtn);
-
+    (document.querySelector("header") || document.body).appendChild(addNewProfileBtn);
     // ======================
     // State Management (UPDATED)
     // ======================
