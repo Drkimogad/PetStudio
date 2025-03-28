@@ -10,6 +10,7 @@
 </head>
 <body>
     <header></header>
+    
     <!-- Sign-Up Page -->
     <div id="signupPage">
         <h1>PetStudio</h1>
@@ -41,7 +42,7 @@
     <!-- Dashboard -->
     <div id="dashboard" class="hidden">
         <h1>Welcome to Your PetStudio!</h1>
-        <button id="createProfileBtn" class="button">Create Profile</button>
+        <button id="createProfileBtn" class="button">Add Pet Profile</button>
         <div id="profileSection" class="hidden">
             <h2>Create a Pet Profile</h2>
             <form id="profileForm" autocomplete="on">
@@ -59,25 +60,21 @@
             </form>
         </div>
         
-        <!-- Added pet list container -->
         <div id="petList" class="pet-list"></div>
         
-        <!-- Logout button -->
         <button id="logoutBtn" class="button">Logout</button>
     </div>
 
-    <!-- Footer -->
     <footer>
-        <p>&copy; 2025 PetStudio. All rights reserved.</p>
+        <p>&copy; 2024 PetStudio. All rights reserved.</p>
     </footer>
 
-    <!-- Firebase CDN should be before your custom scripts -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
     
-    <!-- Custom Scripts -->
     <script src="script.js"></script>
 </body>
 </html>
