@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
         profileSection.classList.add("hidden");
-        fullPageBanner.classList.remove("hidden");
+        fullPageBanner.classList.add("hidden");
         profileForm.reset();
         renderProfiles();
     });
@@ -395,6 +395,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ======================
     logoutBtn.addEventListener("click", () => {
         localStorage.removeItem("petStudio_loggedIn");
-        location.reload();
+        signupPage.classList.remove("hidden");
+        dashboard.classList.add("hidden");
     });
 });
