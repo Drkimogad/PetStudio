@@ -8,19 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoutBtn = document.getElementById("logoutBtn");
     const signupForm = document.getElementById("signupForm");
     const loginForm = document.getElementById("loginForm");
-    const createProfileBtn = document.getElementById("createProfileBtn");
+    const addPetProfileBtn = document.getElementById("addPetProfileBtn");
     const profileSection = document.getElementById("profileSection");
     const profileForm = document.getElementById("profileForm");
     const petList = document.getElementById("petList");
 
-    // ======================
-    // NEW: Add Profile Button
-    // ======================
-    const addNewProfileBtn = document.createElement("button");
-    addNewProfileBtn.textContent = "+ Add New Profile";
-    addNewProfileBtn.id = "addNewProfileBtn";
-    addNewProfileBtn.classList.add("add-profile-btn");
-    (document.querySelector("header") || document.body).appendChild(addNewProfileBtn);
     // ======================
     // State Management (UPDATED)
     // ======================
@@ -29,14 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentEditIndex = null;
 
     // ======================
-    // NEW: Button Event Listeners
+    // Add Pet Profile Button Event Listeners
     // ======================
-    addNewProfileBtn.addEventListener("click", () => {
-        isEditing = false;
-        profileForm.reset();
-        profileSection.classList.remove("hidden");
-    });
-
     createProfileBtn.addEventListener("click", () => {
         isEditing = false;
         profileForm.reset();
@@ -245,14 +231,6 @@ document.addEventListener("DOMContentLoaded", () => {
 // ======================
 // Consolidated Auth Flow Fix
 // ======================
-const header = document.querySelector("header");
-if (header) {
-    header.appendChild(addNewProfileBtn);
-} else {
-    console.error("Header element not found!");
-    // Fallback: Add button to body or another container
-    document.body.insertAdjacentElement('afterbegin', addNewProfileBtn);
-}
 // 1. Signup Form Handler - Fixed Version
 signupForm.addEventListener("submit", (e) => {
     e.preventDefault();
