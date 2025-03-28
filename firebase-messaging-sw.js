@@ -1,14 +1,29 @@
+// Firebase service worker
+// Make sure you have included the Firebase compat versions before this script:
 // To avoid using a bundler and resolve specifier relative path replace all Firebase imports with these //
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 /////////////////////////////////////////////////////////////////////////////////////////////////
-import { messaging } from './firebase-config.js'; // Ensure proper export in firebase-config.js
-import { auth } from './firebase-config.js'; // Ensure proper export in firebase-config.js
-import { db } from './firebase-config.js'; // Ensure proper export in firebase-config.js
+// Firebase initialization (if not already initialized globally)
+if (!firebase.apps.length) {
+  firebase.initializeApp({
+    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+    authDomain: "swiftreach2025.firebaseapp.com",
+    projectId: "swiftreach2025",
+    storageBucket: "swiftreach2025.firebasestorage.app",
+    messagingSenderId: "540185558422",
+    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
+    measurementId: "G-SNBPRVBPNM"
+  });
+} else {
+  firebase.app(); // Use the default app
+}
 
-// firebase cloud messaging section //
+// Firebase messaging setup
+const messaging = firebase.messaging();
+
 // Push notification event - Handles background messages
 self.addEventListener('push', (event) => {
     let notificationData = { title: 'PetStudio Reminder', body: 'You have a new reminder!' };
@@ -50,19 +65,16 @@ self.addEventListener('notificationclick', (event) => {
             if (clientList.length > 0) {
                 return clientList[0].focus();
             }
-            return clients.openWindow('/signin'); // Redirects to signin if no window is open
+            return clients.openWindow('/signin'); // Redirect to signin if no window is open
         })
     );
 });
-
 
 // ----------------------
 // SECTION 2: AUTH
 // ----------------------
 
-// This is an example of handling authentication inside a service worker.
-// Optional Feature: This section helps to sync user tokens in the background.
-
+// Sync authentication token
 self.addEventListener('fetch', async (event) => {
     if (event.request.url.includes('/token-sync')) {
         event.respondWith((async () => {
@@ -93,8 +105,7 @@ async function getUserAuthToken() {
 // SECTION 3: DATABASE
 // ----------------------
 
-// This is an example of Firestore logic inside a service worker.
-// Optional Feature: Background data sync functionality (e.g., pet data sync)
+// Sync pet data to Firestore
 async function syncPetData() {
     const db = firebase.firestore();
     const petData = await getPetDataFromIndexedDB(); // Fetch data from IndexedDB
@@ -121,4 +132,5 @@ async function getPetDataFromIndexedDB() {
         }, 1000); // Simulated data fetch delay
     });
 }
+
 
