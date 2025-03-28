@@ -356,4 +356,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function urlBase64ToUint8Array(base64String) {
-        const padding = '='.repeat((4 - base64String.length % 
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/\-/g, '+').replace(/\_/g, '/');
+        const rawData = atob(base64);
+        return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
+    }
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js')
+            .then(registration => {
+                console.log('Caching Service Worker registered:', registration.scope);
+                subscribeUserToPushNotifications(registration);
+
+                registration.addEventListener('updatefound', () => {
+                    const installingWorker = registration.installing;
+                    installingWorker.addEventListener('statechange', () => {
+                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            installingWorker.postMessage({ action: 'skipWaiting' });
+                        }
+                    });
+                });
+            })
+            .catch(error => console.error('Service Worker registration failed:', error));
+
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('New service worker activated, reloading page...');
+            location.reload();
+        });
+    }
+
+    // ======================
+    // Initialization
+    // ======================
+    if (petProfiles.length > 0) renderProfiles();
+
+    // ======================
+    // Logout Button Functionality
+    // ======================
+    logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("petStudio_loggedIn");
+        location.reload();
+    });
+});
