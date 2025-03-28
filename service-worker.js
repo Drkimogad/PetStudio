@@ -20,9 +20,14 @@ self.addEventListener('install', (event) => {
         caches.open(CACHE_NAME).then(cache => 
             Promise.all(
                 CORE_ASSETS.map(url => 
-                    fetch(url).then(res => 
-                        res.ok ? cache.put(url, res) : null
-                    ).catch(console.warn)
+                    fetch(url, { method: 'GET' }) // Ensure it's a GET request
+                        .then(res => {
+                            if (res.ok) {
+                                return cache.put(url, res);
+                            }
+                            return null;
+                        })
+                        .catch(console.warn)
                 )
             ).then(() => self.skipWaiting())
         )
