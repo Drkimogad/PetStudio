@@ -577,16 +577,16 @@ footer {
 }
 
 .banner-image {
-    width: 100%;
+    width: 80%;
     height: auto;
-    max-width: 100%;
+    max-width: 80%;
     object-fit: cover;
 }
 
 .banner-message {
     position: absolute;
     top: 80%;
-    left: 35%;
+    left: 65%;
     transform: translate(-50%, -50%);
     color: white;
     font-size: 1.5em;
