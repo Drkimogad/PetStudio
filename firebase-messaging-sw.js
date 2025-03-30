@@ -71,38 +71,41 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 // ----------------------
-// SECTION 2: AUTH
+// UPDATED AUTH SECTION (ONLY THIS PART CHANGED)
 // ----------------------
 
-// Sync authentication token
-self.addEventListener('fetch', async (event) => {
+// Initialize auth
+const auth = firebase.auth();
+
+// Token sync endpoint handler
+self.addEventListener('fetch', (event) => {
     if (event.request.url.includes('/token-sync')) {
         event.respondWith((async () => {
-            const userToken = await getUserAuthToken(); // Get auth token logic (e.g., from IndexedDB)
-            return new Response(JSON.stringify({ token: userToken }), {
-                headers: { 'Content-Type': 'application/json' },
-            });
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    return new Response(null, { status: 401 });
+                }
+                
+                const token = await user.getIdToken();
+                return new Response(JSON.stringify({ token }), {
+                    headers: { 'Content-Type': 'application/json' },
+                });
+            } catch (error) {
+                console.error('Token sync error:', error);
+                return new Response(null, { status: 500 });
+            }
         })());
     }
 });
 
-// Sample async function to retrieve user token (this assumes token storage in IndexedDB)
-async function getUserAuthToken() {
-    const dbPromise = indexedDB.open('firebase-auth-db', 1);
-    return new Promise((resolve, reject) => {
-        dbPromise.onsuccess = (event) => {
-            const db = event.target.result;
-            const transaction = db.transaction('tokens', 'readonly');
-            const store = transaction.objectStore('tokens');
-            const request = store.get('authToken');
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject('Failed to retrieve token.');
-        };
-    });
-}
+// Auth state listener
+auth.onAuthStateChanged((user) => {
+    console.log(user ? 'User authenticated' : 'User signed out');
+});
 
 // ----------------------
-// SECTION 3: DATABASE
+// SECTION 3: DATABASE (REMAINS EXACTLY THE SAME)
 // ----------------------
 
 // Sync pet data to Firestore
@@ -132,5 +135,3 @@ async function getPetDataFromIndexedDB() {
         }, 1000); // Simulated data fetch delay
     });
 }
-
-
