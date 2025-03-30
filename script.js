@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     // ======================
-    // COMPLETE Firebase Configuration
+    // Firebase Configuration
     // ======================
     const firebaseConfig = {
         apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
@@ -10,10 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
         messagingSenderId: "540185558422",
         appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
     };
+    
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
     // ======================
-    // COMPLETE DOM Elements
+    // DOM Elements
     // ======================
     const authContainer = document.getElementById("authContainer");
     const signupPage = document.getElementById("signupPage");
@@ -24,174 +27,117 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
     const switchToLogin = document.getElementById("switchToLogin");
     const switchToSignup = document.getElementById("switchToSignup");
-    const addPetProfileBtn = document.getElementById("addPetProfileBtn");
-    const profileSection = document.getElementById("profileSection");
-    const petList = document.getElementById("petList");
-    const fullPageBanner = document.getElementById("fullPageBanner");
-    const profileForm = document.getElementById("profileForm");
 
     // ======================
-    // COMPLETE State Management
+    // Auth Form Switching
     // ======================
-    let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-    let isEditing = false;
-    let currentEditIndex = null;
-
-// ======================
-// COMPLETE Auth Form Switching
-// ======================
-// Wrap everything in an IIFE to avoid global scope pollution
-(function() {
-    const loginPage = document.getElementById("loginPage");
-    const signupPage = document.getElementById("signupPage");
-    const switchToLoginBtn = document.getElementById("switchToLogin");
-    const switchToSignupBtn = document.getElementById("switchToSignup");
-
-    if (loginPage && signupPage && switchToLoginBtn && switchToSignupBtn) {
-        // Initialize - show login, hide signup (or vice versa)
-        loginPage.style.display = "block";
-        signupPage.style.display = "none";
-        
-        switchToLoginBtn.addEventListener("click", () => {
-            signupPage.style.display = "none";  
-            loginPage.style.display = "block";  
+    if (switchToLogin && switchToSignup) {
+        switchToLogin.addEventListener("click", () => {
+            signupPage.classList.add("hidden");
+            loginPage.classList.remove("hidden");
         });
 
-        switchToSignupBtn.addEventListener("click", () => {
-            loginPage.style.display = "none";  
-            signupPage.style.display = "block";  
+        switchToSignup.addEventListener("click", () => {
+            loginPage.classList.add("hidden");
+            signupPage.classList.remove("hidden");
         });
-    } else {
-        console.error("Auth elements not found! Check HTML element IDs.");
     }
-})();
 
-// ======================
-// COMPLETE Firebase Auth Implementation (Fixed)
-// ======================
-// Get form switch buttons
-// Ensure elements exist before adding event listeners
-if (switchToLogin && switchToSignup) {
-    switchToLogin.addEventListener("click", () => {
-        console.log("Switching to login form...");
-        signupPage.classList.add("hidden");
-        loginPage.classList.remove("hidden");
-    });
-
-    switchToSignup.addEventListener("click", () => {
-        console.log("Switching to signup form...");
-        loginPage.classList.add("hidden");
-        signupPage.classList.remove("hidden");
-    });
-} else {
-    console.error("Switch buttons not found in the DOM");
-}
-
-// UPDATED SIGNUP HANDLER (FIXED)
-signupForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+    // ======================
+    // Auth Functions
+    // ======================
     
-    const username = document.getElementById("signupEmail").value.trim();
-    const password = document.getElementById("signupPassword").value.trim();
-    const email = `${username}@petstudio.com`;
-
-    try {
+    // Sign Up Handler
+    signupForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        
+        const username = document.getElementById("signupEmail").value.trim();
+        const password = document.getElementById("signupPassword").value.trim();
+        const email = `${username}@petstudio.com`;
+        
         // Show loading state
         const submitBtn = signupForm.querySelector("button[type='submit']");
         submitBtn.disabled = true;
         submitBtn.textContent = "Creating account...";
 
-        // 1. Create Firebase user
-        await firebase.auth().createUserWithEmailAndPassword(email, password);
-        
-        // 2. Switch to login form
-        signupPage.classList.add("hidden");
-        loginPage.classList.remove("hidden");
-        
-        // 3. Pre-fill username in login form
-        document.getElementById("loginEmail").value = username;
-        
-        // 4. Reset form
-        signupForm.reset();
-        
-    } catch (error) {
-        console.error("Signup error:", error);
-        alert(`Signup failed: ${error.message}`);
-    } finally {
-        // Reset button state
-        const submitBtn = signupForm.querySelector("button[type='submit']");
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Sign Up";
-    }
-});
+        auth.createUserWithEmailAndPassword(email, password)
+            .then(() => {
+                alert("Account created successfully! Please log in.");
+                signupForm.reset();
+                signupPage.classList.add("hidden");
+                loginPage.classList.remove("hidden");
+                // Pre-fill the username in login form
+                document.getElementById("loginEmail").value = username;
+            })
+            .catch((error) => {
+                alert("Sign-up error: " + error.message);
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Sign Up";
+            });
+    });
 
-// Login handler
-loginForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const email = document.getElementById("username").value.trim() + "@petstudio.com";
-    const password = document.getElementById("password").value.trim();
+    // Login Handler
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        
+        const username = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+        const email = `${username}@petstudio.com`;
+        
+        // Show loading state
+        const submitBtn = loginForm.querySelector("button[type='submit']");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Logging in...";
 
-    // Show loading state
-    const submitBtn = loginForm.querySelector("button[type='submit']");
-    const originalBtnText = submitBtn.textContent;
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Logging in...";
-
-    firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(() => {
-            // Success handled by auth state observer
-        })
-        .catch(error => {
-            let errorMessage = "Login failed: ";
-            switch(error.code) {
-                case "auth/user-not-found":
-                    errorMessage += "No account found with this email";
-                    break;
-                case "auth/wrong-password":
-                    errorMessage += "Incorrect password";
-                    break;
-                case "auth/invalid-email":
-                    errorMessage += "Invalid email format";
-                    break;
-                default:
+        auth.signInWithEmailAndPassword(email, password)
+            .then(() => {
+                // Success - handled by auth state observer
+            })
+            .catch((error) => {
+                let errorMessage = "Login failed: ";
+                if (error.code === "auth/wrong-password") {
+                    errorMessage += "Wrong password";
+                } else if (error.code === "auth/user-not-found") {
+                    errorMessage += "User not found";
+                } else {
                     errorMessage += error.message;
-            }
-            alert(errorMessage);
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalBtnText;
-        });
-});
+                }
+                alert(errorMessage);
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Log In";
+            });
+    });
 
-// Logout handler
-logoutBtn.addEventListener("click", () => {
-    firebase.auth().signOut();
-});
+    // Logout Handler
+    logoutBtn.addEventListener("click", () => {
+        auth.signOut();
+    });
 
-// Auth state observer
-firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-        // User is signed in
-        authContainer.classList.add("hidden");
-        dashboard.classList.remove("hidden");
-        logoutBtn.style.display = "block";
-        if (petProfiles.length > 0) renderProfiles();
-        
-        // Pre-fill email in login form for next time
-        const emailOnly = user.email.split("@")[0];
-        document.getElementById("username").value = emailOnly;
-    } else {
-        // User is signed out
-        authContainer.classList.remove("hidden");
-        dashboard.classList.add("hidden");
-        logoutBtn.style.display = "none";
-        
-        // Show login form by default
-        loginPage.classList.remove("hidden");
-        signupPage.classList.add("hidden");
-    }
-});
+    // Auth State Observer
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            // User is signed in
+            authContainer.classList.add("hidden");
+            dashboard.classList.remove("hidden");
+            logoutBtn.style.display = "block";
+            
+            // Load pet profiles if any exist
+            if (petProfiles.length > 0) renderProfiles();
+        } else {
+            // User is signed out
+            authContainer.classList.remove("hidden");
+            dashboard.classList.add("hidden");
+            logoutBtn.style.display = "none";
+            
+            // Show login form by default
+            loginPage.classList.remove("hidden");
+            signupPage.classList.add("hidden");
+        }
+    });
 
     // ======================
     // COMPLETE Pet Profile Rendering (NO CHANGES)
