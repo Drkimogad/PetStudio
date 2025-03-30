@@ -57,27 +57,26 @@ console.log("After auth attempt"); // Should appear regardless of success
         signupPage.classList.remove("hidden");
     });
 
-    // ======================
-    // COMPLETE Firebase Auth Implementation
-    // ======================
-    // ======================
+// ======================
 // COMPLETE Firebase Auth Implementation (Fixed)
 // ======================
-
 // Get form switch buttons
-const switchToLoginBtn = document.getElementById("switchToLogin");
-const switchToSignupBtn = document.getElementById("switchToSignup");
+// Ensure elements exist before adding event listeners
+if (switchToLogin && switchToSignup) {
+    switchToLogin.addEventListener("click", () => {
+        console.log("Switching to login form...");
+        signupPage.classList.add("hidden");
+        loginPage.classList.remove("hidden");
+    });
 
-// Form switching logic
-switchToLoginBtn.addEventListener("click", () => {
-    signupPage.classList.add("hidden");
-    loginPage.classList.remove("hidden");
-});
-
-switchToSignupBtn.addEventListener("click", () => {
-    loginPage.classList.add("hidden");
-    signupPage.classList.remove("hidden");
-});
+    switchToSignup.addEventListener("click", () => {
+        console.log("Switching to signup form...");
+        loginPage.classList.add("hidden");
+        signupPage.classList.remove("hidden");
+    });
+} else {
+    console.error("Switch buttons not found in the DOM");
+}
 
 // UPDATED SIGNUP HANDLER (FIXED)
 signupForm.addEventListener("submit", async (e) => {
