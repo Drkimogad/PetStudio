@@ -10,8 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
         messagingSenderId: "540185558422",
         appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
     };
-    
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
@@ -27,6 +25,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
     const switchToLogin = document.getElementById("switchToLogin");
     const switchToSignup = document.getElementById("switchToSignup");
+    const addPetProfileBtn = document.getElementById("addPetProfileBtn");
+    const profileSection = document.getElementById("profileSection");
+    const petList = document.getElementById("petList");
+    const fullPageBanner = document.getElementById("fullPageBanner");
+    const profileForm = document.getElementById("profileForm");
+
+    // ======================
+    // State Management
+    // ======================
+    let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+    let isEditing = false;
+    let currentEditIndex = null;
 
     // ======================
     // Auth Form Switching
@@ -43,106 +53,102 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-// ======================
-// Auth Functions
-// ======================
-// Sign Up Handler (Fixed)
-signupForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    
-    const username = signupForm.querySelector("#signupEmail").value.trim();
-    const password = signupForm.querySelector("#signupPassword").value.trim();
-    const email = `${username}@petstudio.com`;
-
-    if (!username || !password) {
-        alert("Please fill all fields");
-        return;
-    }
-
-    // Show loading state
-    const submitBtn = signupForm.querySelector("button[type='submit']");
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Creating account...";
-
-    auth.createUserWithEmailAndPassword(email, password)
-        .then(() => {
-            alert("Account created! Please log in.");
-            signupForm.reset();
-            signupPage.classList.add("hidden");
-            loginPage.classList.remove("hidden");
-            
-            // Pre-fill login (safe check)
-            const loginEmail = document.getElementById("loginEmail");
-            if (loginEmail) loginEmail.value = username;
-        })
-        .catch((error) => {
-            alert("Error: " + error.message);
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Sign Up";
-        });
-});
-
-// Login Handler (Fixed)
-loginForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    
-    const username = loginForm.querySelector("#loginEmail")?.value.trim();
-    const password = loginForm.querySelector("#loginPassword")?.value.trim();
-    const email = `${username}@petstudio.com`;
-
-    if (!username || !password) {
-        alert("Please fill all fields");
-        return;
-    }
-
-    // Show loading state
-    const submitBtn = loginForm.querySelector("button[type='submit']");
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Logging in...";
-
-    auth.signInWithEmailAndPassword(email, password)
-        .catch((error) => {
-            let errorMessage = "Login failed: ";
-            if (error.code === "auth/wrong-password") errorMessage += "Wrong password";
-            else if (error.code === "auth/user-not-found") errorMessage += "User not found";
-            else errorMessage += error.message;
-            alert(errorMessage);
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Log In";
-        });
-});
-
-// Auth State Observer (Updated)
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        // User just signed up/logged in
-        authContainer.classList.add("hidden");
-        dashboard.classList.remove("hidden");
-        logoutBtn.style.display = "block";
-        
-        // Load profiles if any exist
-        if (petProfiles.length > 0) renderProfiles();
-    } else {
-        // User logged out
-        authContainer.classList.remove("hidden");
-        dashboard.classList.add("hidden");
-        logoutBtn.style.display = "none";
-        
-        // Reset forms
-        loginForm?.reset();
-        signupForm?.reset();
-        
-        // Always show login first
-        loginPage.classList.remove("hidden");
-        signupPage.classList.add("hidden");
-    }
-});
     // ======================
-    // COMPLETE Pet Profile Rendering (NO CHANGES)
+    // Auth Functions (FIXED)
+    // ======================
+    signupForm?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        
+        const username = signupForm.querySelector("#signupEmail").value.trim();
+        const password = signupForm.querySelector("#signupPassword").value.trim();
+        const email = `${username}@petstudio.com`;
+
+        if (!username || !password) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        const submitBtn = signupForm.querySelector("button[type='submit']");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Creating account...";
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .then(() => {
+                alert("Account created! Please log in.");
+                signupForm.reset();
+                signupPage.classList.add("hidden");
+                loginPage.classList.remove("hidden");
+                document.getElementById("loginEmail").value = username;
+            })
+            .catch((error) => {
+                alert("Error: " + error.message);
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Sign Up";
+            });
+    });
+
+    loginForm?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        
+        const username = loginForm.querySelector("#loginEmail")?.value.trim();
+        const password = loginForm.querySelector("#loginPassword")?.value.trim();
+        const email = `${username}@petstudio.com`;
+
+        if (!username || !password) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        const submitBtn = loginForm.querySelector("button[type='submit']");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Logging in...";
+
+        auth.signInWithEmailAndPassword(email, password)
+            .catch((error) => {
+                let errorMessage = "Login failed: ";
+                if (error.code === "auth/wrong-password") errorMessage += "Wrong password";
+                else if (error.code === "auth/user-not-found") errorMessage += "User not found";
+                else errorMessage += error.message;
+                alert(errorMessage);
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Log In";
+            });
+    });
+
+    logoutBtn?.addEventListener("click", () => {
+        auth.signOut()
+            .then(() => {
+                authContainer.classList.remove("hidden");
+                dashboard.classList.add("hidden");
+                loginPage.classList.remove("hidden");
+                signupPage.classList.add("hidden");
+            })
+            .catch((error) => {
+                alert("Logout error: " + error.message);
+            });
+    });
+
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            authContainer.classList.add("hidden");
+            dashboard.classList.remove("hidden");
+            logoutBtn.style.display = "block";
+            if (petProfiles.length > 0) renderProfiles();
+        } else {
+            authContainer.classList.remove("hidden");
+            dashboard.classList.add("hidden");
+            logoutBtn.style.display = "none";
+            loginPage.classList.remove("hidden");
+            signupPage.classList.add("hidden");
+        }
+    });
+
+    // ======================
+    // Pet Profile Functions
     // ======================
     function renderProfiles() {
         petList.innerHTML = '';
@@ -208,9 +214,6 @@ auth.onAuthStateChanged((user) => {
         });
     }
 
-    // ======================
-    // COMPLETE Helper Functions (NO CHANGES)
-    // ======================
     function getCountdown(birthday) {
         const today = new Date();
         const nextBirthday = new Date(birthday);
@@ -326,9 +329,9 @@ auth.onAuthStateChanged((user) => {
     }
 
     // ======================
-    // COMPLETE Form Handling (NO CHANGES)
+    // Form Handling
     // ======================
-    profileForm.addEventListener("submit", (e) => {
+    profileForm?.addEventListener("submit", (e) => {
         e.preventDefault();
 
         const newProfile = {
@@ -355,7 +358,7 @@ auth.onAuthStateChanged((user) => {
     });
 
     // ======================
-    // COMPLETE Service Worker (NO CHANGES)
+    // Service Worker
     // ======================
     const vapidKey = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk'; 
 
