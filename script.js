@@ -37,30 +37,32 @@ document.addEventListener("DOMContentLoaded", () => {
     let isEditing = false;
     let currentEditIndex = null;
 
-    // ======================
-    // COMPLETE Auth Form Switching
-    // ======================
+// ======================
+// COMPLETE Auth Form Switching
+// ======================
+// Get form switch buttons
+const loginPage = window.loginPage || document.getElementById("loginPage");
+const signupPage = window.signupPage || document.getElementById("signupPage");
+
 // Get form switch buttons
 const switchToLoginBtn = document.getElementById("switchToLogin");
 const switchToSignupBtn = document.getElementById("switchToSignup");
 
-// Get form containers
-const loginPage = document.getElementById("loginPage");
-const signupPage = document.getElementById("signupPage");
-
 // Ensure elements exist before adding event listeners
 if (switchToLoginBtn && switchToSignupBtn && loginPage && signupPage) {
     switchToLoginBtn.addEventListener("click", () => {
-        signupPage.style.display = "none";  // Hide signup
-        loginPage.style.display = "block";  // Show login
+        signupPage.style.display = "none";  
+        loginPage.style.display = "block";  
     });
 
     switchToSignupBtn.addEventListener("click", () => {
-        loginPage.style.display = "none";   // Hide login
-        signupPage.style.display = "block"; // Show signup
+        loginPage.style.display = "none";  
+        signupPage.style.display = "block";  
     });
 } else {
     console.error("Auth switch elements not found!");
+}
+
 }
 
 // ======================
