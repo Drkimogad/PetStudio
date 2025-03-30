@@ -13,6 +13,37 @@
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./styles.css">
     <link rel="manifest" href="./manifest.json">
+    <style>
+        /* Additional auth-specific styles */
+        .auth-switch-btn {
+            background: none;
+            border: none;
+            color: #0066cc;
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 10px 0;
+            font-size: 1rem;
+            margin-top: 15px;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .auth-switch-btn:hover {
+            color: #004499;
+        }
+        
+        .button[disabled] {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .auth-message {
+            text-align: center;
+            margin: 15px 0;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
     
@@ -20,30 +51,47 @@
     <div id="authContainer">
         <!-- Login Page (shown first) -->
         <div id="loginPage">
-            <h1>PetStudio</h1>
-            <h2>Celebrate your pet's milestones and keep their birthdays in check!</h2>
+            <div class="auth-header">
+                <h1>PetStudio</h1>
+                <h2>Celebrate your pet's milestones</h2>
+            </div>
             <form id="loginForm" autocomplete="on">
-                <label for="loginEmail">Email:</label>
-                <input type="email" id="loginEmail" name="email" autocomplete="username" required>
-                <label for="loginPassword">Password:</label>
-                <input type="password" id="loginPassword" name="password" autocomplete="current-password" required>
+                <div class="form-group">
+                    <label for="loginEmail">Username:</label>
+                    <input type="text" id="loginEmail" name="email" autocomplete="username" required>
+                    <span class="email-suffix">@petstudio.com</span>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" name="password" autocomplete="current-password" required>
+                </div>
                 <button type="submit" class="button">Login</button>
+                <div class="auth-message">Don't have an account?</div>
+                <button id="switchToSignup" class="auth-switch-btn">Create Account</button>
             </form>
-            <button id="switchToSignup" class="button-text">Need an account? Sign up</button>
         </div>
 
         <!-- Sign-Up Page (hidden initially) -->
         <div id="signupPage" class="hidden">
-            <h1>PetStudio</h1>
-            <h2>Create your account to get started</h2>
+            <div class="auth-header">
+                <h1>PetStudio</h1>
+                <h2>Create your account</h2>
+            </div>
             <form id="signupForm" autocomplete="on">
-                <label for="signupEmail">Email:</label>
-                <input type="email" id="signupEmail" name="email" autocomplete="username" required>
-                <label for="signupPassword">Password:</label>
-                <input type="password" id="signupPassword" name="password" autocomplete="new-password" required>
+                <div class="form-group">
+                    <label for="signupEmail">Choose a username:</label>
+                    <input type="text" id="signupEmail" name="email" autocomplete="username" required>
+                    <span class="email-suffix">@petstudio.com</span>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Create password:</label>
+                    <input type="password" id="signupPassword" name="password" autocomplete="new-password" required>
+                    <div class="password-hint">(At least 6 characters)</div>
+                </div>
                 <button type="submit" class="button">Sign Up</button>
+                <div class="auth-message">Already have an account?</div>
+                <button id="switchToLogin" class="auth-switch-btn">Back to Login</button>
             </form>
-            <button id="switchToLogin" class="button-text">Already have an account? Login</button>
         </div>
     </div>
 
