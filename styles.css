@@ -515,6 +515,63 @@ footer {
     color: white;
 }
 
+/* Add this to your existing action-buttons styles */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.action-buttons button {
+    flex: 1;
+    min-width: 80px;
+    padding: 8px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.action-buttons button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+/* Existing button colors */
+.editBtn { background: #6a0dad; } /* Your purple */
+.deleteBtn { background: #dc3545; }
+.printBtn { background: #007bff; }
+
+/* New share button style - using your orange color scheme */
+.shareBtn { 
+    background: #ffa500;
+}
+
+.shareBtn:hover {
+    background: #e69500;
+}
+
+/* Ensure buttons stay aligned on mobile */
+@media screen and (max-width: 612px) {
+    .action-buttons button {
+        min-width: 70px;
+        padding: 6px;
+        font-size: 12px;
+    }
+}
+
+/* Print-specific adjustments */
+@media print {
+    .action-buttons {
+        display: none;
+    }
+}
+
+
+
 /* Pet Card Styles */
 .petCard {
     background: white;
