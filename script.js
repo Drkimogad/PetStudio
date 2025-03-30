@@ -1,40 +1,57 @@
 document.addEventListener("DOMContentLoaded", () => {
     // ======================
-    // NEW: Firebase Configuration (REPLACE WITH YOUR CONFIG)
+    // COMPLETE Firebase Configuration
     // ======================
     const firebaseConfig = {
-    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-    authDomain: "swiftreach2025.firebaseapp.com",
-    projectId: "swiftreach2025",
-    storageBucket: "swiftreach2025.firebasestorage.app",
-    messagingSenderId: "540185558422",
-    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
+        apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+        authDomain: "swiftreach2025.firebaseapp.com",
+        projectId: "swiftreach2025",
+        storageBucket: "swiftreach2025.firebasestorage.app",
+        messagingSenderId: "540185558422",
+        appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
     };
     firebase.initializeApp(firebaseConfig);
 
     // ======================
-    // DOM Elements (UNCHANGED)
+    // COMPLETE DOM Elements
     // ======================
+    const authContainer = document.getElementById("authContainer");
     const signupPage = document.getElementById("signupPage");
     const loginPage = document.getElementById("loginPage");
     const dashboard = document.getElementById("dashboard");
     const logoutBtn = document.getElementById("logoutBtn");
     const signupForm = document.getElementById("signupForm");
     const loginForm = document.getElementById("loginForm");
+    const switchToLogin = document.getElementById("switchToLogin");
+    const switchToSignup = document.getElementById("switchToSignup");
     const addPetProfileBtn = document.getElementById("addPetProfileBtn");
     const profileSection = document.getElementById("profileSection");
     const petList = document.getElementById("petList");
     const fullPageBanner = document.getElementById("fullPageBanner");
+    const profileForm = document.getElementById("profileForm");
 
     // ======================
-    // State Management (UPDATED: Removed localStorage auth)
+    // COMPLETE State Management
     // ======================
     let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
     let isEditing = false;
     let currentEditIndex = null;
 
     // ======================
-    // NEW: Firebase Auth Implementation (REPLACES OLD AUTH)
+    // COMPLETE Auth Form Switching
+    // ======================
+    switchToLogin.addEventListener("click", () => {
+        signupPage.classList.add("hidden");
+        loginPage.classList.remove("hidden");
+    });
+
+    switchToSignup.addEventListener("click", () => {
+        loginPage.classList.add("hidden");
+        signupPage.classList.remove("hidden");
+    });
+
+    // ======================
+    // COMPLETE Firebase Auth Implementation
     // ======================
     signupForm.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -43,9 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(() => {
-                alert("Account created! Redirecting to login...");
+                alert("Account created! Please login.");
                 signupPage.classList.add("hidden");
                 loginPage.classList.remove("hidden");
+                signupForm.reset();
             })
             .catch(error => alert("Error: " + error.message));
     });
@@ -67,32 +85,23 @@ document.addEventListener("DOMContentLoaded", () => {
         firebase.auth().signOut();
     });
 
-    // Auto-handle login state
+    // COMPLETE Auth state observer
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
-            loginPage.classList.add("hidden");
-            signupPage.classList.add("hidden");
+            authContainer.classList.add("hidden");
             dashboard.classList.remove("hidden");
             logoutBtn.style.display = "block";
             if (petProfiles.length > 0) renderProfiles();
         } else {
-            loginPage.classList.remove("hidden");
+            authContainer.classList.remove("hidden");
             dashboard.classList.add("hidden");
+            loginPage.classList.remove("hidden"); // Show login first
+            signupPage.classList.add("hidden");
         }
     });
 
     // ======================
-    // Button Event Listeners (UNCHANGED)
-    // ======================
-    addPetProfileBtn.addEventListener("click", () => {
-        isEditing = false;
-        profileForm.reset();
-        profileSection.classList.remove("hidden");
-        fullPageBanner.classList.add("hidden");
-    });
-
-    // ======================
-    // Profile Rendering (UNCHANGED)
+    // COMPLETE Pet Profile Rendering (NO CHANGES)
     // ======================
     function renderProfiles() {
         petList.innerHTML = '';
@@ -159,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ======================
-    // Helper Functions (UNCHANGED)
+    // COMPLETE Helper Functions (NO CHANGES)
     // ======================
     function getCountdown(birthday) {
         const today = new Date();
@@ -276,9 +285,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ======================
-    // Form Handling (UNCHANGED)
+    // COMPLETE Form Handling (NO CHANGES)
     // ======================
-    const profileForm = document.getElementById("profileForm");
     profileForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -306,7 +314,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ======================
-    // Service Worker (UNCHANGED)
+    // COMPLETE Service Worker (NO CHANGES)
     // ======================
     const vapidKey = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk'; 
 
@@ -374,6 +382,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Initialize profiles if any exist
+    // Initialize
     if (petProfiles.length > 0) renderProfiles();
 });
