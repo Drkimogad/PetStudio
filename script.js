@@ -3,12 +3,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // NEW: Firebase Configuration (REPLACE WITH YOUR CONFIG)
     // ======================
     const firebaseConfig = {
-        apiKey: "AIzaSyABCD1234...",
-        authDomain: "your-project-id.firebaseapp.com",
-        projectId: "your-project-id",
-        storageBucket: "your-project-id.appspot.com",
-        messagingSenderId: "1234567890",
-        appId: "1:1234567890:web:abc123def456"
+    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+    authDomain: "swiftreach2025.firebaseapp.com",
+    projectId: "swiftreach2025",
+    storageBucket: "swiftreach2025.firebasestorage.app",
+    messagingSenderId: "540185558422",
+    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
     };
     firebase.initializeApp(firebaseConfig);
 
