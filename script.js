@@ -72,47 +72,42 @@ switchToSignupBtn.addEventListener("click", () => {
     signupPage.classList.remove("hidden");
 });
 
-// Signup handler
-signupForm.addEventListener("submit", (e) => {
+// UPDATED SIGNUP HANDLER (FIXED)
+signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById("newUsername").value.trim() + "@petstudio.com";
-    const password = document.getElementById("newPassword").value.trim();
+    
+    const username = document.getElementById("signupEmail").value.trim();
+    const password = document.getElementById("signupPassword").value.trim();
+    const email = `${username}@petstudio.com`;
 
-    // Show loading state
-    const submitBtn = signupForm.querySelector("button[type='submit']");
-    const originalBtnText = submitBtn.textContent;
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Creating account...";
+    try {
+        // Show loading state
+        const submitBtn = signupForm.querySelector("button[type='submit']");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Creating account...";
 
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then(() => {
-            alert("Account created successfully! Please login.");
-            // Switch to login form
-            signupPage.classList.add("hidden");
-            loginPage.classList.remove("hidden");
-            signupForm.reset();
-        })
-        .catch(error => {
-            let errorMessage = "Signup failed: ";
-            switch(error.code) {
-                case "auth/email-already-in-use":
-                    errorMessage += "This email is already registered";
-                    break;
-                case "auth/invalid-email":
-                    errorMessage += "Please enter a valid email";
-                    break;
-                case "auth/weak-password":
-                    errorMessage += "Password should be at least 6 characters";
-                    break;
-                default:
-                    errorMessage += error.message;
-            }
-            alert(errorMessage);
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalBtnText;
-        });
+        // 1. Create Firebase user
+        await firebase.auth().createUserWithEmailAndPassword(email, password);
+        
+        // 2. Switch to login form
+        signupPage.classList.add("hidden");
+        loginPage.classList.remove("hidden");
+        
+        // 3. Pre-fill username in login form
+        document.getElementById("loginEmail").value = username;
+        
+        // 4. Reset form
+        signupForm.reset();
+        
+    } catch (error) {
+        console.error("Signup error:", error);
+        alert(`Signup failed: ${error.message}`);
+    } finally {
+        // Reset button state
+        const submitBtn = signupForm.querySelector("button[type='submit']");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Sign Up";
+    }
 });
 
 // Login handler
