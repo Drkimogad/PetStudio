@@ -40,26 +40,31 @@ document.addEventListener("DOMContentLoaded", () => {
 // ======================
 // COMPLETE Auth Form Switching
 // ======================
-// Get form switch buttons
-let loginPage = document.getElementById("loginPage");
-let signupPage = document.getElementById("signupPage");
-let switchToLoginBtn = document.getElementById("switchToLogin");
-let switchToSignupBtn = document.getElementById("switchToSignup");
+// Wrap everything in an IIFE to avoid global scope pollution
+(function() {
+    const loginPage = document.getElementById("loginPage");
+    const signupPage = document.getElementById("signupPage");
+    const switchToLoginBtn = document.getElementById("switchToLogin");
+    const switchToSignupBtn = document.getElementById("switchToSignup");
 
-// Ensure loginPage and signupPage exist before applying logic
-if (loginPage && signupPage && switchToLoginBtn && switchToSignupBtn) {
-    switchToLoginBtn.addEventListener("click", () => {
-        signupPage.style.display = "none";  
-        loginPage.style.display = "block";  
-    });
+    if (loginPage && signupPage && switchToLoginBtn && switchToSignupBtn) {
+        // Initialize - show login, hide signup (or vice versa)
+        loginPage.style.display = "block";
+        signupPage.style.display = "none";
+        
+        switchToLoginBtn.addEventListener("click", () => {
+            signupPage.style.display = "none";  
+            loginPage.style.display = "block";  
+        });
 
-    switchToSignupBtn.addEventListener("click", () => {
-        loginPage.style.display = "none";  
-        signupPage.style.display = "block";  
-    });
-} else {
-    console.error("Auth elements not found! Check HTML element IDs.");
-}
+        switchToSignupBtn.addEventListener("click", () => {
+            loginPage.style.display = "none";  
+            signupPage.style.display = "block";  
+        });
+    } else {
+        console.error("Auth elements not found! Check HTML element IDs.");
+    }
+})();
 
 // ======================
 // COMPLETE Firebase Auth Implementation (Fixed)
