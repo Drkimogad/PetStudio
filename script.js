@@ -40,6 +40,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // ======================
     // COMPLETE Auth Form Switching
     // ======================
+ console.log("Before signup attempt"); // Should appear immediately
+
+await firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then(() => console.log("User created successfully"))
+    .catch(error => console.log("Creation error:", error));
+
+console.log("After auth attempt"); // Should appear regardless of success
     switchToLogin.addEventListener("click", () => {
         signupPage.classList.add("hidden");
         loginPage.classList.remove("hidden");
