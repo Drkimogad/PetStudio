@@ -651,3 +651,28 @@ footer {
     padding: 5px;
     border-radius: 5px;
 }
+/* Auth Container */
+#authContainer {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Form Toggle Buttons */
+.button-text {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    padding: 10px 0;
+    font-size: 1em;
+}
+
+.button-text:hover {
+    text-decoration: underline;
+}
+
+/* Form Styling (existing) */
+form {
+    margin: 20px 0;
+}
