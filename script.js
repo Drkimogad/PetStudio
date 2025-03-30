@@ -53,52 +53,135 @@ document.addEventListener("DOMContentLoaded", () => {
     // ======================
     // COMPLETE Firebase Auth Implementation
     // ======================
-    signupForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const email = document.getElementById("newUsername").value.trim() + "@petstudio.com";
-        const password = document.getElementById("newPassword").value.trim();
+    // ======================
+// COMPLETE Firebase Auth Implementation (Fixed)
+// ======================
 
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-            .then(() => {
-                alert("Account created! Please login.");
-                signupPage.classList.add("hidden");
-                loginPage.classList.remove("hidden");
-                signupForm.reset();
-            })
-            .catch(error => alert("Error: " + error.message));
-    });
+// Get form switch buttons
+const switchToLoginBtn = document.getElementById("switchToLogin");
+const switchToSignupBtn = document.getElementById("switchToSignup");
 
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const email = document.getElementById("username").value.trim() + "@petstudio.com";
-        const password = document.getElementById("password").value.trim();
+// Form switching logic
+switchToLoginBtn.addEventListener("click", () => {
+    signupPage.classList.add("hidden");
+    loginPage.classList.remove("hidden");
+});
 
-        firebase.auth().signInWithEmailAndPassword(email, password)
-            .then(() => {
-                loginPage.classList.add("hidden");
-                dashboard.classList.remove("hidden");
-            })
-            .catch(error => alert("Login failed: " + error.message));
-    });
+switchToSignupBtn.addEventListener("click", () => {
+    loginPage.classList.add("hidden");
+    signupPage.classList.remove("hidden");
+});
 
-    logoutBtn.addEventListener("click", () => {
-        firebase.auth().signOut();
-    });
+// Signup handler
+signupForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("newUsername").value.trim() + "@petstudio.com";
+    const password = document.getElementById("newPassword").value.trim();
 
-    // COMPLETE Auth state observer
-    firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-            authContainer.classList.add("hidden");
-            dashboard.classList.remove("hidden");
-            logoutBtn.style.display = "block";
-            if (petProfiles.length > 0) renderProfiles();
-        } else {
-            authContainer.classList.remove("hidden");
-            dashboard.classList.add("hidden");
-            loginPage.classList.remove("hidden"); // Show login first
+    // Show loading state
+    const submitBtn = signupForm.querySelector("button[type='submit']");
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Creating account...";
+
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(() => {
+            alert("Account created successfully! Please login.");
+            // Switch to login form
             signupPage.classList.add("hidden");
-        }
-    });
+            loginPage.classList.remove("hidden");
+            signupForm.reset();
+        })
+        .catch(error => {
+            let errorMessage = "Signup failed: ";
+            switch(error.code) {
+                case "auth/email-already-in-use":
+                    errorMessage += "This email is already registered";
+                    break;
+                case "auth/invalid-email":
+                    errorMessage += "Please enter a valid email";
+                    break;
+                case "auth/weak-password":
+                    errorMessage += "Password should be at least 6 characters";
+                    break;
+                default:
+                    errorMessage += error.message;
+            }
+            alert(errorMessage);
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+        });
+});
+
+// Login handler
+loginForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("username").value.trim() + "@petstudio.com";
+    const password = document.getElementById("password").value.trim();
+
+    // Show loading state
+    const submitBtn = loginForm.querySelector("button[type='submit']");
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Logging in...";
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(() => {
+            // Success handled by auth state observer
+        })
+        .catch(error => {
+            let errorMessage = "Login failed: ";
+            switch(error.code) {
+                case "auth/user-not-found":
+                    errorMessage += "No account found with this email";
+                    break;
+                case "auth/wrong-password":
+                    errorMessage += "Incorrect password";
+                    break;
+                case "auth/invalid-email":
+                    errorMessage += "Invalid email format";
+                    break;
+                default:
+                    errorMessage += error.message;
+            }
+            alert(errorMessage);
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+        });
+});
+
+// Logout handler
+logoutBtn.addEventListener("click", () => {
+    firebase.auth().signOut();
+});
+
+// Auth state observer
+firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+        // User is signed in
+        authContainer.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+        logoutBtn.style.display = "block";
+        if (petProfiles.length > 0) renderProfiles();
+        
+        // Pre-fill email in login form for next time
+        const emailOnly = user.email.split("@")[0];
+        document.getElementById("username").value = emailOnly;
+    } else {
+        // User is signed out
+        authContainer.classList.remove("hidden");
+        dashboard.classList.add("hidden");
+        logoutBtn.style.display = "none";
+        
+        // Show login form by default
+        loginPage.classList.remove("hidden");
+        signupPage.classList.add("hidden");
+    }
+});
 
     // ======================
     // COMPLETE Pet Profile Rendering (NO CHANGES)
