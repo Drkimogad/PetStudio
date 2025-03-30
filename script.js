@@ -1,5 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
     // ======================
+    // NEW: Firebase Configuration (REPLACE WITH YOUR CONFIG)
+    // ======================
+    const firebaseConfig = {
+        apiKey: "AIzaSyABCD1234...",
+        authDomain: "your-project-id.firebaseapp.com",
+        projectId: "your-project-id",
+        storageBucket: "your-project-id.appspot.com",
+        messagingSenderId: "1234567890",
+        appId: "1:1234567890:web:abc123def456"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // ======================
     // DOM Elements (UNCHANGED)
     // ======================
     const signupPage = document.getElementById("signupPage");
@@ -14,14 +27,62 @@ document.addEventListener("DOMContentLoaded", () => {
     const fullPageBanner = document.getElementById("fullPageBanner");
 
     // ======================
-    // State Management (UPDATED)
+    // State Management (UPDATED: Removed localStorage auth)
     // ======================
     let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
     let isEditing = false;
     let currentEditIndex = null;
 
     // ======================
-    // Button Event Listeners
+    // NEW: Firebase Auth Implementation (REPLACES OLD AUTH)
+    // ======================
+    signupForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = document.getElementById("newUsername").value.trim() + "@petstudio.com";
+        const password = document.getElementById("newPassword").value.trim();
+
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then(() => {
+                alert("Account created! Redirecting to login...");
+                signupPage.classList.add("hidden");
+                loginPage.classList.remove("hidden");
+            })
+            .catch(error => alert("Error: " + error.message));
+    });
+
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = document.getElementById("username").value.trim() + "@petstudio.com";
+        const password = document.getElementById("password").value.trim();
+
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then(() => {
+                loginPage.classList.add("hidden");
+                dashboard.classList.remove("hidden");
+            })
+            .catch(error => alert("Login failed: " + error.message));
+    });
+
+    logoutBtn.addEventListener("click", () => {
+        firebase.auth().signOut();
+    });
+
+    // Auto-handle login state
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+            loginPage.classList.add("hidden");
+            signupPage.classList.add("hidden");
+            dashboard.classList.remove("hidden");
+            logoutBtn.style.display = "block";
+            if (petProfiles.length > 0) renderProfiles();
+        } else {
+            loginPage.classList.remove("hidden");
+            dashboard.classList.add("hidden");
+        }
+    });
+
+    // ======================
+    // Button Event Listeners (UNCHANGED)
     // ======================
     addPetProfileBtn.addEventListener("click", () => {
         isEditing = false;
@@ -31,90 +92,74 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ======================
-    // Enhanced Profile Rendering
+    // Profile Rendering (UNCHANGED)
     // ======================
-function renderProfiles() {
-    petList.innerHTML = '';
-    petProfiles.forEach((profile, index) => {
-        const petCard = document.createElement("div");
-        petCard.classList.add("petCard");
+    function renderProfiles() {
+        petList.innerHTML = '';
+        petProfiles.forEach((profile, index) => {
+            const petCard = document.createElement("div");
+            petCard.classList.add("petCard");
 
-        // Set the cover photo as the background of the profile header
-        const coverPhotoUrl = profile.gallery[profile.coverPhotoIndex];
-        const profileHeaderStyle = coverPhotoUrl ? `style="background-image: url('${coverPhotoUrl}');"` : '';
+            const coverPhotoUrl = profile.gallery[profile.coverPhotoIndex];
+            const profileHeaderStyle = coverPhotoUrl ? `style="background-image: url('${coverPhotoUrl}');"` : '';
 
-        petCard.innerHTML = `
-            <div class="profile-header" ${profileHeaderStyle}>
-                <h3>${profile.name}</h3>
-                <p class="countdown">${getCountdown(profile.birthday)}</p>
-            </div>
-            <div class="profile-details">
-                <p><strong>Breed:</strong> ${profile.breed}</p>
-                <p><strong>DOB:</strong> ${profile.dob}</p>
-                <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
-            </div>
-            <div class="gallery-grid">
-                ${profile.gallery.map((img, imgIndex) => `
-                    <div class="gallery-item">
-                        <img src="${img}" alt="Pet Photo">
-                        <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-                                data-index="${imgIndex}">★</button>
+            petCard.innerHTML = `
+                <div class="profile-header" ${profileHeaderStyle}>
+                    <h3>${profile.name}</h3>
+                    <p class="countdown">${getCountdown(profile.birthday)}</p>
+                </div>
+                <div class="profile-details">
+                    <p><strong>Breed:</strong> ${profile.breed}</p>
+                    <p><strong>DOB:</strong> ${profile.dob}</p>
+                    <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+                </div>
+                <div class="gallery-grid">
+                    ${profile.gallery.map((img, imgIndex) => `
+                        <div class="gallery-item">
+                            <img src="${img}" alt="Pet Photo">
+                            <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
+                                    data-index="${imgIndex}">★</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="mood-tracker">
+                    <div class="mood-buttons">
+                        <span>Log Mood:</span>
+                        <button class="mood-btn" data-mood="happy">😊</button>
+                        <button class="mood-btn" data-mood="neutral">😐</button>
+                        <button class="mood-btn" data-mood="sad">😞</button>
                     </div>
-                `).join('')}
-            </div>
-            <div class="mood-tracker">
-                <div class="mood-buttons">
-                    <span>Log Mood:</span>
-                    <button class="mood-btn" data-mood="happy">😊</button>
-                    <button class="mood-btn" data-mood="neutral">😐</button>
-                    <button class="mood-btn" data-mood="sad">😞</button>
+                    <div class="mood-history">
+                        ${renderMoodHistory(profile)}
+                    </div>
                 </div>
-                <div class="mood-history">
-                    ${renderMoodHistory(profile)}
+                <div class="action-buttons">
+                    <button class="editBtn">✏️ Edit</button>
+                    <button class="deleteBtn">🗑️ Delete</button>
+                    <button class="printBtn">🖨️ Print</button>
+                    <button class="shareBtn">📤 Share</button>
                 </div>
-            </div>
-            <div class="action-buttons">
-                <button class="editBtn">✏️ Edit</button>
-                <button class="deleteBtn">🗑️ Delete</button>
-                <button class="printBtn">🖨️ Print</button>
-                <button class="shareBtn">📤 Share</button>
-            </div>
-        `;
+            `;
 
-        petCard.querySelector(".editBtn").addEventListener("click", () => openEditForm(index));
-        petCard.querySelector(".deleteBtn").addEventListener("click", () => deleteProfile(index));
-        petCard.querySelector(".printBtn").addEventListener("click", () => printProfile(profile));
-        petCard.querySelector(".shareBtn").addEventListener("click", () => shareProfile(profile));
+            petCard.querySelector(".editBtn").addEventListener("click", () => openEditForm(index));
+            petCard.querySelector(".deleteBtn").addEventListener("click", () => deleteProfile(index));
+            petCard.querySelector(".printBtn").addEventListener("click", () => printProfile(profile));
+            petCard.querySelector(".shareBtn").addEventListener("click", () => shareProfile(profile));
 
-        petCard.querySelectorAll(".mood-btn").forEach(btn => {
-            btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
+            petCard.querySelectorAll(".mood-btn").forEach(btn => {
+                btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
+            });
+
+            petCard.querySelectorAll(".cover-btn").forEach(btn => {
+                btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
+            });
+
+            petList.appendChild(petCard);
         });
-
-        petCard.querySelectorAll(".cover-btn").forEach(btn => {
-            btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
-        });
-
-        petList.appendChild(petCard);
-    });
-}
-
-// Add this new function for sharing profiles
-function shareProfile(profile) {
-    if (navigator.share) {
-        navigator.share({
-            title: `${profile.name}'s Pet Profile`,
-            text: `Check out ${profile.name}'s profile on Pet Studio! Breed: ${profile.breed}, Birthday: ${profile.birthday}`,
-            url: window.location.href
-        }).catch(error => console.log('Error sharing:', error));
-    } else {
-        // Fallback for browsers that don't support the Web Share API
-        const shareText = `${profile.name}'s Pet Profile\nBreed: ${profile.breed}\nBirthday: ${profile.birthday}\n\nShared from Pet Studio`;
-        alert(shareText + '\n\nCopy this text to share elsewhere.');
     }
-}
 
     // ======================
-    // Helper Functions
+    // Helper Functions (UNCHANGED)
     // ======================
     function getCountdown(birthday) {
         const today = new Date();
@@ -198,6 +243,19 @@ function shareProfile(profile) {
         printWindow.document.close();
     }
 
+    function shareProfile(profile) {
+        if (navigator.share) {
+            navigator.share({
+                title: `${profile.name}'s Pet Profile`,
+                text: `Check out ${profile.name}'s profile on Pet Studio! Breed: ${profile.breed}, Birthday: ${profile.birthday}`,
+                url: window.location.href
+            }).catch(error => console.log('Error sharing:', error));
+        } else {
+            const shareText = `${profile.name}'s Pet Profile\nBreed: ${profile.breed}\nBirthday: ${profile.birthday}\n\nShared from Pet Studio`;
+            alert(shareText + '\n\nCopy this text to share elsewhere.');
+        }
+    }
+
     function logMood(profileIndex, mood) {
         const today = new Date().toISOString().split('T')[0];
         if (!petProfiles[profileIndex].moodLog) petProfiles[profileIndex].moodLog = [];
@@ -218,8 +276,9 @@ function shareProfile(profile) {
     }
 
     // ======================
-    // Form Handling
+    // Form Handling (UNCHANGED)
     // ======================
+    const profileForm = document.getElementById("profileForm");
     profileForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -247,94 +306,7 @@ function shareProfile(profile) {
     });
 
     // ======================
-    // Consolidated Auth Flow Fix
-    // ======================
-    // 1. Signup Form Handler - Fixed Version
-    signupForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const username = document.getElementById("newUsername").value.trim();
-        const password = document.getElementById("newPassword").value.trim();
-
-        if (!username || !password) {
-            alert("Please fill all fields");
-            return;
-        }
-
-        // Save credentials and immediately show login
-        localStorage.setItem("petStudio_username", username);
-        localStorage.setItem("petStudio_password", password);
-
-        // Visual feedback before redirect
-        alert("Account created successfully! Redirecting to login...");
-
-        // Force redraw before hiding
-        setTimeout(() => {
-            signupPage.classList.add("hidden");
-            loginPage.classList.remove("hidden");
-            document.getElementById("username").value = username;
-            document.getElementById("password").focus();
-        }, 100);
-    });
-
-    // 2. Login Form Handler - Debuggable Version
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const storedUser = localStorage.getItem("petStudio_username");
-        const storedPass = localStorage.getItem("petStudio_password");
-
-        console.log("Login attempt:", { username, storedUser }); // Debug line
-
-        if (username === storedUser && password === storedPass) {
-            localStorage.setItem("petStudio_loggedIn", "true");
-
-            // Verify elements before manipulation
-            console.log("Elements:", { 
-                loginPage, 
-                dashboard,
-                logoutBtn 
-            }); // Debug line
-
-            loginPage.classList.add("hidden");
-            dashboard.classList.remove("hidden");
-            logoutBtn.style.display = "block";
-            renderProfiles();
-        } else {
-            alert(`Login failed. ${!storedUser ? "No account found" : "Invalid password"}`);
-        }
-    });
-
-    // 3. Unified Initialization
-    function initializeApp() {
-        // Check auth state first
-        const isLoggedIn = localStorage.getItem("petStudio_loggedIn") === "true";
-
-        console.log("Initial auth state:", isLoggedIn); // Debug line
-
-        if (isLoggedIn) {
-            loginPage.classList.add("hidden");
-            signupPage.classList.add("hidden");
-            dashboard.classList.remove("hidden");
-            logoutBtn.style.display = "block";
-            renderProfiles();
-        } else {
-            // Default to login page
-            loginPage.classList.remove("hidden");
-            signupPage.classList.add("hidden");
-            dashboard.classList.add("hidden");
-            logoutBtn.style.display = "none";
-        }
-
-        // Load profiles if any
-        if (petProfiles.length > 0) renderProfiles();
-    }
-
-    // Single DOMContentLoaded listener
-    document.addEventListener("DOMContentLoaded", initializeApp);
-
-    // ======================
-    // UNCHANGED: Service Worker/Push Notifications
+    // Service Worker (UNCHANGED)
     // ======================
     const vapidKey = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk'; 
 
@@ -402,18 +374,6 @@ function shareProfile(profile) {
         });
     }
 
-    // ======================
-    // Initialization
-    // ======================
+    // Initialize profiles if any exist
     if (petProfiles.length > 0) renderProfiles();
-
-    // ======================
-    // Logout Button Functionality
-    // ======================
-    logoutBtn.addEventListener("click", () => {
-        localStorage.removeItem("petStudio_loggedIn");
-        loginPage.classList.remove("hidden");
-        signupPage.classList.add("hidden");
-        dashboard.classList.add("hidden");
-    });
 });
