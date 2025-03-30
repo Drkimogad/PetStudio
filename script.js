@@ -43,102 +43,104 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ======================
-    // Auth Functions
-    // ======================
+// ======================
+// Auth Functions
+// ======================
+// Sign Up Handler (Fixed)
+signupForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
     
-    // Sign Up Handler
-    signupForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        
-        const username = document.getElementById("signupEmail").value.trim();
-        const password = document.getElementById("signupPassword").value.trim();
-        const email = `${username}@petstudio.com`;
-        
-        // Show loading state
-        const submitBtn = signupForm.querySelector("button[type='submit']");
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Creating account...";
+    const username = signupForm.querySelector("#signupEmail").value.trim();
+    const password = signupForm.querySelector("#signupPassword").value.trim();
+    const email = `${username}@petstudio.com`;
 
-        auth.createUserWithEmailAndPassword(email, password)
-            .then(() => {
-                alert("Account created successfully! Please log in.");
-                signupForm.reset();
-                signupPage.classList.add("hidden");
-                loginPage.classList.remove("hidden");
-                // Pre-fill the username in login form
-                document.getElementById("loginEmail").value = username;
-            })
-            .catch((error) => {
-                alert("Sign-up error: " + error.message);
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Sign Up";
-            });
-    });
+    if (!username || !password) {
+        alert("Please fill all fields");
+        return;
+    }
 
-    // Login Handler
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        
-        const username = document.getElementById("loginEmail").value.trim();
-        const password = document.getElementById("loginPassword").value.trim();
-        const email = `${username}@petstudio.com`;
-        
-        // Show loading state
-        const submitBtn = loginForm.querySelector("button[type='submit']");
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Logging in...";
+    // Show loading state
+    const submitBtn = signupForm.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Creating account...";
 
-        auth.signInWithEmailAndPassword(email, password)
-            .then(() => {
-                // Success - handled by auth state observer
-            })
-            .catch((error) => {
-                let errorMessage = "Login failed: ";
-                if (error.code === "auth/wrong-password") {
-                    errorMessage += "Wrong password";
-                } else if (error.code === "auth/user-not-found") {
-                    errorMessage += "User not found";
-                } else {
-                    errorMessage += error.message;
-                }
-                alert(errorMessage);
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Log In";
-            });
-    });
-
-    // Logout Handler
-    logoutBtn.addEventListener("click", () => {
-        auth.signOut();
-    });
-
-    // Auth State Observer
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            // User is signed in
-            authContainer.classList.add("hidden");
-            dashboard.classList.remove("hidden");
-            logoutBtn.style.display = "block";
-            
-            // Load pet profiles if any exist
-            if (petProfiles.length > 0) renderProfiles();
-        } else {
-            // User is signed out
-            authContainer.classList.remove("hidden");
-            dashboard.classList.add("hidden");
-            logoutBtn.style.display = "none";
-            
-            // Show login form by default
-            loginPage.classList.remove("hidden");
+    auth.createUserWithEmailAndPassword(email, password)
+        .then(() => {
+            alert("Account created! Please log in.");
+            signupForm.reset();
             signupPage.classList.add("hidden");
-        }
-    });
+            loginPage.classList.remove("hidden");
+            
+            // Pre-fill login (safe check)
+            const loginEmail = document.getElementById("loginEmail");
+            if (loginEmail) loginEmail.value = username;
+        })
+        .catch((error) => {
+            alert("Error: " + error.message);
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Sign Up";
+        });
+});
 
+// Login Handler (Fixed)
+loginForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    
+    const username = loginForm.querySelector("#loginEmail")?.value.trim();
+    const password = loginForm.querySelector("#loginPassword")?.value.trim();
+    const email = `${username}@petstudio.com`;
+
+    if (!username || !password) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    // Show loading state
+    const submitBtn = loginForm.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Logging in...";
+
+    auth.signInWithEmailAndPassword(email, password)
+        .catch((error) => {
+            let errorMessage = "Login failed: ";
+            if (error.code === "auth/wrong-password") errorMessage += "Wrong password";
+            else if (error.code === "auth/user-not-found") errorMessage += "User not found";
+            else errorMessage += error.message;
+            alert(errorMessage);
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Log In";
+        });
+});
+
+// Auth State Observer (Updated)
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        // User just signed up/logged in
+        authContainer.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+        logoutBtn.style.display = "block";
+        
+        // Load profiles if any exist
+        if (petProfiles.length > 0) renderProfiles();
+    } else {
+        // User logged out
+        authContainer.classList.remove("hidden");
+        dashboard.classList.add("hidden");
+        logoutBtn.style.display = "none";
+        
+        // Reset forms
+        loginForm?.reset();
+        signupForm?.reset();
+        
+        // Always show login first
+        loginPage.classList.remove("hidden");
+        signupPage.classList.add("hidden");
+    }
+});
     // ======================
     // COMPLETE Pet Profile Rendering (NO CHANGES)
     // ======================
