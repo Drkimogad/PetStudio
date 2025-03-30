@@ -40,22 +40,28 @@ document.addEventListener("DOMContentLoaded", () => {
     // ======================
     // COMPLETE Auth Form Switching
     // ======================
- console.log("Before signup attempt"); // Should appear immediately
+// Get form switch buttons
+const switchToLoginBtn = document.getElementById("switchToLogin");
+const switchToSignupBtn = document.getElementById("switchToSignup");
 
-await firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then(() => console.log("User created successfully"))
-    .catch(error => console.log("Creation error:", error));
+// Get form containers
+const loginPage = document.getElementById("loginPage");
+const signupPage = document.getElementById("signupPage");
 
-console.log("After auth attempt"); // Should appear regardless of success
-    switchToLogin.addEventListener("click", () => {
-        signupPage.classList.add("hidden");
-        loginPage.classList.remove("hidden");
+// Ensure elements exist before adding event listeners
+if (switchToLoginBtn && switchToSignupBtn && loginPage && signupPage) {
+    switchToLoginBtn.addEventListener("click", () => {
+        signupPage.style.display = "none";  // Hide signup
+        loginPage.style.display = "block";  // Show login
     });
 
-    switchToSignup.addEventListener("click", () => {
-        loginPage.classList.add("hidden");
-        signupPage.classList.remove("hidden");
+    switchToSignupBtn.addEventListener("click", () => {
+        loginPage.style.display = "none";   // Hide login
+        signupPage.style.display = "block"; // Show signup
     });
+} else {
+    console.error("Auth switch elements not found!");
+}
 
 // ======================
 // COMPLETE Firebase Auth Implementation (Fixed)
