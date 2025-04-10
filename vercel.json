@@ -1,4 +1,10 @@
 {
+  "functions": {
+    "api/send-reminders.js": {
+      "runtime": "nodejs18.x",
+      "schedule": "@daily"
+    }
+  },
   "routes": [
     {
       "src": "/api/(.*)",
