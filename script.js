@@ -353,31 +353,44 @@ document.addEventListener("DOMContentLoaded", () => {
     // ======================
     // Form Handling
     // ======================
-    profileForm?.addEventListener("submit", (e) => {
-        e.preventDefault();
+profileForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-        const newProfile = {
-            name: document.getElementById("petName").value,
-            breed: document.getElementById("petBreed").value,
-            dob: document.getElementById("petDob").value,
-            birthday: document.getElementById("petBirthday").value,
-            gallery: Array.from(document.getElementById("petGallery").files).map(file => URL.createObjectURL(file)),
-            moodLog: [],
-            coverPhotoIndex: 0
-        };
+    const newProfile = {
+        name: document.getElementById("petName").value,
+        breed: document.getElementById("petBreed").value,
+        dob: document.getElementById("petDob").value,
+        birthday: document.getElementById("petBirthday").value,
+        gallery: Array.from(document.getElementById("petGallery").files).map(file => URL.createObjectURL(file)),
+        moodLog: [],
+        coverPhotoIndex: 0
+    };
 
-        if (isEditing) {
-            petProfiles[currentEditIndex] = newProfile;
-        } else {
-            petProfiles.push(newProfile);
-        }
+    if (isEditing) {
+        petProfiles[currentEditIndex] = newProfile;
+    } else {
+        petProfiles.push(newProfile);
+    }
 
-        localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-        profileSection.classList.add("hidden");
-        fullPageBanner.classList.add("hidden");
-        profileForm.reset();
-        renderProfiles();
-    });
+    // Save the updated profiles to localStorage
+    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+
+    // Hide the form and banner
+    profileSection.classList.add("hidden");
+    fullPageBanner.classList.add("hidden");
+
+    // Reset form fields
+    profileForm.reset();
+
+    // Re-render profiles
+    renderProfiles();
+
+    // Redirect to dashboard
+    dashboard.classList.remove("hidden"); // Show dashboard
+    authContainer.classList.add("hidden"); // Hide auth container
+    window.scrollTo(0, 0); // Optional: Scroll to the top of the page
+});
+
 
     // ======================
     // Service Worker
