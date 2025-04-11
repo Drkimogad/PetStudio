@@ -34,16 +34,37 @@ self.addEventListener('install', (event) => {
 });
 
 
-// Fetch: Optimized strategies
+// service-worker.js (updated)
 self.addEventListener('fetch', (event) => {
-    const { request } = event;
-    const url = new URL(request.url);
+  // Skip caching for POST requests and Vercel analytics
+  if (event.request.method !== 'GET' || 
+      event.request.url.includes('_vercel/insights/')) {
+    return;
+  }
 
-    // Cache-first for static assets
-    if (CORE_ASSETS.includes(url.pathname)) {
-        event.respondWith(caches.match(request));
-        return;
-    }
+  event.respondWith(
+    caches.match(event.request)
+      .then((cachedResponse) => {
+        // Return cached response if found
+        if (cachedResponse) return cachedResponse;
+
+        // Clone request for network fallthrough
+        const fetchRequest = event.request.clone();
+
+        return fetch(fetchRequest).then((response) => {
+          // Validate response
+          if (!response || response.status !== 200) return response;
+
+          // Clone response for caching
+          const responseToCache = response.clone();
+          caches.open('pet-studio-cache-v1')
+            .then((cache) => cache.put(event.request, responseToCache));
+
+          return response;
+        });
+      })
+  );
+});
 
     // Network-first for HTML
     if (request.mode === 'navigate') {
