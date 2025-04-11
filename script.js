@@ -578,28 +578,38 @@ profileForm?.addEventListener("submit", (e) => {
         return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
     }
 
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js')
-            .then(registration => {
-                console.log('Caching Service Worker registered:', registration.scope);
-                subscribeUserToPushNotifications(registration);
-
-                registration.addEventListener('updatefound', () => {
-                    const installingWorker = registration.installing;
-                    installingWorker.addEventListener('statechange', () => {
-                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            installingWorker.postMessage({ action: 'skipWaiting' });
-                        }
-                    });
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js')
+        .then(registration => {
+            // Clear old cache versions FIRST
+            caches.keys().then(cacheNames => {
+                cacheNames.forEach(cacheName => {
+                    if (cacheName !== 'pet-studio-cache-v1') {
+                        caches.delete(cacheName);
+                    }
                 });
-            })
-            .catch(error => console.error('Service Worker registration failed:', error));
+            });
 
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            console.log('New service worker activated, reloading page...');
-            location.reload();
-        });
-    }
+            // Existing code below
+            console.log('Caching Service Worker registered:', registration.scope);
+            subscribeUserToPushNotifications(registration);
+
+            registration.addEventListener('updatefound', () => {
+                const installingWorker = registration.installing;
+                installingWorker.addEventListener('statechange', () => {
+                    if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        installingWorker.postMessage({ action: 'skipWaiting' });
+                    }
+                });
+            });
+        })
+        .catch(error => console.error('Service Worker registration failed:', error));
+
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        console.log('New service worker activated, reloading page...');
+        location.reload();
+    });
+}
 
     // Initialize
     if (petProfiles.length > 0) renderProfiles();
