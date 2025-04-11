@@ -473,9 +473,9 @@ ${profile.moodLog?.length ? `Recent Mood: ${getMoodEmoji(profile.moodLog.slice(-
       if (loader) {
         loader.style.display = 'none';
     }
-  }); // ← CLOSES load event listener
-} 
-    
+ } 
+}); // ← Now closes correctly
+   
     function logMood(profileIndex, mood) {
         const today = new Date().toISOString().split('T')[0];
         if (!petProfiles[profileIndex].moodLog) petProfiles[profileIndex].moodLog = [];
