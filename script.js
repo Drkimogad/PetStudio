@@ -369,7 +369,8 @@ function calculateAge(dobString) {
     } catch {
         return 'N/A';
     }
-    
+ } // Added missing closure for calculateAge
+
 // generate QR code function//
 function generateQRCode(profileIndex) {
   // Add this guard clause first
@@ -436,8 +437,9 @@ function generateQRCode(profileIndex) {
         </html>
     `);
   qrWindow.document.close();
-
-// Inside generateQRCode() function, replace the qrText section with:
+    
+    qrWindow.addEventListener('load', () => {
+    // Moved qrText INSIDE the load handler
 const qrText = `
 PET PROFILE
 Name: ${profile.name || 'N/A'}
@@ -453,7 +455,7 @@ ${profile.moodLog?.length ? `Recent Mood: ${getMoodEmoji(profile.moodLog.slice(-
       const qrcodeContainer = qrWindow.document.getElementById(
         'qrcode-container');
       qrcodeContainer.style.display = 'block';
-      const qrCode = new qrWindow.QRCode(qrcodeContainer, {
+       new qrWindow.QRCode(qrcodeContainer, {
         text: qrText,
         width: 256,
         height: 256,
@@ -465,17 +467,17 @@ ${profile.moodLog?.length ? `Recent Mood: ${getMoodEmoji(profile.moodLog.slice(-
       // Show the controls
       const qrControls = qrWindow.document.getElementById('qr-controls');
       qrControls.style.display = 'block';
-
     } catch (error) {
       qrWindow.document.body.innerHTML = `<h1>Error: ${error.message}</h1>`;
     } finally {
       const loader = qrWindow.document.querySelector('.loader');
       if (loader) {
         loader.style.display = 'none';
-    }
- } 
-}); // ← Now closes correctly
-   
+           } // Added missing closure for if-block
+        } 
+    }); // Properly closes addEventListener
+} // Properly closes generateQRCode
+    
     function logMood(profileIndex, mood) {
         const today = new Date().toISOString().split('T')[0];
         if (!petProfiles[profileIndex].moodLog) petProfiles[profileIndex].moodLog = [];
