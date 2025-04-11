@@ -1,8 +1,8 @@
 const CACHE_NAME = 'PetStudio-cache-v6';
 const API_CACHE = 'api-cache-v1';
 const FONT_CACHE = 'fonts-cache-v1';
-
 const OFFLINE_URL = '/offline.html';
+
 const CORE_ASSETS = [
     '/',
     '/index.html',
@@ -11,6 +11,7 @@ const CORE_ASSETS = [
     '/manifest.json',
     '/icons/icon-192x192.png',
     '/icons/icon-512x512.png',
+    'banner/image.png',
     'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js',
     OFFLINE_URL
 ];
@@ -18,58 +19,39 @@ const CORE_ASSETS = [
 // Install: Precaching
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => 
-            Promise.all(
+        caches.open(CACHE_NAME).then(cache => {
+            return Promise.all(
                 CORE_ASSETS.map(url => {
-                    // Ensure you're only fetching and caching GET requests
-                    return fetch(url, { method: 'GET' })
-                        .then(res => 
-                            res.ok ? cache.put(url, res) : null
-                        )
-                        .catch(console.warn);
+                    return fetch(new Request(url, { method: 'GET' }))
+                        .then(response => {
+                            if (response.ok) return cache.put(url, response);
+                            return null;
+                        })
+                        .catch(error => {
+                            console.warn(`Failed to cache ${url}:`, error);
+                            return null;
+                        });
                 })
-            ).then(() => self.skipWaiting())
-        )
+            ).then(() => self.skipWaiting());
+        })
     );
 });
 
-
-// service-worker.js (updated)
+// Fetch: Network with cache fallback
 self.addEventListener('fetch', (event) => {
-  // Skip caching for POST requests and Vercel analytics
-  if (event.request.method !== 'GET' || 
-      event.request.url.includes('_vercel/insights/')) {
-    return;
-  }
+    const { request } = event;
+    const url = new URL(request.url);
 
-  event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        // Return cached response if found
-        if (cachedResponse) return cachedResponse;
+    // Skip non-GET requests and Vercel analytics
+    if (request.method !== 'GET' || url.pathname.includes('_vercel/insights/')) {
+        return;
+    }
 
-        // Clone request for network fallthrough
-        const fetchRequest = event.request.clone();
-
-        return fetch(fetchRequest).then((response) => {
-          // Validate response
-          if (!response || response.status !== 200) return response;
-
-          // Clone response for caching
-          const responseToCache = response.clone();
-          caches.open('pet-studio-cache-v1')
-            .then((cache) => cache.put(event.request, responseToCache));
-
-          return response;
-        });
-      })
-  );
-});
-
-    // Network-first for HTML
+    // HTML navigation requests
     if (request.mode === 'navigate') {
         event.respondWith(
-            fetch(request).catch(() => caches.match(OFFLINE_URL))
+            fetch(request)
+                .catch(() => caches.match(OFFLINE_URL))
         );
         return;
     }
@@ -77,32 +59,51 @@ self.addEventListener('fetch', (event) => {
     // API caching
     if (url.pathname.startsWith('/api/')) {
         event.respondWith(
-            fetch(request).then(networkResponse => {
-                const clone = networkResponse.clone();
-                caches.open(API_CACHE).then(cache => cache.put(request, clone));
-                return networkResponse;
-            }).catch(() => caches.match(request))
+            fetch(request)
+                .then(networkResponse => {
+                    const clone = networkResponse.clone();
+                    caches.open(API_CACHE)
+                        .then(cache => cache.put(request, clone));
+                    return networkResponse;
+                })
+                .catch(() => caches.match(request))
         );
         return;
     }
 
-    // Default: Network with cache fallback
+    // Default caching strategy
     event.respondWith(
-        fetch(request).catch(() => caches.match(request))
+        caches.match(request).then(cachedResponse => {
+            if (cachedResponse) return cachedResponse;
+
+            return fetch(request).then(response => {
+                if (!response || response.status !== 200) return response;
+
+                const responseToCache = response.clone();
+                caches.open(CACHE_NAME)
+                    .then(cache => cache.put(request, responseToCache));
+
+                return response;
+            }).catch(() => {
+                if (request.headers.get('Accept').includes('text/html')) {
+                    return caches.match(OFFLINE_URL);
+                }
+            });
+        })
     );
 });
 
 // Activate: Cleanup
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then(keys => 
-            Promise.all(
-                keys.map(key => 
-                    ![CACHE_NAME, API_CACHE, FONT_CACHE].includes(key) 
-                        ? caches.delete(key) 
-                        : null
-                )
-            )
-        ).then(() => self.clients.claim())
+        caches.keys().then(keys => {
+            return Promise.all(
+                keys.map(key => {
+                    if (![CACHE_NAME, API_CACHE, FONT_CACHE].includes(key)) {
+                        return caches.delete(key);
+                    }
+                })
+            );
+        }).then(() => self.clients.claim())
     );
 });
