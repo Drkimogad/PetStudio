@@ -31,6 +31,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const fullPageBanner = document.getElementById("fullPageBanner");
     const profileForm = document.getElementById("profileForm");
 
+    // Add at the top of your DOMContentLoaded callback
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.has('profile')) {
+    const profileIndex = parseInt(urlParams.get('profile'));
+    const profile = petProfiles[profileIndex];
+    if(profile) {
+        printProfile(profile);
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+}
+
     // ======================
     // State Management
     // ======================
@@ -146,28 +157,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Auth State Observer
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            // User is logged in
-            authContainer.classList.add("hidden");
-            dashboard.classList.remove("hidden");
-            if (logoutBtn) {
-                logoutBtn.style.display = "block";
-                setupLogoutButton(); // Ensure handler is attached
-            }
-            
-            if (petProfiles.length > 0) renderProfiles();
-        } else {
-            // User is logged out
-            authContainer.classList.remove("hidden");
-            dashboard.classList.add("hidden");
-            if (logoutBtn) logoutBtn.style.display = "none";
-            
-            // Show login form by default
-            loginPage?.classList.remove("hidden");
-            signupPage?.classList.add("hidden");
+// Auth State Observer
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        // Reset UI state on login
+        authContainer.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+        ${`profileSection.classList.add("hidden"); // Add this line`}
+        ${`fullPageBanner.classList.remove("hidden"); // Add this line`}
+
+        if (logoutBtn) {
+            logoutBtn.style.display = "block";
+            setupLogoutButton(); // Ensure handler is attached
         }
-    });
+
+        if (petProfiles.length > 0) {
+            renderProfiles();
+        } else {
+            ${`petList.innerHTML = ''; // Clear previous entries`}
+        }
+
+        // Rest of existing code
+    } else {
+        // User is logged out
+        authContainer.classList.remove("hidden");
+        dashboard.classList.add("hidden");
+        if (logoutBtn) logoutBtn.style.display = "none";
+
+        // Show login form by default
+        loginPage?.classList.remove("hidden");
+        signupPage?.classList.add("hidden");
+    }
+});
     
     // ======================
     // Pet Profile Functions
@@ -297,59 +318,93 @@ addPetProfileBtn?.addEventListener("click", (e) => {
         renderProfiles();
     }
 
-    function printProfile(profile) {
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>${profile.name}'s Profile</title>
-                <style>
-                    body { font-family: Arial; padding: 20px; }
-                    .print-header { text-align: center; margin-bottom: 20px; }
-                    .print-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
-                    .print-gallery img { width: 100%; height: 150px; object-fit: cover; }
-                </style>
-            </head>
-            <body>
-                <div class="print-header">
-                    <h1>${profile.name}'s Profile</h1>
-                    <p>Generated on ${new Date().toLocaleDateString()}</p>
-                </div>
-                <div class="print-details">
-                    <p><strong>Breed:</strong> ${profile.breed}</p>
-                    <p><strong>Date of Birth:</strong> ${profile.dob}</p>
-                    <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
-                </div>
-                <h3>Gallery</h3>
-                <div class="print-gallery">
-                    ${profile.gallery.map(img => `<img src="${img}" alt="Pet photo">`).join('')}
-                </div>
-                <script>
-                    window.onload = function() {
-                        setTimeout(function() {
-                            window.print();
-                        }, 500);
-                    };
-                </script>
-            </body>
-            </html>
-        `);
-        printWindow.document.close();
-    }
+function printProfile(profile) {
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>${profile.name}'s Profile</title>
+            <style>
+                body { font-family: Arial; padding: 20px; }
+                .print-header { text-align: center; margin-bottom: 20px; }
+                .print-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+                .print-gallery img { width: 100%; height: 150px; object-fit: cover; }
+                ${/* Added CSS rule */''}
+                ${`<style>
+                    /* Add this CSS rule */
+                    .print-gallery img { opacity: 0; transition: opacity 0.3s; }
+                </style>`}
+            </style>
+        </head>
+        <body>
+            <div class="print-header">
+                <h1>${profile.name}'s Profile</h1>
+                <p>Generated on ${new Date().toLocaleDateString()}</p>
+            </div>
+            <div class="print-details">
+                <p><strong>Breed:</strong> ${profile.breed}</p>
+                <p><strong>Date of Birth:</strong> ${profile.dob}</p>
+                <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+            </div>
+            <h3>Gallery</h3>
+            <div class="print-gallery">
+                ${profile.gallery.map(img => `<img src="${img}" alt="Pet photo">`).join('')}
+            </div>
+            <script>
+                window.onload = function() {
+                    ${/* Add image preloader */''}
+                    ${`const images = Array.from(document.querySelectorAll('.print-gallery img'));
+                
+                    const loadPromises = images.map(img => {
+                        return new Promise((resolve) => {
+                            if (img.complete) {
+                                resolve();
+                            } else {
+                                img.onload = resolve;
+                                img.onerror = resolve; // Handle broken images
+                            }
+                        });
+                    });
 
-    function shareProfile(profile) {
-        if (navigator.share) {
-            navigator.share({
-                title: `${profile.name}'s Pet Profile`,
-                text: `Check out ${profile.name}'s profile on Pet Studio! Breed: ${profile.breed}, Birthday: ${profile.birthday}`,
-                url: window.location.href
-            }).catch(error => console.log('Error sharing:', error));
-        } else {
-            const shareText = `${profile.name}'s Pet Profile\nBreed: ${profile.breed}\nBirthday: ${profile.birthday}\n\nShared from Pet Studio`;
-            alert(shareText + '\n\nCopy this text to share elsewhere.');
-        }
+                    Promise.all(loadPromises).then(() => {
+                        images.forEach(img => {
+                            img.style.opacity = '1'; // Fade-in effect
+                            // Fix blob URL persistence
+                            if(img.src.startsWith('blob:')) {
+                                img.src = localStorage.getItem(\`petPhoto-\${img.src}\`);
+                            }
+                        });
+                        window.print();
+                    });`}
+                };
+            </script>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
+
+function shareProfile(profile) {
+    // Create unique shareable URL
+    const profileIndex = petProfiles.findIndex(p => p.name === profile.name);
+    const shareUrl = `${window.location.origin}${window.location.pathname}?profile=${profileIndex}`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: `${profile.name}'s Pet Profile`,
+            text: `Check out ${profile.name}'s profile on Pet Studio!`,
+            url: shareUrl
+        }).catch(error => console.log('Sharing error:', error));
+    } else {
+        // Enhanced desktop sharing
+        const printWindow = window.open(shareUrl, '_blank', 'noopener,noreferrer');
+        setTimeout(() => {
+            printWindow.print();
+        }, 1000);
     }
+}
+    
 // ======== QR CODE GENERATION button functionality ========
 // Add this helper function ABOVE generateQRCode()
 function calculateAge(dobString) {
