@@ -169,6 +169,16 @@ footer {
     margin-top: 20px; /* Adjusts the gap between profiles and footer */
 }
 
+/* QR Button Specific Styles */
+.qrBtn {
+    background: #27ae60 !important;
+    transition: transform 0.2s;
+}
+.qrBtn:hover {
+    transform: scale(1.1);
+    background: #219a52 !important;
+}
+
 /* Print styles - specifically for handling image scaling and visibility */
 @media print {
     /* Ensure images are resized properly and centered */
