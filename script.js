@@ -369,7 +369,7 @@ function calculateAge(dobString) {
     } catch {
         return 'N/A';
     }
-}
+    
 // generate QR code function//
 function generateQRCode(profileIndex) {
   // Add this guard clause first
@@ -472,7 +472,9 @@ ${profile.moodLog?.length ? `Recent Mood: ${getMoodEmoji(profile.moodLog.slice(-
       const loader = qrWindow.document.querySelector('.loader');
       if (loader) {
         loader.style.display = 'none';
-      }
+    }
+  }); // ← CLOSES load event listener
+} 
     
     function logMood(profileIndex, mood) {
         const today = new Date().toISOString().split('T')[0];
