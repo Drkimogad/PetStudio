@@ -163,8 +163,8 @@ auth.onAuthStateChanged((user) => {
         // Reset UI state on login
         authContainer.classList.add("hidden");
         dashboard.classList.remove("hidden");
-        ${`profileSection.classList.add("hidden"); // Add this line`}
-        ${`fullPageBanner.classList.remove("hidden"); // Add this line`}
+        profileSection.classList.add("hidden");
+        fullPageBanner.classList.remove("hidden");
 
         if (logoutBtn) {
             logoutBtn.style.display = "block";
@@ -174,7 +174,7 @@ auth.onAuthStateChanged((user) => {
         if (petProfiles.length > 0) {
             renderProfiles();
         } else {
-            ${`petList.innerHTML = ''; // Clear previous entries`}
+        petList.innerHTML = ''; 
         }
 
         // Rest of existing code
