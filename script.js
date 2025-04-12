@@ -488,13 +488,20 @@ function generateQRCode(profileIndex) {
             text-align: center;
           }
           .share-link {
-            font-size: 0.8em;
-            word-break: break-all;
-            margin: 10px 0;
-            padding: 5px;
-            background: #f5f5f5;
-            border-radius: 3px;
-          }
+  font-size: 0.8em;
+  margin: 10px auto;
+  padding: 8px;
+  background: #f8f8f8;
+  border-radius: 4px;
+  max-width: 90%;
+  word-break: break-all;
+}
+
+.share-link input {
+  border: 1px solid #ddd;
+  padding: 3px;
+  font-family: inherit;
+}
         </style>
       </head>
       <body>
@@ -525,35 +532,34 @@ function generateQRCode(profileIndex) {
 
           // NEW: Share functionality
           async function shareQR() {
-            try {
-              const shareUrl = window.location.href.split('?')[0] + '?pet=${profileIndex}';
-              const qrCanvas = document.querySelector('#qrcode-container canvas');
-              
-              // Mobile devices (Web Share API)
-              if (navigator.share) {
-                await navigator.share({
-                  title: '${profile.name}\'s Pet Profile',
-                  text: 'Check out ${profile.name}\'s QR code!',
-                  url: shareUrl
-                });
-                return;
-              }
-              
-              // Desktop fallback
-              if (qrCanvas) {
-                // Show shareable link
-                const shareLinkEl = document.getElementById('share-link');
-                shareLinkEl.textContent = shareUrl;
-                shareLinkEl.style.display = 'block';
-                
-                // Copy to clipboard
-                await navigator.clipboard.writeText(shareUrl);
-                alert('Link copied to clipboard!');
-              }
-            } catch (err) {
-              console.error('Sharing failed:', err);
-            }
-          }
+  try {
+    const shareUrl = `${window.location.origin}/profile/${profileIndex}`;
+    const qrCanvas = document.querySelector('#qrcode-container canvas');
+    
+    // Mobile share
+    if (navigator.share) {
+      await navigator.share({ title: '${profile.name}\'s Profile', url: shareUrl });
+      return;
+    }
+    
+    // Desktop fallback
+    const shareLinkEl = document.getElementById('share-link');
+    shareLinkEl.textContent = shareUrl;
+    shareLinkEl.style.display = 'block';
+    
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      shareLinkEl.textContent = '✅ Link copied to clipboard!';
+    } catch {
+      // Ultimate fallback if clipboard fails
+      shareLinkEl.innerHTML = `🔗 Share this link: <input value="${shareUrl}" style="width:100%">`;
+      shareLinkEl.querySelector('input').select();
+    }
+    
+  } catch (err) {
+    console.error('Sharing failed:', err);
+  }
+}
         </script>
       </body>
     </html>
