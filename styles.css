@@ -105,11 +105,15 @@ input {
 }
 
 .petCard img {
-    display: block;
-    margin: 0 auto;
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 70vh !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
 }
 
 .deleteBtn {
