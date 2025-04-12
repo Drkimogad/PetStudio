@@ -104,6 +104,18 @@ input {
     margin: 5px 0;
 }
 
+/* Optional: Style for Google button */
+.google-btn {
+    background: #4285F4;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+
 /* Keep your existing banner image styles (unchanged) */
 .banner-image {
   width: 100% !important;
