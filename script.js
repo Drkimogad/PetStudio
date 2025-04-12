@@ -298,58 +298,144 @@ async function createDriveFolder() {
   }
 }
     
-   
-   // i need to integrate these here in pet profile functions 
-        // ======================
-    // MODIFIED Save Profile Function - ADD DRIVE BACKUP
-    // ======================
-    async function saveProfileToDrive(profile) {
-        try {
-            await gapi.client.drive.files.create({
-                name: `${profile.name}.json`,
-                mimeType: 'application/json',
-                body: JSON.stringify(profile)
-            });
-        } catch (error) {
-            console.error("Drive save failed, using Firestore fallback");
-            // Add Firestore fallback here if needed
-        }
-    }
-
-    // ======================
-    // Existing Functions with Small Additions
-    // ======================
-    function savePetProfile(profile) {
-        // Your existing save logic
-        
-        // Add Drive backup
-        if (auth.currentUser?.providerData.some(p => p.providerId === 'google.com')) {
-            saveProfileToDrive(profile);
-        }
-    }
-    
-    
-    // ======================
-    // Pet Profile Functions
-    // ======================
+// ======================
+// Enhanced Pet Profile Functions with Drive Backup
+// ======================
+// Existing addPetProfileBtn event listener remains unchanged
 addPetProfileBtn?.addEventListener("click", (e) => {
     e.preventDefault();
     
-    // Reset form when opening
     if (!isEditing) {
         profileForm.reset();
         currentEditIndex = null;
     }
 
-    // Toggle visibility
     fullPageBanner.classList.add("hidden");
     profileSection.classList.remove("hidden");
-    
-    // Keep dashboard visible
     dashboard.classList.remove("hidden");
     authContainer.classList.add("hidden");
 });
+
+// MODIFIED: Save to Google Drive with enhanced error handling
+async function saveProfileToDrive(profile) {
+    try {
+        // Check if we have Drive access
+        if (!gapi.client.drive) {
+            throw new Error("Drive API not initialized");
+        }
+
+        // Check for existing PetStudio folder
+        let folderId = await getDriveFolderId();
+        
+        // Create the JSON file
+        const file = await gapi.client.drive.files.create({
+            name: `${profile.name}_${Date.now()}.json`, // Unique filename
+            parents: folderId ? [folderId] : null,
+            mimeType: 'application/json',
+            body: JSON.stringify({
+                ...profile,
+                lastUpdated: new Date().toISOString()
+            }),
+            fields: 'id,name,webViewLink'
+        });
+
+        console.log("Saved to Drive:", file.result);
+        return file.result;
+    } catch (error) {
+        console.error("Drive save failed:", error);
+        throw error; // Rethrow to handle in calling function
+    }
+}
+// NEW: Helper to get/create Drive folder
+async function getDriveFolderId() {
+    try {
+        const response = await gapi.client.drive.files.list({
+            q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder' and trashed=false",
+            fields: "files(id)",
+            spaces: 'drive'
+        });
+        
+        if (response.result.files.length > 0) {
+            return response.result.files[0].id;
+        }
+
+        // Create folder if not exists
+        const folder = await gapi.client.drive.files.create({
+            name: 'PetStudio',
+            mimeType: 'application/vnd.google-apps.folder',
+            fields: 'id'
+        });
+        
+        return folder.result.id;
+    } catch (error) {
+        console.error("Drive folder operation failed:", error);
+        return null;
+    }
+}
+// MODIFIED: Main save function with Drive + Firestore fallback
+async function savePetProfile(profile) {
+    // Your existing local storage logic
+    if (isEditing) {
+        petProfiles[currentEditIndex] = profile;
+    } else {
+        petProfiles.push(profile);
+    }
+    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+
+    // NEW: Backup to Drive if Google-authenticated
+    const isGoogleUser = auth.currentUser?.providerData?.some(
+        p => p.providerId === 'google.com'
+    );
     
+    if (isGoogleUser && gapi.client.drive) {
+        try {
+            await saveProfileToDrive(profile);
+        } catch (driveError) {
+            console.warn("Drive backup failed, using Firestore fallback");
+            // Add Firestore fallback here if needed
+            // await saveToFirestore(profile);
+        }
+    }
+
+    // Existing UI updates
+    renderProfiles();
+    profileSection.classList.add("hidden");
+    fullPageBanner.classList.remove("hidden");
+    isEditing = false;
+    currentEditIndex = null;
+}
+// MODIFIED: Delete function with Drive cleanup
+async function deleteProfile(index) {
+    const profile = petProfiles[index];
+    // NEW: Try to delete from Drive if exists
+    if (auth.currentUser?.providerData?.some(p => p.providerId === 'google.com')) {
+        try {
+            const files = await gapi.client.drive.files.list({
+                q: `name contains '${profile.name}' and trashed=false`,
+                fields: "files(id,name)"
+            });
+            
+            if (files.result.files.length > 0) {
+                await Promise.all(
+                    files.result.files.map(file => 
+                        gapi.client.drive.files.update({
+                            fileId: file.id,
+                            resource: { trashed: true }
+                        })
+                    )
+                );
+                console.log("Moved to Drive trash:", files.result.files.length, "files");
+            }
+        } catch (error) {
+            console.error("Drive delete failed:", error);
+        }
+    }
+    // Existing deletion logic
+    petProfiles.splice(index, 1);
+    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+    renderProfiles();
+}
+// function render profiles original//  
     function renderProfiles() {
         petList.innerHTML = '';
         petProfiles.forEach((profile, index) => {
@@ -417,6 +503,7 @@ addPetProfileBtn?.addEventListener("click", (e) => {
         });
     }
 
+    // func5ion countdown//
     function getCountdown(birthday) {
         const today = new Date();
         const nextBirthday = new Date(birthday);
