@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const provider = new firebase.auth.GoogleAuthProvider(); // Add Google provider
 
     // ======================
     // DOM Elements
@@ -30,6 +31,46 @@ document.addEventListener("DOMContentLoaded", () => {
     const petList = document.getElementById("petList");
     const fullPageBanner = document.getElementById("fullPageBanner");
     const profileForm = document.getElementById("profileForm");
+    const googleSignInBtn = document.createElement("button"); // Create Google Sign-In button
+
+        // ======================
+    // Initialize Google Drive API
+    // ======================
+    function initDriveAPI(token) {
+        return new Promise((resolve) => {
+            gapi.load('client', () => {
+                gapi.client.init({
+                    apiKey: firebaseConfig.apiKey,
+                    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+                }).then(() => {
+                    gapi.auth.setToken({ access_token: token });
+                    resolve();
+                });
+            });
+        });
+    }
+
+    // ======================
+    // Google Sign-In Handler - NEW FUNCTION
+    // ======================
+    function handleGoogleSignIn() {
+        const googleBtn = document.createElement('div');
+        googleBtn.id = 'googleSignIn';
+        googleBtn.innerHTML = '<button class="google-btn">Sign in with Google</button>';
+        authContainer.appendChild(googleBtn);
+
+        googleBtn.querySelector('button').addEventListener('click', () => {
+            auth.signInWithPopup(provider)
+                .then(async (result) => {
+                    // Initialize Drive API with Google token
+                    await initDriveAPI(result.credential.accessToken);
+                })
+                .catch((error) => {
+                    console.error("Google sign-in error:", error);
+                    // Fallback to email/password if needed
+                });
+        });
+    }
 
     // Add at the top of your DOMContentLoaded callback
     const urlParams = new URLSearchParams(window.location.search);
@@ -157,38 +198,109 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Auth State Observer
-// Auth State Observer
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        // Reset UI state on login
-        authContainer.classList.add("hidden");
-        dashboard.classList.remove("hidden");
-        profileSection.classList.add("hidden");
-        fullPageBanner.classList.remove("hidden");
-
-        if (logoutBtn) {
-            logoutBtn.style.display = "block";
-            setupLogoutButton();
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    // =============================================
+    // NEW: Initialize Drive API for Google users
+    // =============================================
+    if (user.providerData.some(provider => provider.providerId === 'google.com')) {
+      try {
+        const token = await user.getIdToken();
+        await initDriveAPI(token);
+        
+        // NEW: Optional - Create PetStudio folder on first login
+        const folderExists = await checkDriveFolder();
+        if (!folderExists) {
+          await createDriveFolder();
         }
-
-        if (petProfiles.length > 0) {
-            renderProfiles();
-        } else {
-        petList.innerHTML = ''; 
-        }
-
-        // Rest of existing code
-    } else {
-        // User is logged out
-        authContainer.classList.remove("hidden");
-        dashboard.classList.add("hidden");
-        if (logoutBtn) logoutBtn.style.display = "none";
-
-        // Show login form by default
-        loginPage?.classList.remove("hidden");
-        signupPage?.classList.add("hidden");
+      } catch (error) {
+        console.error("Drive init failed:", error);
+        // Fallback to Firestore silently
+      }
     }
+
+    // =============================================
+    // EXISTING UI CODE (unchanged)
+    // =============================================
+    authContainer.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    profileSection.classList.add("hidden");
+    fullPageBanner.classList.remove("hidden");
+
+    if (logoutBtn) {
+      logoutBtn.style.display = "block";
+      setupLogoutButton();
+    }
+
+    if (petProfiles.length > 0) {
+      renderProfiles();
+    } else {
+      petList.innerHTML = '';
+    }
+
+  } else {
+    // =============================================
+    // NEW: Show Google Sign-In button when logged out
+    // =============================================
+    const googleSignInContainer = document.getElementById('googleSignInContainer');
+    if (!googleSignInContainer) {
+      const container = document.createElement('div');
+      container.id = 'googleSignInContainer';
+      container.innerHTML = `
+        <button id="googleSignInBtn" class="auth-btn google-btn">
+          <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
+          Continue with Google
+        </button>
+      `;
+      authContainer.insertBefore(container, loginPage);
+      
+      document.getElementById('googleSignInBtn').addEventListener('click', () => {
+        auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+      });
+    }
+
+    // =============================================
+    // EXISTING LOGOUT CODE (unchanged)
+    // =============================================
+    authContainer.classList.remove("hidden");
+    dashboard.classList.add("hidden");
+    if (logoutBtn) logoutBtn.style.display = "none";
+    
+    loginPage?.classList.remove("hidden");
+    signupPage?.classList.add("hidden");
+  }
 });
+    
+   
+   // i need to integrate these here in pet profile functions 
+        // ======================
+    // MODIFIED Save Profile Function - ADD DRIVE BACKUP
+    // ======================
+    async function saveProfileToDrive(profile) {
+        try {
+            await gapi.client.drive.files.create({
+                name: `${profile.name}.json`,
+                mimeType: 'application/json',
+                body: JSON.stringify(profile)
+            });
+        } catch (error) {
+            console.error("Drive save failed, using Firestore fallback");
+            // Add Firestore fallback here if needed
+        }
+    }
+
+    // ======================
+    // Existing Functions with Small Additions
+    // ======================
+    function savePetProfile(profile) {
+        // Your existing save logic
+        
+        // Add Drive backup
+        if (auth.currentUser?.providerData.some(p => p.providerId === 'google.com')) {
+            saveProfileToDrive(profile);
+        }
+    }
+    
     
     // ======================
     // Pet Profile Functions
