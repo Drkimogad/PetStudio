@@ -1,8 +1,8 @@
-import { schedule } from '../vercel/cron';  // Schedule module for cron job
-import { handler } from '../save-subscription';  // Assuming save-subscription has a handler
+import { schedule } from '../schedule-cron.js';  // Schedule module for cron job
+import { handler } from '../save-subscription.js';  // Assuming save-subscription has a handler
 
 // Import checkAndSendReminders asynchronously
-const { checkAndSendReminders } = await import('../lib/check-reminders');
+const { checkAndSendReminders } = await import('../lib/check-reminders.js');
 
 export default schedule('0 8 * * *', async (req, res) => {  // Runs every day at 8 AM
   try {
