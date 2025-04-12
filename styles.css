@@ -116,30 +116,6 @@ input {
   box-sizing: border-box !important;
 }
 
-/* New styles for the banner container and message */
-.banner {
-  position: relative; /* This makes the message position relative to the banner */
-  display: inline-block; /* Or 'block' depending on your layout needs */
-  width: 100%;
-}
-
-.banner-message {
-  position: absolute;
-  right: 20px; /* Adjust this to move left/right */
-  bottom: 20px; /* Adjust this to move up/down */
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
-  color: white; /* Text color */
-  padding: 10px 15px;
-  border-radius: 5px;
-  max-width: 50%; /* Prevent message from being too wide */
-}
-
-.banner-message p {
-  margin: 0; /* Remove default paragraph margins */
-  font-size: 1.1em; /* Adjust as needed */
-  line-height: 1.4;
-}
-
 .petCard img {
     width: 100% !important;
     max-width: 100% !important;
@@ -738,9 +714,10 @@ footer {
     text-align: center;
     overflow: hidden;
     margin-bottom: 20px;
-    max-width: 100%; /* Ensure banner fits within its container */
+    max-width: 100%;
 }
 
+/* Banner image - keep as is */
 .banner-image {
     width: 80%;
     height: auto;
@@ -748,17 +725,21 @@ footer {
     object-fit: cover;
 }
 
+/* Updated banner message positioning */
 .banner-message {
     position: absolute;
-    top: 80%;
-    left: 65%;
-    transform: translate(-50%, -50%);
+    right: 30px; /* Distance from right edge */
+    bottom: 30px; /* Distance from bottom edge */
     color: white;
     font-size: 1.5em;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 5px;
+    background: rgba(0, 0, 0, 0.7); /* More opaque background */
+    padding: 10px 15px; /* More padding */
     border-radius: 5px;
+    max-width: 40%; /* Prevent too wide text */
+    text-align: right; /* Align text to right */
+    backdrop-filter: blur(2px); /* Optional: frosted glass effect */
 }
+     
 /* Auth Container */
 #authContainer {
     max-width: 500px;
