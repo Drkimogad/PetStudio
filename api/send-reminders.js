@@ -1,110 +1,98 @@
-import { checkAndSendReminders } from '../lib/check-reminder';  // Correct if import admin from "firebase-admin";
-import { sendNotification } from './fcm-handler';
+import admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
-console.log("🔥 Firebase Debugging: ");
-console.log("✅ Private Key Loaded:", !!process.env.FIREBASE_PRIVATE_KEY);
-console.log("🔹 Project ID:", process.env.FIREBASE_PROJECT_ID);
-console.log("🔹 Client Email:", process.env.FIREBASE_CLIENT_EMAIL);
 
-// Check for required environment variables
-const requiredEnvVars = [
-  "FIREBASE_TYPE",
-  "FIREBASE_PROJECT_ID",
-  "FIREBASE_PRIVATE_KEY_ID",
-  "FIREBASE_PRIVATE_KEY",
-  "FIREBASE_CLIENT_EMAIL",
-  "FIREBASE_CLIENT_ID",
-  "FIREBASE_AUTH_URI",
-  "FIREBASE_TOKEN_URI",
-  "FIREBASE_AUTH_PROVIDER_CERT_URL",
-  "FIREBASE_CLIENT_CERT_URL"
-];
-const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
-if (missingEnvVars.length > 0) {
-  console.error(`Missing required environment variables: ${missingEnvVars.join(", ")}`);
-  process.exit(1);
-}
-
+// Initialize Firebase Admin
 if (!admin.apps.length) {
   try {
     admin.initializeApp({
       credential: admin.credential.cert({
         type: process.env.FIREBASE_TYPE,
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        privateKeyId: process.env.FIREBASE_PRIVATE_KEY_ID,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"), // Replace \\n with \n
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        clientId: process.env.FIREBASE_CLIENT_ID,
-        authUri: process.env.FIREBASE_AUTH_URI,
-        tokenUri: process.env.FIREBASE_TOKEN_URI,
-        authProviderX509CertUrl: process.env.FIREBASE_AUTH_PROVIDER_CERT_URL,
-        clientC509CertUrl: process.env.FIREBASE_CLIENT_CERT_URL,
-      }),
+        project_id: process.env.FIREBASE_PROJECT_ID,
+        private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+        private_key: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+        client_email: process.env.FIREBASE_CLIENT_EMAIL,
+        client_id: process.env.FIREBASE_CLIENT_ID,
+        auth_uri: process.env.FIREBASE_AUTH_URI,
+        token_uri: process.env.FIREBASE_TOKEN_URI,
+        auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_CERT_URL,
+        client_x509_cert_url: process.env.FIREBASE_CLIENT_CERT_URL
+      })
     });
   } catch (error) {
-    console.error("Error initializing Firebase Admin SDK:", error);
+    console.error("Firebase initialization error:", error);
     process.exit(1);
   }
 }
 
-const db = getFirestore();  // ✅ Correctly initialize Firestore
+const db = getFirestore();
 
 export default async function main() {
-  const reminders = await checkAndSendReminders();
-  
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  // Allow only GET requests
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
-
   try {
-    // Get today's date in YYYY-MM-DD format
     const today = new Date().toISOString().split("T")[0];
+    console.log(`Checking reminders for ${today}`);
 
-    // Fetch reminders from Firestore
-    const remindersSnapshot = await db.collection("reminders").where("date", "==", today).get();
+    // Get today's reminders
+    const remindersSnapshot = await db.collection("reminders")
+      .where("date", "==", today)
+      .get();
 
     if (remindersSnapshot.empty) {
-      console.log("No reminders for today.");
-      return res.status(200).json({ message: "No reminders today" });
+      console.log("No reminders found for today");
+      return { success: true, message: "No reminders today" };
     }
 
-    // Extract reminder data
-    let reminders = [];
-    remindersSnapshot.forEach((doc) => {
+    // Process reminders
+    const promises = remindersSnapshot.docs.map(async (doc) => {
       const reminder = doc.data();
-      reminders.push(reminder);
+      
+      // Get user's FCM token from users collection
+      const userDoc = await db.collection("users").doc(reminder.userId).get();
+      
+      if (!userDoc.exists) {
+        console.warn(`User ${reminder.userId} not found`);
+        return null;
+      }
 
-      // Construct the personalized message
-      const notificationMessage = `It's ${reminder.petname}'s birthday today. We wish our pawsome friend a fabulous day! 🐾🎉`;
+      const userData = userDoc.data();
+      const fcmToken = userData.fcmToken;
 
-      // Send push notification
+      if (!fcmToken) {
+        console.warn(`No FCM token for user ${reminder.userId}`);
+        return null;
+      }
+
+      // Create notification message
       const message = {
         notification: {
-          title: 'PetStudio Reminder',
-          body: notificationMessage,
+          title: 'It's ${reminder.petname}'s birthday today. We wish our pawsome friend a fabulous day! 🐾🎉',
+          body: reminder.message.replace('${petname}', reminder.petName),
         },
-        token: reminder.token, // Assuming you store the token in the reminder document
+        token: fcmToken
       };
 
-      admin.messaging().send(message)
-        .then((response) => {
-          console.log('Successfully sent message:', response);
-        })
-        .catch((error) => {
-          console.error('Error sending message:', error);
-        });
+      // Send notification
+      try {
+        await admin.messaging().send(message);
+        console.log(`Notification sent to ${reminder.userId} for ${reminder.petName}`);
+        return { success: true, reminderId: doc.id };
+      } catch (error) {
+        console.error(`Error sending to ${reminder.userId}:`, error);
+        return { success: false, reminderId: doc.id, error };
+      }
     });
 
-    console.log("Reminders found and notifications sent:", reminders);
+    // Wait for all notifications to process
+    const results = await Promise.all(promises);
+    
+    return {
+      success: true,
+      totalReminders: results.length,
+      sentCount: results.filter(r => r?.success).length,
+      errors: results.filter(r => !r?.success)
+    };
 
-    return res.status(200).json({ reminders });
   } catch (error) {
-    console.error("Error fetching reminders:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    console.error("Critical error in reminder processing:", error);
+    return { success: false, error: error.message };
   }
 }
