@@ -12,6 +12,7 @@ const CORE_ASSETS = [
     '/icons/icon-192x192.png',
     '/icons/icon-512x512.png',
     'banner/image.png',
+    'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js",
     'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js',
     OFFLINE_URL
 ];
