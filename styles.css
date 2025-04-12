@@ -104,6 +104,7 @@ input {
     margin: 5px 0;
 }
 
+/* Keep your existing banner image styles (unchanged) */
 .banner-image {
   width: 100% !important;
   max-width: 100% !important;
@@ -115,6 +116,29 @@ input {
   box-sizing: border-box !important;
 }
 
+/* New styles for the banner container and message */
+.banner {
+  position: relative; /* This makes the message position relative to the banner */
+  display: inline-block; /* Or 'block' depending on your layout needs */
+  width: 100%;
+}
+
+.banner-message {
+  position: absolute;
+  right: 20px; /* Adjust this to move left/right */
+  bottom: 20px; /* Adjust this to move up/down */
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  color: white; /* Text color */
+  padding: 10px 15px;
+  border-radius: 5px;
+  max-width: 50%; /* Prevent message from being too wide */
+}
+
+.banner-message p {
+  margin: 0; /* Remove default paragraph margins */
+  font-size: 1.1em; /* Adjust as needed */
+  line-height: 1.4;
+}
 
 .petCard img {
     width: 100% !important;
