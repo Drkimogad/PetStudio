@@ -184,7 +184,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 submitBtn.textContent = "Log In";
             });
     });
+// for testing a successful sign in //
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
+const auth = getAuth();
+const provider = new GoogleAuthProvider();
+
+// Add these scopes (critical for Drive access)
+provider.addScope('https://www.googleapis.com/auth/drive.file');
+provider.addScope('email'); // Optional but recommended
+
+// Trigger sign-in
+signInWithPopup(auth, provider)
+  .then(async (result) => {
+    const user = result.user;
+    
+    // Verify Drive access (debugging)
+    const token = await user.getIdToken();
+    console.log("Drive access token:", token); 
+    
+    // Initialize Drive API
+    await gapi.client.init({
+      apiKey: "YOUR_FIREBASE_API_KEY", // From firebaseConfig
+      discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+    });
+    gapi.auth.setToken({ access_token: token });
+  })
+  .catch((error) => {
+    console.error("Google Sign-In failed:", error);
+    // Fallback to email auth if needed
+  });
     // Logout Handler (FIXED)
     function setupLogoutButton() {
         if (logoutBtn) {
@@ -204,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Auth State Observer //
+ // Auth State Observer //
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     // =============================================
