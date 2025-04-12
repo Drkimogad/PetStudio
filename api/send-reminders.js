@@ -1,4 +1,5 @@
-import { checkAndSendReminders } from '../lib/check-reminder.js';  // Correct if import admin from "firebase-admin";
+import { checkAndSendReminders } from '../lib/check-reminder';  // Correct if import admin from "firebase-admin";
+import { sendNotification } from './fcm-handler';
 import { getFirestore } from "firebase-admin/firestore";
 console.log("🔥 Firebase Debugging: ");
 console.log("✅ Private Key Loaded:", !!process.env.FIREBASE_PRIVATE_KEY);
@@ -48,8 +49,9 @@ if (!admin.apps.length) {
 
 const db = getFirestore();  // ✅ Correctly initialize Firestore
 
-export default async function handler(req, res) {
-  // Set CORS headers for all requests
+export default async function main() {
+  const reminders = await checkAndSendReminders();
+  
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
