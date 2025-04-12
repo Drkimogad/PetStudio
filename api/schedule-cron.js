@@ -1,4 +1,4 @@
-import { checkAndSendReminders } from '../lib/reminders';
+import { checkAndSendReminders } from '../lib/check-reminders';
 
 export default async function handler(req, res) {
   try {
