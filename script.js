@@ -234,7 +234,7 @@ addPetProfileBtn?.addEventListener("click", (e) => {
                     ${profile.gallery.map((img, imgIndex) => `
                         <div class="gallery-item">
                             // Change the gallery image rendering to:
-                           `<img src="${img}" alt="Pet Photo" onload="this.classList.add('loaded')">`
+                           <img src="${img}" alt="Pet Photo" onload="this.classList.add('loaded')">
                             <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
                                     data-index="${imgIndex}">★</button>
                         </div>
