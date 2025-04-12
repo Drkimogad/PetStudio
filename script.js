@@ -168,7 +168,7 @@ auth.onAuthStateChanged((user) => {
 
         if (logoutBtn) {
             logoutBtn.style.display = "block";
-            setupLogoutButton(); // Ensure handler is attached
+            setupLogoutButton();
         }
 
         if (petProfiles.length > 0) {
@@ -363,7 +363,8 @@ function printProfile(profile) {
                                 resolve();
                             } else {
                                 img.onload = resolve;
-                                img.onerror = resolve; // Handle broken images
+                                // handle broken image
+                                img.onerror = resolve;
                             }
                         });
                     });
