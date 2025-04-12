@@ -201,7 +201,28 @@ footer {
     .petCard h3, .petCard p {
         font-size: 26pt;             /* Adjusted font size for better print layout */
     }
+@media print {
+    .petCard img {
+        max-height: 70vh !important;
+        object-fit: contain !important;
+        page-break-inside: avoid;
+    }
 
+    .petCard {
+        page-break-inside: avoid;
+        page-break-after: always;
+    }
+}
+/* Prevent Flash of Unstyled Content (FOUC) */
+.gallery-item img {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-item img.loaded {
+    opacity: 1;
+}
+    
     /* Ensure each card starts on a new page */
     .petCard {
         page-break-inside: avoid;    /* Prevent profile cards from splitting across pages */
