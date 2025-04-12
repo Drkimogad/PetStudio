@@ -64,7 +64,7 @@ export default async function main() {
       // Create notification message
       const message = {
         notification: {
-          title: 'It's ${reminder.petname}'s birthday today. We wish our pawsome friend a fabulous day! 🐾🎉',
+          title: `It's ${reminder.petname}'s birthday today. We wish our pawsome friend a fabulous day! 🐾🎉`,
           body: reminder.message.replace('${petname}', reminder.petName),
         },
         token: fcmToken
