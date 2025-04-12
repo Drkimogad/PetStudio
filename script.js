@@ -327,15 +327,27 @@ function printProfile(profile) {
         <head>
             <title>${profile.name}'s Profile</title>
             <style>
-                body { font-family: Arial; padding: 20px; }
-                .print-header { text-align: center; margin-bottom: 20px; }
-                .print-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
-                .print-gallery img { width: 100%; height: 150px; object-fit: cover; }
-                ${/* Added CSS rule */''}
-                ${`<style>
-                    /* Add this CSS rule */
-                    .print-gallery img { opacity: 0; transition: opacity 0.3s; }
-                </style>`}
+                body { 
+                    font-family: Arial; 
+                    padding: 20px;
+                    -webkit-print-color-adjust: exact !important;
+                }
+                .print-header { 
+                    text-align: center; 
+                    margin-bottom: 20px; 
+                }
+                .print-gallery { 
+                    display: grid; 
+                    grid-template-columns: repeat(3, 1fr); 
+                    gap: 10px; 
+                    margin: 20px 0; 
+                }
+                .print-gallery img { 
+                    width: 100%; 
+                    height: 150px; 
+                    object-fit: cover; 
+                    opacity: 0; /* Initial hidden state */
+                }
             </style>
         </head>
         <body>
@@ -354,31 +366,29 @@ function printProfile(profile) {
             </div>
             <script>
                 window.onload = function() {
-                    ${/* Add image preloader */''}
-                    ${`const images = Array.from(document.querySelectorAll('.print-gallery img'));
-                
-                    const loadPromises = images.map(img => {
-                        return new Promise((resolve) => {
-                            if (img.complete) {
-                                resolve();
-                            } else {
-                                img.onload = resolve;
-                                // handle broken image
-                                img.onerror = resolve;
-                            }
-                        });
+                    const images = Array.from(document.querySelectorAll('img'));
+                    let loadedCount = 0;
+
+                    const checkAllLoaded = () => {
+                        if(++loadedCount === images.length) {
+                            images.forEach(img => img.style.opacity = '1');
+                            window.print();
+                        }
+                    };
+
+                    images.forEach(img => {
+                        if(img.complete) {
+                            checkAllLoaded();
+                        } else {
+                            img.onload = checkAllLoaded;
+                            img.onerror = checkAllLoaded; // Handle broken images
+                        }
                     });
 
-                    Promise.all(loadPromises).then(() => {
-                        images.forEach(img => {
-                            img.style.opacity = '1'; // Fade-in effect
-                            // Fix blob URL persistence
-                            if(img.src.startsWith('blob:')) {
-                                img.src = localStorage.getItem(\`petPhoto-\${img.src}\`);
-                            }
-                        });
+                    // Fallback if all images are already cached
+                    if(images.length === 0 || images.every(img => img.complete)) {
                         window.print();
-                    });`}
+                    }
                 };
             </script>
         </body>
@@ -386,7 +396,6 @@ function printProfile(profile) {
     `);
     printWindow.document.close();
 }
-
 function shareProfile(profile) {
     // Create unique shareable URL
     const profileIndex = petProfiles.findIndex(p => p.name === profile.name);
