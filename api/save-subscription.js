@@ -11,6 +11,12 @@ export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
       const subscription = req.body.subscription; 
+          // Store in Firestore through server-side
+    await db.collection('subscriptions').add({
+      ...subscription,
+      createdAt: new Date().toISOString()
+    });
+      
       if (!subscription) {
         throw new Error("No subscription data received.");
       }
