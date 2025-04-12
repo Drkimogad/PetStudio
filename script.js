@@ -563,17 +563,51 @@ ${profile.moodLog?.length ? `Recent Mood: ${getMoodEmoji(profile.moodLog.slice(-
         renderProfiles();
     }
 // ======================
-// Form Handling
+// Form Handling with Reminder Creation
 // ======================
-profileForm?.addEventListener("submit", (e) => {
+    function formatFirestoreDate(dateString) {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0]; // "YYYY-MM-DD"
+}
+
+profileForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    // 1. Hardcoded user ID (temporary until auth implementation)
+    const userId = "test-user";
+
+    // 2. Get form values
+    const petName = document.getElementById("petName").value;
+    const petBreed = document.getElementById("petBreed").value;
+    const petDob = document.getElementById("petDob").value;
+    const birthday = document.getElementById("petBirthday").value;
+    const galleryFiles = Array.from(document.getElementById("petGallery").files);
+
+    // 3. Firestore birthday reminder (if birthday is provided)
+    if (birthday) {
+        const reminderData = {
+            userId: userId,
+            petName: petName,
+            date: formatFirestoreDate(birthday), // "YYYY-MM-DD"
+            message: `It's ${petName}'s birthday today! 🎉`,
+            createdAt: new Date().toISOString()
+        };
+
+        try {
+            await firebase.firestore().collection("reminders").add(reminderData);
+            console.log("Reminder created successfully");
+        } catch (error) {
+            console.error("Error creating reminder:", error);
+        }
+    }
+
+    // 4. Build profile object
     const newProfile = {
-        name: document.getElementById("petName").value,
-        breed: document.getElementById("petBreed").value,
-        dob: document.getElementById("petDob").value,
-        birthday: document.getElementById("petBirthday").value,
-        gallery: Array.from(document.getElementById("petGallery").files).map(file => URL.createObjectURL(file)),
+        name: petName,
+        breed: petBreed,
+        dob: petDob,
+        birthday: birthday,
+        gallery: galleryFiles.map(file => URL.createObjectURL(file)),
         moodLog: [],
         coverPhotoIndex: 0
     };
