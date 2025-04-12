@@ -396,37 +396,45 @@ function printProfile(profile) {
     `);
     printWindow.document.close();
 }
-    
-function shareProfile(profile) {
-    // Create unique shareable URL (if you still want to include that)
-    const profileIndex = petProfiles.findIndex(p => p.name === profile.name);
-    const shareUrl = `${window.location.origin}${window.location.pathname}?profile=${profileIndex}`;
+  //Enhanced share profile function//  
+async function sharePetCard(pet) {
+    // 1. Generate Shareable Link
+    const shareUrl = `${window.location.origin}/pet/${pet.id}`; // Example: petstudio.com/pet/123
 
-    // Check if the browser supports the sharing API
+    // 2. Check if Mobile (Web Share API)
     if (navigator.share) {
-        navigator.share({
-            title: `${profile.name}'s Pet Profile`,
-            text: `Check out ${profile.name}'s profile on Pet Studio!`,
-            url: shareUrl
-        }).catch(error => console.log('Sharing error:', error));
-    } else {
-        // Enhanced desktop sharing - create a printable window
-        const printWindow = window.open(shareUrl, '_blank', 'noopener,noreferrer');
+        try {
+            await navigator.share({
+                title: `Meet ${pet.name}! 🐾`,
+                text: `Check out ${pet.name}'s profile on PetStudio!`,
+                url: shareUrl,
+            });
+            return; // Exit if successful
+        } catch (err) {
+            console.log("User cancelled share", err);
+        }
+    }
 
-        setTimeout(() => {
-            // Trigger print window after a brief delay to ensure content loads
-            printWindow.print();
-        }, 1000);
+    // 3. Desktop/Image Fallback
+    try {
+        // Capture the pet card as an image
+        const cardElement = document.getElementById(`pet-card-${pet.id}`);
+        const canvas = await html2canvas(cardElement);
+        const imageUrl = canvas.toDataURL('image/png');
 
-        // Creating downloadable image
-        const profileElement = document.getElementById('profile'); // Ensure the profile element has this ID or adjust accordingly
-        html2canvas(profileElement).then(canvas => {
-            // Create a link to download the canvas image
-            const downloadLink = document.createElement('a');
-            downloadLink.href = canvas.toDataURL('image/png'); // Convert canvas to image URL
-            downloadLink.download = `${profile.name}-profile.png`; // Set the file name for download
-            downloadLink.click(); // Trigger the download
-        }).catch(error => console.log('Error capturing profile as image:', error));
+        // Create a download link
+        const downloadLink = document.createElement('a');
+        downloadLink.href = imageUrl;
+        downloadLink.download = `${pet.name}-petstudio.png`;
+        downloadLink.click();
+
+        // Bonus: Copy link to clipboard
+        await navigator.clipboard.writeText(shareUrl);
+        alert(`${pet.name}'s card saved! 🔗 Link copied to clipboard.`);
+        
+    } catch (error) {
+        // Ultimate fallback: Just open URL
+        window.open(shareUrl, '_blank');
     }
 }
     
