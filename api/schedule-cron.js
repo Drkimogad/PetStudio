@@ -1,4 +1,6 @@
 import { schedule } from '../vercel/cron';
+import handler(req, res) from '../save-subscription';
+
 const { checkAndSendReminders } = await import('../lib/check-reminders');
 await checkAndSendReminders();
 });
