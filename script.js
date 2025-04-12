@@ -632,9 +632,9 @@ function sendSubscriptionToServer(subscription) {
   
   // Store in Firestore
   if (user) {
-    db.collection('users').doc(user.uid).collection('reminders').add({
-      endpoint: reminders.endpoint,
-      keys: reminders.keys,
+    db.collection('users').doc(user.uid).collection('subscriptions').add({
+      endpoint: subscription.endpoint,
+      keys: subscription.keys,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     }).catch(error => console.error('Firestore save error:', error));
   }
