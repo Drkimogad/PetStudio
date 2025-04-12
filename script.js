@@ -396,11 +396,13 @@ function printProfile(profile) {
     `);
     printWindow.document.close();
 }
+    
 function shareProfile(profile) {
-    // Create unique shareable URL
+    // Create unique shareable URL (if you still want to include that)
     const profileIndex = petProfiles.findIndex(p => p.name === profile.name);
     const shareUrl = `${window.location.origin}${window.location.pathname}?profile=${profileIndex}`;
 
+    // Check if the browser supports the sharing API
     if (navigator.share) {
         navigator.share({
             title: `${profile.name}'s Pet Profile`,
@@ -408,11 +410,23 @@ function shareProfile(profile) {
             url: shareUrl
         }).catch(error => console.log('Sharing error:', error));
     } else {
-        // Enhanced desktop sharing
+        // Enhanced desktop sharing - create a printable window
         const printWindow = window.open(shareUrl, '_blank', 'noopener,noreferrer');
+
         setTimeout(() => {
+            // Trigger print window after a brief delay to ensure content loads
             printWindow.print();
         }, 1000);
+
+        // Creating downloadable image
+        const profileElement = document.getElementById('profile'); // Ensure the profile element has this ID or adjust accordingly
+        html2canvas(profileElement).then(canvas => {
+            // Create a link to download the canvas image
+            const downloadLink = document.createElement('a');
+            downloadLink.href = canvas.toDataURL('image/png'); // Convert canvas to image URL
+            downloadLink.download = `${profile.name}-profile.png`; // Set the file name for download
+            downloadLink.click(); // Trigger the download
+        }).catch(error => console.log('Error capturing profile as image:', error));
     }
 }
     
