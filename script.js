@@ -13,6 +13,13 @@ document.addEventListener("DOMContentLoaded", () => {
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const provider = new firebase.auth.GoogleAuthProvider(); // Add Google provider
+    // Add Drive API permission scope
+    provider.addScope('https://www.googleapis.com/auth/drive.file'); 
+    // Optional: Request user email
+    provider.addScope('email');
+
+    // Later, when signing in:
+    signInWithPopup(auth, provider);
 
     // ======================
     // DOM Elements
