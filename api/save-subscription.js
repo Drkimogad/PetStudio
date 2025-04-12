@@ -1,4 +1,4 @@
-import { db } from './lib/firebase-admin'; // Your existing setup
+import { db } from './lib/firebase.json'; // Your existing setup
 
 export default async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
