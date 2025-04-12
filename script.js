@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Auth State Observer
+    // Auth State Observer //
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     // =============================================
@@ -270,6 +270,33 @@ auth.onAuthStateChanged(async (user) => {
     signupPage?.classList.add("hidden");
   }
 });
+
+// ======================
+// Drive Folder Management
+// ======================
+async function checkDriveFolder() {
+  try {
+    const response = await gapi.client.drive.files.list({
+      q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder'",
+      fields: "files(id)"
+    });
+    return response.result.files.length > 0;
+  } catch (error) {
+    console.error("Drive folder check failed:", error);
+    return false;
+  }
+}
+
+async function createDriveFolder() {
+  try {
+    await gapi.client.drive.files.create({
+      name: 'PetStudio',
+      mimeType: 'application/vnd.google-apps.folder'
+    });
+  } catch (error) {
+    console.error("Drive folder creation failed:", error);
+  }
+}
     
    
    // i need to integrate these here in pet profile functions 
