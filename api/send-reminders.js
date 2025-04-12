@@ -1,4 +1,4 @@
-import admin from "firebase-admin";
+import admin from "firebase-admin"; 
 import { getFirestore } from "firebase-admin/firestore";
 
 // Initialize Firebase Admin
@@ -44,10 +44,10 @@ export default async function main() {
     // Process reminders
     const promises = remindersSnapshot.docs.map(async (doc) => {
       const reminder = doc.data();
-      
+
       // Get user's FCM token from users collection
       const userDoc = await db.collection("users").doc(reminder.userId).get();
-      
+
       if (!userDoc.exists) {
         console.warn(`User ${reminder.userId} not found`);
         return null;
@@ -83,7 +83,7 @@ export default async function main() {
 
     // Wait for all notifications to process
     const results = await Promise.all(promises);
-    
+
     return {
       success: true,
       totalReminders: results.length,
