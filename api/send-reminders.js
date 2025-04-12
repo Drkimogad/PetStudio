@@ -1,4 +1,4 @@
-import { checkAndSendReminders } from '../lib/reminder.js';  // Correct if import admin from "firebase-admin";
+import { checkAndSendReminders } from '../lib/check-reminder.js';  // Correct if import admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
 console.log("🔥 Firebase Debugging: ");
 console.log("✅ Private Key Loaded:", !!process.env.FIREBASE_PRIVATE_KEY);
