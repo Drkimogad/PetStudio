@@ -1,6 +1,9 @@
-import { checkAndSendReminders } from '../lib/check-reminders';
+import { schedule } from '../vercel/cron';
+const { checkAndSendReminders } = await import('../lib/check-reminders');
+await checkAndSendReminders();
+});
 
-export default async function handler(req, res) {
+  export default schedule('0 8 * * *', async () => {  // 8AM daily
   try {
     // 1. Verify cron secret
     if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
