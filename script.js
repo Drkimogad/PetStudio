@@ -628,23 +628,20 @@ profileForm?.addEventListener("submit", (e) => {
 
 // Modify sendSubscriptionToServer function
 function sendSubscriptionToServer(subscription) {
-  const user = auth.currentUser;
-  
-  // Store in Firestore
-  if (user) {
-    db.collection('users').doc(user.uid).collection('reminders').add({
-      endpoint: subscription.endpoint,
-      keys: subscription.keys,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    }).catch(error => console.error('Firestore save error:', error));
-  }
+    // Extract only needed data 🔥
+    const subData = {
+        token: subscription.keys.auth, // Unique identifier
+        endpoint: subscription.endpoint
+    };
 
-  // Existing Vercel API call
-  fetch('https://pet-studio.vercel.app/api/save-subscription', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ subscription }),
-  }).catch(error => console.error('Vercel save error:', error));
+    fetch('https://pet-studio.vercel.app/api/save-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(subData), // Changed from {subscription} 🔥
+    })
+    .then(response => response.json())
+    .then(data => console.log('Subscription sent:', data))
+    .catch(error => console.error('Error sending subscription:', error));
 }
 
     function urlBase64ToUint8Array(base64String) {
