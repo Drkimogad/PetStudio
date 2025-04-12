@@ -104,17 +104,29 @@ input {
     margin: 5px 0;
 }
 
-/* Optional: Style for Google button */
+/* Google Sign-In Button */
 .google-btn {
-    background: #4285F4;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    margin: 10px 0;
-    cursor: pointer;
+  background: white;
+  color: #444;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px auto;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
+.google-btn:hover {
+  background: #f5f5f5;
+}
+
+.google-btn img {
+  width: 18px;
+  height: 18px;
+}
 
 /* Keep your existing banner image styles (unchanged) */
 .banner-image {
