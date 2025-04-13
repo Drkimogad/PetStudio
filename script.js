@@ -752,7 +752,7 @@ qrWindow.document.write(`
             const canvas = document.querySelector('#qrcode-container canvas');
             if (canvas) {
               const link = document.createElement('a');
-              link.download = `${profile.name}_QR.png`;
+              link.download = '${profile.name}_QR.png';
               link.href = canvas.toDataURL();
               link.click();
             }
