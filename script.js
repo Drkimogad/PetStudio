@@ -714,8 +714,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const qrWindow = window.open('', 'QR Code', 'width=400,height=550'); // Increased height
     
     const safeFilename = profile.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    const qrCodeData = JSON.stringify(profile).replace(/'/g, "\\'");
-    const shareableLink = window.location.href; // Or a more specific link if needed
+   const qrCodeData = JSON.stringify(profile)
+  .replace(/\\/g, '\\\\')  // Escape backslashes first
+  .replace(/'/g, "\\'")    // Escape apostrophes
+  .replace(/`/g, '\\`');   // Escape backticks    const shareableLink = window.location.href; // Or a more specific link if needed
 
     qrWindow.document.write(`
     <html>
@@ -774,8 +776,8 @@ document.addEventListener("DOMContentLoaded", () => {
           function generateQRCode() {
             const qrcodeContainer = document.getElementById('qrcode-container');
             qrcodeContainer.innerHTML = ''; // Clear previous QR code
-            qrcode = new QRCode(qrcodeContainer, {
-              text: '${qrCodeData}',
+            new QRCode(document.getElementById('qrcode-container'), {
+              text: \`${qrCodeData}\`, // Now properly escaped
               width: 256,
               height: 256,
               colorDark : "#000000",
