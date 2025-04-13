@@ -712,7 +712,7 @@ function generateQRCode(profileIndex) {
   qrWindow.document.write(`
     <html>
       <head>
-        <title>${profile.name}'s QR Code</title>
+         document.title = `${profile.name}'s QR Code`;
         <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
         <style>
           .loader { /* Your existing loader styles */ }
