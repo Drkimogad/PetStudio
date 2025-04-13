@@ -183,13 +183,16 @@ async function sharePetCard(pet) {
     }
 }
 // ======================
+// Top-Level Declarations
+// ======================
+let auth; // Will hold initialized auth instance
+let provider; // Google auth provider
+
+// ======================
 // Main Initialization (INSIDE DOMContentLoaded)
 // ======================
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Initialize QR Modal FIRST
   initQRModal();
-
-  // 2. Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
     authDomain: "swiftreach2025.firebaseapp.com",
@@ -198,13 +201,116 @@ document.addEventListener("DOMContentLoaded", () => {
     messagingSenderId: "540185558422",
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
   };
-  
-  // 3. Initialize Firebase
+  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const provider = new firebase.auth.GoogleAuthProvider();
+  auth = firebase.auth();
+  provider = new firebase.auth.GoogleAuthProvider();
+  // Add Drive API scopes
   provider.addScope('https://www.googleapis.com/auth/drive.file');
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+  // Service Worker Registration
+  if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./service-worker.js')
+    .then(registration => {
+      // Clear old cache versions FIRST
+      caches.keys().then(cacheNames => {
+        cacheNames.forEach(cacheName => {
+          if (cacheName !== 'pet-studio-cache-v1') {
+            caches.delete(cacheName);
+          }
+        });
+      });
+
+      // Existing code below
+      console.log('Caching Service Worker registered:', registration.scope);
+      subscribeUserToPushNotifications(registration);
+
+      registration.addEventListener('updatefound', () => {
+        const installingWorker = registration.installing;
+        installingWorker.addEventListener('statechange', () => {
+          if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            installingWorker.postMessage({
+              action: 'skipWaiting'
+            });
+          }
+        });
+      });
+    })
+    .catch(error => console.error('Service Worker registration failed:', error));
+
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    console.log('New service worker activated, reloading page...');
+    location.reload();
+  });
+}
+
+  // ======================
+// Push Notification Logic (Corrected)
+// ======================
+// ========== CLIENT-SIDE (script.js) ==========
+// Global VAPID Configuration
+const VAPID_PUBLIC_KEY = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk'; // Keep your original key
+const VERCEL_API = 'https://pet-studio.vercel.app/api/save-subscription';
+
+// Push Notification Subscription
+async function subscribeUserToPushNotifications(registration) {
+  try {
+    const existingSubscription = await registration.pushManager.getSubscription();
+    
+    if (existingSubscription) {
+      console.log('Already subscribed:', existingSubscription);
+      return sendSubscriptionToServer(existingSubscription);
+    }
+
+    const newSubscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+
+    await sendSubscriptionToServer(newSubscription);
+    console.log('Push subscription successful:', newSubscription);
+
+  } catch (error) {
+    console.error('Subscription failed:', error);
+  }
+}
+
+// Send to Vercel API
+async function sendSubscriptionToServer(subscription) {
+  try {
+    const user = auth.currentUser;
+    const response = await fetch(`${VERCEL_API}/save-subscription`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${await user.getIdToken()}`
+      },
+      body: JSON.stringify({
+        subscription,
+        userId: user.uid,
+        vapidPublicKey: VAPID_PUBLIC_KEY
+      })
+    });
+
+    if (!response.ok) throw new Error('Vercel API rejected subscription');
+    console.log('Subscription saved via Vercel API');
+
+  } catch (error) {
+    console.error('Subscription sync failed:', error);
+    throw error;
+  }
+}
+
+// Helper function for VAPID key conversion
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
+}
   // ======================
   // DOM Elements
   // ======================
@@ -1051,95 +1157,6 @@ profileForm?.addEventListener("submit", async (e) => {
   authContainer.classList.add("hidden"); // Hide auth container
   window.scrollTo(0, 0); // Optional: Scroll to the top of the page
 });
-// ======================
-// Service Worker
-// ======================
-const vapidKey = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
-
-function subscribeUserToPushNotifications(registration) {
-  registration.pushManager.getSubscription()
-    .then(subscription => {
-      if (subscription) {
-        console.log('Already subscribed:', subscription);
-        sendSubscriptionToServer(subscription);
-      } else {
-        registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(vapidKey),
-          })
-          .then(newSubscription => {
-            console.log('Subscribed to push notifications:', newSubscription);
-            sendSubscriptionToServer(newSubscription);
-          })
-          .catch(error => {
-            console.error('Push subscription failed:', error);
-          });
-      }
-    })
-    .catch(error => console.error('Subscription check failed:', error));
-}
-
-// Modify sendSubscriptionToServer function
-function sendSubscriptionToServer(subscription) {
-  // Extract only needed data 🔥
-  const subData = {
-    token: subscription.keys.auth, // Unique identifier
-    endpoint: subscription.endpoint
-  };
-
-  fetch('https://pet-studio.vercel.app/api/save-subscription', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(subData), // Changed from {subscription} 🔥
-    })
-    .then(response => response.json())
-    .then(data => console.log('Subscription sent:', data))
-    .catch(error => console.error('Error sending subscription:', error));
-}
-
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/\_/g, '/');
-  const rawData = atob(base64);
-  return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
-}
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js')
-    .then(registration => {
-      // Clear old cache versions FIRST
-      caches.keys().then(cacheNames => {
-        cacheNames.forEach(cacheName => {
-          if (cacheName !== 'pet-studio-cache-v1') {
-            caches.delete(cacheName);
-          }
-        });
-      });
-
-      // Existing code below
-      console.log('Caching Service Worker registered:', registration.scope);
-      subscribeUserToPushNotifications(registration);
-
-      registration.addEventListener('updatefound', () => {
-        const installingWorker = registration.installing;
-        installingWorker.addEventListener('statechange', () => {
-          if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            installingWorker.postMessage({
-              action: 'skipWaiting'
-            });
-          }
-        });
-      });
-    })
-    .catch(error => console.error('Service Worker registration failed:', error));
-
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    console.log('New service worker activated, reloading page...');
-    location.reload();
-  });
-}
 
 // Initialize
 if (petProfiles.length > 0) renderProfiles();
