@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
         apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
         authDomain: "swiftreach2025.firebaseapp.com",
         projectId: "swiftreach2025",
-        storageBucket: "swiftreach2025.firebasestorage.app",
+        storageBucket: "swiftreach2025.appspot.com",
         messagingSenderId: "540185558422",
         appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
     };
@@ -16,10 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add Drive API permission scope
     provider.addScope('https://www.googleapis.com/auth/drive.file'); 
     // Optional: Request user email
-    provider.addScope('email');
-
-    // Later, when signing in:
-    signInWithPopup(auth, provider);
+    provider.addScope('https://www.googleapis.com/auth/userinfo.email');
 
     // ======================
     // DOM Elements
@@ -61,6 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Google Sign-In Handler - NEW FUNCTION
     // ======================
     function handleGoogleSignIn() {
+    // Check if authContainer exists
+        if (!authContainer) {
+        console.error('authContainer not found');
+        return;
+       }
         const googleBtn = document.createElement('div');
         googleBtn.id = 'googleSignIn';
         googleBtn.innerHTML = '<button class="google-btn">Sign in with Google</button>';
@@ -184,37 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 submitBtn.textContent = "Log In";
             });
     });
-// for testing a successful sign in //
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-
-const auth = getAuth();
-const provider = new GoogleAuthProvider();
-
-// Add these scopes (critical for Drive access)
-provider.addScope('https://www.googleapis.com/auth/drive.file');
-provider.addScope('email'); // Optional but recommended
-
-// Trigger sign-in
-signInWithPopup(auth, provider)
-  .then(async (result) => {
-    const user = result.user;
-    
-    // Verify Drive access (debugging)
-    const token = await user.getIdToken();
-    console.log("Drive access token:", token); 
-    
-    // Initialize Drive API
-    await gapi.client.init({
-      apiKey: "YOUR_FIREBASE_API_KEY", // From firebaseConfig
-      discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-    });
-    gapi.auth.setToken({ access_token: token });
-  })
-  .catch((error) => {
-    console.error("Google Sign-In failed:", error);
-    // Fallback to email auth if needed
-  });
-    // Logout Handler (FIXED)
+// Logout Handler (FIXED)
     function setupLogoutButton() {
         if (logoutBtn) {
             logoutBtn.addEventListener("click", (e) => {
