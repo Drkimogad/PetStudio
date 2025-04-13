@@ -842,187 +842,187 @@ document.addEventListener("DOMContentLoaded", () => {
     </html>
   `);
     qrWindow.document.close();
-    });
-  // end of QR CODE//    
-                          
-  function logMood(profileIndex, mood) {
-    const today = new Date().toISOString().split('T')[0];
-    if (!petProfiles[profileIndex].moodLog) petProfiles[profileIndex].moodLog = [];
-
-    petProfiles[profileIndex].moodLog.push({
-      date: today,
-      mood: mood
-    });
-
-    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-    renderProfiles();
-  }
-
-  function setCoverPhoto(profileIndex, imageIndex) {
-    petProfiles[profileIndex].coverPhotoIndex = imageIndex;
-    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-    renderProfiles();
-  }
-  // ======================
-  // Form Handling with Reminder Creation
-  // ======================
-  function formatFirestoreDate(dateString) {
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0]; // "YYYY-MM-DD"
-  }
-
-  profileForm?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    // 1. Hardcoded user ID (temporary until auth implementation)
-    const userId = "test-user";
-
-    // 2. Get form values
-    const petName = document.getElementById("petName").value;
-    const petBreed = document.getElementById("petBreed").value;
-    const petDob = document.getElementById("petDob").value;
-    const birthday = document.getElementById("petBirthday").value;
-    const galleryFiles = Array.from(document.getElementById("petGallery").files);
-
-    // 3. Firestore birthday reminder (if birthday is provided)
-    if (birthday) {
-      const reminderData = {
-        userId: userId,
-        petName: petName,
-        date: formatFirestoreDate(birthday), // "YYYY-MM-DD"
-        message: `It's ${petName}'s birthday today! 🎉`,
-        createdAt: new Date().toISOString()
-      };
-
-      try {
-        await firebase.firestore().collection("reminders").add(reminderData);
-        console.log("Reminder created successfully");
-      } catch (error) {
-        console.error("Error creating reminder:", error);
-      }
-    }
-
-    // 4. Build profile object
-    const newProfile = {
-      name: petName,
-      breed: petBreed,
-      dob: petDob,
-      birthday: birthday,
-      gallery: galleryFiles.map(file => URL.createObjectURL(file)),
-      moodLog: [],
-      coverPhotoIndex: 0
-    };
-
-    if (isEditing) {
-      petProfiles[currentEditIndex] = newProfile;
-    } else {
-      petProfiles.push(newProfile);
-    }
-
-    // Save the updated profiles to localStorage
-    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-
-    // Hide the form and banner
-    profileSection.classList.add("hidden");
-    // Reset form fields
-    profileForm.reset();
-    // Re-render profiles
-    renderProfiles();
-    // Redirect to dashboard
-    dashboard.classList.remove("hidden"); // Show dashboard
-    authContainer.classList.add("hidden"); // Hide auth container
-    window.scrollTo(0, 0); // Optional: Scroll to the top of the page
   });
-  // ======================
-  // Service Worker
-  // ======================
-  const vapidKey = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
+// end of QR CODE//    
 
-  function subscribeUserToPushNotifications(registration) {
-    registration.pushManager.getSubscription()
-      .then(subscription => {
-        if (subscription) {
-          console.log('Already subscribed:', subscription);
-          sendSubscriptionToServer(subscription);
-        } else {
-          registration.pushManager.subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: urlBase64ToUint8Array(vapidKey),
-            })
-            .then(newSubscription => {
-              console.log('Subscribed to push notifications:', newSubscription);
-              sendSubscriptionToServer(newSubscription);
-            })
-            .catch(error => {
-              console.error('Push subscription failed:', error);
-            });
-        }
-      })
-      .catch(error => console.error('Subscription check failed:', error));
-  }
+function logMood(profileIndex, mood) {
+  const today = new Date().toISOString().split('T')[0];
+  if (!petProfiles[profileIndex].moodLog) petProfiles[profileIndex].moodLog = [];
 
-  // Modify sendSubscriptionToServer function
-  function sendSubscriptionToServer(subscription) {
-    // Extract only needed data 🔥
-    const subData = {
-      token: subscription.keys.auth, // Unique identifier
-      endpoint: subscription.endpoint
+  petProfiles[profileIndex].moodLog.push({
+    date: today,
+    mood: mood
+  });
+
+  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  renderProfiles();
+}
+
+function setCoverPhoto(profileIndex, imageIndex) {
+  petProfiles[profileIndex].coverPhotoIndex = imageIndex;
+  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  renderProfiles();
+}
+// ======================
+// Form Handling with Reminder Creation
+// ======================
+function formatFirestoreDate(dateString) {
+  const date = new Date(dateString);
+  return date.toISOString().split('T')[0]; // "YYYY-MM-DD"
+}
+
+profileForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  // 1. Hardcoded user ID (temporary until auth implementation)
+  const userId = "test-user";
+
+  // 2. Get form values
+  const petName = document.getElementById("petName").value;
+  const petBreed = document.getElementById("petBreed").value;
+  const petDob = document.getElementById("petDob").value;
+  const birthday = document.getElementById("petBirthday").value;
+  const galleryFiles = Array.from(document.getElementById("petGallery").files);
+
+  // 3. Firestore birthday reminder (if birthday is provided)
+  if (birthday) {
+    const reminderData = {
+      userId: userId,
+      petName: petName,
+      date: formatFirestoreDate(birthday), // "YYYY-MM-DD"
+      message: `It's ${petName}'s birthday today! 🎉`,
+      createdAt: new Date().toISOString()
     };
 
-    fetch('https://pet-studio.vercel.app/api/save-subscription', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(subData), // Changed from {subscription} 🔥
-      })
-      .then(response => response.json())
-      .then(data => console.log('Subscription sent:', data))
-      .catch(error => console.error('Error sending subscription:', error));
+    try {
+      await firebase.firestore().collection("reminders").add(reminderData);
+      console.log("Reminder created successfully");
+    } catch (error) {
+      console.error("Error creating reminder:", error);
+    }
   }
 
-  function urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/\_/g, '/');
-    const rawData = atob(base64);
-    return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
+  // 4. Build profile object
+  const newProfile = {
+    name: petName,
+    breed: petBreed,
+    dob: petDob,
+    birthday: birthday,
+    gallery: galleryFiles.map(file => URL.createObjectURL(file)),
+    moodLog: [],
+    coverPhotoIndex: 0
+  };
+
+  if (isEditing) {
+    petProfiles[currentEditIndex] = newProfile;
+  } else {
+    petProfiles.push(newProfile);
   }
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(registration => {
-        // Clear old cache versions FIRST
-        caches.keys().then(cacheNames => {
-          cacheNames.forEach(cacheName => {
-            if (cacheName !== 'pet-studio-cache-v1') {
-              caches.delete(cacheName);
-            }
+  // Save the updated profiles to localStorage
+  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+
+  // Hide the form and banner
+  profileSection.classList.add("hidden");
+  // Reset form fields
+  profileForm.reset();
+  // Re-render profiles
+  renderProfiles();
+  // Redirect to dashboard
+  dashboard.classList.remove("hidden"); // Show dashboard
+  authContainer.classList.add("hidden"); // Hide auth container
+  window.scrollTo(0, 0); // Optional: Scroll to the top of the page
+});
+// ======================
+// Service Worker
+// ======================
+const vapidKey = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
+
+function subscribeUserToPushNotifications(registration) {
+  registration.pushManager.getSubscription()
+    .then(subscription => {
+      if (subscription) {
+        console.log('Already subscribed:', subscription);
+        sendSubscriptionToServer(subscription);
+      } else {
+        registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(vapidKey),
+          })
+          .then(newSubscription => {
+            console.log('Subscribed to push notifications:', newSubscription);
+            sendSubscriptionToServer(newSubscription);
+          })
+          .catch(error => {
+            console.error('Push subscription failed:', error);
           });
+      }
+    })
+    .catch(error => console.error('Subscription check failed:', error));
+}
+
+// Modify sendSubscriptionToServer function
+function sendSubscriptionToServer(subscription) {
+  // Extract only needed data 🔥
+  const subData = {
+    token: subscription.keys.auth, // Unique identifier
+    endpoint: subscription.endpoint
+  };
+
+  fetch('https://pet-studio.vercel.app/api/save-subscription', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(subData), // Changed from {subscription} 🔥
+    })
+    .then(response => response.json())
+    .then(data => console.log('Subscription sent:', data))
+    .catch(error => console.error('Error sending subscription:', error));
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/\_/g, '/');
+  const rawData = atob(base64);
+  return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./service-worker.js')
+    .then(registration => {
+      // Clear old cache versions FIRST
+      caches.keys().then(cacheNames => {
+        cacheNames.forEach(cacheName => {
+          if (cacheName !== 'pet-studio-cache-v1') {
+            caches.delete(cacheName);
+          }
         });
+      });
 
-        // Existing code below
-        console.log('Caching Service Worker registered:', registration.scope);
-        subscribeUserToPushNotifications(registration);
+      // Existing code below
+      console.log('Caching Service Worker registered:', registration.scope);
+      subscribeUserToPushNotifications(registration);
 
-        registration.addEventListener('updatefound', () => {
-          const installingWorker = registration.installing;
-          installingWorker.addEventListener('statechange', () => {
-            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              installingWorker.postMessage({
-                action: 'skipWaiting'
-              });
-            }
-          });
+      registration.addEventListener('updatefound', () => {
+        const installingWorker = registration.installing;
+        installingWorker.addEventListener('statechange', () => {
+          if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            installingWorker.postMessage({
+              action: 'skipWaiting'
+            });
+          }
         });
-      })
-      .catch(error => console.error('Service Worker registration failed:', error));
+      });
+    })
+    .catch(error => console.error('Service Worker registration failed:', error));
 
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      console.log('New service worker activated, reloading page...');
-      location.reload();
-    });
-  }
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    console.log('New service worker activated, reloading page...');
+    location.reload();
+  });
+}
 
-  // Initialize
-  if (petProfiles.length > 0) renderProfiles();
+// Initialize
+if (petProfiles.length > 0) renderProfiles();
 });
