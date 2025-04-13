@@ -701,6 +701,21 @@ function renderProfiles() {
         petList.appendChild(petCard);
     });
 }
+// When creating new profiles
+function createNewProfile() {
+  const newProfile = {
+    id: Date.now(), // Simple unique ID
+    name: document.getElementById('petName').value,
+    breed: document.getElementById('petBreed').value,
+    // ... other fields
+    gallery: [],
+    coverPhotoIndex: 0
+  };
+  petProfiles.push(newProfile);
+  saveProfiles();
+  renderProfiles();
+}
+  
 //--------------------------//  
 // function countdown//
 //-------------------------//
