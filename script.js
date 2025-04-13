@@ -709,34 +709,28 @@ function generateQRCode(profileIndex) {
 
   const qrWindow = window.open('', 'QR Code', 'width=400,height=550'); // Increased height
 
-  qrWindow.document.write(`
-    <html>
-      <head>
-         document.title = `${profile.name}'s QR Code`;
-        <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-        <style>
-          .loader { /* Your existing loader styles */ }
-          @keyframes spin { /* Your existing animation */ }
-          .share-container {
-            margin-top: 15px;
-            text-align: center;
-          }
-          .share-link {
-  font-size: 0.8em;
-  margin: 10px auto;
-  padding: 8px;
-  background: #f8f8f8;
-  border-radius: 4px;
-  max-width: 90%;
-  word-break: break-all;
-}
-
-.share-link input {
-  border: 1px solid #ddd;
-  padding: 3px;
-  font-family: inherit;
-}
-        </style>
+qrWindow.document.write(`
+  <html>
+    <head>
+      <title>${profile.name}'s QR Code</title>
+      <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+      <style>
+        .loader { /* Your existing loader styles */ }
+        @keyframes spin { /* Your existing animation */ }
+        .share-container {
+          margin-top: 15px;
+          text-align: center;
+        }
+        .share-link {
+          font-size: 0.8em;
+          margin: 10px auto;
+          padding: 8px;
+          background: #f8f8f8;
+          border-radius: 4px;
+          max-width: 90%;
+          word-break: break-all;
+        }
+      </style>
       </head>
       <body>
         <div class="loader"></div>
