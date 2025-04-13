@@ -149,18 +149,17 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
     
     <script src="script.js"></script>
-<!-- QR Modal (hidden by default) -->
+<!-- In index.html QR Modal (hidden by default -->
 <div id="qr-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000;">
-  <div style="background:white; width:400px; margin:50px auto; padding:20px; border-radius:10px; text-align:center;" class="printable-area">
-    <h3 style="margin-top:0;">Pet Profile QR Code</h3>
+  <div style="background:white; width:400px; margin:50px auto; padding:20px; border-radius:10px; text-align:center;">
     <div id="qrcode-container"></div>
     <div id="qr-controls" style="margin-top:20px;">
-      <button class="modal-btn" onclick="printQR()">Print</button>
-      <button class="modal-btn" onclick="downloadQR()">Download</button>
-      <button class="modal-btn" onclick="shareQR()" style="background:#9b59b6; color:white;">Share</button>
-      <button class="modal-btn" onclick="document.getElementById('qr-modal').style.display='none'" 
-              style="background:#e74c3c; color:white;">Close</button>
+      <button class="qr-action" data-action="print">Print</button>
+      <button class="qr-action" data-action="download">Download</button>
+      <button class="qr-action" data-action="share" style="background:#9b59b6; color:white;">Share</button>
+      <button class="qr-action" data-action="close" style="background:#e74c3c; color:white;">Close</button>
     </div>
+    <p id="qr-status" style="font-size:12px; color:#666; margin-top:10px;"></p>
   </div>
 </div>
 </body>
