@@ -712,8 +712,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const qrWindow = window.open('', 'QR Code', 'width=400,height=550'); // Increased height
+    
     const safeFilename = profile.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    const qrCodeData = JSON.stringify(profile); // Assuming 'profile' is the data you want in the QR code
+    const qrCodeData = JSON.stringify(profile).replace(/'/g, "\\'");
     const shareableLink = window.location.href; // Or a more specific link if needed
 
     qrWindow.document.write(`
