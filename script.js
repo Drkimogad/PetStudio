@@ -1,408 +1,410 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // ======================
-    // Firebase Configuration
-    // ======================
-    const firebaseConfig = {
-        apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-        authDomain: "swiftreach2025.firebaseapp.com",
-        projectId: "swiftreach2025",
-        storageBucket: "swiftreach2025.appspot.com",
-        messagingSenderId: "540185558422",
-        appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const provider = new firebase.auth.GoogleAuthProvider(); // Add Google provider
-    // Add Drive API permission scope
-    provider.addScope('https://www.googleapis.com/auth/drive.file'); 
-    // Optional: Request user email
-    provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+  // ======================
+  // Firebase Configuration
+  // ======================
+  const firebaseConfig = {
+    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+    authDomain: "swiftreach2025.firebaseapp.com",
+    projectId: "swiftreach2025",
+    storageBucket: "swiftreach2025.appspot.com",
+    messagingSenderId: "540185558422",
+    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const provider = new firebase.auth.GoogleAuthProvider(); // Add Google provider
+  // Add Drive API permission scope
+  provider.addScope('https://www.googleapis.com/auth/drive.file');
+  // Optional: Request user email
+  provider.addScope('https://www.googleapis.com/auth/userinfo.email');
 
-    // ======================
-    // DOM Elements
-    // ======================
-    const authContainer = document.getElementById("authContainer");
-    const signupPage = document.getElementById("signupPage");
-    const loginPage = document.getElementById("loginPage");
-    const dashboard = document.getElementById("dashboard");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const signupForm = document.getElementById("signupForm");
-    const loginForm = document.getElementById("loginForm");
-    const switchToLogin = document.getElementById("switchToLogin");
-    const switchToSignup = document.getElementById("switchToSignup");
-    const addPetProfileBtn = document.getElementById("addPetProfileBtn");
-    const profileSection = document.getElementById("profileSection");
-    const petList = document.getElementById("petList");
-    const fullPageBanner = document.getElementById("fullPageBanner");
-    const profileForm = document.getElementById("profileForm");
-    const googleSignInBtn = document.createElement("button"); // Create Google Sign-In button
+  // ======================
+  // DOM Elements
+  // ======================
+  const authContainer = document.getElementById("authContainer");
+  const signupPage = document.getElementById("signupPage");
+  const loginPage = document.getElementById("loginPage");
+  const dashboard = document.getElementById("dashboard");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const signupForm = document.getElementById("signupForm");
+  const loginForm = document.getElementById("loginForm");
+  const switchToLogin = document.getElementById("switchToLogin");
+  const switchToSignup = document.getElementById("switchToSignup");
+  const addPetProfileBtn = document.getElementById("addPetProfileBtn");
+  const profileSection = document.getElementById("profileSection");
+  const petList = document.getElementById("petList");
+  const fullPageBanner = document.getElementById("fullPageBanner");
+  const profileForm = document.getElementById("profileForm");
+  const googleSignInBtn = document.createElement("button"); // Create Google Sign-In button
 
-        // ======================
-    // Initialize Google Drive API
-    // ======================
-    function initDriveAPI(token) {
-        return new Promise((resolve) => {
-            gapi.load('client', () => {
-                gapi.client.init({
-                    apiKey: firebaseConfig.apiKey,
-                    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-                }).then(() => {
-                    gapi.auth.setToken({ access_token: token });
-                    resolve();
-                });
-            });
+  // ======================
+  // Initialize Google Drive API
+  // ======================
+  function initDriveAPI(token) {
+    return new Promise((resolve) => {
+      gapi.load('client', () => {
+        gapi.client.init({
+          apiKey: firebaseConfig.apiKey,
+          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+        }).then(() => {
+          gapi.auth.setToken({
+            access_token: token
+          });
+          resolve();
         });
-    }
+      });
+    });
+  }
 
-    // ======================
-    // Google Sign-In Handler - NEW FUNCTION
-    // ======================
-    function handleGoogleSignIn() {
+  // ======================
+  // Google Sign-In Handler - NEW FUNCTION
+  // ======================
+  function handleGoogleSignIn() {
     // Check if authContainer exists
-        if (!authContainer) {
-        console.error('authContainer not found');
-        return;
-       }
-        const googleBtn = document.createElement('div');
-        googleBtn.id = 'googleSignIn';
-        googleBtn.innerHTML = '<button class="google-btn">Sign in with Google</button>';
-        authContainer.appendChild(googleBtn);
-
-        googleBtn.querySelector('button').addEventListener('click', () => {
-            auth.signInWithPopup(provider)
-                .then(async (result) => {
-                    // Initialize Drive API with Google token
-                    await initDriveAPI(result.credential.accessToken);
-                })
-                .catch((error) => {
-                    console.error("Google sign-in error:", error);
-                    // Fallback to email/password if needed
-                });
-        });
+    if (!authContainer) {
+      console.error('authContainer not found');
+      return;
     }
+    const googleBtn = document.createElement('div');
+    googleBtn.id = 'googleSignIn';
+    googleBtn.innerHTML = '<button class="google-btn">Sign in with Google</button>';
+    authContainer.appendChild(googleBtn);
 
-    // Add at the top of your DOMContentLoaded callback
-    const urlParams = new URLSearchParams(window.location.search);
-    if(urlParams.has('profile')) {
+    googleBtn.querySelector('button').addEventListener('click', () => {
+      auth.signInWithPopup(provider)
+        .then(async (result) => {
+          // Initialize Drive API with Google token
+          await initDriveAPI(result.credential.accessToken);
+        })
+        .catch((error) => {
+          console.error("Google sign-in error:", error);
+          // Fallback to email/password if needed
+        });
+    });
+  }
+
+  // Add at the top of your DOMContentLoaded callback
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('profile')) {
     const profileIndex = parseInt(urlParams.get('profile'));
     const profile = petProfiles[profileIndex];
-    if(profile) {
-        printProfile(profile);
-        window.history.replaceState({}, document.title, window.location.pathname);
+    if (profile) {
+      printProfile(profile);
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
-}
+  }
 
-    // ======================
-    // State Management
-    // ======================
-    let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-    let isEditing = false;
-    let currentEditIndex = null;
+  // ======================
+  // State Management
+  // ======================
+  let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+  let isEditing = false;
+  let currentEditIndex = null;
 
-    // ======================
-    // Auth Form Switching
-    // ======================
-    if (switchToLogin && switchToSignup) {
-        switchToLogin.addEventListener("click", () => {
-            signupPage.classList.add("hidden");
-            loginPage.classList.remove("hidden");
-        });
-
-        switchToSignup.addEventListener("click", () => {
-            loginPage.classList.add("hidden");
-            signupPage.classList.remove("hidden");
-        });
-    }
-
-// ======================
-// Auth Functions (UPDATED)
-// ======================
-
-    // Sign Up Handler
-    signupForm?.addEventListener("submit", (e) => {
-        e.preventDefault();
-        
-        const username = signupForm.querySelector("#signupEmail").value.trim();
-        const password = signupForm.querySelector("#signupPassword").value.trim();
-        const email = `${username}@petstudio.com`;
-
-        if (!username || !password) {
-            alert("Please fill all fields");
-            return;
-        }
-
-        const submitBtn = signupForm.querySelector("button[type='submit']");
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Creating account...";
-
-        auth.createUserWithEmailAndPassword(email, password)
-            .then(() => {
-                // Sign out immediately after signup
-                return auth.signOut();
-            })
-            .then(() => {
-                alert("Account created! Please log in.");
-                signupForm.reset();
-                signupPage.classList.add("hidden");
-                loginPage.classList.remove("hidden");
-                document.getElementById("loginEmail").value = username;
-            })
-            .catch((error) => {
-                alert("Error: " + error.message);
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Sign Up";
-            });
+  // ======================
+  // Auth Form Switching
+  // ======================
+  if (switchToLogin && switchToSignup) {
+    switchToLogin.addEventListener("click", () => {
+      signupPage.classList.add("hidden");
+      loginPage.classList.remove("hidden");
     });
-    
-    // Login Handler
-    loginForm?.addEventListener("submit", (e) => {
-        e.preventDefault();
-        
-        const username = loginForm.querySelector("#loginEmail")?.value.trim();
-        const password = loginForm.querySelector("#loginPassword")?.value.trim();
-        const email = `${username}@petstudio.com`;
 
-        if (!username || !password) {
-            alert("Please fill all fields");
-            return;
-        }
-
-        const submitBtn = loginForm.querySelector("button[type='submit']");
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Logging in...";
-
-        auth.signInWithEmailAndPassword(email, password)
-            .catch((error) => {
-                let errorMessage = "Login failed: ";
-                if (error.code === "auth/wrong-password") errorMessage += "Wrong password";
-                else if (error.code === "auth/user-not-found") errorMessage += "User not found";
-                else errorMessage += error.message;
-                alert(errorMessage);
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Log In";
-            });
+    switchToSignup.addEventListener("click", () => {
+      loginPage.classList.add("hidden");
+      signupPage.classList.remove("hidden");
     });
-// Logout Handler (FIXED)
-    function setupLogoutButton() {
-        if (logoutBtn) {
-            logoutBtn.addEventListener("click", (e) => {
-                e.preventDefault();
-                auth.signOut()
-                    .then(() => {
-                        authContainer.classList.remove("hidden");
-                        dashboard.classList.add("hidden");
-                        loginPage.classList.remove("hidden");
-                        signupPage.classList.add("hidden");
-                    })
-                    .catch((error) => {
-                        alert("Logout error: " + error.message);
-                    });
-            });
-        }
+  }
+
+  // ======================
+  // Auth Functions (UPDATED)
+  // ======================
+
+  // Sign Up Handler
+  signupForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const username = signupForm.querySelector("#signupEmail").value.trim();
+    const password = signupForm.querySelector("#signupPassword").value.trim();
+    const email = `${username}@petstudio.com`;
+
+    if (!username || !password) {
+      alert("Please fill all fields");
+      return;
     }
 
- // Auth State Observer //
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    // =============================================
-    // NEW: Initialize Drive API for Google users
-    // =============================================
-    if (user.providerData.some(provider => provider.providerId === 'google.com')) {
-      try {
-        const token = await user.getIdToken();
-        await initDriveAPI(token);
-        
-        // NEW: Optional - Create PetStudio folder on first login
-        const folderExists = await checkDriveFolder();
-        if (!folderExists) {
-          await createDriveFolder();
-        }
-      } catch (error) {
-        console.error("Drive init failed:", error);
-        // Fallback to Firestore silently
-      }
+    const submitBtn = signupForm.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Creating account...";
+
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        // Sign out immediately after signup
+        return auth.signOut();
+      })
+      .then(() => {
+        alert("Account created! Please log in.");
+        signupForm.reset();
+        signupPage.classList.add("hidden");
+        loginPage.classList.remove("hidden");
+        document.getElementById("loginEmail").value = username;
+      })
+      .catch((error) => {
+        alert("Error: " + error.message);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Sign Up";
+      });
+  });
+
+  // Login Handler
+  loginForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const username = loginForm.querySelector("#loginEmail")?.value.trim();
+    const password = loginForm.querySelector("#loginPassword")?.value.trim();
+    const email = `${username}@petstudio.com`;
+
+    if (!username || !password) {
+      alert("Please fill all fields");
+      return;
     }
 
-    // =============================================
-    // EXISTING UI CODE (unchanged)
-    // =============================================
-    authContainer.classList.add("hidden");
-    dashboard.classList.remove("hidden");
-    profileSection.classList.add("hidden");
-    fullPageBanner.classList.remove("hidden");
+    const submitBtn = loginForm.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Logging in...";
 
+    auth.signInWithEmailAndPassword(email, password)
+      .catch((error) => {
+        let errorMessage = "Login failed: ";
+        if (error.code === "auth/wrong-password") errorMessage += "Wrong password";
+        else if (error.code === "auth/user-not-found") errorMessage += "User not found";
+        else errorMessage += error.message;
+        alert(errorMessage);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Log In";
+      });
+  });
+  // Logout Handler (FIXED)
+  function setupLogoutButton() {
     if (logoutBtn) {
-      logoutBtn.style.display = "block";
-      setupLogoutButton();
+      logoutBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        auth.signOut()
+          .then(() => {
+            authContainer.classList.remove("hidden");
+            dashboard.classList.add("hidden");
+            loginPage.classList.remove("hidden");
+            signupPage.classList.add("hidden");
+          })
+          .catch((error) => {
+            alert("Logout error: " + error.message);
+          });
+      });
     }
+  }
 
-    if (petProfiles.length > 0) {
-      renderProfiles();
+  // Auth State Observer //
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      // =============================================
+      // NEW: Initialize Drive API for Google users
+      // =============================================
+      if (user.providerData.some(provider => provider.providerId === 'google.com')) {
+        try {
+          const token = await user.getIdToken();
+          await initDriveAPI(token);
+
+          // NEW: Optional - Create PetStudio folder on first login
+          const folderExists = await checkDriveFolder();
+          if (!folderExists) {
+            await createDriveFolder();
+          }
+        } catch (error) {
+          console.error("Drive init failed:", error);
+          // Fallback to Firestore silently
+        }
+      }
+
+      // =============================================
+      // EXISTING UI CODE (unchanged)
+      // =============================================
+      authContainer.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+      profileSection.classList.add("hidden");
+      fullPageBanner.classList.remove("hidden");
+
+      if (logoutBtn) {
+        logoutBtn.style.display = "block";
+        setupLogoutButton();
+      }
+
+      if (petProfiles.length > 0) {
+        renderProfiles();
+      } else {
+        petList.innerHTML = '';
+      }
+
     } else {
-      petList.innerHTML = '';
-    }
-
-  } else {
-    // =============================================
-    // NEW: Show Google Sign-In button when logged out
-    // =============================================
-    const googleSignInContainer = document.getElementById('googleSignInContainer');
-    if (!googleSignInContainer) {
-      const container = document.createElement('div');
-      container.id = 'googleSignInContainer';
-      container.innerHTML = `
+      // =============================================
+      // NEW: Show Google Sign-In button when logged out
+      // =============================================
+      const googleSignInContainer = document.getElementById('googleSignInContainer');
+      if (!googleSignInContainer) {
+        const container = document.createElement('div');
+        container.id = 'googleSignInContainer';
+        container.innerHTML = `
         <button id="googleSignInBtn" class="auth-btn google-btn">
           <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
           Continue with Google
         </button>
       `;
-      authContainer.insertBefore(container, loginPage);
-      
-      document.getElementById('googleSignInBtn').addEventListener('click', () => {
-        auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-      });
+        authContainer.insertBefore(container, loginPage);
+
+        document.getElementById('googleSignInBtn').addEventListener('click', () => {
+          auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        });
+      }
+
+      // =============================================
+      // EXISTING LOGOUT CODE (unchanged)
+      // =============================================
+      authContainer.classList.remove("hidden");
+      dashboard.classList.add("hidden");
+      if (logoutBtn) logoutBtn.style.display = "none";
+
+      loginPage?.classList.remove("hidden");
+      signupPage?.classList.add("hidden");
     }
+  });
 
-    // =============================================
-    // EXISTING LOGOUT CODE (unchanged)
-    // =============================================
-    authContainer.classList.remove("hidden");
-    dashboard.classList.add("hidden");
-    if (logoutBtn) logoutBtn.style.display = "none";
-    
-    loginPage?.classList.remove("hidden");
-    signupPage?.classList.add("hidden");
+  // ======================
+  // Drive Folder Management
+  // ======================
+  async function checkDriveFolder() {
+    try {
+      const response = await gapi.client.drive.files.list({
+        q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder'",
+        fields: "files(id)"
+      });
+      return response.result.files.length > 0;
+    } catch (error) {
+      console.error("Drive folder check failed:", error);
+      return false;
+    }
   }
-});
 
-// ======================
-// Drive Folder Management
-// ======================
-async function checkDriveFolder() {
-  try {
-    const response = await gapi.client.drive.files.list({
-      q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder'",
-      fields: "files(id)"
-    });
-    return response.result.files.length > 0;
-  } catch (error) {
-    console.error("Drive folder check failed:", error);
-    return false;
+  async function createDriveFolder() {
+    try {
+      await gapi.client.drive.files.create({
+        name: 'PetStudio',
+        mimeType: 'application/vnd.google-apps.folder'
+      });
+    } catch (error) {
+      console.error("Drive folder creation failed:", error);
+    }
   }
-}
 
-async function createDriveFolder() {
-  try {
-    await gapi.client.drive.files.create({
-      name: 'PetStudio',
-      mimeType: 'application/vnd.google-apps.folder'
-    });
-  } catch (error) {
-    console.error("Drive folder creation failed:", error);
-  }
-}
-    
-// ======================
-// Enhanced Pet Profile Functions with Drive Backup
-// ======================
-// Existing addPetProfileBtn event listener remains unchanged
-addPetProfileBtn?.addEventListener("click", (e) => {
+  // ======================
+  // Enhanced Pet Profile Functions with Drive Backup
+  // ======================
+  // Existing addPetProfileBtn event listener remains unchanged
+  addPetProfileBtn?.addEventListener("click", (e) => {
     e.preventDefault();
-    
+
     if (!isEditing) {
-        profileForm.reset();
-        currentEditIndex = null;
+      profileForm.reset();
+      currentEditIndex = null;
     }
 
     fullPageBanner.classList.add("hidden");
     profileSection.classList.remove("hidden");
     dashboard.classList.remove("hidden");
     authContainer.classList.add("hidden");
-});
+  });
 
-// MODIFIED: Save to Google Drive with enhanced error handling
-async function saveProfileToDrive(profile) {
+  // MODIFIED: Save to Google Drive with enhanced error handling
+  async function saveProfileToDrive(profile) {
     try {
-        // Check if we have Drive access
-        if (!gapi.client.drive) {
-            throw new Error("Drive API not initialized");
-        }
+      // Check if we have Drive access
+      if (!gapi.client.drive) {
+        throw new Error("Drive API not initialized");
+      }
 
-        // Check for existing PetStudio folder
-        let folderId = await getDriveFolderId();
-        
-        // Create the JSON file
-        const file = await gapi.client.drive.files.create({
-            name: `${profile.name}_${Date.now()}.json`, // Unique filename
-            parents: folderId ? [folderId] : null,
-            mimeType: 'application/json',
-            body: JSON.stringify({
-                ...profile,
-                lastUpdated: new Date().toISOString()
-            }),
-            fields: 'id,name,webViewLink'
-        });
+      // Check for existing PetStudio folder
+      let folderId = await getDriveFolderId();
 
-        console.log("Saved to Drive:", file.result);
-        return file.result;
+      // Create the JSON file
+      const file = await gapi.client.drive.files.create({
+        name: `${profile.name}_${Date.now()}.json`, // Unique filename
+        parents: folderId ? [folderId] : null,
+        mimeType: 'application/json',
+        body: JSON.stringify({
+          ...profile,
+          lastUpdated: new Date().toISOString()
+        }),
+        fields: 'id,name,webViewLink'
+      });
+
+      console.log("Saved to Drive:", file.result);
+      return file.result;
     } catch (error) {
-        console.error("Drive save failed:", error);
-        throw error; // Rethrow to handle in calling function
+      console.error("Drive save failed:", error);
+      throw error; // Rethrow to handle in calling function
     }
-}
-// NEW: Helper to get/create Drive folder
-async function getDriveFolderId() {
+  }
+  // NEW: Helper to get/create Drive folder
+  async function getDriveFolderId() {
     try {
-        const response = await gapi.client.drive.files.list({
-            q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder' and trashed=false",
-            fields: "files(id)",
-            spaces: 'drive'
-        });
-        
-        if (response.result.files.length > 0) {
-            return response.result.files[0].id;
-        }
+      const response = await gapi.client.drive.files.list({
+        q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder' and trashed=false",
+        fields: "files(id)",
+        spaces: 'drive'
+      });
 
-        // Create folder if not exists
-        const folder = await gapi.client.drive.files.create({
-            name: 'PetStudio',
-            mimeType: 'application/vnd.google-apps.folder',
-            fields: 'id'
-        });
-        
-        return folder.result.id;
+      if (response.result.files.length > 0) {
+        return response.result.files[0].id;
+      }
+
+      // Create folder if not exists
+      const folder = await gapi.client.drive.files.create({
+        name: 'PetStudio',
+        mimeType: 'application/vnd.google-apps.folder',
+        fields: 'id'
+      });
+
+      return folder.result.id;
     } catch (error) {
-        console.error("Drive folder operation failed:", error);
-        return null;
+      console.error("Drive folder operation failed:", error);
+      return null;
     }
-}
-// MODIFIED: Main save function with Drive + Firestore fallback
-async function savePetProfile(profile) {
+  }
+  // MODIFIED: Main save function with Drive + Firestore fallback
+  async function savePetProfile(profile) {
     // Your existing local storage logic
     if (isEditing) {
-        petProfiles[currentEditIndex] = profile;
+      petProfiles[currentEditIndex] = profile;
     } else {
-        petProfiles.push(profile);
+      petProfiles.push(profile);
     }
     localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
 
     // NEW: Backup to Drive if Google-authenticated
     const isGoogleUser = auth.currentUser?.providerData?.some(
-        p => p.providerId === 'google.com'
+      p => p.providerId === 'google.com'
     );
-    
+
     if (isGoogleUser && gapi.client.drive) {
-        try {
-            await saveProfileToDrive(profile);
-        } catch (driveError) {
-            console.warn("Drive backup failed, using Firestore fallback");
-            // Add Firestore fallback here if needed
-            // await saveToFirestore(profile);
-        }
+      try {
+        await saveProfileToDrive(profile);
+      } catch (driveError) {
+        console.warn("Drive backup failed, using Firestore fallback");
+        // Add Firestore fallback here if needed
+        // await saveToFirestore(profile);
+      }
     }
 
     // Existing UI updates
@@ -411,49 +413,51 @@ async function savePetProfile(profile) {
     fullPageBanner.classList.remove("hidden");
     isEditing = false;
     currentEditIndex = null;
-}
-// MODIFIED: Delete function with Drive cleanup
-async function deleteProfile(index) {
+  }
+  // MODIFIED: Delete function with Drive cleanup
+  async function deleteProfile(index) {
     const profile = petProfiles[index];
     // NEW: Try to delete from Drive if exists
     if (auth.currentUser?.providerData?.some(p => p.providerId === 'google.com')) {
-        try {
-            const files = await gapi.client.drive.files.list({
-                q: `name contains '${profile.name}' and trashed=false`,
-                fields: "files(id,name)"
-            });
-            
-            if (files.result.files.length > 0) {
-                await Promise.all(
-                    files.result.files.map(file => 
-                        gapi.client.drive.files.update({
-                            fileId: file.id,
-                            resource: { trashed: true }
-                        })
-                    )
-                );
-                console.log("Moved to Drive trash:", files.result.files.length, "files");
-            }
-        } catch (error) {
-            console.error("Drive delete failed:", error);
+      try {
+        const files = await gapi.client.drive.files.list({
+          q: `name contains '${profile.name}' and trashed=false`,
+          fields: "files(id,name)"
+        });
+
+        if (files.result.files.length > 0) {
+          await Promise.all(
+            files.result.files.map(file =>
+              gapi.client.drive.files.update({
+                fileId: file.id,
+                resource: {
+                  trashed: true
+                }
+              })
+            )
+          );
+          console.log("Moved to Drive trash:", files.result.files.length, "files");
         }
+      } catch (error) {
+        console.error("Drive delete failed:", error);
+      }
     }
     // Existing deletion logic
     petProfiles.splice(index, 1);
     localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
     renderProfiles();
-}
-// function render profiles original//  
-    function renderProfiles() {
-        petList.innerHTML = '';
-        petProfiles.forEach((profile, index) => {
-            const petCard = document.createElement("div");
-            petCard.classList.add("petCard");
+  }
+  // function render profiles original//  
+  function renderProfiles() {
+    petList.innerHTML = '';
+    petProfiles.forEach((profile, index) => {
+      const petCard = document.createElement("div");
+      petCard.classList.add("petCard");
 
-            const coverPhotoUrl = profile.gallery[profile.coverPhotoIndex];
-            const profileHeaderStyle = coverPhotoUrl ? `style="background-image: url('${coverPhotoUrl}');"` : '';
+      const coverPhotoUrl = profile.gallery[profile.coverPhotoIndex];
+      const profileHeaderStyle = coverPhotoUrl ? `style="background-image: url('${coverPhotoUrl}');"` : '';
 
-            petCard.innerHTML = `
+      petCard.innerHTML = `
                 <div class="profile-header" ${profileHeaderStyle}>
                     <h3>${profile.name}</h3>
                     <p class="countdown">${getCountdown(profile.birthday)}</p>
@@ -493,67 +497,67 @@ async function deleteProfile(index) {
                 </div>
             `;
 
-            petCard.querySelector(".editBtn").addEventListener("click", () => openEditForm(index));
-            petCard.querySelector(".deleteBtn").addEventListener("click", () => deleteProfile(index));
-            petCard.querySelector(".printBtn").addEventListener("click", () => printProfile(profile));
-            petCard.querySelector(".shareBtn").addEventListener("click", () => shareProfile(profile));
-            petCard.querySelector(".qrBtn").addEventListener("click", () => generateQRCode(index));
+      petCard.querySelector(".editBtn").addEventListener("click", () => openEditForm(index));
+      petCard.querySelector(".deleteBtn").addEventListener("click", () => deleteProfile(index));
+      petCard.querySelector(".printBtn").addEventListener("click", () => printProfile(profile));
+      petCard.querySelector(".shareBtn").addEventListener("click", () => shareProfile(profile));
+      petCard.querySelector(".qrBtn").addEventListener("click", () => generateQRCode(index));
 
-            petCard.querySelectorAll(".mood-btn").forEach(btn => {
-                btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
-            });
+      petCard.querySelectorAll(".mood-btn").forEach(btn => {
+        btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
+      });
 
-            petCard.querySelectorAll(".cover-btn").forEach(btn => {
-                btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
-            });
+      petCard.querySelectorAll(".cover-btn").forEach(btn => {
+        btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
+      });
 
-            petList.appendChild(petCard);
-        });
-    }
+      petList.appendChild(petCard);
+    });
+  }
 
-    // func5ion countdown//
-    function getCountdown(birthday) {
-        const today = new Date();
-        const nextBirthday = new Date(birthday);
-        nextBirthday.setFullYear(today.getFullYear());
-        if (nextBirthday < today) nextBirthday.setFullYear(today.getFullYear() + 1);
-        const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
-        return `${diffDays} days until birthday! 🎉`;
-    }
+  // func5ion countdown//
+  function getCountdown(birthday) {
+    const today = new Date();
+    const nextBirthday = new Date(birthday);
+    nextBirthday.setFullYear(today.getFullYear());
+    if (nextBirthday < today) nextBirthday.setFullYear(today.getFullYear() + 1);
+    const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
+    return `${diffDays} days until birthday! 🎉`;
+  }
 
-    function renderMoodHistory(profile) {
-        if (!profile.moodLog || profile.moodLog.length === 0) return "No mood logs yet";
-        return profile.moodLog
-            .slice(-7)
-            .map(entry => `${entry.date}: ${getMoodEmoji(entry.mood)}`)
-            .join('<br>');
-    }
+  function renderMoodHistory(profile) {
+    if (!profile.moodLog || profile.moodLog.length === 0) return "No mood logs yet";
+    return profile.moodLog
+      .slice(-7)
+      .map(entry => `${entry.date}: ${getMoodEmoji(entry.mood)}`)
+      .join('<br>');
+  }
 
-    function getMoodEmoji(mood) {
-        return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
-    }
+  function getMoodEmoji(mood) {
+    return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
+  }
 
-    function openEditForm(index) {
-        isEditing = true;
-        currentEditIndex = index;
-        const profile = petProfiles[index];
+  function openEditForm(index) {
+    isEditing = true;
+    currentEditIndex = index;
+    const profile = petProfiles[index];
 
-        document.getElementById("petName").value = profile.name;
-        document.getElementById("petBreed").value = profile.breed;
-        document.getElementById("petDob").value = profile.dob;
-        document.getElementById("petBirthday").value = profile.birthday;
+    document.getElementById("petName").value = profile.name;
+    document.getElementById("petBreed").value = profile.breed;
+    document.getElementById("petDob").value = profile.dob;
+    document.getElementById("petBirthday").value = profile.birthday;
 
-        profileSection.classList.remove("hidden");
-        fullPageBanner.classList.add("hidden");
-    }
+    profileSection.classList.remove("hidden");
+    fullPageBanner.classList.add("hidden");
+  }
 
-    function deleteProfile(index) {
-        petProfiles.splice(index, 1);
-        localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-        renderProfiles();
-    }
+  function deleteProfile(index) {
+    petProfiles.splice(index, 1);
+    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+    renderProfiles();
+  }
 
-function printProfile(profile) {
+  function printProfile(profile) {
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
         <!DOCTYPE html>
@@ -629,143 +633,186 @@ function printProfile(profile) {
         </html>
     `);
     printWindow.document.close();
-}
+  }
   //Enhanced share profile function//  
-async function sharePetCard(pet) {
+  async function sharePetCard(pet) {
     // 1. Generate Shareable Link
     const shareUrl = `${window.location.origin}/pet/${pet.id}`; // Example: petstudio.com/pet/123
 
     // 2. Check if Mobile (Web Share API)
     if (navigator.share) {
-        try {
-            await navigator.share({
-                title: `Meet ${pet.name}! 🐾`,
-                text: `Check out ${pet.name}'s profile on PetStudio!`,
-                url: shareUrl,
-            });
-            return; // Exit if successful
-        } catch (err) {
-            console.log("User cancelled share", err);
-        }
+      try {
+        await navigator.share({
+          title: `Meet ${pet.name}! 🐾`,
+          text: `Check out ${pet.name}'s profile on PetStudio!`,
+          url: shareUrl,
+        });
+        return; // Exit if successful
+      } catch (err) {
+        console.log("User cancelled share", err);
+      }
     }
 
     // 3. Desktop/Image Fallback
     try {
-        // Capture the pet card as an image
-        const cardElement = document.getElementById(`pet-card-${pet.id}`);
-        const canvas = await html2canvas(cardElement);
-        const imageUrl = canvas.toDataURL('image/png');
+      // Capture the pet card as an image
+      const cardElement = document.getElementById(`pet-card-${pet.id}`);
+      const canvas = await html2canvas(cardElement);
+      const imageUrl = canvas.toDataURL('image/png');
 
-        // Create a download link
-        const downloadLink = document.createElement('a');
-        downloadLink.href = imageUrl;
-        downloadLink.download = `${pet.name}-petstudio.png`;
-        downloadLink.click();
+      // Create a download link
+      const downloadLink = document.createElement('a');
+      downloadLink.href = imageUrl;
+      downloadLink.download = `${pet.name}-petstudio.png`;
+      downloadLink.click();
 
-        // Bonus: Copy link to clipboard
-        await navigator.clipboard.writeText(shareUrl);
-        alert(`${pet.name}'s card saved! 🔗 Link copied to clipboard.`);
-        
+      // Bonus: Copy link to clipboard
+      await navigator.clipboard.writeText(shareUrl);
+      alert(`${pet.name}'s card saved! 🔗 Link copied to clipboard.`);
+
     } catch (error) {
-        // Ultimate fallback: Just open URL
-        window.open(shareUrl, '_blank');
+      // Ultimate fallback: Just open URL
+      window.open(shareUrl, '_blank');
     }
-}
-    
-// ======== QR CODE GENERATION button functionality ========
-// Add this helper function ABOVE generateQRCode()
-function calculateAge(dobString) {
+  }
+
+  // ======== QR CODE GENERATION button functionality ========
+  // Add this helper function ABOVE generateQRCode()
+  function calculateAge(dobString) {
     try {
-        const birthDate = new Date(dobString);
-        const today = new Date();
-        
-        let years = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            years--;
-        }
-        
-        const months = (today.getMonth() + 12 - birthDate.getMonth()) % 12;
-        return `${years} years, ${months} months`;
+      const birthDate = new Date(dobString);
+      const today = new Date();
+
+      let years = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        years--;
+      }
+
+      const months = (today.getMonth() + 12 - birthDate.getMonth()) % 12;
+      return `${years} years, ${months} months`;
     } catch {
-        return 'N/A';
+      return 'N/A';
     }
- } // Added missing closure for calculateAge
-// ======== UPDATED QR CODE GENERATION ========
-function generateQRCode(profileIndex) {
-  if (typeof profileIndex !== 'number' || profileIndex < 0) {
-    alert("Invalid profile selection");
-    return;
-  }
+  } // Added missing closure for calculateAge
+  // ======== UPDATED QR CODE GENERATION ========
+  function generateQRCode(profileIndex) {
+    if (typeof profileIndex !== 'number' || profileIndex < 0) {
+      alert("Invalid profile selection");
+      return;
+    }
 
-  const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-  const profile = savedProfiles[profileIndex];
+    const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+    const profile = savedProfiles[profileIndex];
 
-  if (!profile) {
-    alert("Profile not found!");
-    return;
-  }
+    if (!profile) {
+      alert("Profile not found!");
+      return;
+    }
 
-  const qrWindow = window.open('', 'QR Code', 'width=400,height=550'); // Increased height
-  const safeFilename = profile.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-  link.download = `${safeFilename}_qr.png`;
+    const qrWindow = window.open('', 'QR Code', 'width=400,height=550'); // Increased height
+    const safeFilename = profile.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const qrCodeData = JSON.stringify(profile); // Assuming 'profile' is the data you want in the QR code
+    const shareableLink = window.location.href; // Or a more specific link if needed
 
-qrWindow.document.write(`
-  <html>
-    <head>
-      <title>${profile.name}'s QR Code</title>
-      <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-      <style>
-        .loader { /* Your existing loader styles */ }
-        @keyframes spin { /* Your existing animation */ }
-        .share-container {
-          margin-top: 15px;
-          text-align: center;
-        }
-        .share-link {
-          font-size: 0.8em;
-          margin: 10px auto;
-          padding: 8px;
-          background: #f8f8f8;
-          border-radius: 4px;
-          max-width: 90%;
-          word-break: break-all;
-        }
-      </style>
+    qrWindow.document.write(`
+    <html>
+      <head>
+        <title>${profile.name}'s QR Code</title>
+        <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+        <style>
+          .loader {
+            border: 5px solid #f3f3f3; /* Light grey */
+            border-top: 5px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+          }
+
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+
+          .share-container {
+            margin-top: 15px;
+            text-align: center;
+          }
+          .share-link {
+            font-size: 0.8em;
+            margin: 10px auto;
+            padding: 8px;
+            background: #f8f8f8;
+            border-radius: 4px;
+            max-width: 90%;
+            word-break: break-all;
+          }
+        </style>
       </head>
       <body>
         <div class="loader"></div>
         <div id="qrcode-container" style="display: none; margin: 20px auto; text-align: center;"></div>
         <div id="qr-controls" style="display: none; text-align: center; margin-top: 20px;">
-          <button onclick="window.print()" style="...">Print</button>
-          <button onclick="downloadQR()" style="...">Download</button>
+          <button onclick="window.print()" style="padding: 10px 20px; margin: 0 10px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">Print</button>
+          <button <mark>onclick="downloadQR('${safeFilename}')"</mark> style="padding: 10px 20px; margin: 0 10px; background: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer;">Download</button>
           <button onclick="shareQR()" style="padding: 10px 20px; margin: 0 10px; background: #9b59b6; color: white; border: none; border-radius: 5px; cursor: pointer;">Share</button>
           <div class="share-container">
             <p style="margin-top: 15px; font-size: 0.8em; color: #777;">Scan for Emergency Information</p>
-            <div id="share-link" class="share-link" style="display: none;"></div>
+            <div id="share-link" class="share-link" style="display: none;">${shareableLink}</div>
           </div>
           <p style="font-size: 0.7em; color: #999; margin-top: 10px;">Generated by PetStudio 2024</p>
         </div>
 
         <script>
-          // Your existing download function
-          function downloadQR() {
+          let qrcode;
+          let currentSafeFilename; // To store the passed filename
+
+          function generateQRCode() {
+            const qrcodeContainer = document.getElementById('qrcode-container');
+            qrcodeContainer.innerHTML = ''; // Clear previous QR code
+            qrcode = new QRCode(qrcodeContainer, {
+              text: '${qrCodeData}',
+              width: 256,
+              height: 256,
+              colorDark : "#000000",
+              colorLight : "#ffffff",
+              correctLevel : QRCode.CorrectLevel.H
+            });
+
+            document.querySelector('.loader').style.display = 'none';
+            qrcodeContainer.style.display = 'block';
+            document.getElementById('qr-controls').style.display = 'block';
+          }
+
+          window.onload = generateQRCode;
+
+          <mark>function downloadQR(safeFilename) {</mark>
+            <mark>currentSafeFilename = safeFilename; // Store it in the function's scope</mark>
             const canvas = document.querySelector('#qrcode-container canvas');
             if (canvas) {
               const link = document.createElement('a');
-              link.download = '${profile.name}_QR.png'; // Fixed line
+              <mark>link.download = currentSafeFilename + '_qr.png';</mark>
               link.href = canvas.toDataURL();
               link.click();
             } else {
-                  console.error('QR code canvas not found');
-                  alert('QR code not generated yet!');
-              }
-
-          // NEW: Share functionality
+              console.error('QR code canvas not found');
+              alert('QR code not generated yet!');
+            }
+          }
+ // NEW: Share functionality
           async function shareQR() {
   try {
-    const shareUrl = `${window.location.origin}/profile/${profileIndex}`;
+    const shareUrl = `
+      $ {
+        window.location.origin
+      }
+      /profile/$ {
+        profileIndex
+      }
+      `;
     const qrCanvas = document.querySelector('#qrcode-container canvas');
     
     // Mobile share
@@ -784,7 +831,9 @@ qrWindow.document.write(`
       shareLinkEl.textContent = '✅ Link copied to clipboard!';
     } catch {
       // Ultimate fallback if clipboard fails
-      shareLinkEl.innerHTML = `🔗 Share this link: <input value="${shareUrl}" style="width:100%">`;
+      shareLinkEl.innerHTML = `🔗
+      Share this link: < input value = "${shareUrl}"
+      style = "width:100%" > `;
       shareLinkEl.querySelector('input').select();
     }
     
@@ -796,60 +845,60 @@ qrWindow.document.write(`
       </body>
     </html>
   `);
-  qrWindow.document.close();
+    qrWindow.document.close();
+    // QR code eventlistener//
+    qrWindow.addEventListener('load', () => {
+      const qrText = `PET PROFILE\nName: ${profile.name || 'N/A'}\n...`; // Your existing text
 
-  qrWindow.addEventListener('load', () => {
-    const qrText = `PET PROFILE\nName: ${profile.name || 'N/A'}\n...`; // Your existing text
-    
-    try {
-      const qrcodeContainer = qrWindow.document.getElementById('qrcode-container');
-      qrcodeContainer.style.display = 'block';
-      new qrWindow.QRCode(qrcodeContainer, {
-        text: qrText,
-        width: 256,
-        height: 256,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: qrWindow.QRCode.CorrectLevel.H
-      });
-
-      qrWindow.document.getElementById('qr-controls').style.display = 'block';
-    } catch (error) {
-      qrWindow.document.body.innerHTML = `<h1>Error: ${error.message}</h1>`;
-    } finally {
-      const loader = qrWindow.document.querySelector('.loader');
-      if (loader) loader.style.display = 'none';
-    }
-  });
-}
-    
-    function logMood(profileIndex, mood) {
-        const today = new Date().toISOString().split('T')[0];
-        if (!petProfiles[profileIndex].moodLog) petProfiles[profileIndex].moodLog = [];
-
-        petProfiles[profileIndex].moodLog.push({
-            date: today,
-            mood: mood
+      try {
+        const qrcodeContainer = qrWindow.document.getElementById('qrcode-container');
+        qrcodeContainer.style.display = 'block';
+        new qrWindow.QRCode(qrcodeContainer, {
+          text: qrText,
+          width: 256,
+          height: 256,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: qrWindow.QRCode.CorrectLevel.H
         });
 
-        localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-        renderProfiles();
-    }
+        qrWindow.document.getElementById('qr-controls').style.display = 'block';
+      } catch (error) {
+        qrWindow.document.body.innerHTML = `<h1>Error: ${error.message}</h1>`;
+      } finally {
+        const loader = qrWindow.document.querySelector('.loader');
+        if (loader) loader.style.display = 'none';
+      }
+    });
+  }
+  // end of QR CODE//    
+  function logMood(profileIndex, mood) {
+    const today = new Date().toISOString().split('T')[0];
+    if (!petProfiles[profileIndex].moodLog) petProfiles[profileIndex].moodLog = [];
 
-    function setCoverPhoto(profileIndex, imageIndex) {
-        petProfiles[profileIndex].coverPhotoIndex = imageIndex;
-        localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-        renderProfiles();
-    }
-// ======================
-// Form Handling with Reminder Creation
-// ======================
-    function formatFirestoreDate(dateString) {
+    petProfiles[profileIndex].moodLog.push({
+      date: today,
+      mood: mood
+    });
+
+    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+    renderProfiles();
+  }
+
+  function setCoverPhoto(profileIndex, imageIndex) {
+    petProfiles[profileIndex].coverPhotoIndex = imageIndex;
+    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+    renderProfiles();
+  }
+  // ======================
+  // Form Handling with Reminder Creation
+  // ======================
+  function formatFirestoreDate(dateString) {
     const date = new Date(dateString);
     return date.toISOString().split('T')[0]; // "YYYY-MM-DD"
-}
+  }
 
-profileForm?.addEventListener("submit", async (e) => {
+  profileForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     // 1. Hardcoded user ID (temporary until auth implementation)
@@ -864,37 +913,37 @@ profileForm?.addEventListener("submit", async (e) => {
 
     // 3. Firestore birthday reminder (if birthday is provided)
     if (birthday) {
-        const reminderData = {
-            userId: userId,
-            petName: petName,
-            date: formatFirestoreDate(birthday), // "YYYY-MM-DD"
-            message: `It's ${petName}'s birthday today! 🎉`,
-            createdAt: new Date().toISOString()
-        };
+      const reminderData = {
+        userId: userId,
+        petName: petName,
+        date: formatFirestoreDate(birthday), // "YYYY-MM-DD"
+        message: `It's ${petName}'s birthday today! 🎉`,
+        createdAt: new Date().toISOString()
+      };
 
-        try {
-            await firebase.firestore().collection("reminders").add(reminderData);
-            console.log("Reminder created successfully");
-        } catch (error) {
-            console.error("Error creating reminder:", error);
-        }
+      try {
+        await firebase.firestore().collection("reminders").add(reminderData);
+        console.log("Reminder created successfully");
+      } catch (error) {
+        console.error("Error creating reminder:", error);
+      }
     }
 
     // 4. Build profile object
     const newProfile = {
-        name: petName,
-        breed: petBreed,
-        dob: petDob,
-        birthday: birthday,
-        gallery: galleryFiles.map(file => URL.createObjectURL(file)),
-        moodLog: [],
-        coverPhotoIndex: 0
+      name: petName,
+      breed: petBreed,
+      dob: petDob,
+      birthday: birthday,
+      gallery: galleryFiles.map(file => URL.createObjectURL(file)),
+      moodLog: [],
+      coverPhotoIndex: 0
     };
 
     if (isEditing) {
-        petProfiles[currentEditIndex] = newProfile;
+      petProfiles[currentEditIndex] = newProfile;
     } else {
-        petProfiles.push(newProfile);
+      petProfiles.push(newProfile);
     }
 
     // Save the updated profiles to localStorage
@@ -910,93 +959,97 @@ profileForm?.addEventListener("submit", async (e) => {
     dashboard.classList.remove("hidden"); // Show dashboard
     authContainer.classList.add("hidden"); // Hide auth container
     window.scrollTo(0, 0); // Optional: Scroll to the top of the page
-});
-// ======================
-// Service Worker
-// ======================
-    const vapidKey = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk'; 
+  });
+  // ======================
+  // Service Worker
+  // ======================
+  const vapidKey = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
 
-    function subscribeUserToPushNotifications(registration) {
-        registration.pushManager.getSubscription()
-            .then(subscription => {
-                if (subscription) {
-                    console.log('Already subscribed:', subscription);
-                    sendSubscriptionToServer(subscription);
-                } else {
-                    registration.pushManager.subscribe({
-                        userVisibleOnly: true, 
-                        applicationServerKey: urlBase64ToUint8Array(vapidKey),
-                    })
-                    .then(newSubscription => {
-                        console.log('Subscribed to push notifications:', newSubscription);
-                        sendSubscriptionToServer(newSubscription);
-                    })
-                    .catch(error => {
-                        console.error('Push subscription failed:', error);
-                    });
-                }
+  function subscribeUserToPushNotifications(registration) {
+    registration.pushManager.getSubscription()
+      .then(subscription => {
+        if (subscription) {
+          console.log('Already subscribed:', subscription);
+          sendSubscriptionToServer(subscription);
+        } else {
+          registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(vapidKey),
             })
-            .catch(error => console.error('Subscription check failed:', error));
-    }
+            .then(newSubscription => {
+              console.log('Subscribed to push notifications:', newSubscription);
+              sendSubscriptionToServer(newSubscription);
+            })
+            .catch(error => {
+              console.error('Push subscription failed:', error);
+            });
+        }
+      })
+      .catch(error => console.error('Subscription check failed:', error));
+  }
 
-// Modify sendSubscriptionToServer function
-function sendSubscriptionToServer(subscription) {
+  // Modify sendSubscriptionToServer function
+  function sendSubscriptionToServer(subscription) {
     // Extract only needed data 🔥
     const subData = {
-        token: subscription.keys.auth, // Unique identifier
-        endpoint: subscription.endpoint
+      token: subscription.keys.auth, // Unique identifier
+      endpoint: subscription.endpoint
     };
 
     fetch('https://pet-studio.vercel.app/api/save-subscription', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(subData), // Changed from {subscription} 🔥
-    })
-    .then(response => response.json())
-    .then(data => console.log('Subscription sent:', data))
-    .catch(error => console.error('Error sending subscription:', error));
-}
+      })
+      .then(response => response.json())
+      .then(data => console.log('Subscription sent:', data))
+      .catch(error => console.error('Error sending subscription:', error));
+  }
 
-    function urlBase64ToUint8Array(base64String) {
-        const padding = '='.repeat((4 - base64String.length % 4) % 4);
-        const base64 = (base64String + padding).replace(/\-/g, '+').replace(/\_/g, '/');
-        const rawData = atob(base64);
-        return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
-    }
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/\_/g, '/');
+    const rawData = atob(base64);
+    return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
+  }
 
-if ('serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js')
-        .then(registration => {
-            // Clear old cache versions FIRST
-            caches.keys().then(cacheNames => {
-                cacheNames.forEach(cacheName => {
-                    if (cacheName !== 'pet-studio-cache-v1') {
-                        caches.delete(cacheName);
-                    }
-                });
-            });
+      .then(registration => {
+        // Clear old cache versions FIRST
+        caches.keys().then(cacheNames => {
+          cacheNames.forEach(cacheName => {
+            if (cacheName !== 'pet-studio-cache-v1') {
+              caches.delete(cacheName);
+            }
+          });
+        });
 
-            // Existing code below
-            console.log('Caching Service Worker registered:', registration.scope);
-            subscribeUserToPushNotifications(registration);
+        // Existing code below
+        console.log('Caching Service Worker registered:', registration.scope);
+        subscribeUserToPushNotifications(registration);
 
-            registration.addEventListener('updatefound', () => {
-                const installingWorker = registration.installing;
-                installingWorker.addEventListener('statechange', () => {
-                    if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        installingWorker.postMessage({ action: 'skipWaiting' });
-                    }
-                });
-            });
-        })
-        .catch(error => console.error('Service Worker registration failed:', error));
+        registration.addEventListener('updatefound', () => {
+          const installingWorker = registration.installing;
+          installingWorker.addEventListener('statechange', () => {
+            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              installingWorker.postMessage({
+                action: 'skipWaiting'
+              });
+            }
+          });
+        });
+      })
+      .catch(error => console.error('Service Worker registration failed:', error));
 
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-        console.log('New service worker activated, reloading page...');
-        location.reload();
+      console.log('New service worker activated, reloading page...');
+      location.reload();
     });
-}
+  }
 
-    // Initialize
-    if (petProfiles.length > 0) renderProfiles();
+  // Initialize
+  if (petProfiles.length > 0) renderProfiles();
 });
