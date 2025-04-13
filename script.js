@@ -711,16 +711,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const qrWindow = window.open('', 'QR Code', 'width=400,height=550'); // Increased height
-    
-  // Generate safe filename (NO SPECIAL CHARACTERS)
-  const safeFilename = 
-    profile.name
-      .replace(/[^a-z0-9]/gi, '_') // Replace non-alphanumeric with _
-      .toLowerCase() + '_qr.png';  
-  // ESCAPE PROPERLY FOR JAVASCRIPT TEMPLATE
-  const jsSafeFilename = JSON.stringify(safeFilename);
-  console.log('JS Safe Filename:', jsSafeFilename); 
+    const qrWindow = window.open('', 'QR Code', 'width=400,height=550'); // Increased height  
+    const safeQRData = qrCodeData.replace(/'/g, "\\'").replace(/"/g, '\\"');
+   
     qrWindow.document.write(`
     <html>
       <head>
@@ -778,10 +771,10 @@ document.addEventListener("DOMContentLoaded", () => {
           function generateQRCode() {
             const qrcodeContainer = document.getElementById('qrcode-container');
             qrcodeContainer.innerHTML = ''; // Clear previous QR code
-            new QRCode(document.getElementById('qrcode-container'), {
-              text: \`${qrCodeData}\`, // Now properly escaped
-              width: 256,
-              height: 256,
+               new QRCode(document.getElementById('qrcode-container'), {
+               text: '${safeQRData}',
+               width: 256,
+               height: 256
               colorDark : "#000000",
               colorLight : "#ffffff",
               correctLevel : QRCode.CorrectLevel.H
