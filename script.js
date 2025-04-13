@@ -711,13 +711,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const qrWindow = window.open('', 'QR Code', 'width=400,height=550'); // Increased height
-    
-    const safeFilename = profile.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-   const qrCodeData = JSON.stringify(profile)
-  .replace(/\\/g, '\\\\')  // Escape backslashes first
-  .replace(/'/g, "\\'")    // Escape apostrophes
-  .replace(/`/g, '\\`');   // Escape backticks    const shareableLink = window.location.href; // Or a more specific link if needed
+    const qrWindow = window.open('', 'QR Code', 'width=400,height=550'); // Increased height   
+    const safeFilename = JSON.stringify(profile.name.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_qr.png');
 
     qrWindow.document.write(`
     <html>
@@ -791,14 +786,14 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
           window.onload = generateQRCode;
-
+        // Pass filename as pre-escaped variable
+          const filename = ${safeFilename};
           function downloadQR(safeFilename) {
             currentSafeFilename = safeFilename;
             const canvas = document.querySelector('#qrcode-container canvas');
             if (canvas) {
               const link = document.createElement('a');
-              //                        Escaped twice → ^^^^
-              const filename = '${safeFilename.replace(/'/g, "\\\\'")}_qr.png';
+              link.download = filename; // Use pre-defined variable
               link.href = canvas.toDataURL();
               link.click();
             } else {
