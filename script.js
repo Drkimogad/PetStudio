@@ -696,25 +696,60 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch {
       return 'N/A';
     }
-  } // Added missing closure for calculateAge
+  }
   
   // ======== QR CODE GENERATION ========
-// Global variable to store profile data
+// Global variable
 let currentQRProfile = null;
 
-// Simplified QR Generator
+// Print function (NEW - targets only the modal content)
+function printQR() {
+  const printContent = document.querySelector('#qr-modal .printable-area').innerHTML;
+  const originalContent = document.body.innerHTML;
+  
+  document.body.innerHTML = printContent;
+  window.print();
+  document.body.innerHTML = originalContent;
+  
+  // Re-show modal after printing
+  document.getElementById('qr-modal').style.display = 'block';
+}
+
+// Download function 
+function downloadQR() {
+  const canvas = document.querySelector('#qrcode-container canvas');
+  if (canvas) {
+    const link = document.createElement('a');
+    link.download = (currentQRProfile?.name || 'pet_profile') + '_qr.png';
+    link.href = canvas.toDataURL();
+    link.click();
+  }
+}
+
+// Share function 
+async function shareQR() {
+  try {
+    await navigator.share?.({
+      title: `${currentQRProfile?.name || 'Pet'} Profile`,
+      text: `Check out ${currentQRProfile?.name || 'this pet'}'s details!`,
+      url: window.location.href
+    });
+  } catch {
+    await navigator.clipboard.writeText(window.location.href);
+    alert('Link copied to clipboard!');
+  }
+}
+// Your existing generateQRCode() stays the same
 function generateQRCode(profileIndex) {
   const profile = JSON.parse(localStorage.getItem('petProfiles'))[profileIndex];
-  currentQRProfile = profile; // Store for sharing/download
+  currentQRProfile = profile;
   
   const modal = document.getElementById('qr-modal');
   const container = document.getElementById('qrcode-container');
   
-  // Reset modal
   container.innerHTML = '';
   modal.style.display = 'block';
   
-  // Generate QR
   new QRCode(container, {
     text: JSON.stringify(profile),
     width: 256,
@@ -723,35 +758,6 @@ function generateQRCode(profileIndex) {
     colorLight: "#ffffff",
     correctLevel: QRCode.CorrectLevel.H
   });
-  
-  // Show controls
-  document.getElementById('qr-controls').style.display = 'block';
-}
-
-// Download function
-function downloadQR() {
-  const canvas = document.querySelector('#qrcode-container canvas');
-  if (canvas) {
-    const link = document.createElement('a');
-    link.download = (currentQRProfile.name || 'pet') + '_qr.png';
-    link.href = canvas.toDataURL();
-    link.click();
-  }
-}
-
-// Share function
-async function shareQR() {
-  try {
-    await navigator.share?.({
-      title: `${currentQRProfile.name}'s Pet Profile`,
-      text: `Check out ${currentQRProfile.name}'s pet details!`,
-      url: window.location.href
-    });
-  } catch {
-    // Fallback: Copy URL to clipboard
-    await navigator.clipboard.writeText(window.location.href);
-    alert('Link copied to clipboard!');
-  }
 }
 // end of QR CODE//    
 function logMood(profileIndex, mood) {
