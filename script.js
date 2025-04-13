@@ -720,7 +720,7 @@ document.addEventListener("DOMContentLoaded", () => {
     qrWindow.document.write(`
     <html>
       <head>
-        <title>${profile.name}'s QR Code</title>
+        <title>${profile.name.replace(/'/g, "&apos;")}'s QR Code</title>
         <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
         <style>
           .loader {
@@ -795,7 +795,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const canvas = document.querySelector('#qrcode-container canvas');
             if (canvas) {
               const link = document.createElement('a');
-              <mark>link.download = currentSafeFilename + '_qr.png';</mark>
+              const filename = '${safeFilename.replace(/'/g, "\\'")}_qr.png';
               link.href = canvas.toDataURL();
               link.click();
             } else {
@@ -847,32 +847,9 @@ document.addEventListener("DOMContentLoaded", () => {
     </html>
   `);
     qrWindow.document.close();
-    // QR code eventlistener//
-    qrWindow.addEventListener('load', () => {
-      const qrText = `PET PROFILE\nName: ${profile.name || 'N/A'}\n...`; // Your existing text
-
-      try {
-        const qrcodeContainer = qrWindow.document.getElementById('qrcode-container');
-        qrcodeContainer.style.display = 'block';
-        new qrWindow.QRCode(qrcodeContainer, {
-          text: qrText,
-          width: 256,
-          height: 256,
-          colorDark: "#000000",
-          colorLight: "#ffffff",
-          correctLevel: qrWindow.QRCode.CorrectLevel.H
-        });
-
-        qrWindow.document.getElementById('qr-controls').style.display = 'block';
-      } catch (error) {
-        qrWindow.document.body.innerHTML = `<h1>Error: ${error.message}</h1>`;
-      } finally {
-        const loader = qrWindow.document.querySelector('.loader');
-        if (loader) loader.style.display = 'none';
-      }
     });
-  }
   // end of QR CODE//    
+                          
   function logMood(profileIndex, mood) {
     const today = new Date().toISOString().split('T')[0];
     if (!petProfiles[profileIndex].moodLog) petProfiles[profileIndex].moodLog = [];
