@@ -720,7 +720,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .toLowerCase() + '_qr.png';  
   // ESCAPE PROPERLY FOR JAVASCRIPT TEMPLATE
   const jsSafeFilename = JSON.stringify(safeFilename);
-    
+  console.log('JS Safe Filename:', jsSafeFilename); 
     qrWindow.document.write(`
     <html>
       <head>
@@ -793,17 +793,16 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
  window.onload = generateQRCode;
-      // CORRECT IMPLEMENTATION
-      const filename = ${jsSafeFilename};  // Should output: const filename = "fluffy_qr.png";
-      function downloadQR() {
-        const canvas = document.querySelector('#qrcode-container canvas');
-        if (canvas) {
-          const link = document.createElement('a');
-          link.download = filename;
-          link.href = canvas.toDataURL();
-          link.click();
-        }
+    // Get filename from DOM instead of JS variable
+    function downloadQR() {
+      const canvas = document.querySelector('#qrcode-container canvas');
+      if (canvas) {
+        const link = document.createElement('a');
+        link.download = 'qr_code.png'; // Static filename
+        link.href = canvas.toDataURL();
+        link.click();
       }
+    }
       
  // NEW: Share functionality
           async function shareQR() {
