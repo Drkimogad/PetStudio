@@ -31,6 +31,72 @@ function initQRModal() {
     }
   });
 }
+// Global variables
+let currentQRProfile = null;
+
+// QR Modal Handler
+function handleQRActions() {
+  document.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('qr-action')) return;
+    
+    const action = e.target.dataset.action;
+    const canvas = document.querySelector('#qrcode-container canvas');
+    
+    switch(action) {
+      case 'print':
+        window.print();
+        break;
+        
+      case 'download':
+        if (canvas) {
+          const link = document.createElement('a');
+          link.download = `${currentQRProfile.name}_qr.png`.replace(/[^a-z0-9]/gi, '_');
+          link.href = canvas.toDataURL();
+          link.click();
+        }
+        break;
+        
+      case 'share':
+        shareQR();
+        break;
+        
+      case 'close':
+        document.getElementById('qr-modal').style.display = 'none';
+        break;
+    }
+  });
+}
+
+// Share Function
+async function shareQR() {
+  try {
+    if (!currentQRProfile) return;
+    
+    const shareData = {
+      title: `${currentQRProfile.name}'s Pet Profile`,
+      text: `Check out ${currentQRProfile.name}'s details!`,
+      url: window.location.href
+    };
+
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText(shareData.url);
+      showQRStatus('Link copied to clipboard!', true);
+    }
+  } catch (err) {
+    showQRStatus('Sharing failed. Please copy manually.', false);
+  }
+}
+
+// Helper Function
+function showQRStatus(message, isSuccess) {
+  const statusEl = document.getElementById('qr-status');
+  statusEl.textContent = message;
+  statusEl.style.color = isSuccess ? 'green' : 'red';
+  setTimeout(() => statusEl.textContent = '', 3000);
+}
+
 // ======================
 // Main Initialization (INSIDE DOMContentLoaded)
 // ======================
@@ -713,7 +779,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ======== QR CODE GENERATION button functionality ========
-  // Add this helper function ABOVE generateQRCode()
   function calculateAge(dobString) {
     try {
       const birthDate = new Date(dobString);
@@ -774,19 +839,20 @@ async function shareQR() {
     alert('Link copied to clipboard!');
   }
 }
-// Your existing generateQRCode() stays the same
+// Your existing generateQRCode//
 function generateQRCode(profileIndex) {
-  const profile = JSON.parse(localStorage.getItem('petProfiles'))[profileIndex];
-  currentQRProfile = profile;
+  const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+  currentQRProfile = savedProfiles[profileIndex];
   
   const modal = document.getElementById('qr-modal');
   const container = document.getElementById('qrcode-container');
   
+  // Clear and regenerate
   container.innerHTML = '';
   modal.style.display = 'block';
   
   new QRCode(container, {
-    text: JSON.stringify(profile),
+    text: JSON.stringify(currentQRProfile),
     width: 256,
     height: 256,
     colorDark: "#000000",
@@ -794,8 +860,8 @@ function generateQRCode(profileIndex) {
     correctLevel: QRCode.CorrectLevel.H
   });
 }
-// end of QR CODE//    
-function logMood(profileIndex, mood) {
+
+  function logMood(profileIndex, mood) {
   const today = new Date().toISOString().split('T')[0];
   if (!petProfiles[profileIndex].moodLog) petProfiles[profileIndex].moodLog = [];
 
