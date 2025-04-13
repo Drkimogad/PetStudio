@@ -708,11 +708,13 @@ function generateQRCode(profileIndex) {
   }
 
   const qrWindow = window.open('', 'QR Code', 'width=400,height=550'); // Increased height
+  const safeFilename = profile.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  link.download = `${safeFilename}_qr.png`;
 
 qrWindow.document.write(`
   <html>
     <head>
-      <title>` + profile.name + `'s QR Code</title>
+      <title>${profile.name}'s QR Code</title>
       <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
       <style>
         .loader { /* Your existing loader styles */ }
@@ -752,11 +754,13 @@ qrWindow.document.write(`
             const canvas = document.querySelector('#qrcode-container canvas');
             if (canvas) {
               const link = document.createElement('a');
-              link.download = '` + profile.name + `_QR.png';
+              link.download = '${profile.name}_QR.png'; // Fixed line
               link.href = canvas.toDataURL();
               link.click();
-            }
-          }
+            } else {
+                  console.error('QR code canvas not found');
+                  alert('QR code not generated yet!');
+              }
 
           // NEW: Share functionality
           async function shareQR() {
