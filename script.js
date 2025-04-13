@@ -96,7 +96,92 @@ function showQRStatus(message, isSuccess) {
   statusEl.style.color = isSuccess ? 'green' : 'red';
   setTimeout(() => statusEl.textContent = '', 3000);
 }
+// ======================
+// Enhanced Share Function (Global)
+// ======================
+async function sharePetCard(pet) {
+  // 1. Generate Shareable Link
+  const shareUrl = `${window.location.origin}/pet/${pet.id}`;
 
+  // 2. Try Web Share API first
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: `Meet ${pet.name}! 🐾`,
+        text: `Check out ${pet.name}'s profile on PetStudio!`,
+        url: shareUrl,
+      });
+      return;
+    } catch (err) {
+      console.log("Share cancelled:", err);
+    }
+  }
+
+  // 3. Desktop/Image Fallback
+  try {
+    const cardElement = document.getElementById(`pet-card-${pet.id}`);
+    if (!cardElement) throw new Error('Pet card not found');
+    
+    const canvas = await html2canvas(cardElement);
+    const imageUrl = canvas.toDataURL('image/png');
+
+    // Create and trigger download
+    const downloadLink = document.createElement('a');
+    downloadLink.href = imageUrl;
+    downloadLink.download = `${pet.name}-petstudio.png`.replace(/[^a-z0-9]/gi, '_');
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+
+    // Copy to clipboard
+    await navigator.clipboard.writeText(shareUrl);
+    alert(`${pet.name}'s card saved! 🔗 Link copied to clipboard.`);
+    
+  } catch (error) {
+    console.error('Sharing failed:', error);
+    window.open(shareUrl, '_blank');
+  }
+}
+
+// SHARE PET CARD /PROFILERENDERING RELATED//
+async function sharePetCard(pet) {
+    const shareUrl = `${window.location.origin}/pet/${pet.id}`;
+    
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: `Meet ${pet.name}! 🐾`,
+                text: `Check out ${pet.name}'s profile on PetStudio!`,
+                url: shareUrl,
+            });
+            return;
+        } catch (err) {
+            console.log("Share cancelled:", err);
+        }
+    }
+
+    try {
+        const cardElement = document.getElementById(`pet-card-${pet.id}`);
+        if (!cardElement) throw new Error('Pet card not found');
+        
+        const canvas = await html2canvas(cardElement);
+        const imageUrl = canvas.toDataURL('image/png');
+
+        const downloadLink = document.createElement('a');
+        downloadLink.href = imageUrl;
+        downloadLink.download = `${pet.name}-petstudio.png`.replace(/[^a-z0-9]/gi, '_');
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        await navigator.clipboard.writeText(shareUrl);
+        alert(`${pet.name}'s card saved! 🔗 Link copied to clipboard.`);
+        
+    } catch (error) {
+        console.error('Sharing failed:', error);
+        window.open(shareUrl, '_blank');
+    }
+}
 // ======================
 // Main Initialization (INSIDE DOMContentLoaded)
 // ======================
@@ -550,74 +635,75 @@ document.addEventListener("DOMContentLoaded", () => {
     renderProfiles();
   }
   // function render profiles original//  
-  function renderProfiles() {
+function renderProfiles() {
     petList.innerHTML = '';
     petProfiles.forEach((profile, index) => {
-      const petCard = document.createElement("div");
-      petCard.classList.add("petCard");
+        const petCard = document.createElement("div");
+        petCard.classList.add("petCard");
+        petCard.id = `pet-card-${profile.id}`; // Required for html2canvas
 
-      const coverPhotoUrl = profile.gallery[profile.coverPhotoIndex];
-      const profileHeaderStyle = coverPhotoUrl ? `style="background-image: url('${coverPhotoUrl}');"` : '';
+        const coverPhotoUrl = profile.gallery[profile.coverPhotoIndex];
+        const profileHeaderStyle = coverPhotoUrl ? `style="background-image: url('${coverPhotoUrl}');"` : '';
 
-      petCard.innerHTML = `
-                <div class="profile-header" ${profileHeaderStyle}>
-                    <h3>${profile.name}</h3>
-                    <p class="countdown">${getCountdown(profile.birthday)}</p>
-                </div>
-                <div class="profile-details">
-                    <p><strong>Breed:</strong> ${profile.breed}</p>
-                    <p><strong>DOB:</strong> ${profile.dob}</p>
-                    <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
-                </div>
-                <div class="gallery-grid">
-                    ${profile.gallery.map((img, imgIndex) => `
-                        <div class="gallery-item">
-                            // Change the gallery image rendering to:
-                           <img src="${img}" alt="Pet Photo" onload="this.classList.add('loaded')">
-                            <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-                                    data-index="${imgIndex}">★</button>
-                        </div>
-                    `).join('')}
-                </div>
-                <div class="mood-tracker">
-                    <div class="mood-buttons">
-                        <span>Log Mood:</span>
-                        <button class="mood-btn" data-mood="happy">😊</button>
-                        <button class="mood-btn" data-mood="neutral">😐</button>
-                        <button class="mood-btn" data-mood="sad">😞</button>
+        petCard.innerHTML = `
+            <div class="profile-header" ${profileHeaderStyle}>
+                <h3>${profile.name}</h3>
+                <p class="countdown">${getCountdown(profile.birthday)}</p>
+            </div>
+            <div class="profile-details">
+                <p><strong>Breed:</strong> ${profile.breed}</p>
+                <p><strong>DOB:</strong> ${profile.dob}</p>
+                <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+            </div>
+            <div class="gallery-grid">
+                ${profile.gallery.map((img, imgIndex) => `
+                    <div class="gallery-item">
+                       <img src="${img}" alt="Pet Photo" onload="this.classList.add('loaded')">
+                        <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
+                                data-index="${imgIndex}">★</button>
                     </div>
-                    <div class="mood-history">
-                        ${renderMoodHistory(profile)}
-                    </div>
+                `).join('')}
+            </div>
+            <div class="mood-tracker">
+                <div class="mood-buttons">
+                    <span>Log Mood:</span>
+                    <button class="mood-btn" data-mood="happy">😊</button>
+                    <button class="mood-btn" data-mood="neutral">😐</button>
+                    <button class="mood-btn" data-mood="sad">😞</button>
                 </div>
-                <div class="action-buttons">
-                    <button class="editBtn">✏️ Edit</button>
-                    <button class="deleteBtn">🗑️ Delete</button>
-                    <button class="printBtn">🖨️ Print</button>
-                    <button class="shareBtn">📤 Share</button>
-                    <button class="qrBtn">🔲 QR Code</button>
+                <div class="mood-history">
+                    ${renderMoodHistory(profile)}
                 </div>
-            `;
+            </div>
+            <div class="action-buttons">
+                <button class="editBtn">✏️ Edit</button>
+                <button class="deleteBtn">🗑️ Delete</button>
+                <button class="printBtn">🖨️ Print</button>
+                <button class="shareBtn" onclick="sharePetCard(${JSON.stringify(profile)})">📤 Share</button>
+                <button class="qrBtn">🔲 QR Code</button>
+            </div>
+        `;
 
-      petCard.querySelector(".editBtn").addEventListener("click", () => openEditForm(index));
-      petCard.querySelector(".deleteBtn").addEventListener("click", () => deleteProfile(index));
-      petCard.querySelector(".printBtn").addEventListener("click", () => printProfile(profile));
-      petCard.querySelector(".shareBtn").addEventListener("click", () => shareProfile(profile));
-      petCard.querySelector(".qrBtn").addEventListener("click", () => generateQRCode(index));
+        // Event Listeners
+        petCard.querySelector(".editBtn").addEventListener("click", () => openEditForm(index));
+        petCard.querySelector(".deleteBtn").addEventListener("click", () => deleteProfile(index));
+        petCard.querySelector(".printBtn").addEventListener("click", () => printProfile(profile));
+        petCard.querySelector(".qrBtn").addEventListener("click", () => generateQRCode(index));
 
-      petCard.querySelectorAll(".mood-btn").forEach(btn => {
-        btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
-      });
+        petCard.querySelectorAll(".mood-btn").forEach(btn => {
+            btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
+        });
 
-      petCard.querySelectorAll(".cover-btn").forEach(btn => {
-        btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
-      });
+        petCard.querySelectorAll(".cover-btn").forEach(btn => {
+            btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
+        });
 
-      petList.appendChild(petCard);
+        petList.appendChild(petCard);
     });
-  }
-
-  // func5ion countdown//
+}
+//--------------------------//  
+// function countdown//
+//-------------------------//
   function getCountdown(birthday) {
     const today = new Date();
     const nextBirthday = new Date(birthday);
