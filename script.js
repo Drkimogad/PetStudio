@@ -792,12 +792,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
           window.onload = generateQRCode;
 
-          <mark>function downloadQR(safeFilename) {</mark>
-            <mark>currentSafeFilename = safeFilename; // Store it in the function's scope</mark>
+          function downloadQR(safeFilename) {
+            currentSafeFilename = safeFilename;
             const canvas = document.querySelector('#qrcode-container canvas');
             if (canvas) {
               const link = document.createElement('a');
-              const filename = '${safeFilename.replace(/'/g, "\\'")}_qr.png';
+              //                        Escaped twice → ^^^^
+              const filename = '${safeFilename.replace(/'/g, "\\\\'")}_qr.png';
               link.href = canvas.toDataURL();
               link.click();
             } else {
