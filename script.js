@@ -707,7 +707,8 @@ function createNewProfile() {
     id: Date.now(), // Simple unique ID
     name: document.getElementById('petName').value,
     breed: document.getElementById('petBreed').value,
-    // ... other fields
+    petDob: document.getElementById("petDob").value;
+    birthday: document.getElementById("petBirthday").value;
     gallery: [],
     coverPhotoIndex: 0
   };
