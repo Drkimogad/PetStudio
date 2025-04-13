@@ -711,9 +711,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const qrWindow = window.open('', 'QR Code', 'width=400,height=550'); // Increased height   
-    const safeFilename = JSON.stringify(profile.name.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_qr.png');
-    const escapedFilename = JSON.stringify(safeFilename);
+    const qrWindow = window.open('', 'QR Code', 'width=400,height=550'); // Increased height
+    
+    const safeFilename = 
+    profile.name
+      .replace(/[^a-z0-9]/gi, '_') // Replace non-alphanumeric with _
+      .toLowerCase() + '_qr.png';  
+    const jsSafeFilename = JSON.stringify(safeFilename);
 
     qrWindow.document.write(`
     <html>
@@ -786,18 +790,19 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('qr-controls').style.display = 'block';
           }
 
-          window.onload = generateQRCode;
-        // Pass filename as pre-escaped variable
-         const filename = ${escapedFilename};  // Now properly quoted
-            function downloadQR() {
-            const canvas = document.querySelector('#qrcode-container canvas');
-            if (canvas) {
-              const link = document.createElement('a');
-              link.download = filename; // Use pre-defined variable
-              link.href = canvas.toDataURL();
-              link.click();
-            }
-          }
+ window.onload = generateQRCode;
+ 
+  // CORRECT IMPLEMENTATION
+      const filename = ${jsSafeFilename};
+      function downloadQR() {
+        const canvas = document.querySelector('#qrcode-container canvas');
+        if (canvas) {
+          const link = document.createElement('a');
+          link.download = filename; // ← Now perfectly safe
+          link.href = canvas.toDataURL();
+          link.click();
+        }
+      }
  // NEW: Share functionality
           async function shareQR() {
   try {
