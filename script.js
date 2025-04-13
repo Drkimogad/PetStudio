@@ -1,7 +1,44 @@
+// ======================
+// QR Modal Initialization (OUTSIDE DOMContentLoaded)
+// ======================
+function initQRModal() {
+  // Event delegation for modal buttons
+  document.addEventListener('click', function(e) {
+    // Print button
+    if (e.target.classList.contains('qr-print')) {
+      window.print();
+    }
+    
+    // Download button
+    else if (e.target.classList.contains('qr-download')) {
+      const canvas = document.querySelector('#qrcode-container canvas');
+      if (canvas) {
+        const link = document.createElement('a');
+        link.download = `${currentQRProfile.name}_qr.png`.replace(/[^a-z0-9]/gi, '_');
+        link.href = canvas.toDataURL();
+        link.click();
+      }
+    }
+    
+    // Share button
+    else if (e.target.classList.contains('qr-share')) {
+      shareQR();
+    }
+    
+    // Close button
+    else if (e.target.classList.contains('qr-close')) {
+      document.getElementById('qr-modal').style.display = 'none';
+    }
+  });
+}
+// ======================
+// Main Initialization (INSIDE DOMContentLoaded)
+// ======================
 document.addEventListener("DOMContentLoaded", () => {
-  // ======================
-  // Firebase Configuration
-  // ======================
+  // 1. Initialize QR Modal FIRST
+  initQRModal();
+
+  // 2. Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
     authDomain: "swiftreach2025.firebaseapp.com",
@@ -10,15 +47,13 @@ document.addEventListener("DOMContentLoaded", () => {
     messagingSenderId: "540185558422",
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
   };
+  
+  // 3. Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
-  const provider = new firebase.auth.GoogleAuthProvider(); // Add Google provider
-  // Add Drive API permission scope
+  const provider = new firebase.auth.GoogleAuthProvider();
   provider.addScope('https://www.googleapis.com/auth/drive.file');
-  // Optional: Request user email
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-  // Call this for QR once when your app starts:
-  initQRModal();
   // ======================
   // DOM Elements
   // ======================
