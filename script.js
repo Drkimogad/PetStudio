@@ -156,40 +156,30 @@ document.addEventListener("DOMContentLoaded", () => {
   provider = new firebase.auth.GoogleAuthProvider(); // KEEP
   provider.addScope('https://www.googleapis.com/auth/drive.file');    // Add Drive API scopes
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-// Initialize Google Drive API
-function initDriveAPI(token) {
-  return new Promise((resolve) => {
-    gapi.load('client', () => {
-      gapi.client.init({
-        apiKey: firebaseConfig.apiKey,
-        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-      }).then(() => {
-        gapi.auth.setToken({
-          access_token: token
+  
+// Initialize Drive Api function //
+async function initDriveAPI(accessToken) {
+  return new Promise((resolve, reject) => {
+    gapi.load('client', async () => {
+      try {
+        await gapi.client.init({
+          apiKey: firebaseConfig.apiKey,
+          clientId: 'YOUR_GOOGLE_CLOUD_CLIENT_ID',
+          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
         });
+
+        gapi.auth.setToken({
+          access_token: accessToken,
+          token_type: 'Bearer',
+          expires_in: 3600
+        });
+
         resolve();
-      });
+      } catch (error) {
+        reject(error);
+      }
     });
   });
-}
-// NEW: Initialize Drive API for Google users//
-async function initializeDriveAPIForGoogleUsers() {
-      const user = firebase.auth().currentUser; // ADD THIS LINE
-    // Add null check
-  if (user.providerData.some(provider => provider.providerId === 'google.com')) {
-    try {
-      const token = await user.getIdToken();
-      await initDriveAPI(token);
-      // NEW: Optional - Create PetStudio folder on first login
-      const folderExists = await checkDriveFolder();
-      if (!folderExists) {
-        await createDriveFolder();
-      }
-    } catch (error) {
-      console.error("Drive init failed:", error);
-      // Fallback to Firestore silently
-    }
-  }
 }
   // DOM Elements//
   const authContainer = document.getElementById("authContainer");
@@ -787,68 +777,75 @@ profileForm?.addEventListener("submit", async (e) => {
       });
     }
   }
-  // Auth State Observer //
-  auth.onAuthStateChanged(async (user) => {
-    if (user) {
-      authContainer.classList.add("hidden");
-      dashboard.classList.remove("hidden");
-      profileSection.classList.add("hidden");
-      fullPageBanner.classList.remove("hidden");
-      if (logoutBtn) {
-        logoutBtn.style.display = "block";
-        setupLogoutButton();
-      }
-      if (petProfiles.length > 0) {
-        renderProfiles();
-      } else {
-        petList.innerHTML = '';
-      }
-    } else {     // NEW: Show Google Sign-In button when logged out
-      const googleSignInContainer = document.getElementById('googleSignInContainer');
-      if (!googleSignInContainer) {
-        const container = document.createElement('div');
-        container.id = 'googleSignInContainer';
-        container.innerHTML = `
+//-----------------------------//
+// Global Google Auth Provider configuration//
+const provider = new firebase.auth.GoogleAuthProvider();
+provider.addScope('https://www.googleapis.com/auth/drive.file');
+provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+
+// Auth State Observer
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    // Authenticated: Show dashboard, hide auth screens
+    authContainer.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    profileSection.classList.add("hidden");
+    fullPageBanner.classList.remove("hidden");
+
+    if (logoutBtn) {
+      logoutBtn.style.display = "block";
+      setupLogoutButton();
+    }
+    // Initialize Google Drive API
+    try {
+      await initializeDriveAPIForGoogleUsers();
+    } catch (error) {
+      console.log("Drive init skipped:", error);
+    }
+    if (petProfiles.length > 0) {
+      renderProfiles();
+    } else {
+      petList.innerHTML = '';
+    }
+
+  } else {
+    // Not authenticated: Show login and Google Sign-In button
+    authContainer.classList.remove("hidden");
+    dashboard.classList.add("hidden");
+    if (logoutBtn) logoutBtn.style.display = "none";
+    loginPage?.classList.remove("hidden");
+    signupPage?.classList.add("hidden");
+
+    // Show Google Sign-In button once
+    if (!document.getElementById('googleSignInBtn')) {
+      const googleSignInHTML = `
         <button id="googleSignInBtn" class="auth-btn google-btn">
           <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
           Continue with Google
         </button>
       `;
-        authContainer.insertBefore(container, loginPage);
-        document.getElementById('googleSignInBtn').addEventListener('click', () => {
-          auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-        });
-      }
-      // EXISTING LOGOUT CODE (unchanged)
-      authContainer.classList.remove("hidden");
-      dashboard.classList.add("hidden");
-      if (logoutBtn) logoutBtn.style.display = "none";
-      loginPage?.classList.remove("hidden");
-      signupPage?.classList.add("hidden");
-    }
-  });
-  // Google Sign-In Handler
-  function handleGoogleSignIn() {
-    if (!authContainer) {       // Check if authContainer exists
-      console.error('authContainer not found');
-      return;
-    }
-    const googleBtn = document.createElement('div');
-    googleBtn.id = 'googleSignIn';
-    googleBtn.innerHTML = '<button class="google-btn">Sign in with Google</button>';
-    authContainer.appendChild(googleBtn);
-    googleBtn.querySelector('button').addEventListener('click', () => {
-      auth.signInWithPopup(provider)
-        .then(async (result) => {
-          // Initialize Drive API with Google token
-          await initDriveAPI(result.credential.accessToken);
-        })
-        .catch((error) => {
+      authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
+
+      document.getElementById('googleSignInBtn').addEventListener('click', async () => {
+        try {
+          const result = await auth.signInWithPopup(provider);
+          const credential = result.credential;
+          const accessToken = credential.accessToken;
+
+          await initDriveAPI(accessToken);
+          await initializeDriveAPIForGoogleUsers();
+        } catch (error) {
           console.error("Google sign-in error:", error);
-          // Fallback to email/password if needed
-        });
-    });
+          if (error.code === 'auth/popup-closed-by-user') {
+            showAuthError('Sign-in window was closed');
+          } else {
+            showAuthError('Google sign-in failed. Please try again');
+          }
+        }
+      });
+    }
   }
+});
 // Service Worker Registration//
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js')
