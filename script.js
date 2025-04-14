@@ -894,11 +894,11 @@ auth.onAuthStateChanged(async (user) => {
           await initDriveAPI(accessToken);
           await initializeDriveAPIForGoogleUsers();
           console.error("Google sign-in error:", error);
-           if (error.code === 'auth/popup-closed-by-user') {
-             showAuthError('🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.');
-           } else {
-             showAuthError('Google sign-in failed. Please try again');
-           }
+          if (error.code === 'auth/popup-closed-by-user') {
+          showAuthError(`🚫 Authentication Error: ${error.message}\nPlease try again or check your internet connection.`);
+         } else {
+          showAuthError('Google sign-in failed. Please try again');
+          }
          }
       });
     }
