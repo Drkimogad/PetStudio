@@ -4,7 +4,7 @@ import {
   shareGeneratedQR,
   showQRStatus,
   currentQRProfile
-} from './initialization.js';
+} from '../initialization.js';
 
 import { 
   petProfiles,
@@ -12,14 +12,14 @@ import {
   currentEditIndex,
   setupLogoutButton,
   handleGoogleSignIn
-} from './auth.js';
+} from '../auth.js';
 
 import {
   savePetProfile,
   deleteProfile,
   renderProfiles,
   createNewProfile
-} from './profilehandling.js';
+} from '../profilehandling.js';
 
 import {
   getCountdown,
@@ -29,7 +29,7 @@ import {
   generateQRCode,
   logMood,
   setCoverPhoto
-} from './profilefunctions.js';
+} from '../profilefunctions.js';
 
 // Service Worker Registration
   if ('serviceWorker' in navigator) {
