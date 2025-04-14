@@ -3,7 +3,7 @@ import {
   isEditing, 
   currentEditIndex, 
   petProfiles 
-} from '../auth.js';
+} from './auth.js';
 
 // Import DOM Elements
 import { 
@@ -14,7 +14,7 @@ import {
   dashboard, 
   authContainer,
   petList 
-} from '../initialization.js';
+} from './initialization.js';
 
 // Import Functions
 import { 
@@ -25,13 +25,13 @@ import {
   generateQRCode, 
   logMood, 
   setCoverPhoto 
-} from '../profilefunctions.js';
+} from './profilefunctions.js';
 
 // Import Firebase Auth
-import { auth } from '../initialization.js';
+import { auth } from './initialization.js';
 
 // Import Google API (if needed)
-import { initDriveAPI } from '../initialization.js'; // If initDriveAPI exists there
+import { initDriveAPI } from './initialization.js'; // If initDriveAPI exists there
 
 // ======================
   // Enhanced Pet Profile Functions with Drive Backup
