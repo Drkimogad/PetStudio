@@ -1,7 +1,47 @@
-  // Service Worker Registration
+import { 
+  initQRModal,
+  handleQRActions,
+  shareQR,
+  showQRStatus,
+  currentQRProfile
+} from './initialization.js';
+import { 
+  petProfiles,
+  isEditing,
+  currentEditIndex,
+  setupLogoutButton,
+  handleGoogleSignIn
+} from './auth.js';
+
+import {
+  savePetProfile,
+  deleteProfile,
+  renderProfiles,
+  createNewProfile
+} from './profilehandling.js';
+
+import {
+  getCountdown,
+  renderMoodHistory,
+  openEditForm,
+  printProfile,
+  generateQRCode,
+  logMood,
+  setCoverPhoto
+} from './profilefunctions.js';
+
+// Service Worker Registration
   if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js')
     .then(registration => {
+      handleQRActions();
+      setupGalleryHandlers();
+          // Add these lines:
+    registration.addEventListener('updatefound', () => {
+      const installingWorker = registration.installing;
+      installingWorker.addEventListener('statechange', () => {
+        if (installingWorker.state === 'installed') {
+          generateQRCode(); // Initialize QR system
       // Clear old cache versions FIRST
       caches.keys().then(cacheNames => {
         cacheNames.forEach(cacheName => {
