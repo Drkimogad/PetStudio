@@ -1,11 +1,11 @@
 // Import Firebase (assuming initialized elsewhere)
-import { firebase } from '../initialization.js'; 
+import { firebase } from './initialization.js'; 
 // Import shared state from auth.js
 import { 
   isEditing, 
   currentEditIndex, 
   petProfiles 
-} from '../auth.js';
+} from './auth.js';
 
 // Import DOM elements from initialization.js
 import { 
@@ -14,10 +14,10 @@ import {
   profileForm, 
   dashboard, 
   authContainer 
-} from '../initialization.js';
+} from './initialization.js';
 
 // Import renderProfiles from profilehandling.js
-import { renderProfiles } from '../profilehandling.js';
+import { renderProfiles } from './profilehandling.js';
 
 //--------------------------//  
 // function countdown//
