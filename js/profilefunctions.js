@@ -1,3 +1,24 @@
+// Import Firebase (assuming initialized elsewhere)
+import { firebase } from '../initialization.js'; 
+// Import shared state from auth.js
+import { 
+  isEditing, 
+  currentEditIndex, 
+  petProfiles 
+} from '../auth.js';
+
+// Import DOM elements from initialization.js
+import { 
+  profileSection, 
+  fullPageBanner, 
+  profileForm, 
+  dashboard, 
+  authContainer 
+} from '../initialization.js';
+
+// Import renderProfiles from profilehandling.js
+import { renderProfiles } from '../profilehandling.js';
+
 //--------------------------//  
 // function countdown//
 //-------------------------//
@@ -35,13 +56,13 @@
     profileSection.classList.remove("hidden");
     fullPageBanner.classList.add("hidden");
   }
-
+// function deleting//
   function deleteProfile(index) {
     petProfiles.splice(index, 1);
     localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
     renderProfiles();
   }
-
+// function printing//
   function printProfile(profile) {
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
@@ -161,7 +182,7 @@
     }
   }
 
-  // ======== QR CODE GENERATION button functionality ========
+  // ======== QR CODE GENERATION function========
   function calculateAge(dobString) {
     try {
       const birthDate = new Date(dobString);
@@ -289,7 +310,7 @@ profileForm?.addEventListener("submit", async (e) => {
       userId: userId,
       petName: petName,
       date: formatFirestoreDate(birthday), // "YYYY-MM-DD"
-      message: `It's ${petName}'s birthday today! 🎉`,
+      message: `It's ${reminder.petname}'s birthday today. We wish our pawsome friend a fabulous day! 🐾🎉`,
       createdAt: new Date().toISOString()
     };
 
@@ -327,6 +348,7 @@ profileForm?.addEventListener("submit", async (e) => {
   profileForm.reset();
   // Re-render profiles
   renderProfiles();
+  
   // Redirect to dashboard
   dashboard.classList.remove("hidden"); // Show dashboard
   authContainer.classList.add("hidden"); // Hide auth container
