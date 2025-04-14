@@ -185,9 +185,8 @@ async function sharePetCard(pet) {
 // ======================
 // Top-Level Declarations
 // ======================
-let auth; // Will hold initialized auth instance
-let provider; // Google auth provider
-
+export let auth = null;
+export let provider = null;
 // ======================
 // Main Initialization (INSIDE DOMContentLoaded)
 // ======================
@@ -203,8 +202,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
-  auth = firebase.auth();
-  provider = new firebase.auth.GoogleAuthProvider();
+  // Inside DOMContentLoaded callback:
+  auth = firebase.auth(); // KEEP
+  provider = new firebase.auth.GoogleAuthProvider(); // KEEP
   // Add Drive API scopes
   provider.addScope('https://www.googleapis.com/auth/drive.file');
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
