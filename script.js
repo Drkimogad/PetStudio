@@ -816,7 +816,8 @@ function createNewProfile() {
     petDob: document.getElementById("petDob").value,
     birthday: document.getElementById("petBirthday").value,
     gallery: [],
-    coverPhotoIndex: 0
+    coverPhotoIndex: 0,
+    moodHistory: [] // 🆕 Add this line
   };
   petProfiles.push(newProfile);
   saveProfiles();
