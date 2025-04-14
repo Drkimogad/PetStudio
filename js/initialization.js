@@ -146,8 +146,8 @@ async function sharePetCard(pet) {
 // ======================
 // Top-Level Declarations
 // ======================
-export let auth = null;
-export let provider = null;
+let auth = null;
+let provider = null;
 // ======================
 // Main Initialization (INSIDE DOMContentLoaded)
 // ======================
@@ -275,6 +275,6 @@ export {
   showQRStatus,
   sharePetCard,
   currentQRProfile,
-  auth, 
+  auth,
   provider
 };
