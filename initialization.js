@@ -208,6 +208,43 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add Drive API scopes
   provider.addScope('https://www.googleapis.com/auth/drive.file');
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+
+    // ======================
+  // Initialize Google Drive API
+  // ======================
+  function initDriveAPI(token) {
+    return new Promise((resolve) => {
+      gapi.load('client', () => {
+        gapi.client.init({
+          apiKey: firebaseConfig.apiKey,
+          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+        }).then(() => {
+          gapi.auth.setToken({
+            access_token: token
+          });
+          resolve();
+        });
+      });
+    });
+  }
+        // =============================================
+      // NEW: Initialize Drive API for Google users
+      // =============================================
+      if (user.providerData.some(provider => provider.providerId === 'google.com')) {
+        try {
+          const token = await user.getIdToken();
+          await initDriveAPI(token);
+
+          // NEW: Optional - Create PetStudio folder on first login
+          const folderExists = await checkDriveFolder();
+          if (!folderExists) {
+            await createDriveFolder();
+          }
+        } catch (error) {
+          console.error("Drive init failed:", error);
+          // Fallback to Firestore silently
+        }
+      }
   // ======================
   // DOM Elements
   // ======================
@@ -227,21 +264,39 @@ document.addEventListener("DOMContentLoaded", () => {
   const profileForm = document.getElementById("profileForm");
   const googleSignInBtn = document.createElement("button"); // Create Google Sign-In button
 
+// Add at the top of your DOMContentLoaded callback
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('profile')) {
+    const profileIndex = parseInt(urlParams.get('profile'));
+    const profile = petProfiles[profileIndex];
+    if (profile) {
+      printProfile(profile);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }
   // ======================
-  // Initialize Google Drive API
+  // Drive Folder Management
   // ======================
-  function initDriveAPI(token) {
-    return new Promise((resolve) => {
-      gapi.load('client', () => {
-        gapi.client.init({
-          apiKey: firebaseConfig.apiKey,
-          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-        }).then(() => {
-          gapi.auth.setToken({
-            access_token: token
-          });
-          resolve();
-        });
+  async function checkDriveFolder() {
+    try {
+      const response = await gapi.client.drive.files.list({
+        q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder'",
+        fields: "files(id)"
       });
-    });
+      return response.result.files.length > 0;
+    } catch (error) {
+      console.error("Drive folder check failed:", error);
+      return false;
+    }
+  }
+
+  async function createDriveFolder() {
+    try {
+      await gapi.client.drive.files.create({
+        name: 'PetStudio',
+        mimeType: 'application/vnd.google-apps.folder'
+      });
+    } catch (error) {
+      console.error("Drive folder creation failed:", error);
+    }
   }
