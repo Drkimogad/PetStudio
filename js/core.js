@@ -7,7 +7,7 @@ import {
   currentQRProfile,
   auth, 
   provider
-};
+} from './initialization.js';
 
 import { 
   petProfiles,
