@@ -193,3 +193,10 @@
         });
     });
   }
+export {
+  petProfiles,
+  isEditing,
+  currentEditIndex,
+  setupLogoutButton,
+  handleGoogleSignIn
+};
