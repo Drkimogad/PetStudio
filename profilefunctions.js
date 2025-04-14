@@ -336,3 +336,17 @@ profileForm?.addEventListener("submit", async (e) => {
 // Initialize
 if (petProfiles.length > 0) renderProfiles();
 });
+export {
+  getCountdown,
+  renderMoodHistory,
+  getMoodEmoji,
+  openEditForm,
+  printProfile,
+  calculateAge,
+  printQR,
+  downloadQR,
+  generateQRCode,
+  logMood,
+  setCoverPhoto,
+  formatFirestoreDate
+};
