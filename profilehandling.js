@@ -222,4 +222,11 @@ function createNewProfile() {
   renderProfiles();
 }
   
-
+export {
+  savePetProfile,
+  deleteProfile,
+  renderProfiles,
+  createNewProfile,
+  getDriveFolderId,
+  setupGalleryHandlers
+};
