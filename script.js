@@ -838,7 +838,11 @@ async function initializeDriveAPIForGoogleUsers() {
     console.error("Drive init failed:", error);
   }
 }  
-// Auth State Observer
+// Auth State Observer //
+// Define the showAuthError function if it's missing:
+function showAuthError(message) {
+  alert(`🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`);
+}
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     // Authenticated: Show dashboard, hide auth screens
@@ -889,13 +893,13 @@ auth.onAuthStateChanged(async (user) => {
 
           await initDriveAPI(accessToken);
           await initializeDriveAPIForGoogleUsers();
-        } catch (error) {
-         if (error.code === 'auth/popup-closed-by-user') {
-         console.log("User closed the popup before completing the sign-in.");
-       } else {
-          console.error(error);
+          console.error("Google sign-in error:", error);
+           if (error.code === 'auth/popup-closed-by-user') {
+             showAuthError('🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.');
+           } else {
+             showAuthError('Google sign-in failed. Please try again');
+           }
          }
-       }
       });
     }
   }
