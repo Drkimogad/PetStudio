@@ -1,10 +1,11 @@
 import { 
   initQRModal,
   handleQRActions,
-  shareQR,
+  shareGeneratedQR,
   showQRStatus,
   currentQRProfile
 } from './initialization.js';
+
 import { 
   petProfiles,
   isEditing,
