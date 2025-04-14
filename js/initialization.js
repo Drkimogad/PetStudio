@@ -67,7 +67,7 @@ function handleQRActions() {
   });
 }
 
-// Share Function
+// Share generated qr code Function//
 async function shareGeneratedQR() {
   try {
     if (!currentQRProfile) return;
@@ -97,7 +97,7 @@ function showQRStatus(message, isSuccess) {
   setTimeout(() => statusEl.textContent = '', 3000);
 }
 // ======================
-// Enhanced Share Function (Global)
+// Share petcard Function
 // ======================
 async function sharePetCard(pet) {
   // 1. Generate Shareable Link
@@ -143,45 +143,6 @@ async function sharePetCard(pet) {
   }
 }
 
-// SHARE PET CARD /PROFILERENDERING RELATED//
-async function sharePetCard(pet) {
-    const shareUrl = `${window.location.origin}/pet/${pet.id}`;
-    
-    if (navigator.share) {
-        try {
-            await navigator.share({
-                title: `Meet ${pet.name}! 🐾`,
-                text: `Check out ${pet.name}'s profile on PetStudio!`,
-                url: shareUrl,
-            });
-            return;
-        } catch (err) {
-            console.log("Share cancelled:", err);
-        }
-    }
-
-    try {
-        const cardElement = document.getElementById(`pet-card-${pet.id}`);
-        if (!cardElement) throw new Error('Pet card not found');
-        
-        const canvas = await html2canvas(cardElement);
-        const imageUrl = canvas.toDataURL('image/png');
-
-        const downloadLink = document.createElement('a');
-        downloadLink.href = imageUrl;
-        downloadLink.download = `${pet.name}-petstudio.png`.replace(/[^a-z0-9]/gi, '_');
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-
-        await navigator.clipboard.writeText(shareUrl);
-        alert(`${pet.name}'s card saved! 🔗 Link copied to clipboard.`);
-        
-    } catch (error) {
-        console.error('Sharing failed:', error);
-        window.open(shareUrl, '_blank');
-    }
-}
 // ======================
 // Top-Level Declarations
 // ======================
