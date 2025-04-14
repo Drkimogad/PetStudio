@@ -1,3 +1,37 @@
+// Import Shared State
+import { 
+  isEditing, 
+  currentEditIndex, 
+  petProfiles 
+} from '../auth.js';
+
+// Import DOM Elements
+import { 
+  addPetProfileBtn, 
+  profileForm, 
+  fullPageBanner, 
+  profileSection, 
+  dashboard, 
+  authContainer,
+  petList 
+} from '../initialization.js';
+
+// Import Functions
+import { 
+  getCountdown, 
+  renderMoodHistory, 
+  openEditForm, 
+  printProfile, 
+  generateQRCode, 
+  logMood, 
+  setCoverPhoto 
+} from '../profilefunctions.js';
+
+// Import Firebase Auth
+import { auth } from '../initialization.js';
+
+// Import Google API (if needed)
+import { initDriveAPI } from '../initialization.js'; // If initDriveAPI exists there
 
 // ======================
   // Enhanced Pet Profile Functions with Drive Backup
@@ -218,7 +252,7 @@ function createNewProfile() {
     moodHistory: [] // 🆕 Add this line
   };
   petProfiles.push(newProfile);
-  saveProfiles();
+  savePetProfile(newProfile);
   renderProfiles();
 }
   
@@ -227,6 +261,5 @@ export {
   deleteProfile,
   renderProfiles,
   createNewProfile,
-  getDriveFolderId,
-  setupGalleryHandlers
+  getDriveFolderId
 };
