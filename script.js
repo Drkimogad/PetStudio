@@ -792,7 +792,22 @@ profileForm?.addEventListener("submit", async (e) => {
 provider = new firebase.auth.GoogleAuthProvider(); // ✅ Assign only
 provider.addScope('https://www.googleapis.com/auth/drive.file');
 provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+async function initializeDriveAPIForGoogleUsers() {
+  try {
+    await gapi.load('client:auth2', async () => {
+      await gapi.client.init({
+        apiKey: firebaseConfig.apiKey,
+        clientId: firebaseConfig.clientId,
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+        scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email'
+      });
 
+      console.log("Drive API initialized for Google user.");
+    });
+  } catch (error) {
+    console.error("Drive init failed:", error);
+  }
+}  
 // Auth State Observer
 auth.onAuthStateChanged(async (user) => {
   if (user) {
