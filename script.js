@@ -699,17 +699,47 @@ profileForm?.addEventListener("submit", async (e) => {
   authContainer.classList.add("hidden"); // Hide auth container
   window.scrollTo(0, 0); // Optional: Scroll to the top of the page
 });
-  // ========== Auth Form Switching ============
-  if (switchToLogin && switchToSignup) {
-    switchToLogin.addEventListener("click", () => {
-      signupPage.classList.add("hidden");
-      loginPage.classList.remove("hidden");
+// ========== Auth Form Switching ============
+function toggleForms(showLogin) {
+  const loginPage = document.getElementById("loginPage");
+  const signupPage = document.getElementById("signupPage");
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+  if (showLogin) {
+    loginPage.classList.remove("hidden");
+    signupPage.classList.add("hidden");
+// ✅ Enable only login form fields
+    Array.from(loginForm.elements).forEach(el => {
+      if (el.tagName === 'INPUT') el.required = true;
     });
-    switchToSignup.addEventListener("click", () => {
-      loginPage.classList.add("hidden");
-      signupPage.classList.remove("hidden");
+    Array.from(signupForm.elements).forEach(el => {
+      if (el.tagName === 'INPUT') el.required = false;
+    });
+  } else {
+    loginPage.classList.add("hidden");
+    signupPage.classList.remove("hidden");
+// ✅ Enable only signup form fields
+    Array.from(signupForm.elements).forEach(el => {
+      if (el.tagName === 'INPUT') el.required = true;
+    });
+    Array.from(loginForm.elements).forEach(el => {
+      if (el.tagName === 'INPUT') el.required = false;
     });
   }
+}
+// 🟡 Add event listeners only if buttons exist
+if (switchToLogin && switchToSignup) {
+  switchToLogin.addEventListener("click", (e) => {
+    e.preventDefault();
+    toggleForms(true);
+  });
+  switchToSignup.addEventListener("click", (e) => {
+    e.preventDefault();
+    toggleForms(false);
+  });
+}
+// 🔁 Optional: Show login form by default on load
+toggleForms(true);
   //=======Auth Functions =============
   // Sign Up Handler
   signupForm?.addEventListener("submit", (e) => {
@@ -788,7 +818,6 @@ profileForm?.addEventListener("submit", async (e) => {
       });
     }
   }
-//-----------------------------//
 // Global Google Auth Provider configuration//
 provider = new firebase.auth.GoogleAuthProvider(); // ✅ Assign only
 provider.addScope('https://www.googleapis.com/auth/drive.file');
