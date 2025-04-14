@@ -1,5 +1,5 @@
 // Replace existing auth/provier declarations with imports
-import { auth, provider } from '../initialization.js';
+import { auth, provider } from './initialization.js';
 // ======================
   // State Management
   // ======================
