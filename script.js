@@ -357,12 +357,6 @@ async function savePetProfile(profile) {
         console.error("Drive delete failed:", error);
       }
     }
-    -------------------------------
-    // Existing deletion logic
-    petProfiles.splice(index, 1);
-    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-    renderProfiles();
-  }
   // render profiles original function //  
 function renderProfiles() {
     petList.innerHTML = '';
@@ -471,6 +465,11 @@ function createNewProfile() {
     document.getElementById("petBirthday").value = profile.birthday;
     profileSection.classList.remove("hidden");
     fullPageBanner.classList.add("hidden");
+  }
+// Existing deletion logic
+    petProfiles.splice(index, 1);
+    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+    renderProfiles();
   }
 // Delete profile function//
   function deleteProfile(index) {
