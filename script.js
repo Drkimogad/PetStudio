@@ -890,13 +890,12 @@ auth.onAuthStateChanged(async (user) => {
           await initDriveAPI(accessToken);
           await initializeDriveAPIForGoogleUsers();
         } catch (error) {
-          console.error("Google sign-in error:", error);
-          if (error.code === 'auth/popup-closed-by-user') {
-            showAuthError('Sign-in window was closed');
-          } else {
-            showAuthError('Google sign-in failed. Please try again');
-          }
-        }
+         if (error.code === 'auth/popup-closed-by-user') {
+         console.log("User closed the popup before completing the sign-in.");
+       } else {
+          console.error(error);
+         }
+       }
       });
     }
   }
