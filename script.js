@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 // ✅ Declare and setup provider
-  let provider = new firebase.auth.GoogleAuthProvider();  // ✅ FIXED: "let"
+  provider = new firebase.auth.GoogleAuthProvider(); // ✅ Only assigning, not redeclaring
   provider.addScope('https://www.googleapis.com/auth/drive.file');    // Add Drive API scopes
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
   
@@ -789,7 +789,7 @@ profileForm?.addEventListener("submit", async (e) => {
   }
 //-----------------------------//
 // Global Google Auth Provider configuration//
-const provider = new firebase.auth.GoogleAuthProvider();
+provider = new firebase.auth.GoogleAuthProvider(); // ✅ Assign only
 provider.addScope('https://www.googleapis.com/auth/drive.file');
 provider.addScope('https://www.googleapis.com/auth/userinfo.email');
 
