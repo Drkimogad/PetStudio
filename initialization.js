@@ -208,3 +208,40 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add Drive API scopes
   provider.addScope('https://www.googleapis.com/auth/drive.file');
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+  // ======================
+  // DOM Elements
+  // ======================
+  const authContainer = document.getElementById("authContainer");
+  const signupPage = document.getElementById("signupPage");
+  const loginPage = document.getElementById("loginPage");
+  const dashboard = document.getElementById("dashboard");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const signupForm = document.getElementById("signupForm");
+  const loginForm = document.getElementById("loginForm");
+  const switchToLogin = document.getElementById("switchToLogin");
+  const switchToSignup = document.getElementById("switchToSignup");
+  const addPetProfileBtn = document.getElementById("addPetProfileBtn");
+  const profileSection = document.getElementById("profileSection");
+  const petList = document.getElementById("petList");
+  const fullPageBanner = document.getElementById("fullPageBanner");
+  const profileForm = document.getElementById("profileForm");
+  const googleSignInBtn = document.createElement("button"); // Create Google Sign-In button
+
+  // ======================
+  // Initialize Google Drive API
+  // ======================
+  function initDriveAPI(token) {
+    return new Promise((resolve) => {
+      gapi.load('client', () => {
+        gapi.client.init({
+          apiKey: firebaseConfig.apiKey,
+          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+        }).then(() => {
+          gapi.auth.setToken({
+            access_token: token
+          });
+          resolve();
+        });
+      });
+    });
+  }
