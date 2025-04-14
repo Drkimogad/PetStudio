@@ -170,42 +170,49 @@ document.addEventListener("DOMContentLoaded", () => {
   provider.addScope('https://www.googleapis.com/auth/drive.file');
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
 
-    // ======================
-  // Initialize Google Drive API
-  // ======================
-  function initDriveAPI(token) {
-    return new Promise((resolve) => {
-      gapi.load('client', () => {
-        gapi.client.init({
-          apiKey: firebaseConfig.apiKey,
-          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-        }).then(() => {
-          gapi.auth.setToken({
-            access_token: token
-          });
-          resolve();
+// ======================
+// Initialize Google Drive API
+// ======================
+function initDriveAPI(token) {
+  return new Promise((resolve) => {
+    gapi.load('client', () => {
+      gapi.client.init({
+        apiKey: firebaseConfig.apiKey,
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+      }).then(() => {
+        gapi.auth.setToken({
+          access_token: token
         });
+        resolve();
       });
     });
-  }
-        // =============================================
-      // NEW: Initialize Drive API for Google users
-      // =============================================
-      if (user.providerData.some(provider => provider.providerId === 'google.com')) {
-        try {
-          const token = await user.getIdToken();
-          await initDriveAPI(token);
+  });
+}
 
-          // NEW: Optional - Create PetStudio folder on first login
-          const folderExists = await checkDriveFolder();
-          if (!folderExists) {
-            await createDriveFolder();
-          }
-        } catch (error) {
-          console.error("Drive init failed:", error);
-          // Fallback to Firestore silently
-        }
+// =============================================
+// NEW: Initialize Drive API for Google users
+// =============================================
+async function initializeDriveAPIForGoogleUsers() {
+  if (user.providerData.some(provider => provider.providerId === 'google.com')) {
+    try {
+      const token = await user.getIdToken();
+      await initDriveAPI(token);
+
+      // NEW: Optional - Create PetStudio folder on first login
+      const folderExists = await checkDriveFolder();
+      if (!folderExists) {
+        await createDriveFolder();
       }
+    } catch (error) {
+      console.error("Drive init failed:", error);
+      // Fallback to Firestore silently
+    }
+  }
+}
+
+// Call the async function
+initializeDriveAPIForGoogleUsers();
+
   // ======================
   // DOM Elements
   // ======================
