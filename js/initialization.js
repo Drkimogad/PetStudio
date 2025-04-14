@@ -22,7 +22,7 @@ function initQRModal() {
     
     // Share button
     else if (e.target.classList.contains('qr-share')) {
-      shareQR();
+      shareGeneratedQR();
     }
     
     // Close button
@@ -68,7 +68,7 @@ function handleQRActions() {
 }
 
 // Share Function
-async function shareQR() {
+async function shareGeneratedQR() {
   try {
     if (!currentQRProfile) return;
     
@@ -303,8 +303,8 @@ document.addEventListener("DOMContentLoaded", () => {
 export {
   initQRModal,
   handleQRActions,
-  shareQR,
+  shareGeneratedQR,
   showQRStatus,
-  sharePetCard, // Note: Duplicate function exists - need to remove one
+  sharePetCard,
   currentQRProfile
 };
