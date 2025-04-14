@@ -306,5 +306,7 @@ export {
   shareGeneratedQR,
   showQRStatus,
   sharePetCard,
-  currentQRProfile
+  currentQRProfile,
+  auth, 
+  provider
 };
