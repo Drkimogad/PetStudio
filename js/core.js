@@ -31,50 +31,43 @@ import {
   setCoverPhoto
 } from '../profilefunctions.js';
 
-// Service Worker Registration
-  if ('serviceWorker' in navigator) {
+// Service Worker Registration//
+if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js')
     .then(registration => {
       handleQRActions();
       setupGalleryHandlers();
-          // Add these lines:
-    registration.addEventListener('updatefound', () => {
-      const installingWorker = registration.installing;
-      installingWorker.addEventListener('statechange', () => {
-        if (installingWorker.state === 'installed') {
-          generateQRCode(); // Initialize QR system
-      // Clear old cache versions FIRST
-      caches.keys().then(cacheNames => {
-        cacheNames.forEach(cacheName => {
-          if (cacheName !== 'pet-studio-cache-v1') {
-            caches.delete(cacheName);
-          }
-        });
-      });
 
-      // Existing code below
-      console.log('Caching Service Worker registered:', registration.scope);
-      subscribeUserToPushNotifications(registration);
-
+      // Add updatefound listener for service worker update process
       registration.addEventListener('updatefound', () => {
         const installingWorker = registration.installing;
         installingWorker.addEventListener('statechange', () => {
-          if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            installingWorker.postMessage({
-              action: 'skipWaiting'
+          if (installingWorker.state === 'installed') {
+            generateQRCode(); // Initialize QR system
+
+            // Clear old cache versions FIRST
+            caches.keys().then(cacheNames => {
+              cacheNames.forEach(cacheName => {
+                if (cacheName !== 'pet-studio-cache-v1') {
+                  caches.delete(cacheName);
+                }
+              });
             });
           }
         });
       });
+
+      console.log('Caching Service Worker registered:', registration.scope);
+      subscribeUserToPushNotifications(registration);
     })
     .catch(error => console.error('Service Worker registration failed:', error));
 
+  // Controller change listener to reload page on new service worker activation
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     console.log('New service worker activated, reloading page...');
     location.reload();
   });
 }
-
   // ======================
 // Push Notification Logic (Corrected)
 // ======================
