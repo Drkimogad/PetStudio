@@ -153,7 +153,8 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("No user authenticated");
   }
 });
-  provider = new firebase.auth.GoogleAuthProvider(); // KEEP
+// ✅ Declare and setup provider
+  let provider = new firebase.auth.GoogleAuthProvider();  // ✅ FIXED: "let"
   provider.addScope('https://www.googleapis.com/auth/drive.file');    // Add Drive API scopes
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
   
