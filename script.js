@@ -139,7 +139,8 @@ document.addEventListener("DOMContentLoaded", () => {
     projectId: "swiftreach2025",
     storageBucket: "swiftreach2025.appspot.com",
     messagingSenderId: "540185558422",
-    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
+    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
+    clientId: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com" // ✅ 
   };
   firebase.initializeApp(firebaseConfig);
   auth = firebase.auth(); 
