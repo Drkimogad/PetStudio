@@ -300,3 +300,11 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Drive folder creation failed:", error);
     }
   }
+export {
+  initQRModal,
+  handleQRActions,
+  shareQR,
+  showQRStatus,
+  sharePetCard, // Note: Duplicate function exists - need to remove one
+  currentQRProfile
+};
