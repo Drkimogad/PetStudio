@@ -1,4 +1,6 @@
-  // ======================
+// Replace existing auth/provier declarations with imports
+import { auth, provider } from '../initialization.js';
+// ======================
   // State Management
   // ======================
   let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
