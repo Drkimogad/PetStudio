@@ -140,48 +140,7 @@ import { renderProfiles } from './profilehandling.js';
     `);
     printWindow.document.close();
   }
-  //Enhanced share profile function//  
-  async function sharePetCard(pet) {
-    // 1. Generate Shareable Link
-    const shareUrl = `${window.location.origin}/pet/${pet.id}`; // Example: petstudio.com/pet/123
-
-    // 2. Check if Mobile (Web Share API)
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Meet ${pet.name}! 🐾`,
-          text: `Check out ${pet.name}'s profile on PetStudio!`,
-          url: shareUrl,
-        });
-        return; // Exit if successful
-      } catch (err) {
-        console.log("User cancelled share", err);
-      }
-    }
-
-    // 3. Desktop/Image Fallback
-    try {
-      // Capture the pet card as an image
-      const cardElement = document.getElementById(`pet-card-${pet.id}`);
-      const canvas = await html2canvas(cardElement);
-      const imageUrl = canvas.toDataURL('image/png');
-
-      // Create a download link
-      const downloadLink = document.createElement('a');
-      downloadLink.href = imageUrl;
-      downloadLink.download = `${pet.name}-petstudio.png`;
-      downloadLink.click();
-
-      // Bonus: Copy link to clipboard
-      await navigator.clipboard.writeText(shareUrl);
-      alert(`${pet.name}'s card saved! 🔗 Link copied to clipboard.`);
-
-    } catch (error) {
-      // Ultimate fallback: Just open URL
-      window.open(shareUrl, '_blank');
-    }
-  }
-
+// share function is declared in intitialization.js//
   // ======== QR CODE GENERATION function========
   function calculateAge(dobString) {
     try {
