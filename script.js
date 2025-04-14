@@ -142,7 +142,17 @@ document.addEventListener("DOMContentLoaded", () => {
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
   };
   firebase.initializeApp(firebaseConfig);
-  auth = firebase.auth(); // KEEP
+  auth = firebase.auth(); 
+// Add this after auth = firebase.auth();
+  auth.onAuthStateChanged(user => {
+  if (user) {
+    // User is signed in, initialize Drive API
+    initializeDriveAPIForGoogleUsers();
+  } else {
+    // User is signed out
+    console.log("No user authenticated");
+  }
+});
   provider = new firebase.auth.GoogleAuthProvider(); // KEEP
   provider.addScope('https://www.googleapis.com/auth/drive.file');    // Add Drive API scopes
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
@@ -164,6 +174,8 @@ function initDriveAPI(token) {
 }
 // NEW: Initialize Drive API for Google users//
 async function initializeDriveAPIForGoogleUsers() {
+      const user = firebase.auth().currentUser; // ADD THIS LINE
+    // Add null check
   if (user.providerData.some(provider => provider.providerId === 'google.com')) {
     try {
       const token = await user.getIdToken();
@@ -179,8 +191,6 @@ async function initializeDriveAPIForGoogleUsers() {
     }
   }
 }
-// Call the async function
-initializeDriveAPIForGoogleUsers();
   // DOM Elements//
   const authContainer = document.getElementById("authContainer");
   const signupPage = document.getElementById("signupPage");
