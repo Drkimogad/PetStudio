@@ -843,33 +843,33 @@ profileForm?.addEventListener("submit", async (e) => {
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js')
     .then(registration => {
-      handleQRActions();
-      setupGalleryHandlers();
-      // Add updatefound listener for service worker update process
-      registration.addEventListener('updatefound', () => {
-        const installingWorker = registration.installing;
-        installingWorker.addEventListener('statechange', () => {
-          if (installingWorker.state === 'installed') {
-            generateQRCode(); // Initialize QR system
-            // Clear old cache versions FIRST
-            caches.keys().then(cacheNames => {
-              cacheNames.forEach(cacheName => {
-                if (cacheName !== 'pet-studio-cache-v1') {
-                  caches.delete(cacheName);
-                }
-              });
-            });
+      console.log('Service Worker registered:', registration.scope);
+
+      // Clear old cache versions
+      caches.keys().then(cacheNames => {
+        cacheNames.forEach(cacheName => {
+          if (cacheName !== 'pet-studio-cache-v1') {
+            caches.delete(cacheName);
           }
         });
       });
-      console.log('Caching Service Worker registered:', registration.scope);
-      subscribeUserToPushNotifications(registration);
+
+      // Wait for service worker to be ready
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'activated') {
+            subscribeUserToPushNotifications(registration);
+          }
+        });
+      });
     })
-    .catch(error => console.error('Service Worker registration failed:', error));
-  // Controller change listener to reload page on new service worker activation
+    .catch(error => console.error('Registration failed:', error));
+
+  // Controller change handler
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    console.log('New service worker activated, reloading page...');
-    location.reload();
+    console.log('Controller changed, reloading...');
+    window.location.reload();
   });
 }
 // ====== Push Notification Logic ===========
