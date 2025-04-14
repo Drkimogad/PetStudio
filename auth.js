@@ -167,3 +167,29 @@
       signupPage?.classList.add("hidden");
     }
   });
+  // ======================
+  // Google Sign-In Handler - NEW FUNCTION
+  // ======================
+  function handleGoogleSignIn() {
+    // Check if authContainer exists
+    if (!authContainer) {
+      console.error('authContainer not found');
+      return;
+    }
+    const googleBtn = document.createElement('div');
+    googleBtn.id = 'googleSignIn';
+    googleBtn.innerHTML = '<button class="google-btn">Sign in with Google</button>';
+    authContainer.appendChild(googleBtn);
+
+    googleBtn.querySelector('button').addEventListener('click', () => {
+      auth.signInWithPopup(provider)
+        .then(async (result) => {
+          // Initialize Drive API with Google token
+          await initDriveAPI(result.credential.accessToken);
+        })
+        .catch((error) => {
+          console.error("Google sign-in error:", error);
+          // Fallback to email/password if needed
+        });
+    });
+  }
