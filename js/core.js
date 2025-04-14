@@ -1,10 +1,13 @@
-import { 
+import {
   initQRModal,
   handleQRActions,
   shareGeneratedQR,
   showQRStatus,
-  currentQRProfile
-} from './initialization.js';
+  sharePetCard,
+  currentQRProfile,
+  auth, 
+  provider
+};
 
 import { 
   petProfiles,
