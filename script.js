@@ -829,7 +829,7 @@ async function initializeDriveAPIForGoogleUsers() {
         apiKey: firebaseConfig.apiKey,
         clientId: firebaseConfig.clientId,
         discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-        scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email'
+        scope: 'https://www.googleapis.com/auth/drive.readonly'  // Adjust the scope as needed
       });
 
       console.log("Drive API initialized for Google user.");
