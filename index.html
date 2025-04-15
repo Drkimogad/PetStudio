@@ -13,11 +13,17 @@
       content="default-src 'self';
                script-src 'self' https://www.gstatic.com https://cdn.jsdelivr.net 
                https://cdnjs.cloudflare.com https://apis.google.com 
-               https://accounts.google.com 'strict-dynamic';
-               style-src 'self' 'unsafe-inline';
+               https://accounts.google.com https://www.googleapis.com 
+               https://firebase.googleapis.com https://apis.google.com 
+               'unsafe-eval' 'unsafe-inline';
+               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
                connect-src 'self' https://www.googleapis.com 
-               https://accounts.google.com;
-               frame-src https://accounts.google.com;">
+               https://firestore.googleapis.com https://*.googleapis.com 
+               https://identitytoolkit.googleapis.com;
+               frame-src https://accounts.google.com 
+               https://www.google.com;
+               font-src https://fonts.gstatic.com;
+               img-src 'self' https://*.googleusercontent.com;">   
     <script src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
