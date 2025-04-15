@@ -1,6 +1,7 @@
-import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
-const auth = getAuth();
-setPersistence(auth, browserLocalPersistence);
+// Import necessary Firebase components
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+import { getAuth, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
 // Global variables
 let auth = null;
 let provider = null;
@@ -126,7 +127,7 @@ async function sharePetCard(pet) {
     
     const canvas = await html2canvas(cardElement);
     const imageUrl = canvas.toDataURL('image/png');
-    // Create and trigger download
+// Create and trigger download
     const downloadLink = document.createElement('a');
     downloadLink.href = imageUrl;
     downloadLink.download = `${pet.name}-petstudio.png`.replace(/[^a-z0-9]/gi, '_');
@@ -153,18 +154,31 @@ document.addEventListener("DOMContentLoaded", () => {
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
     clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com" // ✅ 
   };
-  firebase.initializeApp(firebaseConfig);
-  auth = firebase.auth(); 
-// Add this after auth = firebase.auth();
-  auth.onAuthStateChanged(user => {
-  if (user) {
-    // User is signed in, initialize Drive API
-    initializeDriveAPIForGoogleUsers();
-  } else {
-    // User is signed out
-    console.log("No user authenticated");
-  }
-});
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+// Set persistence before any auth operations
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+// Now safe to initialize auth listeners
+    initAuthListeners();
+    initUI();
+  })
+  .catch((error) => {
+    console.error("Persistence error:", error);
+    showErrorToUser("Authentication system failed to initialize");
+  });
+// Auth listeners function
+function initAuthListeners() {
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      console.log("User logged in:", user.uid);
+      handleAuthenticatedUser(user);
+    } else {
+      console.log("User logged out");
+      showLoginScreen();
+    }
+  });
+}
 // ✅ Declare and setup provider
   provider = new firebase.auth.GoogleAuthProvider(); // ✅ Only assigning, not redeclaring
   provider.addScope('https://www.googleapis.com/auth/drive.file');    // Add Drive API scopes
