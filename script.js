@@ -1,7 +1,3 @@
-// Import necessary Firebase components
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-import { getAuth, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-
 // Global variables
 let auth = null;
 let provider = null;
