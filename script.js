@@ -9,9 +9,15 @@ let currentQRProfile = null;
 let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 let isEditing = false;
 let currentEditIndex = null;
-let gapiLoaded = false;
-
-
+let gapiLoaded = false
+// Runtime Origin Verification
+const VALID_ORIGINS = [
+  'https://drkimogad.github.io',
+  'https://drkimogad.github.io/PetStudio'
+];
+if (!VALID_ORIGINS.includes(window.location.origin)) {
+  window.location.href = 'https://drkimogad.github.io/PetStudio';
+}
 // QR Modal Initialization
 function initQRModal() {
   // Event delegation for modal buttons
@@ -141,7 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
     authDomain: "swiftreach2025.firebaseapp.com",
-    databaseURL: "YOUR_DB_URL",
     projectId: "swiftreach2025",
     storageBucket: "swiftreach2025.appspot.com",
     messagingSenderId: "540185558422",
