@@ -39,7 +39,7 @@ auth = firebase.auth(app);
   provider.addScope('https://www.googleapis.com/auth/drive.file');    // Add Drive API scopes
   provider.addScope('https://www.googleapis.com/auth/userinfo.email'); 
   
-// LOAD GAPI DYNAMICALLY JUST ONCE
+// LOAD GoogleAPI DYNAMICALLY JUST ONCE
 function loadGAPI() {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
@@ -89,57 +89,73 @@ async function main() {
   }
 }
 document.addEventListener('DOMContentLoaded', main);
- 
-// Initialize Google Drive API //
-    try {
-      await initializeDriveAPIForGoogleUsers();
-    } catch (error) {
-      console.log("Drive init skipped:", error);
-    }
-    if (petProfiles.length > 0) {
-      renderProfiles();
+// Initialize Google API //
+// Auth check on load
+async function checkUserAuth() {
+  try {
+    const user = await auth.currentUser;
+    if (user) {
+      handleAuthenticatedUser(user);
     } else {
-      petList.innerHTML = '';
+      showLoginScreen();
     }
+  } catch (error) {
+    console.error("Error checking auth:", error);
+    showAuthError('Authentication check failed');
+  }
+}
+// Function to handle token expiration
+async function refreshDriveTokenIfNeeded() {
+  try {
+    const authResponse = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse();
+    const expiresAt = authResponse.expires_at;
+    const currentTime = new Date().getTime();
 
-  } else {
-    // Not authenticated: Show login and Google Sign-In button
-    authContainer.classList.remove("hidden");
-    dashboard.classList.add("hidden");
-    if (logoutBtn) logoutBtn.style.display = "none";
-    loginPage?.classList.remove("hidden");
-    signupPage?.classList.add("hidden");
-
-// Google authentication provider//
+    if (expiresAt <= currentTime) {
+      console.log("Token expired, requesting re-authentication");
+      signInWithRedirect(auth, provider);
+    } else {
+      console.log("Token is still valid");
+    }
+  } catch (error) {
+    console.error("Token refresh error:", error);
+    showAuthError('Failed to refresh token');
+  }
+}
+// Google sign-in provider setup
 const provider = new GoogleAuthProvider();
 provider.addScope('https://www.googleapis.com/auth/drive.file');
-// Show Google Sign-In button once
-if (!document.getElementById('googleSignInBtn')) {
-  const googleSignInHTML = `
-    <button id="googleSignInBtn" class="auth-btn google-btn">
-      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
-      Continue with Google
-    </button>
-  `;
-  authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
-  // Add redirect-based authentication handler
-  document.getElementById('googleSignInBtn').addEventListener('click', () => {
-    signInWithRedirect(auth, provider).catch((error) => {
-      console.error("Redirect initialization error:", error);
-      showAuthError(`Sign-in setup failed: ${error.message}`);
+
+// Dynamic Google Sign-In button
+if (!auth.currentUser) {
+  if (!document.getElementById('googleSignInBtn')) {
+    const googleSignInHTML = `
+      <button id="googleSignInBtn" class="auth-btn google-btn">
+        <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
+        Continue with Google
+      </button>
+    `;
+    authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
+
+    document.getElementById('googleSignInBtn').addEventListener('click', () => {
+      signInWithRedirect(auth, provider).catch((error) => {
+        console.error("Redirect initialization error:", error);
+        showAuthError(`Sign-in setup failed: ${error.message}`);
+      });
     });
-  });
+  }
+} else {
+  handleAuthenticatedUser(auth.currentUser);
 }
-// Handle redirect result when page loads
+// Handle redirect result
 (async function handleRedirectResult() {
   try {
     const result = await getRedirectResult(auth);
     if (result) {
       const credential = GoogleAuthProvider.credentialFromResult(result);
-      const accessToken = credential.accessToken;  
+      const accessToken = credential.accessToken;
       await initDriveAPI(accessToken);
-      await initializeDriveAPIForGoogleUsers();      
-      // Optional: Redirect to main app interface
+      await initializeDriveAPIForGoogleUsers();
       window.location.href = '/main-app';
     }
   } catch (error) {
@@ -150,12 +166,11 @@ if (!document.getElementById('googleSignInBtn')) {
       showAuthError(`Authentication failed: ${error.message}`);
     }
   }
-})();    
-  
-// Set persistence before any auth operations
+})();
+
+// Set persistence and initialize listeners
 setPersistence(auth, browserLocalPersistence)
   .then(() => {
-// Now safe to initialize auth listeners
     initAuthListeners();
     initUI();
   })
@@ -163,42 +178,20 @@ setPersistence(auth, browserLocalPersistence)
     console.error("Persistence error:", error);
     showErrorToUser("Authentication system failed to initialize");
   });
+
 // Auth listeners function
 function initAuthListeners() {
   auth.onAuthStateChanged((user) => {
     if (user) {
       console.log("User logged in:", user.uid);
-      handleAuthenticatedUser(user);/
+      handleAuthenticatedUser(user);
     } else {
       console.log("User logged out");
       showLoginScreen();
     }
   });
 }
-  // Initialize Drive Api function //
-async function initDriveAPI(accessToken) {
-  return new Promise((resolve, reject) => {
-    gapi.load('client', async () => {
-      try {
-        await gapi.client.init({
-          apiKey: firebaseConfig.apiKey,
-          clientId: 'YOUR_GOOGLE_CLOUD_CLIENT_ID',
-          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-        });
-
-        gapi.auth.setToken({
-          access_token: accessToken,
-          token_type: 'Bearer',
-          expires_in: 3600
-        });
-
-        resolve();
-      } catch (error) {
-        reject(error);
-      }
-    });
-  });
-}     
+  
 // Drive Folder Management //
 async function checkDriveFolder() {
   try {
