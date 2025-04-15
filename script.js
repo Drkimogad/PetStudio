@@ -141,11 +141,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
     authDomain: "swiftreach2025.firebaseapp.com",
+    databaseURL: "YOUR_DB_URL",
     projectId: "swiftreach2025",
     storageBucket: "swiftreach2025.appspot.com",
     messagingSenderId: "540185558422",
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
-    clientId: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com" // ✅ 
+    clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com" // ✅ 
   };
   firebase.initializeApp(firebaseConfig);
   auth = firebase.auth(); 
@@ -843,6 +844,8 @@ async function initializeDriveAPIForGoogleUsers() {
   try {
     await gapi.load('client:auth2', async () => {
       await gapi.client.init({
+        authDomain: 'drkimogad.github.io',
+        redirectUri: window.location.origin + '/PetStudio/__/auth/handler'
         apiKey: firebaseConfig.apiKey,
         clientId: firebaseConfig.clientId,
         discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
