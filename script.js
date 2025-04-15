@@ -1,3 +1,6 @@
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
+const auth = getAuth();
+setPersistence(auth, browserLocalPersistence);
 // Global variables
 let auth = null;
 let provider = null;
@@ -824,7 +827,7 @@ toggleForms(true);
 provider = new firebase.auth.GoogleAuthProvider(); // ✅ Assign only
 provider.addScope('https://www.googleapis.com/auth/drive.file');
 provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-//Google api loaded function//
+//Google api dynamically loaded function//
 function loadGAPI() {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
@@ -850,8 +853,6 @@ async function initializeDriveAPIForGoogleUsers() {
     console.error("Drive init failed:", error);
   }
 }  
-
-  
 // Auth State Observer //
 // Define the showAuthError function if it's missing:
 function showAuthError(message) {
@@ -890,36 +891,47 @@ auth.onAuthStateChanged(async (user) => {
     loginPage?.classList.remove("hidden");
     signupPage?.classList.add("hidden");
 
-    // Show Google Sign-In button once
-    if (!document.getElementById('googleSignInBtn')) {
-      const googleSignInHTML = `
-        <button id="googleSignInBtn" class="auth-btn google-btn">
-          <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
-          Continue with Google
-        </button>
-      `;
-authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
-
-document.getElementById('googleSignInBtn').addEventListener('click', async () => {
+// Google authentication provider//
+const provider = new GoogleAuthProvider();
+provider.addScope('https://www.googleapis.com/auth/drive.file');
+// Show Google Sign-In button once
+if (!document.getElementById('googleSignInBtn')) {
+  const googleSignInHTML = `
+    <button id="googleSignInBtn" class="auth-btn google-btn">
+      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
+      Continue with Google
+    </button>
+  `;
+  authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
+  // Add redirect-based authentication handler
+  document.getElementById('googleSignInBtn').addEventListener('click', () => {
+    signInWithRedirect(auth, provider).catch((error) => {
+      console.error("Redirect initialization error:", error);
+      showAuthError(`Sign-in setup failed: ${error.message}`);
+    });
+  });
+}
+// Handle redirect result when page loads
+(async function handleRedirectResult() {
   try {
-    const result = await auth.signInWithPopup(provider);
-    const credential = result.credential;
-    const accessToken = credential.accessToken;
-
-    await initDriveAPI(accessToken);
-    await initializeDriveAPIForGoogleUsers();
-  } catch (error) {  // Added proper catch block
-    console.error("Google sign-in error:", error);
-    if (error.code === 'auth/popup-closed-by-user') {
-      showAuthError(`🚫 Authentication Error: ${error.message}\nPlease try again or check your internet connection.`);
+    const result = await getRedirectResult(auth);
+    if (result) {
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const accessToken = credential.accessToken;  
+      await initDriveAPI(accessToken);
+      await initializeDriveAPIForGoogleUsers();      
+      // Optional: Redirect to main app interface
+      window.location.href = '/main-app';
+    }
+  } catch (error) {
+    console.error("Redirect result handling error:", error);
+    if (error.code === 'auth/redirect-cancelled-by-user') {
+      showAuthError('🚫 Redirect canceled - please try again');
     } else {
-      showAuthError(`Google sign-in failed: ${error.message}`);
-         }
-        }
-      });
+      showAuthError(`Authentication failed: ${error.message}`);
     }
   }
-});
+})();    
 // Service Worker Registration//
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worjer.js', { 
