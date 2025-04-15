@@ -147,15 +147,139 @@ document.addEventListener("DOMContentLoaded", () => {
   initQRModal();
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-    authDomain: "swiftreach2025.firebaseapp.com",
+    authDomain: "drkimogad.github.io",
     projectId: "swiftreach2025",
     storageBucket: "swiftreach2025.appspot.com",
     messagingSenderId: "540185558422",
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
     clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com" // ✅ 
   };
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth(app);
+  
+// Global Google Auth Provider configuration//
+// ✅ Declare and setup provider
+  provider = new firebase.auth.GoogleAuthProvider(); // ✅ Only assigning, not redeclaring
+  provider.addScope('https://www.googleapis.com/auth/drive.file');    // Add Drive API scopes
+  provider.addScope('https://www.googleapis.com/auth/userinfo.email'); 
+// Google API loader
+function loadGAPI() {
+  return new Promise((resolve) => {
+    gapi.load('client:auth2', {
+      callback: resolve,
+      onerror: () => console.error('GAPI failed to load'),
+      timeout: 5000
+    });
+  });
+}  
+//Google api dynamically loaded function//
+function loadGAPI() {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://apis.google.com/js/api.js';
+    script.async = true;
+    script.defer = true;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+async function initializeDriveAPIForGoogleUsers() {
+  try {
+    await gapi.load('client:auth2', async () => {
+      await gapi.client.init({
+        authDomain: 'drkimogad.github.io',
+        redirectUri: window.location.origin + '/PetStudio/__/auth/handler',
+        apiKey: firebaseConfig.apiKey,
+        clientId: firebaseConfig.clientId,
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+        scope: 'https://www.googleapis.com/auth/drive.file'  // Adjust the scope as needed
+      });
+    });
+  } catch (error) {
+    console.error("Drive init failed:", error);
+  }
+}  
+// Auth State Observer //
+function showAuthError(message) {
+  alert(`🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`);
+}  
+  
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    // Authenticated: Show dashboard, hide auth screens
+    authContainer.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    profileSection.classList.add("hidden");
+    fullPageBanner.classList.remove("hidden");
+
+    if (logoutBtn) {
+      logoutBtn.style.display = "block";
+      setupLogoutButton();
+    }
+    // Initialize Google Drive API
+    try {
+      await initializeDriveAPIForGoogleUsers();
+    } catch (error) {
+      console.log("Drive init skipped:", error);
+    }
+    if (petProfiles.length > 0) {
+      renderProfiles();
+    } else {
+      petList.innerHTML = '';
+    }
+
+  } else {
+    // Not authenticated: Show login and Google Sign-In button
+    authContainer.classList.remove("hidden");
+    dashboard.classList.add("hidden");
+    if (logoutBtn) logoutBtn.style.display = "none";
+    loginPage?.classList.remove("hidden");
+    signupPage?.classList.add("hidden");
+
+// Google authentication provider//
+const provider = new GoogleAuthProvider();
+provider.addScope('https://www.googleapis.com/auth/drive.file');
+// Show Google Sign-In button once
+if (!document.getElementById('googleSignInBtn')) {
+  const googleSignInHTML = `
+    <button id="googleSignInBtn" class="auth-btn google-btn">
+      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
+      Continue with Google
+    </button>
+  `;
+  authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
+  // Add redirect-based authentication handler
+  document.getElementById('googleSignInBtn').addEventListener('click', () => {
+    signInWithRedirect(auth, provider).catch((error) => {
+      console.error("Redirect initialization error:", error);
+      showAuthError(`Sign-in setup failed: ${error.message}`);
+    });
+  });
+}
+// Handle redirect result when page loads
+(async function handleRedirectResult() {
+  try {
+    const result = await getRedirectResult(auth);
+    if (result) {
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const accessToken = credential.accessToken;  
+      await initDriveAPI(accessToken);
+      await initializeDriveAPIForGoogleUsers();      
+      // Optional: Redirect to main app interface
+      window.location.href = '/main-app';
+    }
+  } catch (error) {
+    console.error("Redirect result handling error:", error);
+    if (error.code === 'auth/redirect-cancelled-by-user') {
+      showAuthError('🚫 Redirect canceled - please try again');
+    } else {
+      showAuthError(`Authentication failed: ${error.message}`);
+    }
+  }
+})();    
+  
 // Set persistence before any auth operations
 setPersistence(auth, browserLocalPersistence)
   .then(() => {
@@ -172,18 +296,13 @@ function initAuthListeners() {
   auth.onAuthStateChanged((user) => {
     if (user) {
       console.log("User logged in:", user.uid);
-      handleAuthenticatedUser(user);
+      handleAuthenticatedUser(user);/
     } else {
       console.log("User logged out");
       showLoginScreen();
     }
   });
 }
-// ✅ Declare and setup provider
-  provider = new firebase.auth.GoogleAuthProvider(); // ✅ Only assigning, not redeclaring
-  provider.addScope('https://www.googleapis.com/auth/drive.file');    // Add Drive API scopes
-  provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-
   // Initialize Drive Api function //
 async function initDriveAPI(accessToken) {
   return new Promise((resolve, reject) => {
@@ -208,32 +327,6 @@ async function initDriveAPI(accessToken) {
     });
   });
 }     
-  // DOM Elements//
-  const authContainer = document.getElementById("authContainer");
-  const signupPage = document.getElementById("signupPage");
-  const loginPage = document.getElementById("loginPage");
-  const dashboard = document.getElementById("dashboard");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const signupForm = document.getElementById("signupForm");
-  const loginForm = document.getElementById("loginForm");
-  const switchToLogin = document.getElementById("switchToLogin");
-  const switchToSignup = document.getElementById("switchToSignup");
-  const addPetProfileBtn = document.getElementById("addPetProfileBtn");
-  const profileSection = document.getElementById("profileSection");
-  const petList = document.getElementById("petList");
-  const fullPageBanner = document.getElementById("fullPageBanner");
-  const profileForm = document.getElementById("profileForm");
-  const googleSignInBtn = document.createElement("button"); // Create Google Sign-In button
-
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has('profile')) {
-    const profileIndex = parseInt(urlParams.get('profile'));
-    const profile = petProfiles[profileIndex];
-    if (profile) {
-      printProfile(profile);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }
 // Drive Folder Management //
 async function checkDriveFolder() {
   try {
@@ -665,6 +758,7 @@ function setCoverPhoto(profileIndex, imageIndex) {
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
   renderProfiles();
 }
+    
 // ======== Form Handling with Reminder Creation===========
 function formatFirestoreDate(dateString) {
   const date = new Date(dateString);
@@ -724,6 +818,32 @@ profileForm?.addEventListener("submit", async (e) => {
   authContainer.classList.add("hidden"); // Hide auth container
   window.scrollTo(0, 0); // Optional: Scroll to the top of the page
 });
+  // DOM Elements//
+  const authContainer = document.getElementById("authContainer");
+  const signupPage = document.getElementById("signupPage");
+  const loginPage = document.getElementById("loginPage");
+  const dashboard = document.getElementById("dashboard");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const signupForm = document.getElementById("signupForm");
+  const loginForm = document.getElementById("loginForm");
+  const switchToLogin = document.getElementById("switchToLogin");
+  const switchToSignup = document.getElementById("switchToSignup");
+  const addPetProfileBtn = document.getElementById("addPetProfileBtn");
+  const profileSection = document.getElementById("profileSection");
+  const petList = document.getElementById("petList");
+  const fullPageBanner = document.getElementById("fullPageBanner");
+  const profileForm = document.getElementById("profileForm");
+  const googleSignInBtn = document.createElement("button"); // Create Google Sign-In button
+
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('profile')) {
+    const profileIndex = parseInt(urlParams.get('profile'));
+    const profile = petProfiles[profileIndex];
+    if (profile) {
+      printProfile(profile);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }
 // ========== Auth Form Switching ============
 function toggleForms(showLogin) {
   const loginPage = document.getElementById("loginPage");
@@ -843,117 +963,6 @@ toggleForms(true);
       });
     }
   }
-// Global Google Auth Provider configuration//
-provider = new firebase.auth.GoogleAuthProvider(); // ✅ Assign only
-provider.addScope('https://www.googleapis.com/auth/drive.file');
-provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-//Google api dynamically loaded function//
-function loadGAPI() {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js';
-    script.async = true;
-    script.defer = true;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
-async function initializeDriveAPIForGoogleUsers() {
-  try {
-    await gapi.load('client:auth2', async () => {
-      await gapi.client.init({
-        authDomain: 'drkimogad.github.io',
-        redirectUri: window.location.origin + '/PetStudio/__/auth/handler',
-        apiKey: firebaseConfig.apiKey,
-        clientId: firebaseConfig.clientId,
-        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-        scope: 'https://www.googleapis.com/auth/drive.file'  // Adjust the scope as needed
-      });
-    });
-  } catch (error) {
-    console.error("Drive init failed:", error);
-  }
-}  
-// Auth State Observer //
-// Define the showAuthError function if it's missing:
-function showAuthError(message) {
-  alert(`🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`);
-}
-  
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    // Authenticated: Show dashboard, hide auth screens
-    authContainer.classList.add("hidden");
-    dashboard.classList.remove("hidden");
-    profileSection.classList.add("hidden");
-    fullPageBanner.classList.remove("hidden");
-
-    if (logoutBtn) {
-      logoutBtn.style.display = "block";
-      setupLogoutButton();
-    }
-    // Initialize Google Drive API
-    try {
-      await initializeDriveAPIForGoogleUsers();
-    } catch (error) {
-      console.log("Drive init skipped:", error);
-    }
-    if (petProfiles.length > 0) {
-      renderProfiles();
-    } else {
-      petList.innerHTML = '';
-    }
-
-  } else {
-    // Not authenticated: Show login and Google Sign-In button
-    authContainer.classList.remove("hidden");
-    dashboard.classList.add("hidden");
-    if (logoutBtn) logoutBtn.style.display = "none";
-    loginPage?.classList.remove("hidden");
-    signupPage?.classList.add("hidden");
-
-// Google authentication provider//
-const provider = new GoogleAuthProvider();
-provider.addScope('https://www.googleapis.com/auth/drive.file');
-// Show Google Sign-In button once
-if (!document.getElementById('googleSignInBtn')) {
-  const googleSignInHTML = `
-    <button id="googleSignInBtn" class="auth-btn google-btn">
-      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
-      Continue with Google
-    </button>
-  `;
-  authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
-  // Add redirect-based authentication handler
-  document.getElementById('googleSignInBtn').addEventListener('click', () => {
-    signInWithRedirect(auth, provider).catch((error) => {
-      console.error("Redirect initialization error:", error);
-      showAuthError(`Sign-in setup failed: ${error.message}`);
-    });
-  });
-}
-// Handle redirect result when page loads
-(async function handleRedirectResult() {
-  try {
-    const result = await getRedirectResult(auth);
-    if (result) {
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const accessToken = credential.accessToken;  
-      await initDriveAPI(accessToken);
-      await initializeDriveAPIForGoogleUsers();      
-      // Optional: Redirect to main app interface
-      window.location.href = '/main-app';
-    }
-  } catch (error) {
-    console.error("Redirect result handling error:", error);
-    if (error.code === 'auth/redirect-cancelled-by-user') {
-      showAuthError('🚫 Redirect canceled - please try again');
-    } else {
-      showAuthError(`Authentication failed: ${error.message}`);
-    }
-  }
-})();    
 // Service Worker Registration//
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worjer.js', { 
