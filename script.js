@@ -446,17 +446,47 @@ function createNewProfile() {
     profileSection.classList.remove("hidden");
     fullPageBanner.classList.add("hidden");
   }
-// DELETE PDOFILE LOGIC
-    petProfiles.splice(index, 1);
-    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-    renderProfiles();
-  }
 // DELET PROFILE FUNCTION
   function deleteProfile(index) {
+   if (confirm("Are you sure you want to delete this profile?")) {
     petProfiles.splice(index, 1);
     localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
     renderProfiles();
   }
+// FUNCTION DELETE PROFILE FROM DRIVE/IMAGES AND CLEAN UP
+  function deleteProfileFromDrive(fileName) {
+    const driveApi = getDriveApi(); // Placeholder API call
+    // Assuming each pet profile has gallery images that need to be deleted
+    if (petProfiles[index].gallery.length > 0) {
+        petProfiles[index].gallery.forEach(img => {
+            deleteImageFromDrive(img); // Function to delete each image file
+        });
+    }
+    // Now delete the profile file
+    driveApi.files.delete({
+        fileId: fileName,
+    })
+    .then(() => {
+        console.log('File deleted from Google Drive');
+    })
+    .catch(error => {
+        console.error('Error deleting file from Google Drive:', error);
+    });
+}
+function deleteImageFromDrive(imageUrl) {
+    const driveApi = getDriveApi();
+    // Assuming `imageUrl` contains the file ID or unique identifier
+    driveApi.files.delete({
+        fileId: imageUrl, // For example
+    })
+    .then(() => {
+        console.log('Image deleted from Google Drive');
+    })
+    .catch(error => {
+        console.error('Error deleting image from Google Drive:', error);
+    });
+}
+
 // PRINT PROFILE FUNCTION
   function printProfile(profile) {
     const printWindow = window.open('', '_blank');
