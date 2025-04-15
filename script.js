@@ -159,30 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
   provider.addScope('https://www.googleapis.com/auth/drive.file');    // Add Drive API scopes
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
   
-// Initialize Drive Api function //
-async function initDriveAPI(accessToken) {
-  return new Promise((resolve, reject) => {
-    gapi.load('client', async () => {
-      try {
-        await gapi.client.init({
-          apiKey: firebaseConfig.apiKey,
-          clientId: 'YOUR_GOOGLE_CLOUD_CLIENT_ID',
-          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-        });
-
-        gapi.auth.setToken({
-          access_token: accessToken,
-          token_type: 'Bearer',
-          expires_in: 3600
-        });
-
-        resolve();
-      } catch (error) {
-        reject(error);
-      }
-    });
-  });
-}
   // DOM Elements//
   const authContainer = document.getElementById("authContainer");
   const signupPage = document.getElementById("signupPage");
@@ -822,6 +798,27 @@ toggleForms(true);
 provider = new firebase.auth.GoogleAuthProvider(); // ✅ Assign only
 provider.addScope('https://www.googleapis.com/auth/drive.file');
 provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+  let gapiLoaded = false;
+function gapiLoaded() {
+  gapiLoaded = true;
+}
+async function loadGAPI() {
+  if (!gapiLoaded) {
+    await new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://apis.google.com/js/api.js';
+      script.onload = () => {
+        gapiLoaded = true;
+        resolve();
+      };
+      script.onerror = () => {
+        console.error('Failed to load GAPI');
+        resolve();
+      };
+      document.head.appendChild(script);
+    });
+  }
+}
 async function initializeDriveAPIForGoogleUsers() {
   try {
     await gapi.load('client:auth2', async () => {
@@ -831,8 +828,31 @@ async function initializeDriveAPIForGoogleUsers() {
         discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
         scope: 'https://www.googleapis.com/auth/drive.readonly'  // Adjust the scope as needed
       });
+// Initialize Drive Api function //
+async function initDriveAPI(accessToken) {
+  return new Promise((resolve, reject) => {
+    gapi.load('client', async () => {
+      try {
+        await gapi.client.init({
+          apiKey: firebaseConfig.apiKey,
+          clientId: 'YOUR_GOOGLE_CLOUD_CLIENT_ID',
+          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+        });
 
-      console.log("Drive API initialized for Google user.");
+        gapi.auth.setToken({
+          access_token: accessToken,
+          token_type: 'Bearer',
+          expires_in: 3600
+        });
+
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+}     
+console.log("Drive API initialized for Google user.");
     });
   } catch (error) {
     console.error("Drive init failed:", error);
@@ -843,6 +863,7 @@ async function initializeDriveAPIForGoogleUsers() {
 function showAuthError(message) {
   alert(`🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`);
 }
+  
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     // Authenticated: Show dashboard, hide auth screens
