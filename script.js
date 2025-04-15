@@ -31,70 +31,65 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth(app);
+auth = firebase.auth(app);
   
 // Global Google Auth Provider configuration//
 // ✅ Declare and setup provider
   provider = new firebase.auth.GoogleAuthProvider(); // ✅ Only assigning, not redeclaring
   provider.addScope('https://www.googleapis.com/auth/drive.file');    // Add Drive API scopes
   provider.addScope('https://www.googleapis.com/auth/userinfo.email'); 
-// Google API loader
-function loadGAPI() {
-  return new Promise((resolve) => {
-    gapi.load('client:auth2', {
-      callback: resolve,
-      onerror: () => console.error('GAPI failed to load'),
-      timeout: 5000
-    });
-  });
-}  
-//Google api dynamically loaded function//
+  
+// LOAD GAPI DYNAMICALLY JUST ONCE
 function loadGAPI() {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = 'https://apis.google.com/js/api.js';
     script.async = true;
     script.defer = true;
-    script.onload = resolve;
+    script.onload = () => {
+      window.gapiReady = true;
+      resolve();
+    };
     script.onerror = reject;
     document.head.appendChild(script);
   });
 }
-//initialize API function 
-function initializeGoogleAPI() {
-  return new Promise((resolve) => {
-    if (window.gapiReady) {
-      gapi.load('client:auth2', {
-        callback: resolve,
-        onerror: (err) => console.error('GAPI load failed:', err)
-      });
-    } else {
-      const checkInterval = setInterval(() => {
-        if (window.gapiReady) {
-          clearInterval(checkInterval);
-          gapi.load('client:auth2', {
-            callback: resolve,
-            onerror: (err) => console.error('GAPI load failed:', err)
-          });
-        }
-      }, 100);
-    }
-  });
-}
+// Main Google API Init Function
 async function main() {
-      await initializeGoogleAPI();
-      await gapi.client.init({
-        authDomain: 'drkimogad.github.io',
-        redirectUri: window.location.origin + '/PetStudio/__/auth/handler',
-        apiKey: firebaseConfig.apiKey,
-        clientId: firebaseConfig.clientId,
-        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-        scope: 'https://www.googleapis.com/auth/drive.file'  // Adjust the scope as needed
-      });
+  try {
+    await loadGAPI();
+    await initializeGoogleAPI();
+    await gapi.client.init({
+      authDomain: 'drkimogad.github.io',
+      redirectUri: window.location.origin + '/PetStudio/__/auth/handler',
+      apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",  // Optional duplication is safe here
+      clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
+      discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+      scope: 'https://www.googleapis.com/auth/drive.file'
+    });
+
+    console.log("✅ Google API client initialized");
+
+    // Proceed with Drive setup and render
+    try {
+      await initializeDriveAPIForGoogleUsers();
+    } catch (error) {
+      console.log("Drive init skipped:", error);
+    }
+
+    if (petProfiles.length > 0) {
+      renderProfiles();
+    } else {
+      petList.innerHTML = '';
+    }
+
   } catch (error) {
-    console.error("Drive init failed:", error);
+    console.error("❌ main() failed:", error);
+    showErrorToUser("Google API initialization failed");
   }
-}  
+}
+document.addEventListener('DOMContentLoaded', main);
+ 
 // Initialize Google Drive API //
     try {
       await initializeDriveAPIForGoogleUsers();
@@ -804,7 +799,6 @@ profileForm?.addEventListener("submit", async (e) => {
   const fullPageBanner = document.getElementById("fullPageBanner");
   const profileForm = document.getElementById("profileForm");
   const googleSignInBtn = document.createElement("button"); 
-  doument.addEventListener('DOMContentLoaded', main); // MAIN FUNCTION FOR API
 
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has('profile')) {
