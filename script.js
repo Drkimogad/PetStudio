@@ -3,9 +3,11 @@ let auth = null;
 let provider = null;
 let currentQRProfile = null;
 // State Management
-  let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-  let isEditing = false;
-  let currentEditIndex = null;
+let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+let isEditing = false;
+let currentEditIndex = null;
+let gapiLoaded = false;
+
 
 // QR Modal Initialization
 function initQRModal() {
@@ -798,7 +800,7 @@ toggleForms(true);
 provider = new firebase.auth.GoogleAuthProvider(); // ✅ Assign only
 provider.addScope('https://www.googleapis.com/auth/drive.file');
 provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-  let gapiLoaded = false;
+//Google api loaded function//
 function gapiLoaded() {
   gapiLoaded = true;
 }
@@ -826,7 +828,7 @@ async function initializeDriveAPIForGoogleUsers() {
         apiKey: firebaseConfig.apiKey,
         clientId: firebaseConfig.clientId,
         discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-        scope: 'https://www.googleapis.com/auth/drive.readonly'  // Adjust the scope as needed
+        scope: 'https://www.googleapis.com/auth/drive.file'  // Adjust the scope as needed
       });
 // Initialize Drive Api function //
 async function initDriveAPI(accessToken) {
