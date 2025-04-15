@@ -181,9 +181,29 @@ function loadGAPI() {
     document.head.appendChild(script);
   });
 }
-async function initializeDriveAPIForGoogleUsers() {
-  try {
-    await gapi.load('client:auth2', async () => {
+//initialize API function 
+function initializeGoogleAPI() {
+  return new Promise((resolve) => {
+    if (window.gapiReady) {
+      gapi.load('client:auth2', {
+        callback: resolve,
+        onerror: (err) => console.error('GAPI load failed:', err)
+      });
+    } else {
+      const checkInterval = setInterval(() => {
+        if (window.gapiReady) {
+          clearInterval(checkInterval);
+          gapi.load('client:auth2', {
+            callback: resolve,
+            onerror: (err) => console.error('GAPI load failed:', err)
+          });
+        }
+      }, 100);
+    }
+  });
+}
+async function main() {
+      await initializeGoogleAPI();
       await gapi.client.init({
         authDomain: 'drkimogad.github.io',
         redirectUri: window.location.origin + '/PetStudio/__/auth/handler',
@@ -197,11 +217,11 @@ async function initializeDriveAPIForGoogleUsers() {
     console.error("Drive init failed:", error);
   }
 }  
+doument.addEventListener('DOMContentLoaded', main);
 // Auth State Observer //
 function showAuthError(message) {
   alert(`🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`);
-}  
-  
+}    
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     // Authenticated: Show dashboard, hide auth screens
