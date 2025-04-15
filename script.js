@@ -91,7 +91,6 @@ async function main() {
         discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
         scope: 'https://www.googleapis.com/auth/drive.file'  // Adjust the scope as needed
       });
-    });
   } catch (error) {
     console.error("Drive init failed:", error);
   }
