@@ -160,7 +160,31 @@ document.addEventListener("DOMContentLoaded", () => {
   provider = new firebase.auth.GoogleAuthProvider(); // ✅ Only assigning, not redeclaring
   provider.addScope('https://www.googleapis.com/auth/drive.file');    // Add Drive API scopes
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-  
+
+  // Initialize Drive Api function //
+async function initDriveAPI(accessToken) {
+  return new Promise((resolve, reject) => {
+    gapi.load('client', async () => {
+      try {
+        await gapi.client.init({
+          apiKey: firebaseConfig.apiKey,
+          clientId: 'YOUR_GOOGLE_CLOUD_CLIENT_ID',
+          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+        });
+
+        gapi.auth.setToken({
+          access_token: accessToken,
+          token_type: 'Bearer',
+          expires_in: 3600
+        });
+
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+}     
   // DOM Elements//
   const authContainer = document.getElementById("authContainer");
   const signupPage = document.getElementById("signupPage");
@@ -801,25 +825,16 @@ provider = new firebase.auth.GoogleAuthProvider(); // ✅ Assign only
 provider.addScope('https://www.googleapis.com/auth/drive.file');
 provider.addScope('https://www.googleapis.com/auth/userinfo.email');
 //Google api loaded function//
-function gapiLoaded() {
-  gapiLoaded = true;
-}
-async function loadGAPI() {
-  if (!gapiLoaded) {
-    await new Promise((resolve) => {
-      const script = document.createElement('script');
-      script.src = 'https://apis.google.com/js/api.js';
-      script.onload = () => {
-        gapiLoaded = true;
-        resolve();
-      };
-      script.onerror = () => {
-        console.error('Failed to load GAPI');
-        resolve();
-      };
-      document.head.appendChild(script);
-    });
-  }
+function loadGAPI() {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://apis.google.com/js/api.js';
+    script.async = true;
+    script.defer = true;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
 }
 async function initializeDriveAPIForGoogleUsers() {
   try {
@@ -830,36 +845,13 @@ async function initializeDriveAPIForGoogleUsers() {
         discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
         scope: 'https://www.googleapis.com/auth/drive.file'  // Adjust the scope as needed
       });
-// Initialize Drive Api function //
-async function initDriveAPI(accessToken) {
-  return new Promise((resolve, reject) => {
-    gapi.load('client', async () => {
-      try {
-        await gapi.client.init({
-          apiKey: firebaseConfig.apiKey,
-          clientId: 'YOUR_GOOGLE_CLOUD_CLIENT_ID',
-          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-        });
-
-        gapi.auth.setToken({
-          access_token: accessToken,
-          token_type: 'Bearer',
-          expires_in: 3600
-        });
-
-        resolve();
-      } catch (error) {
-        reject(error);
-      }
-    });
-  });
-}     
-console.log("Drive API initialized for Google user.");
     });
   } catch (error) {
     console.error("Drive init failed:", error);
   }
 }  
+
+  
 // Auth State Observer //
 // Define the showAuthError function if it's missing:
 function showAuthError(message) {
@@ -930,10 +922,13 @@ document.getElementById('googleSignInBtn').addEventListener('click', async () =>
 });
 // Service Worker Registration//
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js')
-    .then(registration => {
-      console.log('Service Worker registered:', registration.scope);
-
+  navigator.serviceWorker.register('/service-worjer.js', { 
+    scope: '/PetStudio/',
+    type: 'module'
+  }).then(registration => {
+    console.log('Service Worker registered:', registration.scope);
+  });
+}
       // Clear old cache versions
       caches.keys().then(cacheNames => {
         cacheNames.forEach(cacheName => {
