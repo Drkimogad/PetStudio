@@ -883,23 +883,24 @@ auth.onAuthStateChanged(async (user) => {
           Continue with Google
         </button>
       `;
-      authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
+authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
 
-      document.getElementById('googleSignInBtn').addEventListener('click', async () => {
-        try {
-          const result = await auth.signInWithPopup(provider);
-          const credential = result.credential;
-          const accessToken = credential.accessToken;
+document.getElementById('googleSignInBtn').addEventListener('click', async () => {
+  try {
+    const result = await auth.signInWithPopup(provider);
+    const credential = result.credential;
+    const accessToken = credential.accessToken;
 
-          await initDriveAPI(accessToken);
-          await initializeDriveAPIForGoogleUsers();
-          console.error("Google sign-in error:", error);
-          if (error.code === 'auth/popup-closed-by-user') {
-          showAuthError(`🚫 Authentication Error: ${error.message}\nPlease try again or check your internet connection.`);
-         } else {
-          showAuthError('Google sign-in failed. Please try again');
-          }
+    await initDriveAPI(accessToken);
+    await initializeDriveAPIForGoogleUsers();
+  } catch (error) {  // Added proper catch block
+    console.error("Google sign-in error:", error);
+    if (error.code === 'auth/popup-closed-by-user') {
+      showAuthError(`🚫 Authentication Error: ${error.message}\nPlease try again or check your internet connection.`);
+    } else {
+      showAuthError(`Google sign-in failed: ${error.message}`);
          }
+        }
       });
     }
   }
