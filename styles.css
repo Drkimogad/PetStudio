@@ -143,14 +143,17 @@ input {
     background: #F44336;
     color: white;
 }
-
-
+#qr-status {
+  margin: 10px 0;
+  font-weight: bold;
+  transition: opacity 0.3s ease;
+}
 /* Keep your existing banner image styles (unchanged) */
 .banner-image {
   width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
-  max-height: 70vh !important;
+  max-height: 100vh !important;
   object-fit: contain !important;
   display: block !important;
   margin: 0 auto !important;
@@ -760,20 +763,20 @@ footer {
 
 /* Banner image - keep as is */
 .banner-image {
-    width: 80%;
-    height: auto;
-    max-width: 80%;
+    width: 90%;
+    height: 90%;
+    max-width: 90%;
     object-fit: cover;
 }
 
 /* Updated banner message positioning */
 .banner-message {
     position: absolute;
-    right: 30px; /* Distance from right edge */
-    bottom: 30px; /* Distance from bottom edge */
+    right: 60px; /* Distance from right edge */
+    bottom: 60px; /* Distance from bottom edge */
     color: white;
     font-size: 1.5em;
-    background: rgba(0, 0, 0, 0.7); /* More opaque background */
+    background: rgba(181, 101, 29, 0.7); /* Light brown with 70% opacity */
     padding: 10px 15px; /* More padding */
     border-radius: 5px;
     max-width: 40%; /* Prevent too wide text */
