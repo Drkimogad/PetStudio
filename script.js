@@ -311,14 +311,13 @@ async function deleteProfile(index) {
   renderProfiles();
 }
   
- // 🔄 UI Updates
+ // 🔄 UI UPDATES AND PROFILE RENDERING/FUNCTIONS
   renderProfiles();
   profileSection.classList.add("hidden");
   fullPageBanner.classList.remove("hidden");
   isEditing = false;
   currentEditIndex = null;
 }
- // PET PROFILE RELATED FUNCTIONS// 
   addPetProfileBtn?.addEventListener("click", (e) => {
     e.preventDefault();
     if (!isEditing) {
@@ -604,7 +603,7 @@ async function sharePetCard(pet) {
     window.open(shareUrl, '_blank');
   }
 }
-// GENERATE QR CODE FUNCTION
+// GENERATE QR CODE FUNCTION //
 // AGE CALCULATION FUNCTION
   function calculateAge(dobString) {
     try {
@@ -742,7 +741,7 @@ function setCoverPhoto(profileIndex, imageIndex) {
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
   renderProfiles();
 }
-// FORM HANDLING WITH REMINDER CREATION
+// FORM HANDLING WITH REMINDER CREATION //
 function formatFirestoreDate(dateString) {
   const date = new Date(dateString);
   return date.toISOString().split('T')[0]; // "YYYY-MM-DD"
