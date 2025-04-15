@@ -850,22 +850,54 @@ if (switchToLogin && switchToSignup) {
 }
 // 🔁 Optional: Show login form by default on load
 toggleForms(true);
+  
+// AUTHENTICATION SECTION //
 // AUTH STATE OBSERVER
 function showAuthError(message) {
-  alert(`🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`);
-}    
-auth.onAuthStateChanged(async (user) => {
+  // Custom error display function (could be a modal or notification)
+  const errorElement = document.createElement('div');
+  errorElement.className = 'auth-error';
+  errorElement.innerText = `🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`;
+  document.body.appendChild(errorElement);
+  setTimeout(() => errorElement.remove(), 5000); // Remove the error after 5 seconds
+}
+
+auth.onAuthStateChanged((user) => {
   if (user) {
     // Authenticated: Show dashboard, hide auth screens
-    authContainer.classList.add("hidden");
-    dashboard.classList.remove("hidden");
-    profileSection.classList.add("hidden");
-    fullPageBanner.classList.remove("hidden");
+    toggleAuthUI(true);
+    setupLogoutButton();
+  } else {
+    // Not authenticated: Show login screen, hide dashboard
+    toggleAuthUI(false);
+  }
+});
+// Function to toggle visibility of UI elements based on auth state
+function toggleAuthUI(isAuthenticated) {
+  const authElements = [authContainer, loginPage, signupPage];
+  const dashboardElements = [dashboard, profileSection, fullPageBanner, logoutBtn];
 
-    if (logoutBtn) {
-      logoutBtn.style.display = "block";
-      setupLogoutButton();
-    }
+  authElements.forEach((el) => {
+    el.classList.toggle('hidden', isAuthenticated);
+  });
+  dashboardElements.forEach((el) => {
+    el.classList.toggle('hidden', !isAuthenticated);
+  });
+}
+// Setup logout button functionality
+function setupLogoutButton() {
+  if (logoutBtn) {
+    logoutBtn.style.display = 'block';
+    logoutBtn.addEventListener('click', () => {
+      auth.signOut().then(() => {
+        console.log('User logged out');
+      }).catch((error) => {
+        console.error('Logout error:', error);
+        showAuthError(error.message);
+      });
+    });
+  }
+}
   //=======AUTH FUNCTIONS =============
   // Sign Up Handler
   signupForm?.addEventListener("submit", (e) => {
