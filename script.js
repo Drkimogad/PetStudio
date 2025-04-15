@@ -192,23 +192,8 @@ function initAuthListeners() {
   });
 }
   
-// Drive Folder Management //
-async function checkDriveFolder() {
-  try {
-    const response = await gapi.client.drive.files.list({
-      q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder'",
-      fields: "files(id, name)"
-    });
-    if (response.result.files.length > 0) {
-      return response.result.files[0].id;  // return the folder ID
-    }
-    return null;
-  } catch (error) {
-    console.error("Drive folder check failed:", error);
-    return null;
-  }
-}
-  // 🔄 Helper: Get or Create Drive Folder ID
+// DRIVE FOLDER MANAGEMENT //
+  // 🔄 Get or Create Drive Folder ID
 async function getOrCreateDriveFolderId() {
   const response = await gapi.client.drive.files.list({
     q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder' and trashed=false",
@@ -228,37 +213,29 @@ async function getOrCreateDriveFolderId() {
   });
   return folder.result.id;
 }
-async function createDriveFolder() {
-  try {
-    const response = await gapi.client.drive.files.create({
-      resource: {
-        name: 'PetStudio',
-        mimeType: 'application/vnd.google-apps.folder'
-      },
-      fields: 'id'
-    });
-    return response.result.id;
-  } catch (error) {
-    console.error("Drive folder creation failed:", error);
-    return null;
-  }
-}
 // 💾 Save a Profile to Google Drive
 async function saveProfileToDrive(profile) {
   try {
     if (!gapi.client.drive) {
       throw new Error("Drive API not initialized");
     }
+
     const folderId = await getOrCreateDriveFolderId();
+
+    // Create a unique and clean file name
+    const fileName = `${profile.name.replace(/\s+/g, "_")}_${profile.id || Date.now()}.json`;
+
     const metadata = {
-      name: `${profile.name}_${Date.now()}.json`,
+      name: fileName,
       mimeType: 'application/json',
       parents: [folderId]
     };
+
     const fileContent = JSON.stringify({
       ...profile,
       lastUpdated: new Date().toISOString()
     });
+
     const file = await gapi.client.drive.files.create({
       resource: metadata,
       media: {
@@ -267,13 +244,16 @@ async function saveProfileToDrive(profile) {
       },
       fields: 'id,name,webViewLink'
     });
-    console.log("Saved to Drive:", file.result);
+
+    console.log("✅ Saved to Drive:", file.result);
     return file.result;
+
   } catch (error) {
-    console.error("Drive save failed:", error);
+    console.error("❌ Drive save failed:", error);
     throw error;
   }
 }
+
 // 🧩 Unified Save Function (Local + Drive + Firestore fallback)
 async function savePetProfile(profile) {
   if (isEditing) {
@@ -282,47 +262,55 @@ async function savePetProfile(profile) {
     petProfiles.push(profile);
   }
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  // 🔐 Save to Drive if Google user
   const isGoogleUser = auth.currentUser?.providerData?.some(
     p => p.providerId === 'google.com'
   );
-
-  if (isGoogleUser && gapi.client.drive) {
+  if (isGoogleUser && gapi.client?.drive) {
     try {
       await saveProfileToDrive(profile);
     } catch (driveError) {
-      console.warn("Drive backup failed, using Firestore fallback");
-      await saveToFirestore(profile);
-    }
-  }
-    // Delete function with Drive cleanup
-  async function deleteProfile(index) {
-    const profile = petProfiles[index];
-    // NEW: Try to delete from Drive if exists
-    if (auth.currentUser?.providerData?.some(p => p.providerId === 'google.com')) {
+      console.warn("⚠️ Drive backup failed. Falling back to Firestore.");
       try {
-        const files = await gapi.client.drive.files.list({
-          q: `name contains '${profile.name}' and trashed=false`,
-          fields: "files(id,name)"
-        });
-        if (files.result.files.length > 0) {
-          await Promise.all(
-            files.result.files.map(file =>
-              gapi.client.drive.files.update({
-                fileId: file.id,
-                resource: {
-                  trashed: true
-                }
-              })
-            )
-          );
-          console.log("Moved to Drive trash:", files.result.files.length, "files");
-        }
-      } catch (error) {
-        console.error("Drive delete failed:", error);
+        await saveToFirestore(profile);
+      } catch (firestoreError) {
+        console.error("❌ Firestore fallback also failed:", firestoreError);
       }
     }
-    
+  }
+}
+// Delete function with Drive cleanup
+async function deleteProfile(index) {
+  const profile = petProfiles[index];
+  // Try to delete from Drive if Google user is authenticated
+  if (auth.currentUser?.providerData?.some(p => p.providerId === 'google.com')) {
+    try {
+      const files = await gapi.client.drive.files.list({
+        q: `name contains '${profile.name}' and trashed=false`,
+        fields: "files(id,name)"
+      });
+      if (files.result.files.length > 0) {
+        await Promise.all(
+          files.result.files.map(file =>
+            gapi.client.drive.files.update({
+              fileId: file.id,
+              resource: {
+                trashed: true
+              }
+            })
+          )
+        );
+        console.log(`Moved ${files.result.files.length} files to Drive trash.`);
+      }
+    } catch (error) {
+      console.error("❌ Drive delete failed:", error);
+    }
+  }
+  // Remove from local petProfiles and re-render
+  petProfiles.splice(index, 1);
+  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  renderProfiles();
+}
+  
  // 🔄 UI Updates
   renderProfiles();
   profileSection.classList.add("hidden");
@@ -403,10 +391,13 @@ function renderProfiles() {
         petList.appendChild(petCard);
     });
 }
-// WHEN CREATING NEW PROFILES
+
+  // WHEN CREATING NEW PROFILES
 function createNewProfile() {
+  const timestamp = Date.now();
   const newProfile = {
-    id: Date.now(), // Simple unique ID
+    id: timestamp, // Simple unique ID
+    fileName: `pet_${timestamp}`, // 🔒 Stable file name for Drive storage
     name: document.getElementById('petName').value,
     breed: document.getElementById('petBreed').value,
     petDob: document.getElementById("petDob").value,
@@ -419,6 +410,7 @@ function createNewProfile() {
   savePetProfile(newProfile);
   renderProfiles();
 }
+
 // DAYS COUNTDOWN FUNCTION
   function getCountdown(birthday) {
     const today = new Date();
