@@ -864,7 +864,7 @@ async function initializeDriveAPIForGoogleUsers() {
     await gapi.load('client:auth2', async () => {
       await gapi.client.init({
         authDomain: 'drkimogad.github.io',
-        redirectUri: window.location.origin + '/PetStudio/__/auth/handler'
+        redirectUri: window.location.origin + '/PetStudio/__/auth/handler',
         apiKey: firebaseConfig.apiKey,
         clientId: firebaseConfig.clientId,
         discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
