@@ -332,8 +332,11 @@ async function deleteProfile(index) {
   });
   // render profiles original function //  
 function renderProfiles() {
-    petList.innerHTML = '';
-    petProfiles.forEach((profile, index) => {
+       petList.innerHTML = ''; // Clear current profiles
+       if (petProfiles.length === 0) {
+       petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
+    } else {
+        petProfiles.forEach((profile, index) => {
         const petCard = document.createElement("div");
         petCard.classList.add("petCard");
         petCard.id = `pet-card-${profile.id}`; // Required for html2canvas
