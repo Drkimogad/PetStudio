@@ -1,7 +1,6 @@
 // Global variables
 let auth = null;
 let provider = null;
-let currentQRProfile = null;
 // State Management
 let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 let isEditing = false;
@@ -15,130 +14,10 @@ const VALID_ORIGINS = [
 if (!VALID_ORIGINS.includes(window.location.origin)) {
   window.location.href = 'https://drkimogad.github.io/PetStudio';
 }
-// QR Modal Initialization
-function initQRModal() {
-  // Event delegation for modal buttons
-  document.addEventListener('click', function(e) {
-    // Print button
-    if (e.target.classList.contains('qr-print')) {
-      window.print();
-    }    
-// Download button
-    else if (e.target.classList.contains('qr-download')) {
-      const canvas = document.querySelector('#qrcode-container canvas');
-      if (canvas) {
-        const link = document.createElement('a');
-        link.download = `${currentQRProfile.name}_qr.png`.replace(/[^a-z0-9]/gi, '_');
-        link.href = canvas.toDataURL();
-        link.click();
-      }
-    }   
-    // Share button
-    else if (e.target.classList.contains('qr-share')) {
-      shareGeneratedQR();
-    }    
-    // Close button
-    else if (e.target.classList.contains('qr-close')) {
-      document.getElementById('qr-modal').style.display = 'none';
-    }
-  });
-}
-// QR Modal Handler
-function handleQRActions() {
-  document.addEventListener('click', (e) => {
-    if (!e.target.classList.contains('qr-action')) return;
-    
-    const action = e.target.dataset.action;
-    const canvas = document.querySelector('#qrcode-container canvas');
-    
-    switch(action) {
-      case 'print':
-        window.print();
-        break;
-        
-      case 'download':
-        if (canvas) {
-          const link = document.createElement('a');
-          link.download = `${currentQRProfile.name}_qr.png`.replace(/[^a-z0-9]/gi, '_');
-          link.href = canvas.toDataURL();
-          link.click();
-        }
-        break;      
-      case 'share':
-        shareQR();
-        break;      
-      case 'close':
-        document.getElementById('qr-modal').style.display = 'none';
-        break;
-    }
-  });
-}
-// Share generated qr code Function//
-async function shareGeneratedQR() {
-  try {
-    if (!currentQRProfile) return;  
-    const shareData = {
-      title: `${currentQRProfile.name}'s Pet Profile`,
-      text: `Check out ${currentQRProfile.name}'s details!`,
-      url: window.location.href
-    };
-    if (navigator.share) {
-      await navigator.share(shareData);
-    } else {
-      await navigator.clipboard.writeText(shareData.url);
-      showQRStatus('Link copied to clipboard!', true);
-    }
-  } catch (err) {
-    showQRStatus('Sharing failed. Please copy manually.', false);
-  }
-}
-// Helper Function
-function showQRStatus(message, isSuccess) {
-  const statusEl = document.getElementById('qr-status');
-  statusEl.textContent = message;
-  statusEl.style.color = isSuccess ? 'green' : 'red';
-  setTimeout(() => statusEl.textContent = '', 3000);
-}
-// Share petcard Function//
-async function sharePetCard(pet) {
-  // 1. Generate Shareable Link
-  const shareUrl = `${window.location.origin}/pet/${pet.id}`;
-  // 2. Try Web Share API first
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: `Meet ${pet.name}! 🐾`,
-        text: `Check out ${pet.name}'s profile on PetStudio!`,
-        url: shareUrl,
-      });
-      return;
-    } catch (err) {
-      console.log("Share cancelled:", err);
-    }
-  }
-  // 3. Desktop/Image Fallback
-  try {
-    const cardElement = document.getElementById(`pet-card-${pet.id}`);
-    if (!cardElement) throw new Error('Pet card not found');
-    
-    const canvas = await html2canvas(cardElement);
-    const imageUrl = canvas.toDataURL('image/png');
-// Create and trigger download
-    const downloadLink = document.createElement('a');
-    downloadLink.href = imageUrl;
-    downloadLink.download = `${pet.name}-petstudio.png`.replace(/[^a-z0-9]/gi, '_');
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-    // Copy to clipboard
-    await navigator.clipboard.writeText(shareUrl);
-    alert(`${pet.name}'s card saved! 🔗 Link copied to clipboard.`);   
-  } catch (error) {
-    console.error('Sharing failed:', error);
-    window.open(shareUrl, '_blank');
-  }
-}
-// Main Initialization //
+  // ====================
+  // INITIALIZATION
+  // ====================
+// MAIN INITIALIZATION//
 document.addEventListener("DOMContentLoaded", () => {
   initQRModal();
   const firebaseConfig = {
@@ -217,24 +96,7 @@ async function main() {
     console.error("Drive init failed:", error);
   }
 }  
-doument.addEventListener('DOMContentLoaded', main);
-// Auth State Observer //
-function showAuthError(message) {
-  alert(`🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`);
-}    
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    // Authenticated: Show dashboard, hide auth screens
-    authContainer.classList.add("hidden");
-    dashboard.classList.remove("hidden");
-    profileSection.classList.add("hidden");
-    fullPageBanner.classList.remove("hidden");
-
-    if (logoutBtn) {
-      logoutBtn.style.display = "block";
-      setupLogoutButton();
-    }
-    // Initialize Google Drive API
+// Initialize Google Drive API //
     try {
       await initializeDriveAPIForGoogleUsers();
     } catch (error) {
@@ -446,27 +308,7 @@ async function savePetProfile(profile) {
       await saveToFirestore(profile);
     }
   }
-  // 🔄 UI Updates
-  renderProfiles();
-  profileSection.classList.add("hidden");
-  fullPageBanner.classList.remove("hidden");
-  isEditing = false;
-  currentEditIndex = null;
-}
-  
-  // Pet Profile Functions//
-  addPetProfileBtn?.addEventListener("click", (e) => {
-    e.preventDefault();
-    if (!isEditing) {
-      profileForm.reset();
-      currentEditIndex = null;
-    }
-    fullPageBanner.classList.add("hidden");
-    profileSection.classList.remove("hidden");
-    dashboard.classList.remove("hidden");
-    authContainer.classList.add("hidden");
-  });
-  // Delete function with Drive cleanup
+    // Delete function with Drive cleanup
   async function deleteProfile(index) {
     const profile = petProfiles[index];
     // NEW: Try to delete from Drive if exists
@@ -493,6 +335,26 @@ async function savePetProfile(profile) {
         console.error("Drive delete failed:", error);
       }
     }
+    
+ // 🔄 UI Updates
+  renderProfiles();
+  profileSection.classList.add("hidden");
+  fullPageBanner.classList.remove("hidden");
+  isEditing = false;
+  currentEditIndex = null;
+}
+ // PET PROFILE RELATED FUNCTIONS// 
+  addPetProfileBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (!isEditing) {
+      profileForm.reset();
+      currentEditIndex = null;
+    }
+    fullPageBanner.classList.add("hidden");
+    profileSection.classList.remove("hidden");
+    dashboard.classList.remove("hidden");
+    authContainer.classList.add("hidden");
+  });
   // render profiles original function //  
 function renderProfiles() {
     petList.innerHTML = '';
@@ -554,7 +416,7 @@ function renderProfiles() {
         petList.appendChild(petCard);
     });
 }
-// When creating new profiles
+// WHEN CREATING NEW PROFILES
 function createNewProfile() {
   const newProfile = {
     id: Date.now(), // Simple unique ID
@@ -570,7 +432,7 @@ function createNewProfile() {
   savePetProfile(newProfile);
   renderProfiles();
 }
-// Countdown function//
+// DAYS COUNTDOWN FUNCTION
   function getCountdown(birthday) {
     const today = new Date();
     const nextBirthday = new Date(birthday);
@@ -579,7 +441,7 @@ function createNewProfile() {
     const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
     return `${diffDays} days until birthday! 🎉`;
   }
-// Mood history function//
+// MOOD HISTORY FUNCTION
   function renderMoodHistory(profile) {
     if (!profile.moodLog || profile.moodLog.length === 0) return "No mood logs yet";
     return profile.moodLog
@@ -590,7 +452,7 @@ function createNewProfile() {
   function getMoodEmoji(mood) {
     return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
   }
-// Edit profile function //
+// EDIT PROFILE FUNCTION
   function openEditForm(index) {
     isEditing = true;
     currentEditIndex = index;
@@ -602,18 +464,18 @@ function createNewProfile() {
     profileSection.classList.remove("hidden");
     fullPageBanner.classList.add("hidden");
   }
-// Existing deletion logic
+// DELETE PDOFILE LOGIC
     petProfiles.splice(index, 1);
     localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
     renderProfiles();
   }
-// Delete profile function//
+// DELET PROFILE FUNCTION
   function deleteProfile(index) {
     petProfiles.splice(index, 1);
     localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
     renderProfiles();
   }
-// Print profile function //
+// PRINT PROFILE FUNCTION
   function printProfile(profile) {
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
@@ -691,9 +553,47 @@ function createNewProfile() {
     `);
     printWindow.document.close();
   }
-// share function is up in the file  //
-// ======== QR CODE GENERATION function========
-// age calculation function//
+// SHARE PET CARD FUNCTION//
+async function sharePetCard(pet) {
+  // 1. Generate Shareable Link
+  const shareUrl = `${window.location.origin}/pet/${pet.id}`;
+  // 2. Try Web Share API first
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: `Meet ${pet.name}! 🐾`,
+        text: `Check out ${pet.name}'s profile on PetStudio!`,
+        url: shareUrl,
+      });
+      return;
+    } catch (err) {
+      console.log("Share cancelled:", err);
+    }
+  }
+  // 3. Desktop/Image Fallback
+  try {
+    const cardElement = document.getElementById(`pet-card-${pet.id}`);
+    if (!cardElement) throw new Error('Pet card not found');
+    
+    const canvas = await html2canvas(cardElement);
+    const imageUrl = canvas.toDataURL('image/png');
+  // 4. Create and trigger download
+    const downloadLink = document.createElement('a');
+    downloadLink.href = imageUrl;
+    downloadLink.download = `${pet.name}-petstudio.png`.replace(/[^a-z0-9]/gi, '_');
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    // Copy to clipboard
+    await navigator.clipboard.writeText(shareUrl);
+    alert(`${pet.name}'s card saved! 🔗 Link copied to clipboard.`);   
+  } catch (error) {
+    console.error('Sharing failed:', error);
+    window.open(shareUrl, '_blank');
+  }
+}
+// GENERATE QR CODE FUNCTION
+// AGE CALCULATION FUNCTION
   function calculateAge(dobString) {
     try {
       const birthDate = new Date(dobString);
@@ -709,47 +609,18 @@ function createNewProfile() {
       return 'N/A';
     }
   }
-
-// Generate/print/download/ share/close QR code//
-function printQR() {
-  const printContent = document.querySelector('#qr-modal .printable-area').innerHTML;
-  const originalContent = document.body.innerHTML; 
-  document.body.innerHTML = printContent;
-  window.print();
-  document.body.innerHTML = originalContent; 
-  // Re-show modal after printing
-  document.getElementById('qr-modal').style.display = 'block';
-}
-function downloadQR() {
-  const canvas = document.querySelector('#qrcode-container canvas');
-  if (canvas) {
-    const link = document.createElement('a');
-    link.download = (currentQRProfile?.name || 'pet_profile') + '_qr.png';
-    link.href = canvas.toDataURL();
-    link.click();
-  }
-}
-  // this might be a duplicate//
-async function shareQR() {
-  try {
-    await navigator.share?.({
-      title: `${currentQRProfile?.name || 'Pet'} Profile`,
-      text: `Check out ${currentQRProfile?.name || 'this pet'}'s details!`,
-      url: window.location.href
-    });
-  } catch {
-    await navigator.clipboard.writeText(window.location.href);
-    alert('Link copied to clipboard!');
-  }
-}
+// QR CODE MODAL MANAGEMENT
+// GENERATE, PRINT, DOWNLOAD, SHARE AND CLOSE QR CODE
+let currentQRProfile = null;
+// Generate QR Code
 function generateQRCode(profileIndex) {
   const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   currentQRProfile = savedProfiles[profileIndex];
   const modal = document.getElementById('qr-modal');
   const container = document.getElementById('qrcode-container');  
-  // Clear and regenerate
+  // Clear previous QR code
   container.innerHTML = '';
-  modal.style.display = 'block'; 
+  // Generate new QR code
   new QRCode(container, {
     text: JSON.stringify(currentQRProfile),
     width: 256,
@@ -758,7 +629,91 @@ function generateQRCode(profileIndex) {
     colorLight: "#ffffff",
     correctLevel: QRCode.CorrectLevel.H
   });
+  
+  modal.style.display = 'block';
 }
+
+// Print QR Code
+function printQR() {
+  const printContent = document.querySelector('#qr-modal .printable-area').cloneNode(true);
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write('<html><head><title>Print QR Code</title></head><body>');
+  printWindow.document.write(printContent.innerHTML);
+  printWindow.document.write('</body></html>');
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+  printWindow.close();
+}
+
+// Download QR Code
+function downloadQR() {
+  const canvas = document.querySelector('#qrcode-container canvas');
+  if (canvas) {
+    const link = document.createElement('a');
+    link.download = `${currentQRProfile?.name || 'pet_profile'}_qr.png`.replace(/[^a-z0-9]/gi, '_');
+    link.href = canvas.toDataURL();
+    link.click();
+  }
+}
+
+// Share QR Code
+async function shareQR() {
+  try {
+    if (!currentQRProfile) return;
+
+    const shareData = {
+      title: `${currentQRProfile.name}'s Pet Profile`,
+      text: `Check out ${currentQRProfile.name}'s details!`,
+      url: window.location.href
+    };
+
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText(shareData.url);
+      showQRStatus('Link copied to clipboard!', true);
+    }
+  } catch (err) {
+    showQRStatus('Sharing failed. Please copy manually.', false);
+  }
+}
+
+// QR Modal Initialization
+function initQRModal() {
+  document.addEventListener('click', (e) => {
+    const modal = document.getElementById('qr-modal');
+    
+    if (e.target.classList.contains('qr-print')) {
+      printQR();
+    }
+    else if (e.target.classList.contains('qr-download')) {
+      downloadQR();
+    }
+    else if (e.target.classList.contains('qr-share')) {
+      shareQR();
+    }
+    else if (e.target.classList.contains('qr-close')) {
+      modal.style.display = 'none';
+    }
+  });
+}
+// QR Status Helper
+function showQRStatus(message, isSuccess) {
+  const statusEl = document.getElementById('qr-status');
+  if (!statusEl) return;
+
+  statusEl.textContent = message;
+  statusEl.style.color = isSuccess ? '#28a745' : '#dc3545';
+  setTimeout(() => {
+    statusEl.textContent = '';
+    statusEl.style.color = '';
+  }, 3000);
+}
+// Initialize QR Module
+document.addEventListener('DOMContentLoaded', initQRModal);
+    
+// LOG MOOD FUNCTION    
   function logMood(profileIndex, mood) {
   const today = new Date().toISOString().split('T')[0];
   if (!petProfiles[profileIndex].moodLog) petProfiles[profileIndex].moodLog = [];
@@ -769,13 +724,13 @@ function generateQRCode(profileIndex) {
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
   renderProfiles();
 }
+// SET COVERPHOTO FUNCTION
 function setCoverPhoto(profileIndex, imageIndex) {
   petProfiles[profileIndex].coverPhotoIndex = imageIndex;
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
   renderProfiles();
 }
-    
-// ======== Form Handling with Reminder Creation===========
+// FORM HANDLING WITH REMINDER CREATION
 function formatFirestoreDate(dateString) {
   const date = new Date(dateString);
   return date.toISOString().split('T')[0]; // "YYYY-MM-DD"
@@ -834,7 +789,7 @@ profileForm?.addEventListener("submit", async (e) => {
   authContainer.classList.add("hidden"); // Hide auth container
   window.scrollTo(0, 0); // Optional: Scroll to the top of the page
 });
-  // DOM Elements//
+  // DOM ELEMENTS
   const authContainer = document.getElementById("authContainer");
   const signupPage = document.getElementById("signupPage");
   const loginPage = document.getElementById("loginPage");
@@ -849,7 +804,8 @@ profileForm?.addEventListener("submit", async (e) => {
   const petList = document.getElementById("petList");
   const fullPageBanner = document.getElementById("fullPageBanner");
   const profileForm = document.getElementById("profileForm");
-  const googleSignInBtn = document.createElement("button"); // Create Google Sign-In button
+  const googleSignInBtn = document.createElement("button"); 
+  doument.addEventListener('DOMContentLoaded', main); // MAIN FUNCTION FOR API
 
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has('profile')) {
@@ -860,7 +816,7 @@ profileForm?.addEventListener("submit", async (e) => {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }
-// ========== Auth Form Switching ============
+// AUTH FORM SWITCHING
 function toggleForms(showLogin) {
   const loginPage = document.getElementById("loginPage");
   const signupPage = document.getElementById("signupPage");
@@ -901,7 +857,23 @@ if (switchToLogin && switchToSignup) {
 }
 // 🔁 Optional: Show login form by default on load
 toggleForms(true);
-  //=======Auth Functions =============
+// AUTH STATE OBSERVER
+function showAuthError(message) {
+  alert(`🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`);
+}    
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    // Authenticated: Show dashboard, hide auth screens
+    authContainer.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    profileSection.classList.add("hidden");
+    fullPageBanner.classList.remove("hidden");
+
+    if (logoutBtn) {
+      logoutBtn.style.display = "block";
+      setupLogoutButton();
+    }
+  //=======AUTH FUNCTIONS =============
   // Sign Up Handler
   signupForm?.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -961,7 +933,7 @@ toggleForms(true);
         submitBtn.textContent = "Log In";
       });
   });
-  // Logout Handler //
+  // Logout Handler
   function setupLogoutButton() {
     if (logoutBtn) {
       logoutBtn.addEventListener("click", (e) => {
@@ -979,7 +951,7 @@ toggleForms(true);
       });
     }
   }
-// Service Worker Registration//
+// SERVICE WORKER REGISTERATION //
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worjer.js', { 
     scope: '/PetStudio/',
@@ -1008,14 +980,13 @@ if ('serviceWorker' in navigator) {
       });
     })
     .catch(error => console.error('Registration failed:', error));
-
   // Controller change handler
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     console.log('Controller changed, reloading...');
     window.location.reload();
   });
 }
-// ====== Push Notification Logic ===========
+// PUSH NOTIFICATIONS LOGIC
 // Global VAPID Configuration
 const VAPID_PUBLIC_KEY = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
 const VERCEL_API = 'https://pet-studio.vercel.app/api/save-subscription';
