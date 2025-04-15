@@ -738,7 +738,7 @@ profileForm?.addEventListener("submit", async (e) => {
       userId: userId,
       petName: petName,
       date: formatFirestoreDate(birthday), // "YYYY-MM-DD"
-      message: `It's ${reminder.petname}'s birthday today. We wish our pawsome friend a fabulous day! 🐾🎉`,
+      message: `It's ${petName}'s birthday today. We wish our pawsome friend a fabulous day! 🐾🎉`,
       createdAt: new Date().toISOString()
     };
     try {
