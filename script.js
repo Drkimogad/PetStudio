@@ -994,7 +994,6 @@ function setupLogoutButton() {
     }
   }
 // SERVICE WORKER REGISTRATION //
-// SERVICE WORKER REGISTRATION //
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/PetStudio/service-worker.js', { 
     scope: '/PetStudio/'
@@ -1030,12 +1029,11 @@ if ('serviceWorker' in navigator) {
     window.location.reload();
   });
 }
-
-
 // PUSH NOTIFICATIONS LOGIC
 // Global VAPID Configuration
 const VAPID_PUBLIC_KEY = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
 const VERCEL_API = 'https://pet-studio.vercel.app/api/save-subscription';
+
 // Push Notification Subscription
 async function subscribeUserToPushNotifications(registration) {
   try {
@@ -1054,10 +1052,15 @@ async function subscribeUserToPushNotifications(registration) {
     console.error('Subscription failed:', error);
   }
 }
+
 // Send to Vercel API
 async function sendSubscriptionToServer(subscription) {
   try {
     const user = auth.currentUser;
+    if (!user) {
+      console.error('User not authenticated');
+      return;
+    }
     const response = await fetch(`${VERCEL_API}/save-subscription`, {
       method: 'POST',
       headers: {
@@ -1077,6 +1080,7 @@ async function sendSubscriptionToServer(subscription) {
     throw error;
   }
 }
+
 // Helper function for VAPID key conversion
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -1086,7 +1090,9 @@ function urlBase64ToUint8Array(base64String) {
   const rawData = window.atob(base64);
   return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
 }
+
 // Initialize
-if (petProfiles.length > 0) 
+if (petProfiles.length > 0) {
   renderProfiles();
-});
+}
+
