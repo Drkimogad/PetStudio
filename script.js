@@ -37,6 +37,55 @@ document.addEventListener("DOMContentLoaded", () => {
       provider = new firebase.auth.GoogleAuthProvider(); // ✅ Only assigning, not redeclaring
       provider.addScope('https://www.googleapis.com/auth/drive.file'); // Add Drive API scopes
       provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+//-----------------------//
+// Google API Initialization
+let gapiInitialized = false;
+let gisInitialized = false;
+
+// Called when Google's core library (gapi) is loaded
+function gapiLoaded() {
+  gapi.load('client', initializeGapiClient);
+}
+
+// Called when Google's auth2 library is loaded
+function gisLoaded() {
+  gisInitialized = true;
+  maybeEnableGoogleSignIn();
+}
+
+// Initialize the Google API client
+async function initializeGapiClient() {
+  await gapi.client.init({
+    apiKey: 'YOUR_API_KEY', // Replace with your API key
+    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+  });
+  gapiInitialized = true;
+  maybeEnableGoogleSignIn();
+}
+
+// Enable Google Sign-In button once libraries are loaded
+function maybeEnableGoogleSignIn() {
+  if (gapiInitialized && gisInitialized) {
+    // Render Google Sign-In button
+    google.accounts.id.initialize({
+      client_id: 'YOUR_CLIENT_ID', // Replace with your OAuth client ID
+      callback: handleGoogleSignIn,
+    });
+    google.accounts.id.renderButton(
+      document.getElementById('googleSignInBtn'),
+      { theme: 'outline', size: 'large' }
+    );
+  }
+}
+
+// Handle Google Sign-In
+function handleGoogleSignIn(response) {
+  const credential = google.accounts.id.credentialFromResponse(response);
+  const accessToken = credential.access_token;
+  // Use the access token for Drive API calls
+  initDriveAPI(accessToken);
+}
+//-----------------------------------//	
       // LOAD GoogleAPI DYNAMICALLY JUST ONCE
       function loadGAPI() {
         return new Promise((resolve, reject) => {
