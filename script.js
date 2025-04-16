@@ -1095,4 +1095,3 @@ function urlBase64ToUint8Array(base64String) {
 if (petProfiles.length > 0) {
   renderProfiles();
 }
-
