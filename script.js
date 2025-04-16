@@ -460,8 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
               })
               .then(() => {
                 console.log('File deleted from Google Drive');
-              })
-              .catch(error => {
+              }).catch(error => {
                 console.error('Error deleting file from Google Drive:', error);
               });
           }
@@ -982,37 +981,39 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           }
           // SERVICE WORKER REGISTRATION //
-          if('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/PetStudio/service-worker.js', {
-              scope: '/PetStudio/'
-            }).then(registration => {
-              console.log('Service Worker registered:', registration.scope);
-              // Clear old cache versions
-              caches.keys().then(cacheNames => {
-                cacheNames.forEach(cacheName => {
-                  if(cacheName !== 'pet-studio-cache-v1') {
-                    caches.delete(cacheName);
-                  }
-                });
-              });
-              // Wait for service worker to be ready
-              registration.addEventListener('updatefound', () => {
-                const newWorker = registration.installing;
-                newWorker.addEventListener('statechange', () => {
-                  if(newWorker.state === 'activated') {
-                    subscribeUserToPushNotifications(registration);
-                  }
-                });
-              });
-            }).catch(error => {
-              console.error('Registration failed:', error);
-            });
-            // Controller change handler
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-              console.log('Controller changed, reloading...');
-              window.location.reload();
-            });
-          }
+// SERVICE WORKER REGISTRATION //
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/PetStudio/service-worker.js', {
+    scope: '/PetStudio/'
+  }).then(registration => {
+    console.log('Service Worker registered:', registration.scope);
+    // Clear old cache versions
+    caches.keys().then(cacheNames => {
+      cacheNames.forEach(cacheName => {
+        if (cacheName !== 'pet-studio-cache-v1') {
+          caches.delete(cacheName);
+        }
+      });
+    });
+    // Wait for service worker to be ready
+    registration.addEventListener('updatefound', () => {
+      const newWorker = registration.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'activated') {
+          subscribeUserToPushNotifications(registration);
+        }
+      });
+    });
+  }).catch(error => { // 🟢 No extra parenthesis here
+    console.error('Registration failed:', error);
+  }); // ✅ Correct closing
+
+  // Controller change handler
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    console.log('Controller changed, reloading...');
+    window.location.reload();
+  });
+}
           // PUSH NOTIFICATIONS LOGIC
           // Global VAPID Configuration
           const VAPID_PUBLIC_KEY = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
