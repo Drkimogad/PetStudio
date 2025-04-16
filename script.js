@@ -1,4 +1,3 @@
-document.addEventListener('DOMContentLoaded', () => { // 🟢 OPENING
 // Global variables
 let auth = null;
 let provider = null;
@@ -1079,4 +1078,3 @@ if ('serviceWorker' in navigator) {
           if(petProfiles.length > 0) {
             renderProfiles();
           }
-     }); // ✅ ADD THIS TO CLOSE THE DOMContentLoaded LISTENER
