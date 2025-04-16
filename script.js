@@ -323,7 +323,7 @@ async function deleteProfile(index) {
     if (!isEditing) {
       profileForm.reset();
       currentEditIndex = null;
-    }
+
     fullPageBanner.classList.add("hidden");
     profileSection.classList.remove("hidden");
     dashboard.classList.remove("hidden");
