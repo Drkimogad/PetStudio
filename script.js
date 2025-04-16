@@ -317,7 +317,7 @@ async function deleteProfile(index) {
   fullPageBanner.classList.remove("hidden");
   isEditing = false;
   currentEditIndex = null;
-}
+
   addPetProfileBtn?.addEventListener("click", (e) => {
     e.preventDefault();
     if (!isEditing) {
