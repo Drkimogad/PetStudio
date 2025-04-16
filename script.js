@@ -994,9 +994,10 @@ function setupLogoutButton() {
     }
   }
 // SERVICE WORKER REGISTRATION //
+// SERVICE WORKER REGISTRATION //
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js', { 
-    scope: '/PetStudio/',
+  navigator.serviceWorker.register('/PetStudio/service-worker.js', { 
+    scope: '/PetStudio/'
   }).then(registration => {
     console.log('Service Worker registered:', registration.scope);
 
@@ -1029,6 +1030,7 @@ if ('serviceWorker' in navigator) {
     window.location.reload();
   });
 }
+
 
 // PUSH NOTIFICATIONS LOGIC
 // Global VAPID Configuration
