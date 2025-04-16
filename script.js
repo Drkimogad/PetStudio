@@ -5,7 +5,12 @@ let provider = null;
 let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 let isEditing = false;
 let currentEditIndex = null;
-let gapiLoaded = false
+function onGapiLoad() {
+  gapiLoaded = true;
+}
+function onGisLoad() {
+  gisLoaded = true;
+}
 // Runtime Origin Verification
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
@@ -14,8 +19,6 @@ const VALID_ORIGINS = [
 if(!VALID_ORIGINS.includes(window.location.origin)) {
   window.location.href = 'https://drkimogad.github.io/PetStudio';
 }
-// ====================
-// INITIALIZATION
 // ====================
 // MAIN INITIALIZATION//
 document.addEventListener("DOMContentLoaded", () => {
@@ -43,19 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Google API Initialization
-let gapiInitialized = false;
-let gisInitialized = false;
-
-// Called when Google's core library (gapi) is loaded
-function gapiLoaded() {
-  gapi.load('client', initializeGapiClient);
-}
-
-// Called when Google's auth2 library is loaded
-function gisLoaded() {
-  gisInitialized = true;
-  maybeEnableGoogleSignIn();
-}
+let gapiLoaded = false;
+let gisLoaded = false;
 
 // Load Google APIs dynamically
 window.onload = function() {
