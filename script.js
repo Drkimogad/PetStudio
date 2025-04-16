@@ -980,7 +980,6 @@ document.addEventListener("DOMContentLoaded", () => {
               });
             }
           }
-          // SERVICE WORKER REGISTRATION //
 // SERVICE WORKER REGISTRATION //
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/PetStudio/service-worker.js', {
@@ -1004,9 +1003,9 @@ if ('serviceWorker' in navigator) {
         }
       });
     });
-  }).catch(error => { // 🟢 No extra parenthesis here
+  }).catch(error => { // 🟢 Corrected line
     console.error('Registration failed:', error);
-  }); // ✅ Correct closing
+  }); // ✅ No extra parenthesis
 
   // Controller change handler
   navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -1014,7 +1013,7 @@ if ('serviceWorker' in navigator) {
     window.location.reload();
   });
 }
-          // PUSH NOTIFICATIONS LOGIC
+		// PUSH NOTIFICATIONS LOGIC
           // Global VAPID Configuration
           const VAPID_PUBLIC_KEY = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
           const VERCEL_API = 'https://pet-studio.vercel.app/api/save-subscription';
