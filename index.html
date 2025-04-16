@@ -8,7 +8,6 @@
     <meta property="og:title" content="PetStudio - Pet Profile Manager">
     <meta property="og:description" content="Create and share your pet's profile with milestones and birthday reminders">
     <meta property="og:type" content="website">
-    <script src="script.js" defer></script>
     <!-- In index.html head -->
     <meta http-equiv="Content-Security-Policy" 
       content="default-src 'self';
@@ -25,8 +24,8 @@
                https://www.google.com;
                font-src https://fonts.gstatic.com;
                img-src 'self' https://*.googleusercontent.com;">   
-    <script src="https://apis.google.com/js/api.js" onload="gapiLoaded()"defer></script>
-    <script src="https://accounts.google.com/gsi/client" onload="gisLoaded()"defer></script>
+    <script src="https://apis.google.com/js/api.js" onload="onGapiLoad()"></script>
+    <script src="https://accounts.google.com/gsi/client" onload="onGisLoad()"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <meta property="og:url" content="https://your-petstudio-url.com">
@@ -164,7 +163,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
-    
+    <script src="script.js"></script>
+
     <!-- In index.html QR Modal (hidden by default -->
 <div id="qr-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000;">
   <div style="background:white; width:400px; margin:50px auto; padding:20px; border-radius:10px; text-align:center;">
