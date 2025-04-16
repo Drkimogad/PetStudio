@@ -23,7 +23,15 @@
                frame-src https://accounts.google.com 
                https://www.google.com;
                font-src https://fonts.gstatic.com;
-               img-src 'self' https://*.googleusercontent.com;">   
+               img-src 'self' https://*.googleusercontent.com;"> 
+      <script>
+          function onGapiLoad() {
+            window.gapiInitialized = true;
+              }
+         function onGisLoad() {
+           window.gisInitialized = true;
+             }
+     </script>
     <script src="https://apis.google.com/js/api.js" onload="onGapiLoad()"></script>
     <script src="https://accounts.google.com/gsi/client" onload="onGisLoad()"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
