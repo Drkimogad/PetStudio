@@ -309,45 +309,67 @@ async function savePetProfile(profile) {
 }
 
 // Delete function with Drive cleanup
+// Delete function with Drive cleanup
 async function deleteProfile(index) {
   const profile = petProfiles[index];
+  
+  // Confirm deletion
+  if (!confirm("Are you sure you want to delete this profile?")) return;
+
   // Try to delete from Google Drive if applicable
   const fileId = profile.driveFileId;
   if (fileId) {
     try {
-      await gapi.client.drive.files.delete({
-        fileId
-      });
-      console.log("Drive file deleted successfully");
+      await deleteProfileFromDrive(fileId); // Deletes associated Drive files (including images)
+      console.log("Drive files deleted successfully");
     } catch (driveError) {
-      console.error("Error deleting Drive file:", driveError);
+      console.error("Error deleting Drive files:", driveError);
     }
   }
+  
+  // Now delete the profile from petProfiles array and update localStorage
   petProfiles.splice(index, 1);
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  
+  // Re-render profiles after deletion
   renderProfiles();
 }
 
-// Render the profiles on screen
-function renderProfiles() {
-  if (petProfiles.length === 0) {
-    petList.innerHTML = '<p>No pet profiles found. Add one!</p>';
-  } else {
-    petList.innerHTML = '';
-    petProfiles.forEach((profile, index) => {
-      const profileHTML = `
-        <div class="pet-profile">
-          <h3>${profile.name}</h3>
-          <p>${profile.breed}</p>
-          <button onclick="deleteProfile(${index})">Delete</button>
-        </div>
-      `;
-      petList.insertAdjacentHTML('beforeend', profileHTML);
-    });
+// Helper function to delete pet images and profile file from Google Drive
+async function deleteProfileFromDrive(fileId) {
+  const driveApi = getDriveApi(); // Placeholder for actual Drive API call
+  
+  // Assuming pet profile has a gallery of images
+  if (petProfiles[index].gallery.length > 0) {
+    // Delete each image from the gallery
+    for (let img of petProfiles[index].gallery) {
+      await deleteImageFromDrive(img); // Assuming `img` contains the Drive fileId
+    }
+  }
+
+  // Now delete the profile file itself
+  try {
+    await driveApi.files.delete({ fileId });
+    console.log('Profile file deleted from Google Drive');
+  } catch (error) {
+    console.error('Error deleting profile from Google Drive:', error);
   }
 }
 
-      // 🔄 UI UPDATES AND PROFILE RENDERING/FUNCTIONS
+// Helper function to delete an image from Google Drive
+async function deleteImageFromDrive(imageUrl) {
+  const driveApi = getDriveApi(); // Placeholder for Drive API instance
+  try {
+    await driveApi.files.delete({
+      fileId: imageUrl, // Assuming the imageUrl contains the fileId
+    });
+    console.log('Image deleted from Google Drive');
+  } catch (error) {
+    console.error('Error deleting image from Google Drive:', error);
+  }
+}
+
+// 🔄 UI UPDATES
       renderProfiles();
       profileSection.classList.add("hidden");
       fullPageBanner.classList.remove("hidden");
@@ -364,7 +386,8 @@ function renderProfiles() {
         dashboard.classList.remove("hidden");
         authContainer.classList.add("hidden");
       }); // ← closing the 'addEventListener' callback here ✅
-      // render profiles original function //  
+
+// PROFILE RENDERING FUNCTIONS  
       function renderProfiles() {
         petList.innerHTML = ''; // Clear current profiles
         if(petProfiles.length === 0) {
@@ -464,10 +487,10 @@ function renderProfiles() {
             .map(entry => `${entry.date}: ${getMoodEmoji(entry.mood)}`)
             .join('<br>');
         }
-
         function getMoodEmoji(mood) {
           return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
         }
+	      
         // EDIT PROFILE FUNCTION
         function openEditForm(index) {
           isEditing = true;
@@ -480,46 +503,6 @@ function renderProfiles() {
           profileSection.classList.remove("hidden");
           fullPageBanner.classList.add("hidden");
         }
-        // DELET PROFILE FUNCTION
-        function deleteProfile(index) {
-          if(confirm("Are you sure you want to delete this profile?")) {
-            petProfiles.splice(index, 1);
-            localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-            renderProfiles();
-          }
-          // FUNCTION DELETE PROFILE FROM DRIVE/IMAGES AND CLEAN UP
-          function deleteProfileFromDrive(fileName) {
-            const driveApi = getDriveApi(); // Placeholder API call
-            // Assuming each pet profile has gallery images that need to be deleted
-            if(petProfiles[index].gallery.length > 0) {
-              petProfiles[index].gallery.forEach(img => {
-                deleteImageFromDrive(img); // Function to delete each image file
-              });
-            }
-            // Now delete the profile file
-            driveApi.files.delete({
-                fileId: fileName,
-              })
-              .then(() => {
-                console.log('File deleted from Google Drive');
-              }).catch(error => {
-                console.error('Error deleting file from Google Drive:', error);
-              });
-          }
-
-          function deleteImageFromDrive(imageUrl) {
-            const driveApi = getDriveApi();
-            // Assuming `imageUrl` contains the file ID or unique identifier
-            driveApi.files.delete({
-                fileId: imageUrl, // For example
-              })
-              .then(() => {
-                console.log('Image deleted from Google Drive');
-              })
-              .catch(error => {
-                console.error('Error deleting image from Google Drive:', error);
-              });
-          }
           // PRINT PROFILE FUNCTION
           function printProfile(profile) {
             const printWindow = window.open('', '_blank');
