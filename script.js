@@ -5,12 +5,6 @@ let provider = null;
 let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 let isEditing = false;
 let currentEditIndex = null;
-function onGapiLoad() {
-  gapiLoaded = true;
-}
-function onGisLoad() {
-  gisLoaded = true;
-}
 // Runtime Origin Verification
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
