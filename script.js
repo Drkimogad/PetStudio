@@ -31,12 +31,12 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Initialize Firebase
   const app = firebase.initializeApp(firebaseConfig);
-  auth = firebase.auth(app);
+  const auth = firebase.auth(app);
 
   // Global Google Auth Provider configuration
-  provider = new firebase.auth.GoogleAuthProvider();
-  provider.addScope('https://www.googleapis.com/auth/drive.file'); // Add Drive API scopes
-  provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+const firebaseProvider = new firebase.auth.GoogleAuthProvider();
+firebaseProvider.addScope('https://www.googleapis.com/auth/drive.file'); // Add Drive API scopes
+firebaseProvider.addScope('https://www.googleapis.com/auth/userinfo.email');
 });
 
 // Google API Initialization
@@ -142,12 +142,8 @@ async function refreshDriveTokenIfNeeded() {
     showAuthError('Failed to refresh token');
   }
 }
-
-// Google sign-in provider setup
-const provider = new GoogleAuthProvider();
-provider.addScope('https://www.googleapis.com/auth/drive.file');
-
-// Dynamic Google Sign-In button
+// Dynamic Google Sign-In button//
+// Firebase Google sign-in provider setup (already declared earlier)
 if (!auth.currentUser) {
   if (!document.getElementById('googleSignInBtn')) {
     const googleSignInHTML = `
@@ -158,7 +154,7 @@ if (!auth.currentUser) {
     `;
     authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
     document.getElementById('googleSignInBtn').addEventListener('click', () => {
-      signInWithRedirect(auth, provider).catch((error) => {
+      signInWithRedirect(auth, firebaseProvider).catch((error) => {
         console.error("Redirect initialization error:", error);
         showAuthError(`Sign-in setup failed: ${error.message}`);
       });
