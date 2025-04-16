@@ -1106,3 +1106,4 @@ if ('serviceWorker' in navigator) {
           if(petProfiles.length > 0) {
             renderProfiles();
           }
+  }); // ✅ Close DOMContentLoaded event listener
