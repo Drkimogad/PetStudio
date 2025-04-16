@@ -18,7 +18,6 @@ if(!VALID_ORIGINS.includes(window.location.origin)) {
 // INITIALIZATION
 // ====================
 // MAIN INITIALIZATION//
-// MAIN INITIALIZATION//
 document.addEventListener("DOMContentLoaded", () => {
   initQRModal();
 
@@ -1007,7 +1006,7 @@ async function deleteImageFromDrive(imageUrl) {
           }
 // SERVICE WORKER REGISTRATION //
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/PetStudio/service-worker.js', {
+  navigator.serviceWorker.register('./service-worker.js', {
     scope: '/PetStudio/'
   }).then(registration => {
     console.log('Service Worker registered:', registration.scope);
