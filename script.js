@@ -154,7 +154,8 @@ if (!auth.currentUser) {
     `;
     authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
     document.getElementById('googleSignInBtn').addEventListener('click', () => {
-      signInWithRedirect(auth, firebaseProvider).catch((error) => {
+      signInWithRedirect(auth, firebaseProvider)
+	.catch((error) => {
         console.error("Redirect initialization error:", error);
         showAuthError(`Sign-in setup failed: ${error.message}`);
       });
