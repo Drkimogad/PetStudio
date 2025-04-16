@@ -317,18 +317,18 @@ async function deleteProfile(index) {
   fullPageBanner.classList.remove("hidden");
   isEditing = false;
   currentEditIndex = null;
-  } // ← this was missing
+  
   addPetProfileBtn?.addEventListener("click", (e) => {
     e.preventDefault();
     if (!isEditing) {
       profileForm.reset();
       currentEditIndex = null;
-
+  } // Closing the 'if' block here ✅
     fullPageBanner.classList.add("hidden");
     profileSection.classList.remove("hidden");
     dashboard.classList.remove("hidden");
     authContainer.classList.add("hidden");
-  });
+  }); // ← closing the 'addEventListener' callback here ✅
   // render profiles original function //  
 function renderProfiles() {
        petList.innerHTML = ''; // Clear current profiles
