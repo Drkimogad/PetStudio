@@ -52,6 +52,20 @@ function gisLoaded() {
   gisInitialized = true;
   maybeEnableGoogleSignIn();
 }
+// maybe it is better to load this manually//
+window.onload = function() {
+  // Load Google APIs dynamically
+  const gapiScript = document.createElement('script');
+  gapiScript.src = 'https://apis.google.com/js/api.js';
+  gapiScript.onload = gapiLoaded; // ✅ Now gapiLoaded is defined
+  document.head.appendChild(gapiScript);
+
+  const gisScript = document.createElement('script');
+  gisScript.src = 'https://accounts.google.com/gsi/client';
+  gisScript.onload = gisLoaded;
+  document.head.appendChild(gisScript);
+};	
+//----------------------------//	
 // LOAD GoogleAPI DYNAMICALLY JUST ONCE
       function loadGAPI() {
         return new Promise((resolve, reject) => {
