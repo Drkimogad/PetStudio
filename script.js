@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', () => { // 🟢 OPENING
 // Global variables
 let auth = null;
 let provider = null;
