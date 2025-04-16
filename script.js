@@ -18,30 +18,35 @@ if(!VALID_ORIGINS.includes(window.location.origin)) {
 // INITIALIZATION
 // ====================
 // MAIN INITIALIZATION//
+// MAIN INITIALIZATION//
 document.addEventListener("DOMContentLoaded", () => {
-      initQRModal();
-      const firebaseConfig = {
-        apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-        authDomain: "drkimogad.github.io",
-        projectId: "swiftreach2025",
-        storageBucket: "swiftreach2025.appspot.com",
-        messagingSenderId: "540185558422",
-        appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
-        clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com" // ✅ 
-      };
-      // Initialize Firebase
-      const app = firebase.initializeApp(firebaseConfig);
-      auth = firebase.auth(app);
-      // Global Google Auth Provider configuration//
-      // ✅ Declare and setup provider
-      provider = new firebase.auth.GoogleAuthProvider(); // ✅ Only assigning, not redeclaring
-      provider.addScope('https://www.googleapis.com/auth/drive.file'); // Add Drive API scopes
-      provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+  initQRModal();
 
+  // Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+    authDomain: "drkimogad.github.io",
+    projectId: "swiftreach2025",
+    storageBucket: "swiftreach2025.appspot.com",
+    messagingSenderId: "540185558422",
+    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
+    clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com" // ✅
+  };
+  
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth(app);
+
+  // Global Google Auth Provider configuration
+  provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('https://www.googleapis.com/auth/drive.file'); // Add Drive API scopes
+  provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+});
 
 // Google API Initialization
 let gapiInitialized = false;
-let gisInitialized = false;	
+let gisInitialized = false;
+
 // Called when Google's core library (gapi) is loaded
 function gapiLoaded() {
   gapi.load('client', initializeGapiClient);
@@ -52,288 +57,296 @@ function gisLoaded() {
   gisInitialized = true;
   maybeEnableGoogleSignIn();
 }
-// maybe it is better to load this manually//
+
+// Load Google APIs dynamically
 window.onload = function() {
   // Load Google APIs dynamically
   const gapiScript = document.createElement('script');
   gapiScript.src = 'https://apis.google.com/js/api.js';
-  gapiScript.onload = gapiLoaded; // ✅ Now gapiLoaded is defined
+  gapiScript.onload = gapiLoaded;
   document.head.appendChild(gapiScript);
 
   const gisScript = document.createElement('script');
   gisScript.src = 'https://accounts.google.com/gsi/client';
   gisScript.onload = gisLoaded;
   document.head.appendChild(gisScript);
-};	
-//----------------------------//	
-// LOAD GoogleAPI DYNAMICALLY JUST ONCE
-      function loadGAPI() {
-        return new Promise((resolve, reject) => {
-          const script = document.createElement('script');
-          script.src = 'https://apis.google.com/js/api.js';
-          script.async = true;
-          script.defer = true;
-          script.onload = () => {
-            window.gapiReady = true;
-            resolve();
-          };
-          script.onerror = reject;
-          document.head.appendChild(script);
-        });
-      }
-      // Main Google API Init Function
-      async function main() {
-        try {
-          await loadGAPI();
-          await initializeGoogleAPI();
-          await gapi.client.init({
-            authDomain: 'drkimogad.github.io',
-            redirectUri: window.location.origin + '/PetStudio/__/auth/handler',
-            apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw", // Optional duplication is safe here
-            clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
-            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-            scope: 'https://www.googleapis.com/auth/drive.file'
-          });
-          console.log("✅ Google API client initialized");
-          // Proceed with Drive setup and render
-          try {
-            await initializeDriveAPIForGoogleUsers();
-          }
-          catch (error) {
-            console.log("Drive init skipped:", error);
-          }
-          if(petProfiles.length > 0) {
-            renderProfiles();
-          }
-          else {
-            petList.innerHTML = '';
-          }
-        }
-        catch (error) {
-          console.error("❌ main() failed:", error);
-          showErrorToUser("Google API initialization failed");
-        }
-      }
-      document.addEventListener('DOMContentLoaded', main);
-      // Initialize Google API //
-      // Auth check on load
-      async function checkUserAuth() {
-        try {
-          const user = await auth.currentUser;
-          if(user) {
-            handleAuthenticatedUser(user);
-          }
-          else {
-            showLoginScreen();
-          }
-        }
-        catch (error) {
-          console.error("Error checking auth:", error);
-          showAuthError('Authentication check failed');
-        }
-      }
-      // Function to handle token expiration
-      async function refreshDriveTokenIfNeeded() {
-        try {
-          const authResponse = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse();
-          const expiresAt = authResponse.expires_at;
-          const currentTime = new Date().getTime();
-          if(expiresAt <= currentTime) {
-            console.log("Token expired, requesting re-authentication");
-            signInWithRedirect(auth, provider);
-          }
-          else {
-            console.log("Token is still valid");
-          }
-        }
-        catch (error) {
-          console.error("Token refresh error:", error);
-          showAuthError('Failed to refresh token');
-        }
-      }
-      // Google sign-in provider setup
-      const provider = new GoogleAuthProvider();
-      provider.addScope('https://www.googleapis.com/auth/drive.file');
-      // Dynamic Google Sign-In button
-      if(!auth.currentUser) {
-        if(!document.getElementById('googleSignInBtn')) {
-          const googleSignInHTML = `
+};
+
+// Load Google API Dynamically Once
+function loadGAPI() {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://apis.google.com/js/api.js';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      window.gapiReady = true;
+      resolve();
+    };
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+// Main Google API Init Function
+async function main() {
+  try {
+    await loadGAPI();
+    await initializeGoogleAPI();
+    await gapi.client.init({
+      authDomain: 'drkimogad.github.io',
+      redirectUri: window.location.origin + '/PetStudio/__/auth/handler',
+      apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+      clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
+      discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+      scope: 'https://www.googleapis.com/auth/drive.file'
+    });
+    console.log("✅ Google API client initialized");
+    
+    // Proceed with Drive setup and render
+    try {
+      await initializeDriveAPIForGoogleUsers();
+    }
+    catch (error) {
+      console.log("Drive init skipped:", error);
+    }
+    
+    if (petProfiles.length > 0) {
+      renderProfiles();
+    } else {
+      petList.innerHTML = '';
+    }
+  } catch (error) {
+    console.error("❌ main() failed:", error);
+    showErrorToUser("Google API initialization failed");
+  }
+}
+
+// Initialize Google API on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', main);
+
+// Auth check on load
+async function checkUserAuth() {
+  try {
+    const user = await auth.currentUser;
+    if (user) {
+      handleAuthenticatedUser(user);
+    } else {
+      showLoginScreen();
+    }
+  } catch (error) {
+    console.error("Error checking auth:", error);
+    showAuthError('Authentication check failed');
+  }
+}
+
+// Token expiration handler
+async function refreshDriveTokenIfNeeded() {
+  try {
+    const authResponse = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse();
+    const expiresAt = authResponse.expires_at;
+    const currentTime = new Date().getTime();
+    if (expiresAt <= currentTime) {
+      console.log("Token expired, requesting re-authentication");
+      signInWithRedirect(auth, provider);
+    } else {
+      console.log("Token is still valid");
+    }
+  } catch (error) {
+    console.error("Token refresh error:", error);
+    showAuthError('Failed to refresh token');
+  }
+}
+
+// Google sign-in provider setup
+const provider = new GoogleAuthProvider();
+provider.addScope('https://www.googleapis.com/auth/drive.file');
+
+// Dynamic Google Sign-In button
+if (!auth.currentUser) {
+  if (!document.getElementById('googleSignInBtn')) {
+    const googleSignInHTML = `
       <button id="googleSignInBtn" class="auth-btn google-btn">
         <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
         Continue with Google
       </button>
     `;
-          authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
-          document.getElementById('googleSignInBtn').addEventListener('click', () => {
-            signInWithRedirect(auth, provider).catch((error) => {
-              console.error("Redirect initialization error:", error);
-              showAuthError(`Sign-in setup failed: ${error.message}`);
-            });
-          });
-        }
+    authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
+    document.getElementById('googleSignInBtn').addEventListener('click', () => {
+      signInWithRedirect(auth, provider).catch((error) => {
+        console.error("Redirect initialization error:", error);
+        showAuthError(`Sign-in setup failed: ${error.message}`);
+      });
+    });
+  }
+} else {
+  handleAuthenticatedUser(auth.currentUser);
+}
+
+// Handle redirect result
+(async function handleRedirectResult() {
+  try {
+    const result = await getRedirectResult(auth);
+    if (result) {
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const accessToken = credential.accessToken;
+      await initDriveAPI(accessToken);
+      await initializeDriveAPIForGoogleUsers();
+      window.location.href = '/main-app';
+    }
+  } catch (error) {
+    console.error("Redirect result handling error:", error);
+    if (error.code === 'auth/redirect-cancelled-by-user') {
+      showAuthError('🚫 Redirect canceled - please try again');
+    } else {
+      showAuthError(`Authentication failed: ${error.message}`);
+    }
+  }
+})();
+
+// Set persistence and initialize listeners
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    initAuthListeners();
+    initUI();
+  })
+  .catch((error) => {
+    console.error("Persistence error:", error);
+    showErrorToUser("Authentication system failed to initialize");
+  });
+
+// Auth listeners function
+function initAuthListeners() {
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      console.log("User logged in:", user.uid);
+      handleAuthenticatedUser(user);
+    } else {
+      console.log("User logged out");
+      showLoginScreen();
+    }
+  });
+}
+
+// DRIVE FOLDER MANAGEMENT //
+// 🔄 Get or Create Drive Folder ID
+async function getOrCreateDriveFolderId() {
+  const response = await gapi.client.drive.files.list({
+    q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder' and trashed=false",
+    fields: "files(id)",
+    spaces: 'drive'
+  });
+  if (response.result.files.length > 0) {
+    return response.result.files[0].id;
+  }
+  const folder = await gapi.client.drive.files.create({
+    resource: {
+      name: 'PetStudio',
+      mimeType: 'application/vnd.google-apps.folder'
+    },
+    fields: 'id'
+  });
+  return folder.result.id;
+}
+
+// 💾 Save a Profile to Google Drive
+async function saveProfileToDrive(profile) {
+  try {
+    if (!gapi.client.drive) {
+      throw new Error("Drive API not initialized");
+    }
+    const folderId = await getOrCreateDriveFolderId();
+    // Create a unique and clean file name
+    const fileName = `${profile.name.replace(/\s+/g, "_")}_${profile.id || Date.now()}.json`;
+    const metadata = {
+      name: fileName,
+      mimeType: 'application/json',
+      parents: [folderId]
+    };
+    const fileContent = JSON.stringify({
+      ...profile,
+      lastUpdated: new Date().toISOString()
+    });
+    const file = await gapi.client.drive.files.create({
+      resource: metadata,
+      media: {
+        mimeType: 'application/json',
+        body: fileContent
+      },
+      fields: 'id,name,webViewLink'
+    });
+    console.log("✅ Saved to Drive:", file.result);
+    return file.result;
+  } catch (error) {
+    console.error("❌ Drive save failed:", error);
+    throw error;
+  }
+}
+
+// 🧩 Unified Save Function (Local + Drive + Firestore fallback)
+async function savePetProfile(profile) {
+  if (isEditing) {
+    petProfiles[currentEditIndex] = profile;
+  } else {
+    petProfiles.push(profile);
+  }
+  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  const isGoogleUser = auth.currentUser?.providerData?.some(
+    p => p.providerId === 'google.com'
+  );
+  if (isGoogleUser && gapi.client?.drive) {
+    try {
+      await saveProfileToDrive(profile);
+    } catch (driveError) {
+      console.warn("⚠️ Drive backup failed. Falling back to Firestore.");
+      try {
+        await saveToFirestore(profile);
+      } catch (firestoreError) {
+        console.error("❌ Firestore fallback also failed:", firestoreError);
       }
-      else {
-        handleAuthenticatedUser(auth.currentUser);
-      }
-      // Handle redirect result
-      (async function handleRedirectResult() {
-        try {
-          const result = await getRedirectResult(auth);
-          if(result) {
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const accessToken = credential.accessToken;
-            await initDriveAPI(accessToken);
-            await initializeDriveAPIForGoogleUsers();
-            window.location.href = '/main-app';
-          }
-        }
-        catch (error) {
-          console.error("Redirect result handling error:", error);
-          if(error.code === 'auth/redirect-cancelled-by-user') {
-            showAuthError('🚫 Redirect canceled - please try again');
-          }
-          else {
-            showAuthError(`Authentication failed: ${error.message}`);
-          }
-        }
-      })();
-      // Set persistence and initialize listeners
-      setPersistence(auth, browserLocalPersistence)
-        .then(() => {
-          initAuthListeners();
-          initUI();
-        })
-        .catch((error) => {
-          console.error("Persistence error:", error);
-          showErrorToUser("Authentication system failed to initialize");
-        });
-      // Auth listeners function
-      function initAuthListeners() {
-        auth.onAuthStateChanged((user) => {
-          if(user) {
-            console.log("User logged in:", user.uid);
-            handleAuthenticatedUser(user);
-          }
-          else {
-            console.log("User logged out");
-            showLoginScreen();
-          }
-        });
-      }
-      // DRIVE FOLDER MANAGEMENT //
-      // 🔄 Get or Create Drive Folder ID
-      async function getOrCreateDriveFolderId() {
-        const response = await gapi.client.drive.files.list({
-          q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder' and trashed=false",
-          fields: "files(id)",
-          spaces: 'drive'
-        });
-        if(response.result.files.length > 0) {
-          return response.result.files[0].id;
-        }
-        const folder = await gapi.client.drive.files.create({
-          resource: {
-            name: 'PetStudio',
-            mimeType: 'application/vnd.google-apps.folder'
-          },
-          fields: 'id'
-        });
-        return folder.result.id;
-      }
-      // 💾 Save a Profile to Google Drive
-      async function saveProfileToDrive(profile) {
-        try {
-          if(!gapi.client.drive) {
-            throw new Error("Drive API not initialized");
-          }
-          const folderId = await getOrCreateDriveFolderId();
-          // Create a unique and clean file name
-          const fileName = `${profile.name.replace(/\s+/g, "_")}_${profile.id || Date.now()}.json`;
-          const metadata = {
-            name: fileName,
-            mimeType: 'application/json',
-            parents: [folderId]
-          };
-          const fileContent = JSON.stringify({
-            ...profile,
-            lastUpdated: new Date().toISOString()
-          });
-          const file = await gapi.client.drive.files.create({
-            resource: metadata,
-            media: {
-              mimeType: 'application/json',
-              body: fileContent
-            },
-            fields: 'id,name,webViewLink'
-          });
-          console.log("✅ Saved to Drive:", file.result);
-          return file.result;
-        }
-        catch (error) {
-          console.error("❌ Drive save failed:", error);
-          throw error;
-        }
-      }
-      // 🧩 Unified Save Function (Local + Drive + Firestore fallback)
-      async function savePetProfile(profile) {
-        if(isEditing) {
-          petProfiles[currentEditIndex] = profile;
-        }
-        else {
-          petProfiles.push(profile);
-        }
-        localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-        const isGoogleUser = auth.currentUser?.providerData?.some(
-          p => p.providerId === 'google.com'
-        );
-        if(isGoogleUser && gapi.client?.drive) {
-          try {
-            await saveProfileToDrive(profile);
-          }
-          catch (driveError) {
-            console.warn("⚠️ Drive backup failed. Falling back to Firestore.");
-            try {
-              await saveToFirestore(profile);
-            }
-            catch (firestoreError) {
-              console.error("❌ Firestore fallback also failed:", firestoreError);
-            }
-          }
-        }
-      }
-      // Delete function with Drive cleanup
-      async function deleteProfile(index) {
-        const profile = petProfiles[index];
-        // Try to delete from Drive if Google user is authenticated
-        if(auth.currentUser?.providerData?.some(p => p.providerId === 'google.com')) {
-          try {
-            const files = await gapi.client.drive.files.list({
-              q: `name contains '${profile.name}' and trashed=false`,
-              fields: "files(id,name)"
-            });
-            if(files.result.files.length > 0) {
-              await Promise.all(
-                files.result.files.map(file =>
-                  gapi.client.drive.files.update({
-                    fileId: file.id,
-                    resource: {
-                      trashed: true
-                    }
-                  })
-                )
-              );
-              console.log(`Moved ${files.result.files.length} files to Drive trash.`);
-            }
-          }
-          catch (error) {
-            console.error("❌ Drive delete failed:", error);
-          }
-        }
-        // Remove from local petProfiles and re-render
-        petProfiles.splice(index, 1);
-        localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-        renderProfiles();
-      }
+    }
+  }
+}
+
+// Delete function with Drive cleanup
+async function deleteProfile(index) {
+  const profile = petProfiles[index];
+  // Try to delete from Google Drive if applicable
+  const fileId = profile.driveFileId;
+  if (fileId) {
+    try {
+      await gapi.client.drive.files.delete({
+        fileId
+      });
+      console.log("Drive file deleted successfully");
+    } catch (driveError) {
+      console.error("Error deleting Drive file:", driveError);
+    }
+  }
+  petProfiles.splice(index, 1);
+  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  renderProfiles();
+}
+
+// Render the profiles on screen
+function renderProfiles() {
+  if (petProfiles.length === 0) {
+    petList.innerHTML = '<p>No pet profiles found. Add one!</p>';
+  } else {
+    petList.innerHTML = '';
+    petProfiles.forEach((profile, index) => {
+      const profileHTML = `
+        <div class="pet-profile">
+          <h3>${profile.name}</h3>
+          <p>${profile.breed}</p>
+          <button onclick="deleteProfile(${index})">Delete</button>
+        </div>
+      `;
+      petList.insertAdjacentHTML('beforeend', profileHTML);
+    });
+  }
+}
+
       // 🔄 UI UPDATES AND PROFILE RENDERING/FUNCTIONS
       renderProfiles();
       profileSection.classList.add("hidden");
