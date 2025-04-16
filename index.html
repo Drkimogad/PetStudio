@@ -24,7 +24,8 @@
                https://www.google.com;
                font-src https://fonts.gstatic.com;
                img-src 'self' https://*.googleusercontent.com;">   
-    <script src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script src="https://apis.google.com/js/api.js" onload="gapiLoaded()"defer></script>
+    <script src="https://accounts.google.com/gsi/client" onload="gisLoaded()"defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <meta property="og:url" content="https://your-petstudio-url.com">
