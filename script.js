@@ -117,11 +117,11 @@ async function checkUserAuth() {
     if (user) {
       handleAuthenticatedUser(user);
     } else {
-      showLoginScreen();
+      // Handle unauthenticated user
+      console.log("User not authenticated.");
     }
   } catch (error) {
-    console.error("Error checking auth:", error);
-    showAuthError('Authentication check failed');
+    console.error("Error checking user authentication:", error);
   }
 }
 
