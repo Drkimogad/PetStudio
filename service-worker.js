@@ -1,4 +1,4 @@
-const CACHE_NAME = 'PetStudio-cache-v6';
+const CACHE_NAME = 'PetStudio-cache-v1';
 const API_CACHE = 'api-cache-v1';
 const FONT_CACHE = 'fonts-cache-v1';
 const OFFLINE_URL = '/offline.html';
