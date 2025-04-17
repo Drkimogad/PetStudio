@@ -1094,4 +1094,4 @@ async function sendSubscriptionToServer(subscription) {
   if(petProfiles.length > 0) {
     renderProfiles();
   }
-}); // <-- Add this line to close the DOMContentLoaded listener
+});
