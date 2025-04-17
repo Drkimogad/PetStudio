@@ -40,11 +40,11 @@ window.onload = function() {
   // Load Google APIs dynamically
   const gapiScript = document.createElement('script');
   gapiScript.src = 'https://apis.google.com/js/api.js';
-  gapiScript.onload = gapiLoaded;
+  gapiScript.onload = () => { gapiLoaded = true; }; // changed
   document.head.appendChild(gapiScript);
   const gisScript = document.createElement('script');
   gisScript.src = 'https://accounts.google.com/gsi/client';
-  gisScript.onload = gisLoaded;
+  gisScript.onload = () => { gisLoaded = true; };  // changed
   document.head.appendChild(gisScript);
 };
 // Load Google API Dynamically Once
@@ -286,58 +286,43 @@ async function savePetProfile(profile) {
   }
 }
 // Delete function with Drive cleanup
-// Delete function with Drive cleanup
 async function deleteProfile(index) {
   const profile = petProfiles[index];
   // Confirm deletion
-  if(!confirm("Are you sure you want to delete this profile?")) return;
+  if (!confirm("Are you sure you want to delete this profile?")) return;
+  
   // Try to delete from Google Drive if applicable
   const fileId = profile.driveFileId;
-  if(fileId) {
+  if (fileId) {
     try {
-      await deleteProfileFromDrive(fileId); // Deletes associated Drive files (including images)
+      await deleteProfileFromDrive(fileId, profile.gallery); // Pass gallery here
       console.log("Drive files deleted successfully");
-    }
-    catch (driveError) {
+    } catch (driveError) {
       console.error("Error deleting Drive files:", driveError);
     }
   }
+
   // Now delete the profile from petProfiles array and update localStorage
   petProfiles.splice(index, 1);
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  // Re-render profiles after deletion
   renderProfiles();
 }
+
 // Helper function to delete pet images and profile file from Google Drive
-async function deleteProfileFromDrive(fileId) {
+async function deleteProfileFromDrive(fileId, gallery = []) {
   const driveApi = getDriveApi(); // Placeholder for actual Drive API call
-  // Assuming pet profile has a gallery of images
-  if(petProfiles[index].gallery.length > 0) {
-    // Delete each image from the gallery
-    for(let img of petProfiles[index].gallery) {
+
+  if (gallery.length > 0) {
+    for (let img of gallery) {
       await deleteImageFromDrive(img); // Assuming `img` contains the Drive fileId
     }
   }
-  // Now delete the profile file itself
+
   try {
     await driveApi.files.delete({ fileId });
     console.log('Profile file deleted from Google Drive');
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Error deleting profile from Google Drive:', error);
-  }
-}
-// Helper function to delete an image from Google Drive
-async function deleteImageFromDrive(imageUrl) {
-  const driveApi = getDriveApi(); // Placeholder for Drive API instance
-  try {
-    await driveApi.files.delete({
-      fileId: imageUrl, // Assuming the imageUrl contains the fileId
-    });
-    console.log('Image deleted from Google Drive');
-  }
-  catch (error) {
-    console.error('Error deleting image from Google Drive:', error);
   }
 }
 // 🔄 UI UPDATES
