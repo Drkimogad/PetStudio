@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', function() {
 // State Management
 let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 let isEditing = false;
