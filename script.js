@@ -1110,4 +1110,3 @@ function renderProfiles() {
   if(petProfiles.length > 0) {
     renderProfiles();
   }
-});
