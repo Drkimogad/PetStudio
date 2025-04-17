@@ -1,3 +1,7 @@
+// ====================
+// MAIN INITIALIZATION//
+document.addEventListener('DOMContentLoaded', function() {
+  initQRModal();
 // State Management
 let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 let isEditing = false;
@@ -10,10 +14,8 @@ const VALID_ORIGINS = [
 if(!VALID_ORIGINS.includes(window.location.origin)) {
   window.location.href = 'https://drkimogad.github.io/PetStudio';
 }
-// ====================
-// MAIN INITIALIZATION//
-document.addEventListener('DOMContentLoaded', function() {
-  initQRModal();
+
+
   // Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
