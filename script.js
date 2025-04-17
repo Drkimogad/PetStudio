@@ -110,7 +110,6 @@ document.addEventListener('DOMContentLoaded', main);
 // Auth check on load
 async function checkUserAuth() {
   try {
-    const user = await auth.currentUser;
     if (user) {
       handleAuthenticatedUser(user);
     } else {
