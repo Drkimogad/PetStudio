@@ -12,7 +12,7 @@ if(!VALID_ORIGINS.includes(window.location.origin)) {
 }
 // ====================
 // MAIN INITIALIZATION//
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function() => {
   initQRModal();
   // Firebase Configuration
   const firebaseConfig = {
