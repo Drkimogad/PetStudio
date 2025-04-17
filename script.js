@@ -1055,33 +1055,32 @@ function renderProfiles() {
     }
   }
   // Send to Vercel API
-  async function sendSubscriptionToServer(subscription) {
-    try {
-      const user = auth.currentUser;
-      if(!user) {
-        console.error('User not authenticated');
-        return;
-      }
-      const response = await fetch(`${VERCEL_API}/save-subscription`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await user.getIdToken()}`
-        },
-        body: JSON.stringify({
-          subscription,
-          userId: user.uid,
-          vapidPublicKey: VAPID_PUBLIC_KEY
-        })
-      });
-      if(!response.ok) throw new Error('Vercel API rejected subscription');
-      console.log('Subscription saved via Vercel API');
+async function sendSubscriptionToServer(subscription) {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      console.error('User not authenticated');
+      return;
     }
-    .catch (error) {
-      console.error('Subscription sync failed:', error));
-      throw error;
-    }
+    const response = await fetch(`${VERCEL_API}/save-subscription`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${await user.getIdToken()}`
+      },
+      body: JSON.stringify({
+        subscription,
+        userId: user.uid,
+        vapidPublicKey: VAPID_PUBLIC_KEY
+      })
+    });
+    if (!response.ok) throw new Error('Vercel API rejected subscription');
+    console.log('Subscription saved via Vercel API');
+  } catch (error) { // <-- Corrected "catch" block
+    console.error('Subscription sync failed:', error); // Fixed extra ')'
+    throw error;
   }
+}
   // Helper function for VAPID key conversion
   function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
