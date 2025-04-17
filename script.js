@@ -1,4 +1,3 @@
-document.addEventListener('DOMContentLoaded', function() {
 // State Management
 let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 let isEditing = false;
@@ -13,7 +12,7 @@ if(!VALID_ORIGINS.includes(window.location.origin)) {
 }
 // ====================
 // MAIN INITIALIZATION//
-document.addEventListener("DOMContentLoaded", function() => {
+document.addEventListener('DOMContentLoaded', function() {
   initQRModal();
   // Firebase Configuration
   const firebaseConfig = {
