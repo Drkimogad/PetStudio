@@ -1077,8 +1077,8 @@ function renderProfiles() {
       if(!response.ok) throw new Error('Vercel API rejected subscription');
       console.log('Subscription saved via Vercel API');
     }
-    catch (error) {
-      console.error('Subscription sync failed:', error);
+    .catch (error) {
+      console.error('Subscription sync failed:', error));
       throw error;
     }
   }
@@ -1095,3 +1095,4 @@ function renderProfiles() {
   if(petProfiles.length > 0) {
     renderProfiles();
   }
+}); // <-- Add this line to close the DOMContentLoaded listener
