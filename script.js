@@ -1,6 +1,3 @@
-// Global variables
-let auth = null;
-let provider = null;
 // State Management
 let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 let isEditing = false;
