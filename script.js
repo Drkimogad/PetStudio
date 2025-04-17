@@ -1077,7 +1077,7 @@ async function sendSubscriptionToServer(subscription) {
     if (!response.ok) throw new Error('Vercel API rejected subscription');
     console.log('Subscription saved via Vercel API');
   } catch (error) { // <-- Corrected "catch" block
-    console.error('Subscription sync failed:', error); // Fixed extra ')'
+    console.error('Subscription sync failed:', error)); // Fixed extra ')'
     throw error;
   }
 }
