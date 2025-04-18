@@ -310,8 +310,6 @@ async function deleteProfile(index) {
 
 // Helper function to delete pet images and profile file from Google Drive
 async function deleteProfileFromDrive(fileId, gallery = []) {
-  const driveApi = getDriveApi(); // Placeholder for actual Drive API call
-
   if (gallery.length > 0) {
     for (let img of gallery) {
       await deleteImageFromDrive(img); // Assuming `img` contains the Drive fileId
@@ -319,7 +317,7 @@ async function deleteProfileFromDrive(fileId, gallery = []) {
   }
 
   try {
-    await driveApi.files.delete({ fileId });
+    await gapi.client.drive.files.delete({ fileId });
     console.log('Profile file deleted from Google Drive');
   } catch (error) {
     console.error('Error deleting profile from Google Drive:', error);
