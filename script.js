@@ -444,8 +444,8 @@ function renderProfiles() {
   }
   // MOOD HISTORY FUNCTION
   function renderMoodHistory(profile) {
-    if(!profile.moodLog || profile.moodLog.length === 0) return "No mood logs yet";
-    return profile.moodLog
+    if(!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
+    return profile.moodHistory
       .slice(-7)
       .map(entry => `${entry.date}: ${getMoodEmoji(entry.mood)}`)
       .join('<br>');
