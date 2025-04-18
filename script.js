@@ -1095,3 +1095,4 @@ async function sendSubscriptionToServer(subscription) {
     renderProfiles();
   }
 });
+}); // ← Closes the .ready() handler
