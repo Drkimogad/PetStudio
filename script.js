@@ -1132,6 +1132,6 @@ const VALID_ORIGINS = [
   'https://drkimogad.github.io',
   'https://drkimogad.github.io/PetStudio'
 ];
-if(!VALID_ORIGINS.includes(window.location.origin)) {
+if(!VALID_ORIGINS.includes(window.location.origin) {
   window.location.href = 'https://drkimogad.github.io/PetStudio';
 }
