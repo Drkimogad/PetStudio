@@ -458,84 +458,116 @@ function renderProfiles() {
     profileSection.classList.remove("hidden");
     fullPageBanner.classList.add("hidden");
   }
-  // PRINT PROFILE FUNCTION
-  function printProfile(profile) {
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>${profile.name}'s Profile</title>
-            <style>
-                body { 
-                    font-family: Arial; 
-                    padding: 20px;
-                    -webkit-print-color-adjust: exact !important;
-                }
-                .print-header { 
-                    text-align: center; 
-                    margin-bottom: 20px; 
-                }
-                .print-gallery { 
-                    display: grid; 
-                    grid-template-columns: repeat(3, 1fr); 
-                    gap: 10px; 
-                    margin: 20px 0; 
-                }
-                .print-gallery img { 
-                    width: 100%; 
-                    height: 150px; 
-                    object-fit: cover; 
-                    opacity: 0; /* Initial hidden state */
-                }
-            </style>
-        </head>
-        <body>
-            <div class="print-header">
-                <h1>${profile.name}'s Profile</h1>
-                <p>Generated on ${new Date().toLocaleDateString()}</p>
-            </div>
-            <div class="print-details">
-                <p><strong>Breed:</strong> ${profile.breed}</p>
-                <p><strong>Date of Birth:</strong> ${profile.dob}</p>
-                <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
-            </div>
-            <h3>Gallery</h3>
-            <div class="print-gallery">
-                ${profile.gallery.map(img => `<img src="${img}" alt="Pet photo">`).join('')}
-            </div>
-            <script>
-                window.onload = function() {
-                    const images = Array.from(document.querySelectorAll('img'));
-                    let loadedCount = 0;
+// PRINT PROFILE FUNCTION (Refactored)
+function printProfile(profile) {
+  const printWindow = window.open('', '_blank');
+  const printDocument = printWindow.document;
 
-                    const checkAllLoaded = () => {
-                        if(++loadedCount === images.length) {
-                            images.forEach(img => img.style.opacity = '1');
-                            window.print();
-                        }
-                    };
+  // Create HTML structure
+  const html = printDocument.createElement('html');
+  const head = printDocument.createElement('head');
+  const title = printDocument.createElement('title');
+  title.textContent = `${profile.name}'s Profile`;
+  const style = printDocument.createElement('style');
+  style.textContent = `
+    body {
+      font-family: Arial;
+      padding: 20px;
+      -webkit-print-color-adjust: exact !important;
+    }
+    .print-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .print-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* More responsive gallery */
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .print-gallery img {
+      width: 100%;
+      height: auto; /* Maintain aspect ratio */
+      object-fit: cover;
+      opacity: 0; /* Initial hidden state */
+    }
+  `;
+  head.appendChild(title);
+  head.appendChild(style);
+  html.appendChild(head);
 
-                    images.forEach(img => {
-                        if(img.complete) {
-                            checkAllLoaded();
-                        } else {
-                            img.onload = checkAllLoaded;
-                            img.onerror = checkAllLoaded; // Handle broken images
-                        }
-                    });
+  const body = printDocument.createElement('body');
+  const headerDiv = printDocument.createElement('div');
+  headerDiv.classList.add('print-header');
+  const heading = printDocument.createElement('h1');
+  heading.textContent = `${profile.name}'s Profile`;
+  const dateParagraph = printDocument.createElement('p');
+  dateParagraph.textContent = `Generated on ${new Date().toLocaleDateString()}`;
+  headerDiv.appendChild(heading);
+  headerDiv.appendChild(dateParagraph);
+  body.appendChild(headerDiv);
 
-                    // Fallback if all images are already cached
-                    if(images.length === 0 || images.every(img => img.complete)) {
-                        window.print();
-                    }
-                };
-            </script>
-        </body>
-        </html>
-    `);
-    printWindow.document.close();
-  }
+  const detailsDiv = printDocument.createElement('div');
+  detailsDiv.classList.add('print-details');
+  const breedParagraph = printDocument.createElement('p');
+  breedParagraph.innerHTML = `<strong>Breed:</strong> ${profile.breed}`;
+  const dobParagraph = printDocument.createElement('p');
+  dobParagraph.innerHTML = `<strong>Date of Birth:</strong> ${profile.dob}`;
+  const birthdayParagraph = printDocument.createElement('p');
+  birthdayParagraph.innerHTML = `<strong>Next Birthday:</strong> ${profile.birthday}`;
+  detailsDiv.appendChild(breedParagraph);
+  detailsDiv.appendChild(dobParagraph);
+  detailsDiv.appendChild(birthdayParagraph);
+  body.appendChild(detailsDiv);
+
+  const galleryHeading = printDocument.createElement('h3');
+  galleryHeading.textContent = 'Gallery';
+  body.appendChild(galleryHeading);
+
+  const galleryDiv = printDocument.createElement('div');
+  galleryDiv.classList.add('print-gallery');
+  profile.gallery.forEach(imgSrc => {
+    const img = printDocument.createElement('img');
+    img.src = imgSrc;
+    img.alt = 'Pet photo';
+    galleryDiv.appendChild(img);
+  });
+  body.appendChild(galleryDiv);
+
+  // Image loading script (moved to be appended after gallery)
+  const script = printDocument.createElement('script');
+  script.textContent = `
+    window.onload = function() {
+      const images = Array.from(document.querySelectorAll('.print-gallery img'));
+      let loadedCount = 0;
+
+      const checkAllLoaded = () => {
+        if(++loadedCount === images.length) {
+          images.forEach(img => img.style.opacity = '1');
+          window.print();
+        }
+      };
+
+      images.forEach(img => {
+        if(img.complete) {
+          checkAllLoaded();
+        } else {
+          img.onload = checkAllLoaded;
+          img.onerror = checkAllLoaded;
+        }
+      });
+
+      if(images.length === 0 || images.every(img => img.complete)) {
+        window.print();
+      }
+    };
+  `;
+  body.appendChild(script);
+
+  html.appendChild(body);
+  printDocument.appendChild(html);
+  printDocument.close();
+}
   // SHARE PET CARD FUNCTION//
   async function sharePetCard(pet) {
     // 1. Generate Shareable Link
