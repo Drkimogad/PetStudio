@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const profileForm = document.getElementById("profileForm");
   const googleSignInBtn = document.createElement("button");
   const urlParams = new URLSearchParams(window.location.search);
+  
   if(urlParams.has('profile')) {
     const profileIndex = parseInt(urlParams.get('profile'));
     const profile = petProfiles[profileIndex];
@@ -1116,14 +1117,16 @@ async function sendSubscriptionToServer(subscription) {
     const rawData = window.atob(base64);
     return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
   }
-  // Initialize
-  if(petProfiles.length > 0) {
-    renderProfiles();
-  }
 // State Management
 let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 let isEditing = false;
 let currentEditIndex = null;
+
+  // Initialize
+  if(petProfiles.length > 0) {
+    renderProfiles();
+  }
+
 // Runtime Origin Verification
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
