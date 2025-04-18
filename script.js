@@ -1055,7 +1055,6 @@ if ('serviceWorker' in navigator) {
                     console.log('[Service Worker] Controller changed, reloading page for new version.');
                     window.location.reload();
                 });
-            })
             .catch((error) => {
                 console.error('Error registering service worker:', error);
             });
