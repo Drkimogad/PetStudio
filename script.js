@@ -1016,41 +1016,41 @@ function printProfile(profile) {
     }
   }
 // SERVICE WORKER REGISTRATION AND UPDATE CHECK
+// script.js (or your main JavaScript file)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
+        // Register Service Worker
         navigator.serviceWorker.register('./service-worker.js', {
             scope: '/PetStudio/'
         })
         .then((registration) => {
-            console.log('Service Worker registered with scope:', registration.scope);
+            console.log('Service Worker registered:', registration.scope);
 
-            // Check for updates on page load
+            // Check for updates immediately
             registration.update();
 
             // Listen for updates
             registration.addEventListener('updatefound', () => {
-                const installingWorker = registration.installing;
-                console.log('[Service Worker] Update found, installing...');
+                const newWorker = registration.installing;
+                console.log('New service worker found:', newWorker);
 
-                installingWorker.addEventListener('statechange', () => {
-                    if (installingWorker.state === 'installed') {
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed') {
                         if (navigator.serviceWorker.controller) {
-                            // New version available
-                            if (confirm('A new version is available. Update now?')) {
-                                installingWorker.postMessage({ action: 'skipWaiting' });
+                            // New update available
+                            if (confirm('New version available! Reload to update?')) {
+                                newWorker.postMessage({ action: 'skipWaiting' });
                             }
-                        } else {
-                            console.log('Content now available offline!');
                         }
                     }
                 });
             });
         })
-        .catch((error) => { // <-- Moved .catch() to chain properly
-            console.error('Registration failed:', error);
+        .catch((error) => {
+            console.error('Service Worker registration failed:', error);
         });
 
-        // Controller change listener (moved inside load handler)
+        // Handle controller changes
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             console.log('Controller changed - reloading');
             window.location.reload();
