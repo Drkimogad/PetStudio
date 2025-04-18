@@ -1013,7 +1013,9 @@ if ('serviceWorker' in navigator) {
                         }
                     });
                 });
-
+            });
+         }); 
+      }
                 // Listen for controller change (new SW taking over)
                 navigator.serviceWorker.addEventListener('controllerchange', () => {
                     console.log('[Service Worker] Controller changed, reloading page for new version.');
