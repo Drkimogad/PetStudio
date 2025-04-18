@@ -1,15 +1,3 @@
-// State Management
-let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-let isEditing = false;
-let currentEditIndex = null;
-// Runtime Origin Verification
-const VALID_ORIGINS = [
-  'https://drkimogad.github.io',
-  'https://drkimogad.github.io/PetStudio'
-];
-if(!VALID_ORIGINS.includes(window.location.origin)) {
-  window.location.href = 'https://drkimogad.github.io/PetStudio';
-}
 // ====================
 // MAIN INITIALIZATION//
 document.addEventListener('DOMContentLoaded', function() {
@@ -993,41 +981,50 @@ function renderProfiles() {
       });
     }
   }
-  // SERVICE WORKER REGISTRATION //
-  if('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js', {
-        scope: '/PetStudio/'
-      })
-      .then(registration => {
-        console.log('Service Worker registered:', registration.scope);
-        // Clear old cache versions
-        caches.keys()
-          .then(cacheNames => {
-            cacheNames.forEach(cacheName => {
-              if(cacheName !== 'pet-studio-cache-v1') {
-                caches.delete(cacheName);
-              }
+// SERVICE WORKER REGISTRATION AND UPDATE CHECK
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js', {
+            scope: '/PetStudio/'
+        })
+            .then((registration) => {
+                console.log('Service Worker registered with scope:', registration.scope);
+
+                // Check for service worker updates on page load
+                registration.update();
+
+                // Listen for when a new service worker is available
+                registration.addEventListener('updatefound', () => {
+                    const installingWorker = registration.installing;
+                    console.log('[Service Worker] Update found, installing...');
+
+                    installingWorker.addEventListener('statechange', () => {
+                        if (installingWorker.state === 'installed') {
+                            if (navigator.serviceWorker.controller) {
+                                // New version available, prompt user to update
+                                if (confirm('A new version of PetStudio is available. Update now?')) {
+                                    installingWorker.postMessage({ action: 'skipWaiting' });
+                                }
+                            } else {
+                                console.log('[Service Worker] Content is now available offline!');
+                            }
+                        } else if (installingWorker.state === 'installing') {
+                            console.log('[Service Worker] Installing new version...');
+                        }
+                    });
+                });
+
+                // Listen for controller change (new SW taking over)
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    console.log('[Service Worker] Controller changed, reloading page for new version.');
+                    window.location.reload();
+                });
+            })
+            .catch((error) => {
+                console.error('Error registering service worker:', error);
             });
-          });
-        // Wait for service worker to be ready
-        registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
-          newWorker.addEventListener('statechange', () => {
-            if(newWorker.state === 'activated') {
-              subscribeUserToPushNotifications(registration);
-            }
-          });
-        });
-      })
-      .catch(error => { // 🟢 Corrected line
-        console.error('Registration failed:', error);
-      }); // ✅ No extra parenthesis
-    // Controller change handler
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      console.log('Controller changed, reloading...');
-      window.location.reload();
     });
-  }
+}
   // PUSH NOTIFICATIONS LOGIC
   // Global VAPID Configuration
   const VAPID_PUBLIC_KEY = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
@@ -1091,3 +1088,17 @@ async function sendSubscriptionToServer(subscription) {
   if(petProfiles.length > 0) {
     renderProfiles();
   }
+});
+
+// State Management
+let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+let isEditing = false;
+let currentEditIndex = null;
+// Runtime Origin Verification
+const VALID_ORIGINS = [
+  'https://drkimogad.github.io',
+  'https://drkimogad.github.io/PetStudio'
+];
+if(!VALID_ORIGINS.includes(window.location.origin)) {
+  window.location.href = 'https://drkimogad.github.io/PetStudio';
+}
