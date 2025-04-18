@@ -398,7 +398,9 @@ function renderProfiles() {
         });
       petList.appendChild(petCard);
     });
-  }
+   } // <-- Added closing brace for the else block
+ }
+
   // WHEN CREATING NEW PROFILES
   function createNewProfile() {
     const timestamp = Date.now();
