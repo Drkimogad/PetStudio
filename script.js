@@ -1126,12 +1126,13 @@ let currentEditIndex = null;
   if(petProfiles.length > 0) {
     renderProfiles();
   }
-
-// Runtime Origin Verification
+// VALID_ORIGINS array declaration
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
   'https://drkimogad.github.io/PetStudio'
-];
-if(!VALID_ORIGINS.includes(window.location.origin) {
+]; // <-- This semicolon is correct
+
+// Runtime origin check
+if (!VALID_ORIGINS.includes(window.location.origin)) { // ✅ Fixed line
   window.location.href = 'https://drkimogad.github.io/PetStudio';
 }
