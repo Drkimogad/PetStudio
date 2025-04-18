@@ -2,6 +2,31 @@
 // MAIN INITIALIZATION//
 document.addEventListener('DOMContentLoaded', function() {
   initQRModal();
+    // DOM ELEMENTS
+  const authContainer = document.getElementById("authContainer");
+  const signupPage = document.getElementById("signupPage");
+  const loginPage = document.getElementById("loginPage");
+  const dashboard = document.getElementById("dashboard");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const signupForm = document.getElementById("signupForm");
+  const loginForm = document.getElementById("loginForm");
+  const switchToLogin = document.getElementById("switchToLogin");
+  const switchToSignup = document.getElementById("switchToSignup");
+  const addPetProfileBtn = document.getElementById("addPetProfileBtn");
+  const profileSection = document.getElementById("profileSection");
+  const petList = document.getElementById("petList");
+  const fullPageBanner = document.getElementById("fullPageBanner");
+  const profileForm = document.getElementById("profileForm");
+  const googleSignInBtn = document.createElement("button");
+  const urlParams = new URLSearchParams(window.location.search);
+  if(urlParams.has('profile')) {
+    const profileIndex = parseInt(urlParams.get('profile'));
+    const profile = petProfiles[profileIndex];
+    if(profile) {
+      printProfile(profile);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }
   // Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
@@ -813,31 +838,6 @@ function printProfile(profile) {
     authContainer.classList.add("hidden"); // Hide auth container
     window.scrollTo(0, 0); // Optional: Scroll to the top of the page
   });
-  // DOM ELEMENTS
-  const authContainer = document.getElementById("authContainer");
-  const signupPage = document.getElementById("signupPage");
-  const loginPage = document.getElementById("loginPage");
-  const dashboard = document.getElementById("dashboard");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const signupForm = document.getElementById("signupForm");
-  const loginForm = document.getElementById("loginForm");
-  const switchToLogin = document.getElementById("switchToLogin");
-  const switchToSignup = document.getElementById("switchToSignup");
-  const addPetProfileBtn = document.getElementById("addPetProfileBtn");
-  const profileSection = document.getElementById("profileSection");
-  const petList = document.getElementById("petList");
-  const fullPageBanner = document.getElementById("fullPageBanner");
-  const profileForm = document.getElementById("profileForm");
-  const googleSignInBtn = document.createElement("button");
-  const urlParams = new URLSearchParams(window.location.search);
-  if(urlParams.has('profile')) {
-    const profileIndex = parseInt(urlParams.get('profile'));
-    const profile = petProfiles[profileIndex];
-    if(profile) {
-      printProfile(profile);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }
   // AUTH FORM SWITCHING
   function toggleForms(showLogin) {
     const loginPage = document.getElementById("loginPage");
@@ -1021,43 +1021,40 @@ if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./service-worker.js', {
             scope: '/PetStudio/'
         })
-            .then((registration) => {
-                console.log('Service Worker registered with scope:', registration.scope);
+        .then((registration) => {
+            console.log('Service Worker registered with scope:', registration.scope);
 
-                // Check for service worker updates on page load
-                registration.update();
+            // Check for updates on page load
+            registration.update();
 
-                // Listen for when a new service worker is available
-                registration.addEventListener('updatefound', () => {
-                    const installingWorker = registration.installing;
-                    console.log('[Service Worker] Update found, installing...');
+            // Listen for updates
+            registration.addEventListener('updatefound', () => {
+                const installingWorker = registration.installing;
+                console.log('[Service Worker] Update found, installing...');
 
-                    installingWorker.addEventListener('statechange', () => {
-                        if (installingWorker.state === 'installed') {
-                            if (navigator.serviceWorker.controller) {
-                                // New version available, prompt user to update
-                                if (confirm('A new version of PetStudio is available. Update now?')) {
-                                    installingWorker.postMessage({ action: 'skipWaiting' });
-                                }
-                            } else {
-                                console.log('[Service Worker] Content is now available offline!');
+                installingWorker.addEventListener('statechange', () => {
+                    if (installingWorker.state === 'installed') {
+                        if (navigator.serviceWorker.controller) {
+                            // New version available
+                            if (confirm('A new version is available. Update now?')) {
+                                installingWorker.postMessage({ action: 'skipWaiting' });
                             }
-                        } else if (installingWorker.state === 'installing') {
-                            console.log('[Service Worker] Installing new version...');
+                        } else {
+                            console.log('Content now available offline!');
                         }
-                    });
+                    }
                 });
             });
-         }); 
-      }
-                // Listen for controller change (new SW taking over)
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    console.log('[Service Worker] Controller changed, reloading page for new version.');
-                    window.location.reload();
-                });
-            .catch((error) => {
-                console.error('Error registering service worker:', error);
-            });
+        })
+        .catch((error) => { // <-- Moved .catch() to chain properly
+            console.error('Registration failed:', error);
+        });
+
+        // Controller change listener (moved inside load handler)
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('Controller changed - reloading');
+            window.location.reload();
+        });
     });
 }
   // PUSH NOTIFICATIONS LOGIC
