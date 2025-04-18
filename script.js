@@ -588,7 +588,6 @@ function renderProfiles() {
       window.open(shareUrl, '_blank');
     }
   }
-  // GENERATE QR CODE FUNCTION //
   // AGE CALCULATION FUNCTION
   function calculateAge(dobString) {
     try {
@@ -708,8 +707,8 @@ function renderProfiles() {
     const today = new Date()
       .toISOString()
       .split('T')[0];
-    if(!petProfiles[profileIndex].moodLog) petProfiles[profileIndex].moodLog = [];
-    petProfiles[profileIndex].moodLog.push({
+    if(!petProfiles[profileIndex].moodHistory) petProfiles[profileIndex].moodHistory = [];
+    petProfiles[profileIndex].moodHistory.push({
       date: today,
       mood: mood
     });
@@ -770,7 +769,7 @@ function renderProfiles() {
       dob: petDob,
       birthday: birthday,
       gallery: galleryFiles.map(file => URL.createObjectURL(file)),
-      moodLog: [],
+      moodHistory: [],
       coverPhotoIndex: 0
     };
     if(isEditing) {
