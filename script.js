@@ -35,9 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
   provider = new firebase.auth.GoogleAuthProvider();
   provider.addScope('https://www.googleapis.com/auth/drive.file');
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-    
+  } // Add this closing brace
   initQRModal();
-  document.addEventListener('DOMContentLoaded', loadGoogleAPIs); // load gapi from auth.init.js
+  loadGoogleAPIs();
  // =====================
   // DOM ELEMENT SELECTORS
   // =====================
@@ -95,12 +95,9 @@ document.addEventListener('DOMContentLoaded', function() {
     DOM.switchToLogin.addEventListener('click', () => {
       DOM.signupPage.classList.add('hidden');
       DOM.loginPage.classList.remove('hidden');
-    });
-  } // <-- Closing brace for event listeners check
     DOM.switchToSignup.addEventListener('click', () => {
       DOM.loginPage.classList.add('hidden');
       DOM.signupPage.classList.remove('hidden');
-    });
   }
 
   // ======================
