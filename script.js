@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
       DOM.signupPage.classList.add('hidden');
       DOM.loginPage.classList.remove('hidden');
     });
-
+  } // <-- Closing brace for event listeners check
     DOM.switchToSignup.addEventListener('click', () => {
       DOM.loginPage.classList.add('hidden');
       DOM.signupPage.classList.remove('hidden');
@@ -111,7 +111,8 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     DOM.petList?.classList.add('empty-state');
   }
-}
+});
+
 // ======================
 // GOOGLE API INIT FLOW //
 // ======================
