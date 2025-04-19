@@ -858,3 +858,11 @@ form {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+# ERROR STATES     
+.hidden { display: none; }
+.empty-state::after {
+  content: "No pets found";
+  display: block;
+  text-align: center;
+  color: #666;
+}
