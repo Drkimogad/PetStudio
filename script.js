@@ -111,8 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     DOM.petList?.classList.add('empty-state');
   }
-});
-
+}
 // ======================
 // GOOGLE API INIT FLOW //
 // ======================
