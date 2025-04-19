@@ -111,7 +111,6 @@ if(DOM.switchToLogin && DOM.switchToSignup) {
   } else {
     DOM.petList?.classList.add('empty-state');
   }
-});
 
 // ======================
 // GOOGLE API INIT FLOW //
