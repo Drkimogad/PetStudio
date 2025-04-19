@@ -64,7 +64,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if(profile) {
       printProfile(profile);
       window.history.replaceState({}, document.title, window.location.pathname);
-  }
+    } // Added inner if closure
+  }  // OUTER IF CLOSURE
 });
 
 // ======================
