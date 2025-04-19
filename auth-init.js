@@ -1,10 +1,15 @@
 // auth-init.js
-function onGapiLoad() { 
-  window.gapiLoaded = true;
-  console.log("Google API client loaded");
+function loadGoogleAPIs() {
+  const gapiScript = document.createElement('script');
+  gapiScript.src = 'https://apis.google.com/js/api.js';
+  gapiScript.onload = () => window.gapiLoaded = true;
+  document.head.appendChild(gapiScript);
+
+  const gisScript = document.createElement('script');
+  gisScript.src = 'https://accounts.google.com/gsi/client';
+  gisScript.onload = () => window.gisLoaded = true;
+  document.head.appendChild(gisScript);
 }
 
-function onGisLoad() { 
-  window.gisLoaded = true;
-  console.log("Google Identity Services loaded");
-}
+// Initialize after Firebase
+document.addEventListener('DOMContentLoaded', loadGoogleAPIs);
