@@ -6,41 +6,53 @@
     <meta property="og:title" content="PetStudio - Pet Profile Manager">
     <meta property="og:description" content="Create and share your pet's profile with milestones and birthday reminders">
     <meta property="og:type" content="website">
-    <meta http-equiv="Content-Security-Policy"
-   content="
-    default-src 'self';
-    script-src 'self'
-               https://www.gstatic.com
-               https://cdn.jsdelivr.net
-               https://cdnjs.cloudflare.com
-               https://apis.google.com
-               https://accounts.google.com
-               https://www.googleapis.com
-               'unsafe-eval' 'unsafe-inline';
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    connect-src 'self'
-                 https://www.googleapis.com
-                 https://firestore.googleapis.com
-                 https://*.googleapis.com
-                 https://identitytoolkit.googleapis.com
-                 https://www.gstatic.com;
-    frame-src https://accounts.google.com https://www.google.com;
-    font-src https://fonts.gstatic.com;
-    img-src 'self' https://*.googleusercontent.com;">
-      <script>
-          function onGapiLoad() {
-            window.gapiInitialized = true;
-              }
-         function onGisLoad() {
-           window.gisInitialized = true;
-             }
-     </script>
-    <script src="https://apis.google.com/js/api.js" onload="onGapiLoad()"></script>
-    <script src="https://accounts.google.com/gsi/client" onload="onGisLoad()"></script>
+    
+    <!-- Enhanced CSP with Nonce -->
+    <meta http-equiv="Content-Security-Policy" 
+      content="
+        default-src 'self';
+        script-src 'self'
+                   https://www.gstatic.com
+                   https://cdn.jsdelivr.net
+                   https://cdnjs.cloudflare.com
+                   https://apis.google.com
+                   https://accounts.google.com
+                   https://www.googleapis.com
+                   'nonce-YourSecureNonce'
+                   'unsafe-eval';
+        style-src 'self' 'nonce-YourSecureNonce' https://fonts.googleapis.com;
+        connect-src 'self'
+                   https://www.googleapis.com
+                   https://firestore.googleapis.com
+                   https://*.googleapis.com
+                   https://identitytoolkit.googleapis.com
+                   https://www.gstatic.com;
+        frame-src https://accounts.google.com https://www.google.com;
+        font-src https://fonts.gstatic.com;
+        img-src 'self' https://*.googleusercontent.com;">
+
+    <!-- Firebase Core SDKs (MUST COME FIRST) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <!-- Google API Loaders with Nonce -->
+    <script nonce="YourSecureNonce">
+        function onGapiLoad() { window.gapiLoaded = true; }
+        function onGisLoad() { window.gisLoaded = true; }
+    </script>
+    <script src="https://apis.google.com/js/api.js" onload="onGapiLoad()" async defer></script>
+    <script src="https://accounts.google.com/gsi/client" onload="onGisLoad()" async defer></script>
+
+    <!-- Third-Party Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <!-- Metadata -->
     <meta property="og:url" content="https://your-petstudio-url.com">
     <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- Local Resources -->
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./styles.css">
     <link rel="manifest" href="./manifest.json">
@@ -165,14 +177,7 @@
     <footer>
         <p>&copy; 2024 PetStudio. All rights reserved.</p>
     </footer>
-
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
     <script src="script.js"></script>
-
     <!-- In index.html QR Modal (hidden by default -->
 <div id="qr-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000;">
   <div style="background:white; width:400px; margin:50px auto; padding:20px; border-radius:10px; text-align:center;">
