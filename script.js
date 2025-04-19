@@ -1,6 +1,26 @@
 // ====================
-// MAIN INITIALIZATION//
+// MAIN INITIALIZATION //
+// ====================
 document.addEventListener('DOMContentLoaded', function() {
+  // Initialize Firebase FIRST
+  // Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+    authDomain: "drkimogad.github.io",
+    projectId: "swiftreach2025",
+    storageBucket: "swiftreach2025.appspot.com",
+    messagingSenderId: "540185558422",
+    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
+    clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com" // ✅
+  };
+  const app = firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth(app); // Now globally accessible
+  
+  // Initialize provider once
+  provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('https://www.googleapis.com/auth/drive.file');
+  provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+  // Proceed with DOM setup
   initQRModal();
     // DOM ELEMENTS
   const authContainer = document.getElementById("authContainer");
@@ -28,125 +48,102 @@ document.addEventListener('DOMContentLoaded', function() {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }
-  // Firebase Configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-    authDomain: "drkimogad.github.io",
-    projectId: "swiftreach2025",
-    storageBucket: "swiftreach2025.appspot.com",
-    messagingSenderId: "540185558422",
-    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
-    clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com" // ✅
-  };
-  // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth(app);
-  // Global Google Auth Provider configuration
-  const firebaseProvider = new firebase.auth.GoogleAuthProvider();
-  firebaseProvider.addScope('https://www.googleapis.com/auth/drive.file'); // Add Drive API scopes
-  firebaseProvider.addScope('https://www.googleapis.com/auth/userinfo.email');
 });
-// Google API Initialization
-let gapiLoaded = false;
-let gisLoaded = false;
-// Load Google APIs dynamically
-window.onload = function() {
-  // Load Google APIs dynamically
-  const gapiScript = document.createElement('script');
-  gapiScript.src = 'https://apis.google.com/js/api.js';
-  gapiScript.onload = () => { gapiLoaded = true; }; // changed
-  document.head.appendChild(gapiScript);
-  const gisScript = document.createElement('script');
-  gisScript.src = 'https://accounts.google.com/gsi/client';
-  gisScript.onload = () => { gisLoaded = true; };  // changed
-  document.head.appendChild(gisScript);
-};
-// Load Google API Dynamically Once
-function loadGAPI() {
+
+// ======================
+// GOOGLE API INIT FLOW //
+// ======================
+async function initializeGoogleAPI() {
   return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js';
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      window.gapiReady = true;
-      resolve();
-    };
-    script.onerror = reject;
-    document.head.appendChild(script);
+    gapi.load('client:auth2', {
+      callback: () => resolve(),
+      onerror: reject
+    });
   });
 }
-// Main Google API Init Function
+
+// ====================
+// CORE FUNCTIONALITY //
+// ====================
 async function main() {
   try {
     await loadGAPI();
     await initializeGoogleAPI();
+    
+    // Unified gapi client init
     await gapi.client.init({
-      authDomain: 'drkimogad.github.io',
-      redirectUri: window.location.origin + '/PetStudio/__/auth/handler',
       apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
       clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
       discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
       scope: 'https://www.googleapis.com/auth/drive.file'
     });
+
     console.log("✅ Google API client initialized");
-    // Proceed with Drive setup and render
-    try {
-      await initializeDriveAPIForGoogleUsers();
-    }
-    catch (error) {
-      console.log("Drive init skipped:", error);
-    }
-    if(petProfiles.length > 0) {
+    
+    // Safety checks
+    if(window.petProfiles?.length > 0) {
       renderProfiles();
+    } else {
+      petList.innerHTML = ''; // Only if petList exists
     }
-    else {
-      petList.innerHTML = '';
-    }
-  }
-  catch (error) {
+  } catch (error) {
     console.error("❌ main() failed:", error);
-    showErrorToUser("Google API initialization failed");
+    showErrorToUser(`Initialization error: ${error.message}`);
   }
 }
-// Initialize Google API on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', main);
-// Auth check on load
-async function checkUserAuth() {
+
+// ================
+// ERROR HANDLING //
+// ================
+function showErrorToUser(message) {
   try {
-    if(user) {
-      handleAuthenticatedUser(user);
+    const errorDiv = document.getElementById('error-message');
+    if(errorDiv) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    } else {
+      alert(message); // Fallback
     }
-    else {
-      // Handle unauthenticated user
-      console.log("User not authenticated.");
-    }
-  }
-  catch (error) {
-    console.error("Error checking user authentication:", error);
+  } catch (fallbackError) {
+    alert(message); // Ultimate fallback
   }
 }
-// Token expiration handler
+
+// =====================
+// AUTHENTICATION FLOW //
+// =====================
 async function refreshDriveTokenIfNeeded() {
   try {
-    const authResponse = gapi.auth2.getAuthInstance()
-      .currentUser.get()
-      .getAuthResponse();
-    const expiresAt = authResponse.expires_at;
-    const currentTime = new Date()
-      .getTime();
-    if(expiresAt <= currentTime) {
+    if(!auth?.currentUser) throw new Error("No authenticated user");
+    
+    const authResponse = await auth.currentUser.getIdTokenResult();
+    const expiration = new Date(authResponse.expirationTime);
+    
+    if(expiration <= new Date()) {
       console.log("Token expired, requesting re-authentication");
-      signInWithRedirect(auth, provider);
+      await signInWithRedirect(auth, provider);
     }
-    else {
-      console.log("Token is still valid");
-    }
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Token refresh error:", error);
-    showAuthError('Failed to refresh token');
+    showErrorToUser('Session expired - please re-login');
   }
+}
+
+// ======================
+// SCRIPT LOADING FIXES //
+// ======================
+function loadGAPI() {
+  return new Promise((resolve, reject) => {
+    if(window.gapi) return resolve();
+    
+    const script = document.createElement('script');
+    script.src = 'https://apis.google.com/js/api.js';
+    script.async = true;
+    script.defer = true;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
 }
 // Dynamic Google Sign-In button//
 // Firebase Google sign-in provider setup (already declared earlier)
