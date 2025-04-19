@@ -27,7 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
     storageBucket: "swiftreach2025.appspot.com",
     messagingSenderId: "540185558422",
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
-    clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com" // ✅
+    clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com", // ✅
+    authDomain: 'swiftreach2025.firebaseapp.com' // Must match Firebase settings
   };
   // Changed initialization pattern
   if (!auth) { // Safety check
@@ -38,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
   // Proceed with DOM setup
   initQRModal();
+  document.addEventListener('DOMContentLoaded', loadGoogleAPIs); // load gapi from auth.init.js
     // DOM ELEMENTS
   const authContainer = document.getElementById("authContainer");
   const signupPage = document.getElementById("signupPage");
@@ -62,7 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if(profile) {
       printProfile(profile);
       window.history.replaceState({}, document.title, window.location.pathname);
-    }
   }
 });
 
