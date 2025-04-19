@@ -88,17 +88,20 @@ document.addEventListener('DOMContentLoaded', function() {
       showErrorToUser('Invalid profile URL');
     }
   }
-  // ======================
-  // UI EVENT LISTENERS
-  // ======================
-  if(DOM.switchToLogin && DOM.switchToSignup) {
-    DOM.switchToLogin.addEventListener('click', () => {
-      DOM.signupPage.classList.add('hidden');
-      DOM.loginPage.classList.remove('hidden');
-    DOM.switchToSignup.addEventListener('click', () => {
-      DOM.loginPage.classList.add('hidden');
-      DOM.signupPage.classList.remove('hidden');
-  }
+// ======================
+// UI EVENT LISTENERS
+// ======================
+if(DOM.switchToLogin && DOM.switchToSignup) {
+  DOM.switchToLogin.addEventListener('click', () => {
+    DOM.signupPage.classList.add('hidden');
+    DOM.loginPage.classList.remove('hidden');
+  }); // Added missing closure
+
+  DOM.switchToSignup.addEventListener('click', () => {
+    DOM.loginPage.classList.add('hidden');
+    DOM.signupPage.classList.remove('hidden');
+  }); // Added missing closure
+} // Proper if-block closure
 
   // ======================
   // PET PROFILE INIT
