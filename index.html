@@ -11,7 +11,6 @@
 <meta http-equiv="Content-Security-Policy"
   content="default-src 'self';
     script-src 'self'
-               'sha256-5x4L3Q3wZfMtTkHq2vmELkI0V8Tpa/31gIjq6OZJQk4='
                https://www.gstatic.com
                https://cdn.jsdelivr.net
                https://cdnjs.cloudflare.com
@@ -30,19 +29,17 @@
     font-src https://fonts.gstatic.com;
     img-src 'self' https://*.googleusercontent.com;">
 
-    <!-- Firebase Core SDKs (MUST COME FIRST) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<!-- Firebase Core SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-    <!-- Google API Loaders with Nonce -->
-    <script nonce="YourSecureNonce">
-        function onGapiLoad() { window.gapiLoaded = true; }
-        function onGisLoad() { window.gisLoaded = true; }
-    </script>
-    <script src="https://apis.google.com/js/api.js" onload="onGapiLoad()" async defer></script>
-    <script src="https://accounts.google.com/gsi/client" onload="onGisLoad()" async defer></script>
+<!-- Your External Auth Initialization -->
+<script src="/auth-init.js"></script>
 
+<!-- Google API Loaders -->
+<script src="https://apis.google.com/js/api.js" onload="onGapiLoad()" async defer></script>
+<script src="https://accounts.google.com/gsi/client" onload="onGisLoad()" async defer></script>
     <!-- Third-Party Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
