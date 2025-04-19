@@ -12,4 +12,3 @@ function loadGoogleAPIs() {
 }
 
 // Initialize after Firebase
-document.addEventListener('DOMContentLoaded', loadGoogleAPIs);
