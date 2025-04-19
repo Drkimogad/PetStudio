@@ -13,13 +13,11 @@ const VALID_ORIGINS = [
 if (!VALID_ORIGINS.includes(window.location.origin)) {
   window.location.href = 'https://drkimogad.github.io/PetStudio';
 }
-
 // ====================
 // MAIN INITIALIZATION //
 // ====================
 document.addEventListener('DOMContentLoaded', function() {
   // Initialize Firebase FIRST
-  // Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
     authDomain: "drkimogad.github.io",
@@ -37,35 +35,82 @@ document.addEventListener('DOMContentLoaded', function() {
   provider = new firebase.auth.GoogleAuthProvider();
   provider.addScope('https://www.googleapis.com/auth/drive.file');
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-  // Proceed with DOM setup
+    
   initQRModal();
   document.addEventListener('DOMContentLoaded', loadGoogleAPIs); // load gapi from auth.init.js
-    // DOM ELEMENTS
-  const authContainer = document.getElementById("authContainer");
-  const signupPage = document.getElementById("signupPage");
-  const loginPage = document.getElementById("loginPage");
-  const dashboard = document.getElementById("dashboard");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const signupForm = document.getElementById("signupForm");
-  const loginForm = document.getElementById("loginForm");
-  const switchToLogin = document.getElementById("switchToLogin");
-  const switchToSignup = document.getElementById("switchToSignup");
-  const addPetProfileBtn = document.getElementById("addPetProfileBtn");
-  const profileSection = document.getElementById("profileSection");
-  const petList = document.getElementById("petList");
-  const fullPageBanner = document.getElementById("fullPageBanner");
-  const profileForm = document.getElementById("profileForm");
+ // =====================
+  // DOM ELEMENT SELECTORS
+  // =====================
+  const DOM = {
+    authContainer: document.getElementById("authContainer"),
+    signupPage: document.getElementById("signupPage"),
+    loginPage: document.getElementById("loginPage"),
+    dashboard: document.getElementById("dashboard"),
+    logoutBtn: document.getElementById("logoutBtn"),
+    signupForm: document.getElementById("signupForm"),
+    loginForm: document.getElementById("loginForm"),
+    switchToLogin: document.getElementById("switchToLogin"),
+    switchToSignup: document.getElementById("switchToSignup"),
+    addPetProfileBtn: document.getElementById("addPetProfileBtn"),
+    profileSection: document.getElementById("profileSection"),
+    petList: document.getElementById("petList"),
+    fullPageBanner: document.getElementById("fullPageBanner"),
+    profileForm: document.getElementById("profileForm")
+  };
+
+  // ===================
+  // ELEMENT VALIDATION
+  // ===================
+  if (!DOM.authContainer) {
+    console.error('Critical Error: Auth container not found!');
+    return;
+  }
+
+  // Create Google Sign-In button
   const googleSignInBtn = document.createElement("button");
-  const urlParams = new URLSearchParams(window.location.search);
-  
+  googleSignInBtn.className = "google-signin-btn";
+  DOM.authContainer.appendChild(googleSignInBtn);
+
+  // ======================
+  // URL PARAMETER HANDLING
+  // ======================
+  const urlParams = new URLSearchParams(window.location.search);  
   if(urlParams.has('profile')) {
-    const profileIndex = parseInt(urlParams.get('profile'));
-    const profile = petProfiles[profileIndex];
-    if(profile) {
-      printProfile(profile);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } // Added inner if closure
-  }  // OUTER IF CLOSURE
+    try {
+      const profileIndex = parseInt(urlParams.get('profile'));
+      if(window.petProfiles?.length > profileIndex) {
+        const profile = petProfiles[profileIndex];
+        printProfile(profile);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    } catch(error) {
+      console.error('Profile load error:', error);
+      showErrorToUser('Invalid profile URL');
+    }
+  }
+  // ======================
+  // UI EVENT LISTENERS
+  // ======================
+  if(DOM.switchToLogin && DOM.switchToSignup) {
+    DOM.switchToLogin.addEventListener('click', () => {
+      DOM.signupPage.classList.add('hidden');
+      DOM.loginPage.classList.remove('hidden');
+    });
+
+    DOM.switchToSignup.addEventListener('click', () => {
+      DOM.loginPage.classList.add('hidden');
+      DOM.signupPage.classList.remove('hidden');
+    });
+  }
+
+  // ======================
+  // PET PROFILE INIT
+  // ======================
+  if(window.petProfiles?.length > 0) {
+    renderProfiles();
+  } else {
+    DOM.petList?.classList.add('empty-state');
+  }
 });
 
 // ======================
