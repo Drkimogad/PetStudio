@@ -1,3 +1,19 @@
+// State Management
+let auth = null; // Global declaration
+let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+let isEditing = false;
+let currentEditIndex = null;
+// VALID_ORIGINS array declaration
+const VALID_ORIGINS = [
+  'https://drkimogad.github.io',
+  'https://drkimogad.github.io/PetStudio'
+]; // <-- This semicolon is correct
+
+// Runtime origin check
+if (!VALID_ORIGINS.includes(window.location.origin)) {
+  window.location.href = 'https://drkimogad.github.io/PetStudio';
+}
+
 // ====================
 // MAIN INITIALIZATION //
 // ====================
@@ -13,10 +29,10 @@ document.addEventListener('DOMContentLoaded', function() {
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
     clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com" // ✅
   };
+  // Changed initialization pattern
+  if (!auth) { // Safety check
   const app = firebase.initializeApp(firebaseConfig);
-  auth = firebase.auth(app); // Now globally accessible
-  
-  // Initialize provider once
+  auth = firebase.auth(app); // Assign to global
   provider = new firebase.auth.GoogleAuthProvider();
   provider.addScope('https://www.googleapis.com/auth/drive.file');
   provider.addScope('https://www.googleapis.com/auth/userinfo.email');
@@ -146,7 +162,7 @@ function loadGAPI() {
   });
 }
 // Dynamic Google Sign-In button//
-// Firebase Google sign-in provider setup (already declared earlier)
+if(auth) { // Wrap in existence check
 if(!auth.currentUser) {
   if(!document.getElementById('googleSignInBtn')) {
     const googleSignInHTML = `
@@ -158,11 +174,7 @@ if(!auth.currentUser) {
     authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
     document.getElementById('googleSignInBtn')
       .addEventListener('click', () => {
-        signInWithRedirect(auth, firebaseProvider)
-          .catch((error) => {
-            console.error("Redirect initialization error:", error);
-            showAuthError(`Sign-in setup failed: ${error.message}`);
-          });
+        signInWithRedirect(auth, provider)
       });
   }
 }
@@ -171,6 +183,7 @@ else {
 }
 // Handle redirect result
 (async function handleRedirectResult() {
+ if(!auth) return; // Early exit
   try {
     const result = await getRedirectResult(auth);
     if(result) {
@@ -191,6 +204,7 @@ else {
     }
   }
 })();
+  
 // Set persistence and initialize listeners
 setPersistence(auth, browserLocalPersistence)
   .then(() => {
@@ -1114,22 +1128,8 @@ async function sendSubscriptionToServer(subscription) {
     const rawData = window.atob(base64);
     return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
   }
-// State Management
-let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-let isEditing = false;
-let currentEditIndex = null;
 
   // Initialize
   if(petProfiles.length > 0) {
     renderProfiles();
   }
-// VALID_ORIGINS array declaration
-const VALID_ORIGINS = [
-  'https://drkimogad.github.io',
-  'https://drkimogad.github.io/PetStudio'
-]; // <-- This semicolon is correct
-
-// Runtime origin check
-if (!VALID_ORIGINS.includes(window.location.origin)) { // ✅ Fixed line
-  window.location.href = 'https://drkimogad.github.io/PetStudio';
-}
