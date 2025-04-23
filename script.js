@@ -18,6 +18,35 @@ if (!VALID_ORIGINS.includes(window.location.origin)) {
 // MAIN INITIALIZATION //
 // ====================  
 document.addEventListener('DOMContentLoaded', function() {
+  // =====================
+  // DOM ELEMENT SELECTORS
+  // =====================
+  const DOM = {
+    authContainer: document.getElementById("authContainer"),
+    signupPage: document.getElementById("signupPage"),
+    loginPage: document.getElementById("loginPage"),
+    dashboard: document.getElementById("dashboard"),
+    logoutBtn: document.getElementById("logoutBtn"),
+    signupForm: document.getElementById("signupForm"),
+    loginForm: document.getElementById("loginForm"),
+    switchToLogin: document.getElementById("switchToLogin"),
+    switchToSignup: document.getElementById("switchToSignup"),
+    addPetProfileBtn: document.getElementById("addPetProfileBtn"),
+    profileSection: document.getElementById("profileSection"),
+    petList: document.getElementById("petList"),
+    fullPageBanner: document.getElementById("fullPageBanner"),
+    profileForm: document.getElementById("profileForm")
+  };
+
+  // ===================
+  // ELEMENT VALIDATION
+  // ===================
+  if (!DOM.authContainer) {
+    console.error('Critical Error: Auth container not found!');
+    showErrorToUser('Application failed to load. Please refresh.');
+    disableUI();
+    return; // ✅ Now valid inside the callback function
+  }
   // Initialize Firebase FIRST
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
@@ -48,39 +77,15 @@ document.addEventListener('DOMContentLoaded', function() {
   initQRModal();
   loadGoogleAPIs();
 });
-    
- // =====================
-  // DOM ELEMENT SELECTORS
-  // =====================
-  const DOM = {
-    authContainer: document.getElementById("authContainer"),
-    signupPage: document.getElementById("signupPage"),
-    loginPage: document.getElementById("loginPage"),
-    dashboard: document.getElementById("dashboard"),
-    logoutBtn: document.getElementById("logoutBtn"),
-    signupForm: document.getElementById("signupForm"),
-    loginForm: document.getElementById("loginForm"),
-    switchToLogin: document.getElementById("switchToLogin"),
-    switchToSignup: document.getElementById("switchToSignup"),
-    addPetProfileBtn: document.getElementById("addPetProfileBtn"),
-    profileSection: document.getElementById("profileSection"),
-    petList: document.getElementById("petList"),
-    fullPageBanner: document.getElementById("fullPageBanner"),
-    profileForm: document.getElementById("profileForm")
-  };
-
-  // ===================
-  // ELEMENT VALIDATION
-  // ===================
-  if (!DOM.authContainer) {
-    console.error('Critical Error: Auth container not found!');
-    // Instead of return, handle the error appropriately
-    showErrorToUser('Application failed to load. Please refresh.');
-    disableUI(); // Add this function to hide/disable UI elements
-    return; // ✅ Now this is valid because it's inside a function
-  }
-
-  // Create Google Sign-In button
+// HELPER FUNCTION DISABLE UI    
+ function disableUI() {
+  document.body.innerHTML = `
+    <h1 style="color: red; padding: 2rem; text-align: center">
+      Critical Error: Failed to load application interface
+    </h1>
+  `;
+}
+// Create Google Sign-In button
   const googleSignInBtn = document.createElement("button");
   googleSignInBtn.className = "google-signin-btn";
   DOM.authContainer.appendChild(googleSignInBtn);
