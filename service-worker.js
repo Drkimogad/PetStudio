@@ -1,5 +1,5 @@
 // service-worker.js
-const VERSION = '2.0.0';
+const VERSION = '3.0.0';
 const CACHE_NAMES = {
   core: `PetStudio-core-v${VERSION}`,
   api: `PetStudio-api-v${VERSION}`,
