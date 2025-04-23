@@ -229,11 +229,14 @@ function loadGAPI() {
   } 
 // Handle redirect result
 (async function handleRedirectResult() {
- if(!auth) return; // Early exit
+  if(!auth) return;
+  
   try {
-    const result = await getRedirectResult(auth);
-    if(result) {
-      const credential = GoogleAuthProvider.credentialFromResult(result);
+    // Use proper firebase.auth() method
+    const result = await firebase.auth().getRedirectResult();
+    
+    if(result.user) {
+      const credential = firebase.auth.GoogleAuthProvider.credentialFromResult(result);
       const accessToken = credential.accessToken;
       await initDriveAPI(accessToken);
       await initializeDriveAPIForGoogleUsers();
@@ -241,13 +244,8 @@ function loadGAPI() {
     }
   }
   catch (error) {
-    console.error("Redirect result handling error:", error);
-    if(error.code === 'auth/redirect-cancelled-by-user') {
-      showAuthError('🚫 Redirect canceled - please try again');
-    }
-    else {
-      showAuthError(`Authentication failed: ${error.message}`);
-    }
+    console.error("Redirect error:", error);
+    showAuthError(`Auth failed: ${error.message}`);
   }
 })();
   
