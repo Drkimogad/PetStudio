@@ -462,27 +462,39 @@ function renderProfiles() {
                 <button class="qrBtn">🔲 QR Code</button>
             </div>
         `;
-      // Event Listeners
+      // =====================
+      // EVENT LISTENERS - CORRECTED
+      // =====================
+      // Edit Button
       petCard.querySelector(".editBtn")
         .addEventListener("click", () => openEditForm(index));
+      
+      // Delete Button
       petCard.querySelector(".deleteBtn")
         .addEventListener("click", () => deleteProfile(index));
+      
+      // Print Button
       petCard.querySelector(".printBtn")
         .addEventListener("click", () => printProfile(profile));
+      
+      // QR Button
       petCard.querySelector(".qrBtn")
         .addEventListener("click", () => generateQRCode(index));
-      petCard.querySelectorAll(".mood-btn")
-        .forEach(btn => {
-          btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
-        });
-      petCard.querySelectorAll(".cover-btn")
-        .forEach(btn => {
-          btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
-        });
+
+      // Mood Buttons
+      petCard.querySelectorAll(".mood-btn").forEach(btn => {
+        btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
+      });
+
+      // Cover Photo Buttons
+      petCard.querySelectorAll(".cover-btn").forEach(btn => {
+        btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
+      });
+
       petList.appendChild(petCard);
-    });
-   } // <-- Added closing brace for the else block
- }
+    }); // Closing brace for .forEach()
+  } // Closing brace for else block
+} // Closing brace for renderProfiles function
 
   // WHEN CREATING NEW PROFILES
   function createNewProfile() {
