@@ -14,6 +14,14 @@ const VALID_ORIGINS = [
 if (!VALID_ORIGINS.includes(window.location.origin)) {
   window.location.href = 'https://drkimogad.github.io/PetStudio';
 }
+// HELPER FUNCTION DISABLE UI (MOVE TO TOP)    
+function disableUI() {
+  document.body.innerHTML = `
+    <h1 style="color: red; padding: 2rem; text-align: center">
+      Critical Error: Failed to load application interface
+    </h1>
+  `;
+}
 // ====================
 // MAIN INITIALIZATION //
 // ====================  
@@ -47,6 +55,13 @@ document.addEventListener('DOMContentLoaded', function() {
     disableUI();
     return; // ✅ Now valid inside the callback function
   }
+  
+  // Create Google Sign-In button HERE
+// Create Google Sign-In button
+  const googleSignInBtn = document.createElement("button");
+  googleSignInBtn.className = "google-signin-btn";
+  DOM.authContainer.appendChild(googleSignInBtn);
+  
   // Initialize Firebase FIRST
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
@@ -65,45 +80,36 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configure provider INSIDE the try block
     provider.addScope('https://www.googleapis.com/auth/drive.file');
     provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+// ===================
+// GOOGLE SIGNIN HANDLER
+// ===================
+googleSignInBtn.addEventListener('click', () => {
+  try {
+    // Safety checks
+    if (!auth) throw new Error("Authentication system not ready");
+    if (!provider) throw new Error("Google provider not configured");
     
-    console.log("Firebase initialized successfully");
+    // Initiate sign-in
+    auth.signInWithRedirect(provider)
+      .catch(error => {
+        console.error("Sign-in failed:", error);
+        showAuthError(error.message);
+      });
+  } catch (error) {
+    console.error("Sign-in error:", error);
+    showAuthError(error.message);
+  }
+});  
+    
+initQRModal();
+loadGoogleAPIs();
+
+console.log("Firebase initialized successfully");
   } catch (error) {
     console.error("Firebase init failed:", error);
     showErrorToUser("Failed to initialize services");
-    return; // Stop execution if initialization fails
-  }
-
-  // These should be OUTSIDE the try/catch but INSIDE DOMContentLoaded
-  initQRModal();
-  loadGoogleAPIs();
-});
-// HELPER FUNCTION DISABLE UI    
- function disableUI() {
-  document.body.innerHTML = `
-    <h1 style="color: red; padding: 2rem; text-align: center">
-      Critical Error: Failed to load application interface
-    </h1>
-  `;
-}
-// Create Google Sign-In button
-  const googleSignInBtn = document.createElement("button");
-  googleSignInBtn.className = "google-signin-btn";
-  DOM.authContainer.appendChild(googleSignInBtn);
-
-
-  document.getElementById('googleSignInBtn')?.addEventListener('click', () => {
-  try {
-    if (!auth || !provider) throw new Error("Auth system not initialized");
-    auth.signInWithRedirect(provider);
-  } catch (error) {
-    console.error("Sign-in failed:", error);
-    showAuthError(error.message);
-  }
-});
-// Optional helper function
-function disableUI() {
-  document.body.innerHTML = '<h1 style="color: red">Critical Error: Missing required elements</h1>';
-}
+    disableUI();
+  }    
   // ======================
   // URL PARAMETER HANDLING
   // ======================
@@ -128,14 +134,14 @@ if(DOM.switchToLogin && DOM.switchToSignup) {
   DOM.switchToLogin.addEventListener('click', () => {
     DOM.signupPage.classList.add('hidden');
     DOM.loginPage.classList.remove('hidden');
-  }); // Added missing closure
+  });
 
   DOM.switchToSignup.addEventListener('click', () => {
     DOM.loginPage.classList.add('hidden');
     DOM.signupPage.classList.remove('hidden');
-  }); // Added missing closure
-} // Proper if-block closure
-
+  });
+ }
+}); // DOM CLOSING BRACE
   // ======================
   // PET PROFILE INIT
   // ======================
