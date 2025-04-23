@@ -312,13 +312,15 @@ async function checkAuthState() {
 // Auth listeners function
 function initAuthListeners() {
   auth.onAuthStateChanged((user) => {
-    if(user) {
+    if (user) {
       console.log("User logged in:", user.uid);
       handleAuthenticatedUser(user);
-    }
-    else {
-      console.log("User logged out");
-      showLoginScreen();
+    } else {
+      console.log("No active session");
+      // Only show login screen if not already signed up
+      if(!isSignupInProgress) {
+        showLoginScreen();
+      }
     }
   });
 }
@@ -964,73 +966,45 @@ function printProfile(profile) {
     authContainer.classList.add("hidden"); // Hide auth container
     window.scrollTo(0, 0); // Optional: Scroll to the top of the page
   });
+  
   // AUTH FORM SWITCHING
-  function toggleForms(showLogin) {
-    const loginPage = document.getElementById("loginPage");
-    const signupPage = document.getElementById("signupPage");
-    const loginForm = document.getElementById("loginForm");
-    const signupForm = document.getElementById("signupForm");
-    if(showLogin) {
-      loginPage.classList.remove("hidden");
-      signupPage.classList.add("hidden");
-      // ✅ Enable only login form fields
-      Array.from(loginForm.elements)
-        .forEach(el => {
-          if(el.tagName === 'INPUT') el.required = true;
-        });
-      Array.from(signupForm.elements)
-        .forEach(el => {
-          if(el.tagName === 'INPUT') el.required = false;
-        });
-    }
-    else {
-      loginPage.classList.add("hidden");
-      signupPage.classList.remove("hidden");
-      // ✅ Enable only signup form fields
-      Array.from(signupForm.elements)
-        .forEach(el => {
-          if(el.tagName === 'INPUT') el.required = true;
-        });
-      Array.from(loginForm.elements)
-        .forEach(el => {
-          if(el.tagName === 'INPUT') el.required = false;
-        });
-    }
+  let isSignupInProgress = false;
+function showLoginScreen() {
+  // Use your existing toggle system
+  toggleAuthUI(false); // Show auth elements
+  toggleForms(true);   // Show login form
+  DOM.profileSection.classList.add('hidden');
+}
+// Modified toggleAuthUI to work with showLoginScreen
+function toggleAuthUI(isAuthenticated) {
+  const authElements = [DOM.authContainer, DOM.loginPage, DOM.signupPage];
+  const dashboardElements = [DOM.dashboard, DOM.profileSection, DOM.fullPageBanner, DOM.logoutBtn];
+
+  authElements.forEach(el => el.classList.toggle('hidden', isAuthenticated));
+  dashboardElements.forEach(el => el.classList.toggle('hidden', !isAuthenticated));
+
+  // Additional cleanup
+  if (!isAuthenticated) {
+    DOM.profileForm.reset();
+    DOM.loginForm.reset();
+    DOM.signupForm.reset();
   }
-  // 🟡 Add event listeners only if buttons exist
-  if(switchToLogin && switchToSignup) {
-    switchToLogin.addEventListener("click", (e) => {
-      e.preventDefault();
-      toggleForms(true);
-    });
-    switchToSignup.addEventListener("click", (e) => {
-      e.preventDefault();
-      toggleForms(false);
-    });
-  }
-  // 🔁 Optional: Show login form by default on load
-  toggleForms(true);
+}
   // AUTHENTICATION SECTION //
   // AUTH STATE OBSERVER
-  function showAuthError(message) {
-    // Custom error display function (could be a modal or notification)
-    const errorElement = document.createElement('div');
-    errorElement.className = 'auth-error';
-    errorElement.innerText = `🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`;
-    document.body.appendChild(errorElement);
-    setTimeout(() => errorElement.remove(), 5000); // Remove the error after 5 seconds
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    console.log("✅ User authenticated:", user.email);
+    toggleAuthUI(true);
+    setupLogoutButton();
+    renderProfiles();
+    } else {
+    console.log("⚠️ No active session");
+    if (!isSignupInProgress) {
+      showLoginScreen();
+    }
   }
-  auth.onAuthStateChanged((user) => {
-    if(user) {
-      // Authenticated: Show dashboard, hide auth screens
-      toggleAuthUI(true);
-      setupLogoutButton();
-    }
-    else {
-      // Not authenticated: Show login screen, hide dashboard
-      toggleAuthUI(false);
-    }
-  });
+});
   // Function to toggle visibility of UI elements based on auth state
   function toggleAuthUI(isAuthenticated) {
     const authElements = [authContainer, loginPage, signupPage];
@@ -1061,6 +1035,7 @@ function printProfile(profile) {
   //=======AUTH FUNCTIONS =============
   // Sign Up Handler
   signupForm?.addEventListener("submit", (e) => {
+   isSignupInProgress = true;
     e.preventDefault();
     const username = signupForm.querySelector("#signupEmail")
       .value.trim();
@@ -1142,19 +1117,19 @@ function printProfile(profile) {
     }
   }
 // SERVICE WORKER REGISTRATION AND UPDATE CHECK
-// script.js (or your main JavaScript file)
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        // Register Service Worker
-        navigator.serviceWorker.register('./service-worker.js', {
-            scope: '/PetStudio/'
-        })
-        .then((registration) => {
-            console.log('Service Worker registered:', registration.scope);
-
-            // Check for updates immediately
+  navigator.serviceWorker.register('/PetStudio/service-worker.js', {
+    scope: '/PetStudio/'
+  })
+  .then(registration => {
+    console.log('SW registered:', registration);
+  })
+  .catch(error => {
+    console.log('SW registration failed:', error);
+  });
+}
+// Check for updates immediately
             registration.update();
-
             // Listen for updates
             registration.addEventListener('updatefound', () => {
                 const newWorker = registration.installing;
