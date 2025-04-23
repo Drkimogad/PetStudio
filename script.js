@@ -74,7 +74,10 @@ document.addEventListener('DOMContentLoaded', function() {
   // ===================
   if (!DOM.authContainer) {
     console.error('Critical Error: Auth container not found!');
-    return;
+    // Instead of return, handle the error appropriately
+    showErrorToUser('Application failed to load. Please refresh.');
+    disableUI(); // Add this function to hide/disable UI elements
+    return; // ✅ Now this is valid because it's inside a function
   }
 
   // Create Google Sign-In button
@@ -92,7 +95,10 @@ document.addEventListener('DOMContentLoaded', function() {
     showAuthError(error.message);
   }
 });
-
+// Optional helper function
+function disableUI() {
+  document.body.innerHTML = '<h1 style="color: red">Critical Error: Missing required elements</h1>';
+}
   // ======================
   // URL PARAMETER HANDLING
   // ======================
