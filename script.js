@@ -1,3 +1,10 @@
+  // 1. DECLARE GLOBALS FIRST
+  let auth = null; 
+  let provider = null;
+  let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+  let isEditing = false;
+  let currentEditIndex = null;
+
 // State Management
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
@@ -7,22 +14,14 @@ const VALID_ORIGINS = [
 if (!VALID_ORIGINS.includes(window.location.origin)) {
   window.location.href = 'https://drkimogad.github.io/PetStudio';
 }
-
 // ====================
 // MAIN INITIALIZATION //
-// ====================
+// ====================  
 document.addEventListener('DOMContentLoaded', function() {
-  // 1. DECLARE GLOBALS FIRST
-  let auth = null; 
-  let provider = null;
-  let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-  let isEditing = false;
-  let currentEditIndex = null;
-  
-  // 2. FIREBASE CONFIG (Fix authDomain)
+  // Initialize Firebase FIRST
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-    authDomain: "swiftreach2025.firebaseapp.com", // 🔥 Only use the Firebase-assigned domain
+    authDomain: "swiftreach2025.firebaseapp.com",
     projectId: "swiftreach2025",
     storageBucket: "swiftreach2025.appspot.com",
     messagingSenderId: "540185558422",
@@ -30,22 +29,25 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   try {
-    // 3. INITIALIZE FIREBASE CORE
     const app = firebase.initializeApp(firebaseConfig);
-    
-    // 4. INIT AUTH AND PROVIDER
     auth = firebase.auth(app);
     provider = new firebase.auth.GoogleAuthProvider();
     
-    // 5. CONFIGURE PROVIDER (Add scopes HERE)
+    // Configure provider INSIDE the try block
     provider.addScope('https://www.googleapis.com/auth/drive.file');
     provider.addScope('https://www.googleapis.com/auth/userinfo.email');
     
     console.log("Firebase initialized successfully");
-    
-    // 6. INIT DEPENDENT SERVICES (AFTER Firebase)
-    initQRModal();
-    loadGoogleAPIs();
+  } catch (error) {
+    console.error("Firebase init failed:", error);
+    showErrorToUser("Failed to initialize services");
+    return; // Stop execution if initialization fails
+  }
+
+  // These should be OUTSIDE the try/catch but INSIDE DOMContentLoaded
+  initQRModal();
+  loadGoogleAPIs();
+});
     
  // =====================
   // DOM ELEMENT SELECTORS
