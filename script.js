@@ -141,7 +141,6 @@ if(DOM.switchToLogin && DOM.switchToSignup) {
     DOM.signupPage.classList.remove('hidden');
   });
  }
-}); // DOM CLOSING BRACE
   // ======================
   // PET PROFILE INIT
   // ======================
@@ -1248,3 +1247,4 @@ async function sendSubscriptionToServer(subscription) {
   if(petProfiles.length > 0) {
     renderProfiles();
   }
+}); // DOM CLOSING BRACE
