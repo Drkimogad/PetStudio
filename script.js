@@ -7,7 +7,7 @@ let currentEditIndex = null;
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
   'https://drkimogad.github.io/PetStudio'
-]; // <-- This semicolon is correct
+];
 
 // Runtime origin check
 if (!VALID_ORIGINS.includes(window.location.origin)) {
@@ -207,26 +207,26 @@ function loadGAPI() {
     document.head.appendChild(script);
   });
 }
-// Dynamic Google Sign-In button//
-if(auth) { // Wrap in existence check
-if(!auth.currentUser) {
-  if(!document.getElementById('googleSignInBtn')) {
-    const googleSignInHTML = `
-      <button id="googleSignInBtn" class="auth-btn google-btn">
-        <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
-        Continue with Google
-      </button>
-    `;
-    authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
-    document.getElementById('googleSignInBtn')
-      .addEventListener('click', () => {
-        signInWithRedirect(auth, provider)
-      });
-  }
-}
-else {
-  handleAuthenticatedUser(auth.currentUser);
-}
+  // =====================
+  // Fixed Google Sign-In
+  // =====================
+  if (auth) {
+    if (!auth.currentUser) {
+      if (!document.getElementById('googleSignInBtn')) {
+        const googleSignInHTML = `
+          <button id="googleSignInBtn" class="auth-btn google-btn">
+            <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
+            Continue with Google
+          </button>`;
+        authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
+        document.getElementById('googleSignInBtn').addEventListener('click', () => {
+          signInWithRedirect(auth, provider);
+        });
+      }
+    } else {
+      handleAuthenticatedUser(auth.currentUser);
+    }
+  } 
 // Handle redirect result
 (async function handleRedirectResult() {
  if(!auth) return; // Early exit
