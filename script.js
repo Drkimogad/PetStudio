@@ -1117,47 +1117,45 @@ auth.onAuthStateChanged((user) => {
     }
   }
 // SERVICE WORKER REGISTRATION AND UPDATE CHECK
+// SERVICE WORKER REGISTRATION AND UPDATE CHECK
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/PetStudio/service-worker.js', {
-    scope: '/PetStudio/'
-  })
-  .then(registration => {
-    console.log('SW registered:', registration);
-  })
-  .catch(error => {
-    console.log('SW registration failed:', error);
-  });
-}
-// Check for updates immediately
-            registration.update();
-            // Listen for updates
-            registration.addEventListener('updatefound', () => {
-                const newWorker = registration.installing;
-                console.log('New service worker found:', newWorker);
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/PetStudio/service-worker.js', {
+      scope: '/PetStudio/'
+    })
+    .then(registration => {
+      console.log('SW registered:', registration.scope);
 
-                newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'installed') {
-                        if (navigator.serviceWorker.controller) {
-                            // New update available
-                            if (confirm('New version available! Reload to update?')) {
-                                newWorker.postMessage({ action: 'skipWaiting' });
-                            }
-                        }
-                    }
-                });
-            });
-        })
-        .catch((error) => {
-            console.error('Service Worker registration failed:', error);
-        });
+      // Check for updates immediately
+      registration.update();
 
-        // Handle controller changes
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            console.log('Controller changed - reloading');
-            window.location.reload();
+      // Listen for updates
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        console.log('New service worker found:', newWorker);
+
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed') {
+            if (navigator.serviceWorker.controller) {
+              if (confirm('New version available! Reload to update?')) {
+                newWorker.postMessage({ action: 'skipWaiting' });
+              }
+            }
+          }
         });
+      });
+    })
+    .catch(error => {
+      console.error('SW registration failed:', error);
     });
-}
+
+    // Handle controller changes
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      console.log('Controller changed - reloading');
+      window.location.reload();
+    });
+  });
+} // <-- Proper closing brace for service worker block
   // PUSH NOTIFICATIONS LOGIC
   // Global VAPID Configuration
   const VAPID_PUBLIC_KEY = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
