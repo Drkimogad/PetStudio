@@ -1,43 +1,52 @@
 // State Management
-let auth = null; // Global declaration
-let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-let isEditing = false;
-let currentEditIndex = null;
-// VALID_ORIGINS array declaration
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
   'https://drkimogad.github.io/PetStudio'
 ];
-
 // Runtime origin check
 if (!VALID_ORIGINS.includes(window.location.origin)) {
   window.location.href = 'https://drkimogad.github.io/PetStudio';
 }
+
 // ====================
 // MAIN INITIALIZATION //
 // ====================
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize Firebase FIRST
+  // 1. DECLARE GLOBALS FIRST
+  let auth = null; 
+  let provider = null;
+  let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+  let isEditing = false;
+  let currentEditIndex = null;
+  
+  // 2. FIREBASE CONFIG (Fix authDomain)
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-    authDomain: "drkimogad.github.io",
+    authDomain: "swiftreach2025.firebaseapp.com", // 🔥 Only use the Firebase-assigned domain
     projectId: "swiftreach2025",
     storageBucket: "swiftreach2025.appspot.com",
     messagingSenderId: "540185558422",
-    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
-    clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com", // ✅
-    authDomain: 'swiftreach2025.firebaseapp.com' // Must match Firebase settings
+    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
   };
-  // Changed initialization pattern
-  if (!auth) { // Safety check
-  const app = firebase.initializeApp(firebaseConfig);
-  auth = firebase.auth(app); // Assign to global
-  provider = new firebase.auth.GoogleAuthProvider();
-  provider.addScope('https://www.googleapis.com/auth/drive.file');
-  provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-  } // Add this closing brace
-  initQRModal();
-  loadGoogleAPIs();
+
+  try {
+    // 3. INITIALIZE FIREBASE CORE
+    const app = firebase.initializeApp(firebaseConfig);
+    
+    // 4. INIT AUTH AND PROVIDER
+    auth = firebase.auth(app);
+    provider = new firebase.auth.GoogleAuthProvider();
+    
+    // 5. CONFIGURE PROVIDER (Add scopes HERE)
+    provider.addScope('https://www.googleapis.com/auth/drive.file');
+    provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+    
+    console.log("Firebase initialized successfully");
+    
+    // 6. INIT DEPENDENT SERVICES (AFTER Firebase)
+    initQRModal();
+    loadGoogleAPIs();
+    
  // =====================
   // DOM ELEMENT SELECTORS
   // =====================
@@ -261,7 +270,7 @@ function loadGAPI() {
 })();
   
 // Set persistence and initialize listeners
-setPersistence(auth, browserLocalPersistence)
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
   .then(() => {
     initAuthListeners();
     initUI();
@@ -270,6 +279,18 @@ setPersistence(auth, browserLocalPersistence)
     console.error("Persistence error:", error);
     showErrorToUser("Authentication system failed to initialize");
   });
+  // Add these if missing
+function initUI() {
+  // Your existing UI initialization code
+  checkAuthState();
+}
+// FUNCTION CHECK AUTH STATE
+async function checkAuthState() {
+  const user = await auth.currentUser;
+  if (user) {
+    window.location.href = '/main-app'; // Your app's main page
+  }
+}
 // Auth listeners function
 function initAuthListeners() {
   auth.onAuthStateChanged((user) => {
@@ -283,6 +304,14 @@ function initAuthListeners() {
     }
   });
 }
+// FUNCTION HANDLE AUTH ACTION
+function handleAuthAction() {
+  // ✅ Safe to use auth/provider here
+  if(auth && provider) {
+    auth.signInWithRedirect(provider);
+  }
+}
+    
 // DRIVE FOLDER MANAGEMENT //
 // 🔄 Get or Create Drive Folder ID
 async function getOrCreateDriveFolderId() {
