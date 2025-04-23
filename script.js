@@ -71,6 +71,17 @@ document.addEventListener('DOMContentLoaded', function() {
   googleSignInBtn.className = "google-signin-btn";
   DOM.authContainer.appendChild(googleSignInBtn);
 
+
+  document.getElementById('googleSignInBtn')?.addEventListener('click', () => {
+  try {
+    if (!auth || !provider) throw new Error("Auth system not initialized");
+    auth.signInWithRedirect(provider);
+  } catch (error) {
+    console.error("Sign-in failed:", error);
+    showAuthError(error.message);
+  }
+});
+
   // ======================
   // URL PARAMETER HANDLING
   // ======================
