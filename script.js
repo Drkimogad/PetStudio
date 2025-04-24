@@ -1,6 +1,7 @@
   // 1. DECLARE GLOBALS FIRST
   let auth = null; 
   let provider = null;
+  let isSignupInProgress = false;
   let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   let isEditing = false;
   let currentEditIndex = null;
@@ -458,6 +459,15 @@ async function deleteProfileFromDrive(fileId, gallery = []) {
     console.error('Error deleting profile from Google Drive:', error);
   }
 }
+  
+// 🔼 NEW FUNCTION (add around line ~650)
+function handleAuthenticatedUser(user) {
+  console.log("✅ Auth success:", user.uid);
+  DOM.dashboard.classList.remove('hidden');
+  DOM.authContainer.classList.add('hidden');
+  initializeGoogleAPI(); // Ensure Drive is ready
+}
+  
 // 🔄 UI UPDATES
 renderProfiles();
 profileSection.classList.add("hidden");
@@ -694,34 +704,26 @@ function printProfile(profile) {
   });
   body.appendChild(galleryDiv);
 
-  // Image loading script (moved to be appended after gallery)
-  const script = printDocument.createElement('script');
-  script.textContent = `
-    window.onload = function() {
-      const images = Array.from(document.querySelectorAll('.print-gallery img'));
-      let loadedCount = 0;
-
-      const checkAllLoaded = () => {
-        if(++loadedCount === images.length) {
-          images.forEach(img => img.style.opacity = '1');
-          window.print();
-        }
+// 🔼 UPDATE PRINT FUNCTION (line ~1015)
+const script = printDocument.createElement('script');
+script.textContent = `
+  window.addEventListener('load', function() {
+    // ✅ Tracks ALL images (including gallery)
+    const images = Array.from(document.querySelectorAll('img')); 
+    let loaded = 0;
+    
+    images.forEach(img => {
+      img.onload = () => {
+        // ✅ Atomic counter increment
+        if(++loaded === images.length) window.print(); 
       };
+      // ✅ Accounts for cached/pre-loaded images
+      if(img.complete) loaded++; 
+    });
 
-      images.forEach(img => {
-        if(img.complete) {
-          checkAllLoaded();
-        } else {
-          img.onload = checkAllLoaded;
-          img.onerror = checkAllLoaded;
-        }
-      });
-
-      if(images.length === 0 || images.every(img => img.complete)) {
-        window.print();
-      }
-    };
-  `;
+    // ✅ Fallback if all images cached
+    if(loaded === images.length) window.print(); 
+  })`;
   body.appendChild(script);
 
   html.appendChild(body);
@@ -731,8 +733,8 @@ function printProfile(profile) {
   // SHARE PET CARD FUNCTION//
   async function sharePetCard(pet) {
     // 1. Generate Shareable Link
-    const shareUrl = `${window.location.origin}/pet/${pet.id}`;
-    // 2. Try Web Share API first
+// 🔼 UPDATE SHARE URL (line ~995)
+    const shareUrl = `${window.location.origin}/PetStudio/?profile=${pet.id}`;    // 2. Try Web Share API first
     if(navigator.share) {
       try {
         await navigator.share({
@@ -854,7 +856,10 @@ function printProfile(profile) {
   // QR Modal Initialization
   function initQRModal() {
     document.addEventListener('click', (e) => {
-      const modal = document.getElementById('qr-modal');
+    const modal = document.getElementById('qr-modal');
+    modal.style.display = 'block'; 
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
+      
       if(e.target.classList.contains('qr-print')) {
         printQR();
       }
@@ -882,6 +887,7 @@ function printProfile(profile) {
   }
   // Initialize QR Module
   document.addEventListener('DOMContentLoaded', initQRModal);
+
   // LOG MOOD FUNCTION    
   function logMood(profileIndex, mood) {
     const today = new Date()
