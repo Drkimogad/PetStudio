@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fullPageBanner: document.getElementById("fullPageBanner"),
     profileForm: document.getElementById("profileForm")
   };
-
+  
   // ===================
   // ELEMENT VALIDATION
   // ===================
@@ -55,6 +55,10 @@ document.addEventListener('DOMContentLoaded', function() {
     disableUI();
     return; // ✅ Now valid inside the callback function
   }
+  
+ // 🟢 INITIAL FORM STATE
+toggleForms(false); // Show signup first
+DOM.dashboard.classList.add('hidden'); // Hide dashboard initially
   
   // Create Google Sign-In button HERE
 // Create Google Sign-In button
@@ -939,6 +943,7 @@ function printProfile(profile) {
     }
     // 4. Build profile object
     const newProfile = {
+      id: Date.now(),
       name: petName,
       breed: petBreed,
       dob: petDob,
@@ -953,68 +958,38 @@ function printProfile(profile) {
     else {
       petProfiles.push(newProfile);
     }
-    // Save the updated profiles to localStorage
-    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-    // Hide the form and banner
-    profileSection.classList.add("hidden");
-    // Reset form fields
-    profileForm.reset();
-    // Re-render profiles
-    renderProfiles();
-    // Redirect to dashboard
-    dashboard.classList.remove("hidden"); // Show dashboard
-    authContainer.classList.add("hidden"); // Hide auth container
-    window.scrollTo(0, 0); // Optional: Scroll to the top of the page
-  });
+// Save the updated profiles to localStorage
+localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+// Hide the form and banner
+profileSection.classList.add("hidden");
+// Reset form fields
+profileForm.reset();
+// Re-render profiles
+renderProfiles();
+// ✅ Let auth state observer handle UI visibility
+window.scrollTo(0, 0); // Optional: Scroll to the top of the page
+}); // 🧩
   
-  // AUTH FORM SWITCHING
-  function toggleForms(showLogin) {
-    const loginPage = document.getElementById("loginPage");
-    const signupPage = document.getElementById("signupPage");
-    const loginForm = document.getElementById("loginForm");
-    const signupForm = document.getElementById("signupForm");
-    if(showLogin) {
-      loginPage.classList.remove("hidden");
-      signupPage.classList.add("hidden");
-      // ✅ Enable only login form fields
-      Array.from(loginForm.elements)
-        .forEach(el => {
-          if(el.tagName === 'INPUT') el.required = true;
-        });
-      Array.from(signupForm.elements)
-        .forEach(el => {
-          if(el.tagName === 'INPUT') el.required = false;
-        });
-    }
-    else {
-      loginPage.classList.add("hidden");
-      signupPage.classList.remove("hidden");
-      // ✅ Enable only signup form fields
-      Array.from(signupForm.elements)
-        .forEach(el => {
-          if(el.tagName === 'INPUT') el.required = true;
-        });
-      Array.from(loginForm.elements)
-        .forEach(el => {
-          if(el.tagName === 'INPUT') el.required = false;
-        });
-    }
-  }
-  // 🟡 Add event listeners only if buttons exist
-  if(switchToLogin && switchToSignup) {
-    switchToLogin.addEventListener("click", (e) => {
-      e.preventDefault();
-      toggleForms(true);
-    });
-    switchToSignup.addEventListener("click", (e) => {
-      e.preventDefault();
-      toggleForms(false);
-    });
-  }
-  // 🔁 Optional: Show login form by default on load
-  toggleForms(true);
+// AUTH FORM SWITCHING
+// 🟢 NEW TOGGLEFORMS FUNCTION
+function toggleForms(showLogin) {
+  // Simplified visibility control
+  DOM.signupPage.classList.toggle('hidden', showLogin);
+  DOM.loginPage.classList.toggle('hidden', !showLogin);
+  
+  // Input requirement management
+  const forms = showLogin ? DOM.loginForm : DOM.signupForm;
+  const otherForms = showLogin ? DOM.signupForm : DOM.loginForm;
+  
+  Array.from(forms.elements).forEach(el => {
+    if(el.tagName === 'INPUT') el.required = true;
+  });
+  Array.from(otherForms.elements).forEach(el => {
+    if(el.tagName === 'INPUT') el.required = false;
+  });
+}
   // AUTHENTICATION SECTION //
-  // AUTH STATE OBSERVER
+  // 1. AUTH STATE OBSERVER
   function showAuthError(message) {
     // Custom error display function (could be a modal or notification)
     const errorElement = document.createElement('div');
@@ -1023,44 +998,36 @@ function printProfile(profile) {
     document.body.appendChild(errorElement);
     setTimeout(() => errorElement.remove(), 5000); // Remove the error after 5 seconds
   }
-  auth.onAuthStateChanged((user) => {
-    if(user) {
-      // Authenticated: Show dashboard, hide auth screens
-      toggleAuthUI(true);
-      setupLogoutButton();
-    }
-    else {
-      // Not authenticated: Show login screen, hide dashboard
-      toggleAuthUI(false);
-    }
-  });
-  // Function to toggle visibility of UI elements based on auth state
-  function toggleAuthUI(isAuthenticated) {
-    const authElements = [authContainer, loginPage, signupPage];
-    const dashboardElements = [dashboard, profileSection, fullPageBanner, logoutBtn];
-    authElements.forEach((el) => {
-      el.classList.toggle('hidden', isAuthenticated);
-    });
-    dashboardElements.forEach((el) => {
-      el.classList.toggle('hidden', !isAuthenticated);
-    });
-  }
-  // Setup logout button functionality
-  function setupLogoutButton() {
-    if(logoutBtn) {
-      logoutBtn.style.display = 'block';
-      logoutBtn.addEventListener('click', () => {
-        auth.signOut()
-          .then(() => {
-            console.log('User logged out');
-          })
-          .catch((error) => {
-            console.error('Logout error:', error);
-            showAuthError(error.message);
-          });
-      });
+// 2. AUTH STATE CHANGED
+auth.onAuthStateChanged((user) => {
+  if(user) {
+    // Authenticated: Show dashboard
+    toggleAuthUI(true);
+    setupLogoutButton();
+  } else {
+    // Not authenticated: Show auth UI
+    toggleAuthUI(false);
+    
+    // 🌟 Preserve form state between sessions
+    if(!document.getElementById('loginPage').classList.contains('hidden')) {
+      toggleForms(true); // Show login if returning user
     }
   }
+});
+// 🟢 CORRECTED TOGGLEAUTHUI FUNCTION
+function toggleAuthUI(isAuthenticated) {
+  // Only control container visibility - not individual forms
+  const authElements = [DOM.authContainer];
+  const dashboardElements = [DOM.dashboard, DOM.profileSection, DOM.fullPageBanner, DOM.logoutBtn];
+
+  authElements.forEach(el => el.classList.toggle('hidden', isAuthenticated));
+  dashboardElements.forEach(el => el.classList.toggle('hidden', !isAuthenticated));
+
+  // 🌟 New: Auto-show login form when logged out
+  if (!isAuthenticated) {
+    toggleForms(true); // Force-show login form
+  }
+}
   //=======AUTH FUNCTIONS =============
   // Sign Up Handler
   signupForm?.addEventListener("submit", (e) => {
@@ -1078,18 +1045,17 @@ function printProfile(profile) {
     submitBtn.disabled = true;
     submitBtn.textContent = "Creating account...";
     auth.createUserWithEmailAndPassword(email, password)
+      // 🟢 UPDATED SUCCESS HANDLER
       .then(() => {
         // Sign out immediately after signup
         return auth.signOut();
       })
-      .then(() => {
-        alert("Account created! Please log in.");
-        signupForm.reset();
-        signupPage.classList.add("hidden");
-        loginPage.classList.remove("hidden");
-        document.getElementById("loginEmail")
-          .value = username;
-      })
+     .then(() => {
+    alert("Account created! Please log in.");
+    DOM.signupForm.reset();
+    toggleForms(true); // Use centralized toggle
+    DOM.loginForm.querySelector("#loginEmail").value = username;
+     })
       .catch((error) => {
         alert("Error: " + error.message);
       })
