@@ -59,6 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
  // 🟢 INITIAL FORM STATE
 toggleForms(false); // Show signup first
 DOM.dashboard.classList.add('hidden'); // Hide dashboard initially
+DOM.fullPageBanner.classList.remove('hidden'); // Add this
+DOM.profileSection.classList.add('hidden'); // Add this
   
   // Create Google Sign-In button HERE
 // Create Google Sign-In button
@@ -470,9 +472,8 @@ addPetProfileBtn?.addEventListener("click", (e) => {
   } // Closing the 'if' block here ✅
   fullPageBanner.classList.add("hidden");
   profileSection.classList.remove("hidden");
-  dashboard.classList.remove("hidden");
-  authContainer.classList.add("hidden");
 }); // ← closing the 'addEventListener' callback here ✅
+  
 // PROFILE RENDERING FUNCTIONS  
 function renderProfiles() {
   petList.innerHTML = ''; // Clear current profiles
@@ -1020,12 +1021,13 @@ function toggleAuthUI(isAuthenticated) {
   const authElements = [DOM.authContainer];
   const dashboardElements = [DOM.dashboard, DOM.profileSection, DOM.fullPageBanner, DOM.logoutBtn];
 
-  authElements.forEach(el => el.classList.toggle('hidden', isAuthenticated));
-  dashboardElements.forEach(el => el.classList.toggle('hidden', !isAuthenticated));
-
-  // 🌟 New: Auto-show login form when logged out
-  if (!isAuthenticated) {
-    toggleForms(true); // Force-show login form
+  DOM.authContainer.classList.toggle('hidden', isAuthenticated);
+  DOM.dashboard.classList.toggle('hidden', !isAuthenticated);
+  
+  // Reset UI state when authenticated
+  if(isAuthenticated) {
+    DOM.fullPageBanner.classList.remove('hidden');
+    DOM.profileSection.classList.add('hidden');
   }
 }
   //=======AUTH FUNCTIONS =============
