@@ -615,7 +615,7 @@ function renderProfiles() {
       .value = profile.dob;
     document.getElementById("petBirthday")
       .value = profile.birthday;
-    profileSection.classList.remove("hidden");
+    DOM.profileSection.classList.remove("hidden"); 
     fullPageBanner.classList.add("hidden");
   }
 // PRINT PROFILE FUNCTION (Refactored)
@@ -962,7 +962,7 @@ function printProfile(profile) {
 // Save the updated profiles to localStorage
 localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
 // Hide the form and banner
-profileSection.classList.add("hidden");
+DOM.profileSection.classList.add("hidden");
 // Reset form fields
 profileForm.reset();
 // Re-render profiles
