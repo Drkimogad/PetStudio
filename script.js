@@ -324,13 +324,14 @@ function initAuthListeners() {
       handleAuthenticatedUser(user);
     } else {
       console.log("No active session");
-      // Only show login screen if not already signed up
       if(!isSignupInProgress) {
-        showLoginScreen();
+        toggleForms(true); // 🌟 Use existing form toggle
+        DOM.authContainer.classList.remove('hidden');
       }
     }
   });
 }
+
 // FUNCTION HANDLE AUTH ACTION
 function handleAuthAction() {
   // ✅ Safe to use auth/provider here
