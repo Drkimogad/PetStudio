@@ -1117,7 +1117,7 @@ if (!auth) {
 // SERVICE WORKER REGISTRATION AND UPDATE CHECK
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js', {
+    navigator.serviceWorker.register('/PetStudio/service-worker.js', {
       scope: '/PetStudio/'
     })
     .then(registration => {
