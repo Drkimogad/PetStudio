@@ -770,7 +770,7 @@ function printProfile(profile) {
     container.innerHTML = '';
     // Generate new QR code
     new QRCode(container, {
-      text: JSON.stringify(currentQRProfile),
+      text: profileUrl, // Instead of full profile JSON
       width: 256,
       height: 256,
       colorDark: "#000000",
@@ -1099,7 +1099,7 @@ function setupLogoutButton() {
     e.preventDefault();
     try {
       await auth.signOut();
-      window.location.reload(); // Full reset
+      window.location.href = '/PetStudio/'; // Full redirect
     } catch (error) {
       console.error('Logout failed:', error);
     }
