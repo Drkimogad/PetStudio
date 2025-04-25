@@ -924,10 +924,9 @@ function printProfile(profile) {
       }
     }
   // Handle gallery files with URL cleanup
-  const galleryFiles = Array.from(document.getElementById("petGallery").files);
   const galleryUrls = await Promise.all(
     galleryFiles.map(async file => {
-      const url = URL.createObjectURL(file);
+      const url = URL.createObjectURL(file); // ✅ Directly use .files
       // Create image to load and revoke URL
       await new Promise((resolve) => {
         const img = new Image();
