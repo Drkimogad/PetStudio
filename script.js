@@ -857,6 +857,8 @@ script.textContent = `
   // QR Modal Initialization
   function initQRModal() {
     document.addEventListener('click', (e) => {
+         // ✅ Only handle clicks inside QR modal
+    if (!e.target.closest('#qr-modal')) return;
     const modal = document.getElementById('qr-modal');
     modal.style.display = 'block'; 
     document.body.style.overflow = 'hidden'; // Prevent scrolling
@@ -980,21 +982,22 @@ window.scrollTo(0, 0); // Optional: Scroll to the top of the page
   
 // AUTH FORM SWITCHING
 // 🟢 NEW TOGGLEFORMS FUNCTION
+// 🔼 UPDATE toggleForms (~line 350)
 function toggleForms(showLogin) {
-  // Simplified visibility control
-  DOM.signupPage.classList.toggle('hidden', showLogin);
-  DOM.loginPage.classList.toggle('hidden', !showLogin);
-  
-  // Input requirement management
-  const forms = showLogin ? DOM.loginForm : DOM.signupForm;
-  const otherForms = showLogin ? DOM.signupForm : DOM.loginForm;
-  
-  Array.from(forms.elements).forEach(el => {
-    if(el.tagName === 'INPUT') el.required = true;
-  });
-  Array.from(otherForms.elements).forEach(el => {
-    if(el.tagName === 'INPUT') el.required = false;
-  });
+  try {
+    DOM.signupPage.classList.toggle('hidden', showLogin);
+    DOM.loginPage.classList.toggle('hidden', !showLogin);
+    
+    // ✅ Reset form states
+    if (showLogin) {
+      DOM.loginForm.reset();
+      DOM.loginForm.querySelector('input').focus();
+    } else {
+      DOM.signupForm.reset();
+    }
+  } catch (error) {
+    console.error("Form toggle error:", error);
+  }
 }
   // AUTHENTICATION SECTION //
   // 1. AUTH STATE OBSERVER
@@ -1007,19 +1010,21 @@ function toggleForms(showLogin) {
     setTimeout(() => errorElement.remove(), 5000); // Remove the error after 5 seconds
   }
 // 2. AUTH STATE CHANGED
+// 🔼 REPLACE auth.onAuthStateChanged (~line 320)
 auth.onAuthStateChanged((user) => {
-  if(user) {
-    // Authenticated: Show dashboard
-    toggleAuthUI(true);
-    setupLogoutButton();
+  if (user) {
+    // Authenticated
+    DOM.dashboard.classList.remove('hidden');
+    DOM.authContainer.classList.add('hidden');
+    renderProfiles();
   } else {
-    // Not authenticated: Show auth UI
-    toggleAuthUI(false);
+    // Not authenticated
+    DOM.dashboard.classList.add('hidden');
+    DOM.authContainer.classList.remove('hidden');
     
-    // 🌟 Preserve form state between sessions
-    if(!document.getElementById('loginPage').classList.contains('hidden')) {
-      toggleForms(true); // Show login if returning user
-    }
+    // ✅ Preserve form state
+    const showLogin = !document.getElementById('loginPage').classList.contains('hidden');
+    toggleForms(showLogin);
   }
 });
 // 🟢 CORRECTED TOGGLEAUTHUI FUNCTION
@@ -1039,6 +1044,11 @@ function toggleAuthUI(isAuthenticated) {
 }
   //=======AUTH FUNCTIONS =============
   // Sign Up Handler
+  // 🔼 ADD TO TOP OF SIGNUP HANDLER (~line 575)
+if (!auth) {
+  showErrorToUser("Authentication system not ready");
+  return;
+}
   signupForm?.addEventListener("submit", (e) => {
     e.preventDefault();
     const username = signupForm.querySelector("#signupEmail")
