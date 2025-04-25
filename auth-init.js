@@ -1,15 +1,15 @@
-// auth-init.js
 function loadGoogleAPIs() {
-  const nonce = 'YourRandomNonceValue'; // Must match CSP nonce
-  
+  // Load gapi.js with integrity check
   const gapiScript = document.createElement('script');
-  gapiScript.nonce = nonce;
   gapiScript.src = 'https://apis.google.com/js/api.js';
-  gapiScript.onload = () => console.log('Google API loaded');
+  gapiScript.integrity = 'sha256-...'; // Get from https://cdn.jsdelivr.net/npm/apis.google.com/js/api.js
+  gapiScript.crossOrigin = 'anonymous';
   
+  // Load GSI client with integrity check
   const gsiScript = document.createElement('script');
-  gsiScript.nonce = nonce;
   gsiScript.src = 'https://accounts.google.com/gsi/client';
-  
+  gsiScript.integrity = 'sha256-...'; // Get from https://cdn.jsdelivr.net/npm/accounts.google.com/gsi/client
+  gsiScript.crossOrigin = 'anonymous';
+
   document.head.append(gapiScript, gsiScript);
 }
