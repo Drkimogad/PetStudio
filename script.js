@@ -550,6 +550,9 @@ function renderProfiles() {
       // Print Button
       petCard.querySelector(".printBtn")
         .addEventListener("click", () => printProfile(profile));
+      // Share Button
+      petCard.querySelector('.shareBtn')
+       .addEventListener('click', () => sharePetCard(profile));
       
       // QR Button
       petCard.querySelector(".qrBtn")
@@ -634,104 +637,72 @@ function printProfile(profile) {
   const printWindow = window.open('', '_blank');
   const printDocument = printWindow.document;
 
-  // Create HTML structure
-  const html = printDocument.createElement('html');
-  const head = printDocument.createElement('head');
-  const title = printDocument.createElement('title');
-  title.textContent = `${profile.name}'s Profile`;
-  const style = printDocument.createElement('style');
-  style.textContent = `
-    body {
-      font-family: Arial;
-      padding: 20px;
-      -webkit-print-color-adjust: exact !important;
-    }
-    .print-header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .print-gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* More responsive gallery */
-      gap: 10px;
-      margin: 20px 0;
-    }
-    .print-gallery img {
-      width: 100%;
-      height: auto; /* Maintain aspect ratio */
-      object-fit: cover;
-      opacity: 0; /* Initial hidden state */
-    }
-  `;
-  head.appendChild(title);
-  head.appendChild(style);
-  html.appendChild(head);
+  // Create single root element
+  const html = `
+  <html>
+    <head>
+      <title>${profile.name}'s Profile</title>
+      <style>
+        body {
+          font-family: Arial;
+          padding: 20px;
+          -webkit-print-color-adjust: exact !important;
+        }
+        .print-header {
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .print-gallery {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 10px;
+          margin: 20px 0;
+        }
+        .print-gallery img {
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="print-header">
+        <h1>${profile.name}'s Profile</h1>
+        <p>Generated on ${new Date().toLocaleDateString()}</p>
+      </div>
+      <div class="print-details">
+        <p><strong>Breed:</strong> ${profile.breed}</p>
+        <p><strong>Date of Birth:</strong> ${profile.dob}</p>
+        <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+      </div>
+      <h3>Gallery</h3>
+      <div class="print-gallery">
+        ${profile.gallery.map(imgSrc => 
+          `<img src="${imgSrc}" alt="Pet photo" onload="this.style.opacity = '1'">`
+        ).join('')}
+      </div>
+    </body>
+  </html>`;
 
-  const body = printDocument.createElement('body');
-  const headerDiv = printDocument.createElement('div');
-  headerDiv.classList.add('print-header');
-  const heading = printDocument.createElement('h1');
-  heading.textContent = `${profile.name}'s Profile`;
-  const dateParagraph = printDocument.createElement('p');
-  dateParagraph.textContent = `Generated on ${new Date().toLocaleDateString()}`;
-  headerDiv.appendChild(heading);
-  headerDiv.appendChild(dateParagraph);
-  body.appendChild(headerDiv);
-
-  const detailsDiv = printDocument.createElement('div');
-  detailsDiv.classList.add('print-details');
-  const breedParagraph = printDocument.createElement('p');
-  breedParagraph.innerHTML = `<strong>Breed:</strong> ${profile.breed}`;
-  const dobParagraph = printDocument.createElement('p');
-  dobParagraph.innerHTML = `<strong>Date of Birth:</strong> ${profile.dob}`;
-  const birthdayParagraph = printDocument.createElement('p');
-  birthdayParagraph.innerHTML = `<strong>Next Birthday:</strong> ${profile.birthday}`;
-  detailsDiv.appendChild(breedParagraph);
-  detailsDiv.appendChild(dobParagraph);
-  detailsDiv.appendChild(birthdayParagraph);
-  body.appendChild(detailsDiv);
-
-  const galleryHeading = printDocument.createElement('h3');
-  galleryHeading.textContent = 'Gallery';
-  body.appendChild(galleryHeading);
-
-  const galleryDiv = printDocument.createElement('div');
-  galleryDiv.classList.add('print-gallery');
-  profile.gallery.forEach(imgSrc => {
-    const img = printDocument.createElement('img');
-    img.src = imgSrc;
-    img.alt = 'Pet photo';
-    galleryDiv.appendChild(img);
-  });
-  body.appendChild(galleryDiv);
-
-// 🔼 UPDATE PRINT FUNCTION (line ~1015)
-const script = printDocument.createElement('script');
-script.textContent = `
-  window.addEventListener('load', function() {
-    // ✅ Tracks ALL images (including gallery)
-    const images = Array.from(document.querySelectorAll('img')); 
-    let loaded = 0;
-    
-    images.forEach(img => {
-      img.onload = () => {
-        // ✅ Atomic counter increment
-        if(++loaded === images.length) window.print(); 
-      };
-      // ✅ Accounts for cached/pre-loaded images
-      if(img.complete) loaded++; 
-    });
-
-    // ✅ Fallback if all images cached
-    if(loaded === images.length) window.print(); 
-  })`;
-  body.appendChild(script);
-
-  html.appendChild(body);
-  printDocument.appendChild(html);
+  printDocument.write(html);
   printDocument.close();
+
+  // Image load handling
+  const images = printDocument.querySelectorAll('img');
+  let loaded = 0;
+  
+  const checkPrint = () => {
+    if (++loaded === images.length) {
+      printWindow.print();
+    }
+  };
+
+  images.forEach(img => {
+    if (img.complete) checkPrint();
+    else img.addEventListener('load', checkPrint);
+  });
 }
-  // SHARE PET CARD FUNCTION//
+// SHARE PET CARD FUNCTION//
   async function sharePetCard(pet) {
     // 1. Generate Shareable Link
 // 🔼 UPDATE SHARE URL (line ~995)
@@ -916,6 +887,7 @@ script.textContent = `
     return date.toISOString()
       .split('T')[0]; // "YYYY-MM-DD"
   }
+  // FORM SUBMISSION
   profileForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     // 1. Hardcoded user ID (temporary until auth implementation)
@@ -951,6 +923,23 @@ script.textContent = `
         console.error("Error creating reminder:", error);
       }
     }
+  // Handle gallery files with URL cleanup
+  const galleryFiles = Array.from(document.getElementById("petGallery").files);
+  const galleryUrls = await Promise.all(
+    galleryFiles.map(async file => {
+      const url = URL.createObjectURL(file);
+      // Create image to load and revoke URL
+      await new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(url);
+        };
+        img.src = url;
+      });
+      return url;
+    })
+  );
     // 4. Build profile object
     const newProfile = {
       id: Date.now(),
@@ -958,7 +947,7 @@ script.textContent = `
       breed: petBreed,
       dob: petDob,
       birthday: birthday,
-      gallery: galleryFiles.map(file => URL.createObjectURL(file)),
+      gallery: galleryUrls,      
       moodHistory: [],
       coverPhotoIndex: 0
     };
@@ -982,22 +971,19 @@ window.scrollTo(0, 0); // Optional: Scroll to the top of the page
   
 // AUTH FORM SWITCHING
 // 🟢 NEW TOGGLEFORMS FUNCTION
-// 🔼 UPDATE toggleForms (~line 350)
 function toggleForms(showLogin) {
-  try {
-    DOM.signupPage.classList.toggle('hidden', showLogin);
-    DOM.loginPage.classList.toggle('hidden', !showLogin);
-    
-    // ✅ Reset form states
-    if (showLogin) {
-      DOM.loginForm.reset();
-      DOM.loginForm.querySelector('input').focus();
-    } else {
-      DOM.signupForm.reset();
+  DOM.signupPage.classList.toggle('hidden', showLogin);
+  DOM.loginPage.classList.toggle('hidden', !showLogin);
+  
+  // Reset validation on hidden forms
+  [DOM.signupForm, DOM.loginForm].forEach(form => {
+    if(form.classList.contains('hidden')) {
+      form.reset();
+      form.querySelectorAll('input').forEach(input => {
+        input.setCustomValidity('');
+      });
     }
-  } catch (error) {
-    console.error("Form toggle error:", error);
-  }
+  });
 }
   // AUTHENTICATION SECTION //
   // 1. AUTH STATE OBSERVER
