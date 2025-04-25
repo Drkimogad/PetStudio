@@ -5,7 +5,7 @@
   let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   let isEditing = false;
   let currentEditIndex = null;
-
+// 🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶
 // State Management
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
@@ -23,7 +23,7 @@ function disableUI() {
     </h1>
   `;
 }
-// ====================
+// 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
 // MAIN INITIALIZATION //
 // ====================  
 document.addEventListener('DOMContentLoaded', function() {
@@ -200,7 +200,7 @@ async function main() {
 }
 
 // ================
-// ERROR HANDLING //
+// ERROR HANDLING ❌❌❌❌❌❌
 // ================
 function showErrorToUser(message) {
   try {
@@ -217,7 +217,7 @@ function showErrorToUser(message) {
 }
 
 // =====================
-// AUTHENTICATION FLOW //
+// 🔐 AUTHENTICATION FLOW ========================
 // =====================
 async function refreshDriveTokenIfNeeded() {
   try {
@@ -339,8 +339,8 @@ function handleAuthAction() {
     auth.signInWithRedirect(provider);
   }
 }
-    
-// DRIVE FOLDER MANAGEMENT //
+// 🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈
+// DRIVE FOLDER MANAGEMENT
 // 🔄 Get or Create Drive Folder ID
 async function getOrCreateDriveFolderId() {
   const response = await gapi.client.drive.files.list({
@@ -468,7 +468,7 @@ function handleAuthenticatedUser(user) {
   DOM.authContainer.classList.add('hidden');
   initializeGoogleAPI(); // Ensure Drive is ready
 }
-  
+// 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷  
 // 🔄 UI UPDATES
 renderProfiles();
 profileSection.classList.add("hidden");
@@ -480,11 +480,11 @@ addPetProfileBtn?.addEventListener("click", (e) => {
   if(!isEditing) {
     profileForm.reset();
     currentEditIndex = null;
-  } // Closing the 'if' block here ✅
+  }
   fullPageBanner.classList.add("hidden");
   profileSection.classList.remove("hidden");
-}); // ← closing the 'addEventListener' callback here ✅
-  
+});
+// 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷  
 // PROFILE RENDERING FUNCTIONS  
 function renderProfiles() {
   petList.innerHTML = ''; // Clear current profiles
@@ -569,9 +569,9 @@ function renderProfiles() {
       });
 
       petList.appendChild(petCard);
-    }); // Closing brace for .forEach()
-  } // Closing brace for else block
-} // Closing brace for renderProfiles function
+    });
+  } 
+}
 
   // WHEN CREATING NEW PROFILES
   function createNewProfile() {
@@ -595,6 +595,7 @@ function renderProfiles() {
     savePetProfile(newProfile);
     renderProfiles();
   }
+  // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
   // DAYS COUNTDOWN FUNCTION
   function getCountdown(birthday) {
     const today = new Date();
@@ -604,6 +605,7 @@ function renderProfiles() {
     const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
     return `${diffDays} days until birthday! 🎉`;
   }
+// 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
   // MOOD HISTORY FUNCTION
   function renderMoodHistory(profile) {
     if(!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
@@ -616,6 +618,7 @@ function renderProfiles() {
   function getMoodEmoji(mood) {
     return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
   }
+// 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
   // EDIT PROFILE FUNCTION
   function openEditForm(index) {
     isEditing = true;
@@ -632,6 +635,7 @@ function renderProfiles() {
     DOM.profileSection.classList.remove("hidden"); 
     fullPageBanner.classList.add("hidden");
   }
+// 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
 // PRINT PROFILE FUNCTION (Refactored)
 function printProfile(profile) {
   const printWindow = window.open('', '_blank');
@@ -702,7 +706,7 @@ function printProfile(profile) {
     else img.addEventListener('load', checkPrint);
   });
 }
-  
+// 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀  
 // 🔼 SHARE PET CARD FUNCTION
   async function sharePetCard(profile) {
 // 1. Generate Shareable Link
@@ -742,6 +746,7 @@ function printProfile(profile) {
       console.error('Sharing failed:', error);
     }
   }
+// 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
   // AGE CALCULATION FUNCTION
   function calculateAge(dobString) {
     try {
@@ -759,8 +764,9 @@ function printProfile(profile) {
       return 'N/A';
     }
   }
+// 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷
 // QR CODE MODAL MANAGEMENT
-  // GENERATE, PRINT, DOWNLOAD, SHARE AND CLOSE QR CODE
+// GENERATE, PRINT, DOWNLOAD, SHARE AND CLOSE QR CODE
 // Generate QR Code
 function generateQRCode(profileIndex) {
   const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
@@ -893,6 +899,8 @@ function generateQRCode(profileIndex) {
     return date.toISOString()
       .split('T')[0]; // "YYYY-MM-DD"
   }
+  
+  // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷
   // FORM SUBMISSION
   profileForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -972,6 +980,7 @@ renderProfiles();
 window.scrollTo(0, 0); // Optional: Scroll to the top of the page
 }); // 🧩
   
+// 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢    
 // AUTH FORM SWITCHING
 // 🟢 NEW TOGGLEFORMS FUNCTION
 function toggleForms(showLogin) {
@@ -988,7 +997,7 @@ function toggleForms(showLogin) {
     }
   });
 }
-  // AUTHENTICATION SECTION //
+// 🟢 AUTHENTICATION SECTION
   // 1. AUTH STATE OBSERVER
   function showAuthError(message) {
     // Custom error display function (could be a modal or notification)
@@ -999,7 +1008,7 @@ function toggleForms(showLogin) {
     setTimeout(() => errorElement.remove(), 5000); // Remove the error after 5 seconds
   }
 // 2. AUTH STATE CHANGED
-// 🔼 REPLACE auth.onAuthStateChanged (~line 320)
+// 🔼 auth.onAuthStateChanged
 auth.onAuthStateChanged((user) => {
   if (user) {
     // Authenticated
@@ -1031,48 +1040,48 @@ function toggleAuthUI(isAuthenticated) {
     DOM.profileSection.classList.add('hidden');
   }
 }
-  //=======AUTH FUNCTIONS =============
-  // Sign Up Handler
-  // 🔼 ADD TO TOP OF SIGNUP HANDLER (~line 575)
-if (!auth) {
-  showErrorToUser("Authentication system not ready");
-  return;
-}
-  signupForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const username = signupForm.querySelector("#signupEmail")
-      .value.trim();
-    const password = signupForm.querySelector("#signupPassword")
-      .value.trim();
-    const email = `${username}@petstudio.com`;
-    if(!username || !password) {
-      alert("Please fill all fields");
-      return;
-    }
-    const submitBtn = signupForm.querySelector("button[type='submit']");
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Creating account...";
-    auth.createUserWithEmailAndPassword(email, password)
-      // 🟢 UPDATED SUCCESS HANDLER
-      .then(() => {
-        // Sign out immediately after signup
-        return auth.signOut();
-      })
-     .then(() => {
-    alert("Account created! Please log in.");
-    DOM.signupForm.reset();
-    toggleForms(true); // Use centralized toggle
-    DOM.loginForm.querySelector("#loginEmail").value = username;
-     })
-      .catch((error) => {
-        alert("Error: " + error.message);
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Sign Up";
-      });
-  });
-  // Login Handler
+  //🟢=======AUTH FUNCTIONS =============
+  // 🔼 Sign Up Handler
+// Sign Up Handler
+signupForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  
+  if (!auth) {
+    showErrorToUser("Authentication system not ready");
+    return;
+  }
+
+  const username = signupForm.querySelector("#signupEmail").value.trim();
+  const password = signupForm.querySelector("#signupPassword").value.trim();
+  const email = `${username}@petstudio.com`;
+  const submitBtn = signupForm.querySelector("button[type='submit']");
+
+  if (!username || !password) {
+    showAuthError("Please fill all fields");
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Creating account...";
+
+  auth.createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Successful signup - automatic login
+      DOM.signupForm.reset();
+      
+      // Direct redirect without signout
+      window.location.href = '/PetStudio/main-app.html'; 
+    })
+    .catch((error) => {
+      showAuthError(error.message);
+      console.error("Signup Error:", error);
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Sign Up";
+    });
+});
+// 🔼 Login Handler
   loginForm?.addEventListener("submit", (e) => {
     e.preventDefault();
     const username = loginForm.querySelector("#loginEmail")
@@ -1101,7 +1110,7 @@ if (!auth) {
       });
   });
 
-// Logout Handler
+// 🔼 Logout Handler
 function setupLogoutButton() {
   DOM.logoutBtn?.addEventListener('click', async (e) => {
     e.preventDefault();
@@ -1113,8 +1122,8 @@ function setupLogoutButton() {
     }
   });
 }
-
-// SERVICE WORKER REGISTRATION AND UPDATE CHECK
+// 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
+// ⚙️ SERVICE WORKER =============================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/PetStudio/service-worker.js', {
@@ -1152,9 +1161,10 @@ if ('serviceWorker' in navigator) {
       window.location.reload();
     });
   });
-} // <-- Proper closing brace for service worker block
-  // PUSH NOTIFICATIONS LOGIC
-  // Global VAPID Configuration
+} 
+// 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
+  // 🟢 PUSH NOTIFICATIONS LOGIC
+  // 🟢 Global VAPID Configuration
   const VAPID_PUBLIC_KEY = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
   const VERCEL_API = 'https://pet-studio.vercel.app/api/save-subscription';
   // Push Notification Subscription
@@ -1176,7 +1186,7 @@ if ('serviceWorker' in navigator) {
       console.error('Subscription failed:', error);
     }
   }
-  // Send to Vercel API
+  //🟢 Send to Vercel API
 async function sendSubscriptionToServer(subscription) {
   try {
     const user = auth.currentUser;
@@ -1203,7 +1213,7 @@ async function sendSubscriptionToServer(subscription) {
     throw error;
   }
 }
-  // Helper function for VAPID key conversion
+  // 🟢 Helper function for VAPID key conversion
   function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
@@ -1212,9 +1222,9 @@ async function sendSubscriptionToServer(subscription) {
     const rawData = window.atob(base64);
     return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
   }
-
-  // Initialize
+// 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
+  // 🟢 Initialize
   if(petProfiles.length > 0) {
     renderProfiles();
   }
-}); // DOM CLOSING BRACE
+});
