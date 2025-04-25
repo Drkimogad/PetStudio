@@ -759,18 +759,22 @@ function printProfile(profile) {
       return 'N/A';
     }
   }
-  // QR CODE MODAL MANAGEMENT
+// QR CODE MODAL MANAGEMENT
   // GENERATE, PRINT, DOWNLOAD, SHARE AND CLOSE QR CODE
-  let currentQRProfile = null;
-  // Generate QR Codefunction generateQRCode(profileIndex) {
-  const profile = petProfiles[profileIndex];
-  // Use URL instead of full data
-  const profileUrl = `${window.location.origin}/?profile=${profile.id}`;
-    // Clear previous QR code
-    container.innerHTML = '';
-    // Generate new QR code
+// Generate QR Code
+function generateQRCode(profileIndex) {
+  const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+  currentQRProfile = savedProfiles[profileIndex];
+  const modal = document.getElementById('qr-modal');
+  const container = document.getElementById('qrcode-container');
+  
+  // Clear previous QR code
+  container.innerHTML = '';
+  
+  // Generate new QR code with proper error handling
+  try {
     new QRCode(container, {
-      text: profileUrl, // Instead of full profile JSON
+      text: `${window.location.origin}/?profile=${currentQRProfile.id}`, // Shortened URL
       width: 256,
       height: 256,
       colorDark: "#000000",
@@ -778,7 +782,11 @@ function printProfile(profile) {
       correctLevel: QRCode.CorrectLevel.H
     });
     modal.style.display = 'block';
+  } catch (error) {
+    console.error('QR Generation Error:', error);
+    alert('QR code generation failed. Profile data might be too large.');
   }
+}
   // Print QR Code
   function printQR() {
     const printContent = document.querySelector('#qr-modal .printable-area')
