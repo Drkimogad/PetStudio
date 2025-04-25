@@ -8,26 +8,26 @@
     <meta property="og:type" content="website">
     
     <!-- Enhanced CSP with Nonce -->
-<meta http-equiv="Content-Security-Policy"
-  content="default-src 'self';
-    script-src 'self'
-               https://www.gstatic.com
-               https://cdn.jsdelivr.net
-               https://cdnjs.cloudflare.com
-               https://apis.google.com
-               https://accounts.google.com
-               https://www.googleapis.com
-               'unsafe-eval';
+<meta http-equiv="Content-Security-Policy" 
+  content="default-src 'none';
+    script-src 'self' 
+               https://www.gstatic.com 
+               https://apis.google.com 
+               https://accounts.google.com 
+               'nonce-YourRandomNonceValue' 
+               'strict-dynamic';
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    connect-src 'self'
-               https://www.googleapis.com
-               https://firestore.googleapis.com
-               https://*.googleapis.com
-               https://identitytoolkit.googleapis.com
-               https://www.gstatic.com;
-    frame-src https://accounts.google.com https://www.google.com;
-    font-src https://fonts.gstatic.com;
-    img-src 'self' https://*.googleusercontent.com;">
+    connect-src 'self' 
+               https://firestore.googleapis.com 
+               https://identitytoolkit.googleapis.com;
+    img-src 'self' 
+            https://*.googleusercontent.com 
+            https://fonts.gstatic.com;
+    font-src 'self' https://fonts.gstatic.com;
+    frame-src https://accounts.google.com;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';">
 
 <!-- Firebase Core SDKs -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -92,7 +92,7 @@
                 <h1>PetStudio</h1>
                 <h2>Celebrate your pet's milestones</h2>
             </div>
-            <form id="loginForm" autocomplete="on">
+            <form id="loginForm" autocomplete="on" novalidate>
                 <div class="form-group">
                     <label for="loginEmail">Username:</label>
                     <input type="text" id="loginEmail" name="email" autocomplete="username" required>
@@ -114,7 +114,7 @@
                 <h1>PetStudio</h1>
                 <h2>Create your account</h2>
             </div>
-            <form id="signupForm" autocomplete="on">
+            <form id="signupForm" autocomplete="on" novalidate>
                 <div class="form-group">
                     <label for="signupEmail">Choose a username:</label>
                     <input type="text" id="signupEmail" name="email" autocomplete="username" required>
