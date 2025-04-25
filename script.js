@@ -702,10 +702,10 @@ function printProfile(profile) {
     else img.addEventListener('load', checkPrint);
   });
 }
-// SHARE PET CARD FUNCTION//
-  async function sharePetCard(pet) {
-    // 1. Generate Shareable Link
-// 🔼 UPDATE SHARE URL (line ~995)
+  
+// 🔼 SHARE PET CARD FUNCTION
+  async function sharePetCard(profile) {
+// 1. Generate Shareable Link
     const shareUrl = `${window.location.origin}/PetStudio/?profile=${pet.id}`;    // 2. Try Web Share API first
     if(navigator.share) {
       try {
@@ -722,8 +722,9 @@ function printProfile(profile) {
     }
     // 3. Desktop/Image Fallback
     try {
-      const cardElement = document.getElementById(`pet-card-${pet.id}`);
-      if(!cardElement) throw new Error('Pet card not found');
+      const cardElement = document.getElementById(`pet-card-${profile.id}`);
+      if(!cardElement) throw new Error('Card element missing');
+      
       const canvas = await html2canvas(cardElement);
       const imageUrl = canvas.toDataURL('image/png');
       // 4. Create and trigger download
@@ -739,7 +740,6 @@ function printProfile(profile) {
     }
     catch (error) {
       console.error('Sharing failed:', error);
-      window.open(shareUrl, '_blank');
     }
   }
   // AGE CALCULATION FUNCTION
@@ -762,12 +762,10 @@ function printProfile(profile) {
   // QR CODE MODAL MANAGEMENT
   // GENERATE, PRINT, DOWNLOAD, SHARE AND CLOSE QR CODE
   let currentQRProfile = null;
-  // Generate QR Code
-  function generateQRCode(profileIndex) {
-    const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-    currentQRProfile = savedProfiles[profileIndex];
-    const modal = document.getElementById('qr-modal');
-    const container = document.getElementById('qrcode-container');
+  // Generate QR Codefunction generateQRCode(profileIndex) {
+  const profile = petProfiles[profileIndex];
+  // Use URL instead of full data
+  const profileUrl = `${window.location.origin}/?profile=${profile.id}`;
     // Clear previous QR code
     container.innerHTML = '';
     // Generate new QR code
@@ -924,21 +922,19 @@ function printProfile(profile) {
       }
     }
   // Handle gallery files with URL cleanup
-  const galleryUrls = await Promise.all(
-    galleryFiles.map(async file => {
-      const url = URL.createObjectURL(file); // ✅ Directly use .files
-      // Create image to load and revoke URL
-      await new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          URL.revokeObjectURL(url);
-          resolve(url);
-        };
-        img.src = url;
-      });
-      return url;
-    })
-  );
+ // Modify gallery handling
+const galleryUrls = await Promise.all(
+  galleryFiles.map(async file => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    await new Promise(resolve => {
+      img.onerror = resolve; // Handle failed loads
+      img.onload = resolve;
+      img.src = url;
+    });
+    return url; // Don't revoke here
+  })
+);
     // 4. Build profile object
     const newProfile = {
       id: Date.now(),
@@ -1096,24 +1092,20 @@ if (!auth) {
         submitBtn.textContent = "Log In";
       });
   });
-  // Logout Handler
-  function setupLogoutButton() {
-    if(logoutBtn) {
-      logoutBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        auth.signOut()
-          .then(() => {
-            authContainer.classList.remove("hidden");
-            dashboard.classList.add("hidden");
-            loginPage.classList.remove("hidden");
-            signupPage.classList.add("hidden");
-          })
-          .catch((error) => {
-            alert("Logout error: " + error.message);
-          });
-      });
+
+// Logout Handler
+function setupLogoutButton() {
+  DOM.logoutBtn?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+      await auth.signOut();
+      window.location.reload(); // Full reset
+    } catch (error) {
+      console.error('Logout failed:', error);
     }
-  }  
+  });
+}
+
 // SERVICE WORKER REGISTRATION AND UPDATE CHECK
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
