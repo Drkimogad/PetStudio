@@ -158,14 +158,14 @@
 
     <!-- Dashboard -->
     <div id="dashboard" class="hidden">
-        <h1>Welcome to your pets' dashboard</h1>
+        <h1>Welcome to your pet's dashboard</h1>
         <button id="addPetProfileBtn" class="button">Add Pet Profile</button>
 
         <!-- Full Page Image/Banner -->
         <div id="fullPageBanner" class="banner">
             <img src="./banner/image.png" alt="Banner Image" class="banner-image">
             <div class="banner-message">
-                <p>Capture your pet's special moments and never miss a birthday with PetStudio!</p>
+                <p>Capture your pets' special moments and never miss a birthday with PetStudio!</p>
             </div>
         </div>
         
@@ -183,6 +183,10 @@
                 <input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
                 <label for="petBirthday">Birthday Reminder:</label>
                 <input type="date" id="petBirthday" name="petBirthday">
+                <label for="moodHistoryInput">Mood Logs (one per line, format YYYY-MM-DD:mood):</label>
+               <textarea id="moodHistoryInput" name="moodHistoryInput" rows="4"
+                placeholder="2025-04-27:happy
+                2025-05-01:sad"></textarea>
                 <button type="submit" class="button">Save Profile</button>
             </form>
         </div>
