@@ -1,14 +1,18 @@
-// service-worker.js
-const VERSION = '3.0.0';
-const CACHE_NAMES = {
-  core: `PetStudio-core-v${VERSION}`,
-  api: `PetStudio-api-v${VERSION}`,
-  fonts: `PetStudio-fonts-v${VERSION}`,
-  images: `PetStudio-images-v${VERSION}`
+/*
+ * service-worker.js
+ * Versioned caching with install/activate/fetch handlers
+ */
+
+const VERSION = '4.0.0';
+const CACHE = {
+  CORE: `PetStudio-core-v${VERSION}`,
+  API:  `PetStudio-api-v${VERSION}`,
+  FONTS:`PetStudio-fonts-v${VERSION}`,
+  IMAGES:`PetStudio-images-v${VERSION}`
 };
 
-const OFFLINE_URL = '/PetStudio/offline.html';
-const FALLBACK_IMAGE = '/PetStudio/images/fallback.png';
+const OFFLINE_URL    = '/PetStudio/offline.html';
+const FALLBACK_IMAGE = '/PetStudio/banner/image.png';
 
 const CORE_ASSETS = [
   '/PetStudio/',
@@ -21,6 +25,10 @@ const CORE_ASSETS = [
   '/PetStudio/banner/image.png',
   'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js',
   'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js',
+  'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js',
+  'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js',
+  'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js',
+  'https://accounts.google.com/gsi/client',
   OFFLINE_URL,
   FALLBACK_IMAGE
 ];
@@ -30,211 +38,145 @@ const FONT_SOURCES = [
   'https://use.typekit.net'
 ];
 
-const API_ENDPOINTS = [
-  '/PetStudio/api/'
+const DYNAMIC_PATHS = [
+  /\/profile\?id=/,
+  /\/PetStudio\/api\/.*$/,
+  /\.(json|png|jpg)$/
 ];
 
-// Installation: Precaching Core Assets
-self.addEventListener('install', (event) => {
+const NO_CACHE_PATHS = [
+  /\/__\/auth\//,
+  /\/identitytoolkit\//,
+  /\/token$/
+];
+
+// Installation: precache core assets
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAMES.core)
-      .then(cache => {
-        console.log(`[SW] Caching ${CORE_ASSETS.length} core assets`);
-        return cache.addAll(CORE_ASSETS);
-      })
-      .then(() => {
-        console.log('[SW] Core assets cached');
-        return self.skipWaiting();
-      })
-      .catch(error => {
-        console.error('[SW] Installation failed:', error);
-        throw error;
-      })
+    caches.open(CACHE.CORE)
+      .then(cache => cache.addAll(CORE_ASSETS))
+      .then(() => self.skipWaiting())
   );
 });
 
-// Activation: Cleanup and Claim Clients
-self.addEventListener('activate', (event) => {
+// Activation: clean up old caches
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
-        keys.filter(key => !Object.values(CACHE_NAMES).includes(key))
-          .map(key => {
-            console.log(`[SW] Removing old cache: ${key}`);
-            return caches.delete(key);
-          })
-      );
-    })
-    .then(() => {
-      console.log('[SW] Claiming clients');
-      return self.clients.claim();
-    })
-    .catch(error => {
-      console.error('[SW] Activation failed:', error);
-      throw error;
-    })
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(key => !Object.values(CACHE).includes(key))
+            .map(key => caches.delete(key))
+      )
+    ).then(() => self.clients.claim())
   );
 });
 
-// Fetch: Advanced Caching Strategies
-self.addEventListener('fetch', (event) => {
+// Fetch handler: route requests through our strategies
+self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET and non-HTTP(S) requests
-  if (request.method !== 'GET' || !url.protocol.startsWith('http')) {
-    return;
+  // Skip caching for critical auth paths
+  if (NO_CACHE_PATHS.some(rx => rx.test(url.pathname))) {
+    return event.respondWith(fetch(request));
   }
 
-  // Handle navigation requests
+  // Navigation: network-first with offline fallback
   if (request.mode === 'navigate') {
-    event.respondWith(
-      handleNavigationRequest(request)
+    return event.respondWith(
+      networkFirst(request, CACHE.CORE, 5000, OFFLINE_URL)
     );
-    return;
   }
 
-  // API Requests (Network First with Timeout)
-  if (API_ENDPOINTS.some(endpoint => url.pathname.startsWith(endpoint))) {
-    event.respondWith(
-      handleApiRequest(request)
+  // Dynamic API or data requests
+  if (DYNAMIC_PATHS.some(rx => rx.test(url.pathname))) {
+    return event.respondWith(
+      networkFirst(request, CACHE.API, 3000)
     );
-    return;
   }
 
-  // Fonts (Cache First with Network Update)
+  // Font requests: cache-first with background update
   if (FONT_SOURCES.includes(url.origin) && request.destination === 'font') {
-    event.respondWith(
-      handleFontRequest(request)
+    return event.respondWith(
+      cacheFirst(request, CACHE.FONTS)
     );
-    return;
   }
 
-  // Images (Cache First with Network Update)
+  // Image requests: cache-first with fallback image
   if (request.destination === 'image') {
-    event.respondWith(
-      handleImageRequest(request)
+    return event.respondWith(
+      cacheFirst(request, CACHE.IMAGES, FALLBACK_IMAGE)
     );
-    return;
   }
 
-  // Default (Cache First with Network Update)
+  // Default: cache-first for core assets
   event.respondWith(
-    handleDefaultRequest(request)
+    cacheFirst(request, CACHE.CORE)
   );
 });
 
-// Strategy Handlers
-async function handleNavigationRequest(request) {
+// Network-first strategy with optional timeout and offline fallback
+async function networkFirst(request, cacheName, timeoutMs = 3000, fallbackUrl) {
   try {
-    // Network-first with timeout
-    const response = await timeout(5000, fetch(request));
-    return response;
-  } catch (error) {
-    const cache = await caches.open(CACHE_NAMES.core);
-    const cached = await cache.match(OFFLINE_URL);
-    return cached || Response.error();
-  }
-}
-
-async function handleApiRequest(request) {
-  const cache = await caches.open(CACHE_NAMES.api);
-  
-  try {
-    // Network-first with timeout
-    const response = await timeout(3000, fetch(request));
-    
-    // Cache successful responses
-    if (response.ok) {
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch (error) {
-    // Fallback to cache
-    const cached = await cache.match(request);
-    return cached || Response.error();
-  }
-}
-
-async function handleFontRequest(request) {
-  const cache = await caches.open(CACHE_NAMES.fonts);
-  const cached = await cache.match(request);
-  
-  // Update cache in background
-  if (!cached) {
-    fetchAndCache(request, CACHE_NAMES.fonts);
-    return fetch(request);
-  }
-  
-  // Refresh cache
-  fetchAndCache(request, CACHE_NAMES.fonts);
-  return cached;
-}
-
-async function handleImageRequest(request) {
-  const cache = await caches.open(CACHE_NAMES.images);
-  const cached = await cache.match(request);
-  
-  if (cached) {
-    // Refresh cache in background
-    fetchAndCache(request, CACHE_NAMES.images);
-    return cached;
-  }
-  
-  return fetchAndCache(request, CACHE_NAMES.images);
-}
-
-async function handleDefaultRequest(request) {
-  const cache = await caches.open(CACHE_NAMES.core);
-  const cached = await cache.match(request);
-  
-  if (cached) {
-    // Refresh cache in background
-    fetchAndCache(request, CACHE_NAMES.core);
-    return cached;
-  }
-  
-  return fetchAndCache(request, CACHE_NAMES.core);
-}
-
-// Helper Functions
-function timeout(ms, promise) {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => {
-      reject(new Error('Request timeout'));
-    }, ms);
-
-    promise
-      .then(resolve)
-      .catch(reject)
-      .finally(() => clearTimeout(timer));
-  });
-}
-
-async function fetchAndCache(request, cacheName) {
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
+    const response = await timeout(timeoutMs, fetch(request));
+    if (response && response.ok) {
       const cache = await caches.open(cacheName);
       cache.put(request, response.clone());
     }
     return response;
-  } catch (error) {
-    if (request.headers.get('Accept').includes('text/html')) {
-      return caches.match(OFFLINE_URL);
-    }
-    return Response.error();
+  } catch (err) {
+    const cache = await caches.open(cacheName);
+    const cached = await cache.match(request) || (fallbackUrl && cache.match(fallbackUrl));
+    return cached || Response.error();
   }
 }
 
-// Lifecycle Management
-self.addEventListener('message', (event) => {
-  if (event.data.action === 'skipWaiting') {
+// Cache-first strategy with optional fallback
+async function cacheFirst(request, cacheName, fallbackUrl) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  if (cached) {
+    // Update in background
+    fetchAndCache(request, cacheName);
+    return cached;
+  }
+  try {
+    const response = await fetch(request);
+    if (response && response.ok) {
+      cache.put(request, response.clone());
+      return response;
+    }
+    throw new Error('Network response not ok');
+  } catch (err) {
+    return fallbackUrl ? caches.match(fallbackUrl) : Response.error();
+  }
+}
+
+// Helper: promise timeout
+function timeout(ms, promise) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('Timeout')), ms);
+    promise.then(resolve, reject).finally(() => clearTimeout(timer));
+  });
+}
+
+// Helper: fetch and cache without blocking response
+async function fetchAndCache(request, cacheName) {
+  try {
+    const response = await fetch(request);
+    if (response && response.ok) {
+      const cache = await caches.open(cacheName);
+      cache.put(request, response.clone());
+    }
+  } catch (err) {
+    // silent failure
+  }
+}
+
+// Listen for skipWaiting message to activate new SW immediately
+self.addEventListener('message', event => {
+  if (event.data && event.data.action === 'skipWaiting') {
     self.skipWaiting();
-    self.clients.claim().then(() => {
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => client.postMessage({ action: 'reload' }));
-      });
-    });
+    self.clients.claim();
   }
 });
