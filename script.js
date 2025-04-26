@@ -1,11 +1,12 @@
-  // 🔶DECLARE GLOBALS🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶
+  // 🔶DECLARE GLOBALS🔶🔶🔶
   let auth = null; 
   let provider = null;
   let isSignupInProgress = false;
   let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   let isEditing = false;
   let currentEditIndex = null;
-// 🌐 Global DOM element references🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶
+//🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+// 🌐 Global DOM element references🔶🔶🔶
 const DOM = {
   authContainer:  document.getElementById("authContainer"),
   signupPage:     document.getElementById("signupPage"),
@@ -22,8 +23,8 @@ const DOM = {
   fullPageBanner:    document.getElementById("fullPageBanner"),
   profileForm:       document.getElementById("profileForm")
 };
-
-// 🔶 State Management🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶
+//🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+// 🔶 State Management🔶🔶🔶
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
   'https://drkimogad.github.io/PetStudio'
@@ -34,7 +35,7 @@ if (!VALID_ORIGINS.includes(window.location.origin)) {
 }
 // HELPER FUNCTION DISABLE UI (MOVE TO TOP)    
 function disableUI() {
-  document.body.innerHTML = `
+   document.body.innerHTML = `
     <h1 style="color: red; padding: 2rem; text-align: center">
       Critical Error: Failed to load application interface
     </h1>
@@ -106,6 +107,9 @@ async function initializeFirebase() {
 
 // 🧩 IMPROVED SCRIPT LOADING
 async function loadEssentialScripts() {
+// Initialize Google APIs + render profiles
+    await main();
+    setupLogoutButton();
   return new Promise((resolve) => {
     const checkInterval = setInterval(() => {
       if(window.firebase?.auth && window.gapi?.client) {
@@ -198,7 +202,7 @@ async function main() {
     if(window.petProfiles?.length > 0) {
       renderProfiles();
     } else {
-      petList.innerHTML = ''; // Only if petList exists
+      DOM.petList.innerHTML = '';
     }
   } catch (error) {
     console.error("❌ main() failed:", error);
@@ -475,6 +479,7 @@ function handleAuthenticatedUser(user) {
   DOM.authContainer.classList.add('hidden');
   initializeGoogleAPI(); // Ensure Drive is ready
 }
+// 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
 // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷  
 // 🔄 UI UPDATES
 renderProfiles();
