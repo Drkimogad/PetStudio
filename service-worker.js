@@ -1,7 +1,6 @@
-/*
- * service-worker.js
- * Versioned caching with install/activate/fetch handlers
- */
+self.addEventListener('install', () => {
+  self.skipWaiting(); // Force immediate activation
+});
 
 const VERSION = '4.0.0';
 const CACHE = {
