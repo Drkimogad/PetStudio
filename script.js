@@ -114,27 +114,7 @@ async function loadEssentialScripts() {
     }, 100); // ✅ Faster checking interval
   });
 }
-// ===================
-// GOOGLE SIGNIN HANDLER
-// ===================
-googleSignInBtn.addEventListener('click', () => {
-  try {
-    // Safety checks
-    if (!auth) throw new Error("Authentication system not ready");
-    if (!provider) throw new Error("Google provider not configured");
-    
-    // Initiate sign-in
-    auth.signInWithRedirect(provider)
-      .catch(error => {
-        console.error("Sign-in failed:", error);
-        showAuthError(error.message);
-      });
-  } catch (error) {
-    console.error("Sign-in error:", error);
-    showAuthError(error.message);
-  }
-});  
-    
+
 initQRModal();
 await main();            // initialize Google APIs + render profiles
 console.log("App fully initialized");
