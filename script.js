@@ -139,12 +139,7 @@ initQRModal();
 loadGoogleAPIs();
 
 console.log("Firebase initialized successfully");
-  } catch (error) {
-    console.error("Firebase init failed:", error);
-    showErrorToUser("Failed to initialize services");
-    disableUI();
-  }    
-  
+    
 // 📄 MODIFIED URL PARAM HANDLING
 const urlParams = new URLSearchParams(window.location.search); // Add this line
 if(urlParams.has('profile')) {
