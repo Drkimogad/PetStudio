@@ -27,7 +27,6 @@ const CORE_ASSETS = [
   'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js',
   'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js',
   'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js',
-  'https://accounts.google.com/gsi/client',
   OFFLINE_URL,
   FALLBACK_IMAGE
 ];
