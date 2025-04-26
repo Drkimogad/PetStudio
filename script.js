@@ -170,8 +170,26 @@ async function initializeGoogleAPI() {
 }
 
 // ====================
-// CORE FUNCTIONALITY //
+// CORE FUNCTIONALITY 🌟🌟🌟🌟🌟🌟
 // ====================
+async function loadGoogleAPIs() {
+  return new Promise((resolve, reject) => {
+    if (window.google?.accounts) return resolve(); // Already loaded
+    
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('Failed to load Google Identity Services'));
+    document.head.appendChild(script);
+  });
+}
+// 🔑 Key Points:
+// 1. Creates a script tag for Google's Identity Services
+// 2. Uses standard script loading (no CORS issues)
+// 3. Checks if already loaded to avoid duplicates
+// MAIN FUNCTION 🌟🌟🌟🌟🌟🌟
 async function main() {
   try {
     await loadGAPI();
