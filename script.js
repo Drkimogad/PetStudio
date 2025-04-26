@@ -111,6 +111,7 @@ console.log("Firebase initialized successfully");
   }    
   
 // 📄 MODIFIED URL PARAM HANDLING
+const urlParams = new URLSearchParams(window.location.search); // Add this line
 if(urlParams.has('profile')) {
   try {
     const profileIndex = parseInt(urlParams.get('profile'));
