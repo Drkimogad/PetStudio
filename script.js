@@ -24,8 +24,8 @@ function disableUI() {
 }
 // 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
 // MAIN INITIALIZATION
-document.addEventListener('DOMContentLoaded', function() {
-// 🖥️ DOM ELEMENT
+document.addEventListener('DOMContentLoaded', async function() { // ✅ Added async
+  // 🖥️ DOM ELEMENT
   const DOM = {
     authContainer: document.getElementById("authContainer"),
     signupPage: document.getElementById("signupPage"),
@@ -42,26 +42,50 @@ document.addEventListener('DOMContentLoaded', function() {
     fullPageBanner: document.getElementById("fullPageBanner"),
     profileForm: document.getElementById("profileForm")
   };
-  
-// 💠💠 ELEMENT VALIDATION 💠💠💠💠💠💠💠💠💠💠💠💠💠💠💠💠💠💠
-  if (!DOM.authContainer) {
-    console.error('Critical Error: Auth container not found!');
-    showErrorToUser('Application failed to load. Please refresh.');
+  // ⏳ ADD LOADING STATE
+  document.body.classList.add('loading');
+
+  try {
+    // 🔥 INITIALIZE FIREBASE FIRST
+    const { app, auth } = await initializeFirebase(); // ✅ Get auth instance
+    
+    // 🔄 INIT AUTH LISTENERS AFTER FIREBASE
+    initAuthListeners(auth); // ✅ Pass auth dependency
+
+    // ✅ MOVED DOM VALIDATION HERE
+    if (!DOM.authContainer) {
+      throw new Error('Auth container element missing');
+    }
+
+    // 🟢 INITIAL FORM STATE
+    toggleForms(false);
+    DOM.dashboard.classList.add('hidden');
+    DOM.fullPageBanner.classList.remove('hidden');
+    DOM.profileSection.classList.add('hidden');
+
+    // ✅ MOVED GOOGLE BUTTON CREATION HERE
+    const googleSignInBtn = document.createElement("button");
+    googleSignInBtn.className = "google-signin-btn";
+    DOM.authContainer.appendChild(googleSignInBtn);
+
+    // 🔥 INIT PROVIDER AFTER AUTH
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/drive.file');
+    provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+
+    await loadEssentialScripts();
+
+  } catch (error) {
+    console.error('Initialization failed:', error);
+    showErrorToUser('Failed to initialize. Please refresh.');
     disableUI();
-    return;
+  } finally {
+    document.body.classList.remove('loading');
   }
-  
- // 🟢 INITIAL FORM STATE
-toggleForms(false); // Show signup first
-DOM.dashboard.classList.add('hidden'); // Hide dashboard initially
-DOM.fullPageBanner.classList.remove('hidden'); // Add this
-DOM.profileSection.classList.add('hidden'); // Add this
-// Create Google Sign-In button
-  const googleSignInBtn = document.createElement("button");
-  googleSignInBtn.className = "google-signin-btn";
-  DOM.authContainer.appendChild(googleSignInBtn);
-  
-  // 🔥 🔥 🔥 Initialize Firebase 🔥 🔥 🔥 🔥 
+});
+
+// 🧩 PROPER FIREBASE INIT FUNCTION
+async function initializeFirebase() {
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
     authDomain: "swiftreach2025.firebaseapp.com",
@@ -71,14 +95,23 @@ DOM.profileSection.classList.add('hidden'); // Add this
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
   };
 
-  try {
-    const app = firebase.initializeApp(firebaseConfig);
-    auth = firebase.auth(app);
-    provider = new firebase.auth.GoogleAuthProvider();
-    
-    // Configure provider INSIDE the try block
-    provider.addScope('https://www.googleapis.com/auth/drive.file');
-    provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+  // ✅ ACTUALLY INITIALIZE FIREBASE
+  const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth(app);
+  return { app, auth }; // ✅ Return critical instances
+}
+
+// 🧩 IMPROVED SCRIPT LOADING
+async function loadEssentialScripts() {
+  return new Promise((resolve) => {
+    const checkInterval = setInterval(() => {
+      if(window.firebase?.auth && window.gapi?.client) {
+        clearInterval(checkInterval);
+        resolve();
+      }
+    }, 100); // ✅ Faster checking interval
+  });
+}
 // ===================
 // GOOGLE SIGNIN HANDLER
 // ===================
