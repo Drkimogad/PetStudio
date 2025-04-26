@@ -111,23 +111,27 @@ console.log("Firebase initialized successfully");
     showErrorToUser("Failed to initialize services");
     disableUI();
   }    
-  // ======================
-  // URL PARAMETER HANDLING
-  // ======================
-  const urlParams = new URLSearchParams(window.location.search);  
-  if(urlParams.has('profile')) {
-    try {
-      const profileIndex = parseInt(urlParams.get('profile'));
-      if(window.petProfiles?.length > profileIndex) {
-        const profile = petProfiles[profileIndex];
-        printProfile(profile);
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-    } catch(error) {
-      console.error('Profile load error:', error);
-      showErrorToUser('Invalid profile URL');
+  
+// 📄 MODIFIED URL PARAM HANDLING
+if(urlParams.has('profile')) {
+  try {
+    const profileIndex = parseInt(urlParams.get('profile'));
+    // 🔄 IMPROVED VALIDATION
+    if(Number.isNaN(profileIndex)) throw new Error('Invalid profile ID');
+    
+    const validProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+    if(validProfiles.length > profileIndex) {
+      printProfile(validProfiles[profileIndex]); // ✅ Pass actual profile data
+    } else {
+      showErrorToUser('Requested profile not found');
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
+  } catch(error) {
+    console.error('Profile load error:', error);
+    showErrorToUser('Invalid profile URL');
+    window.history.replaceState({}, document.title, window.location.pathname);
   }
+}
 // ======================
 // UI EVENT LISTENERS
 // ======================
