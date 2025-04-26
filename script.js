@@ -1,12 +1,11 @@
-  // 1. DECLARE GLOBALS FIRST
+  // 🔶DECLARE GLOBALS🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶
   let auth = null; 
   let provider = null;
   let isSignupInProgress = false;
   let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   let isEditing = false;
   let currentEditIndex = null;
-// 🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶
-// State Management
+// 🔶 State Management🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
   'https://drkimogad.github.io/PetStudio'
@@ -24,12 +23,9 @@ function disableUI() {
   `;
 }
 // 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
-// MAIN INITIALIZATION //
-// ====================  
+// MAIN INITIALIZATION
 document.addEventListener('DOMContentLoaded', function() {
-  // =====================
-  // DOM ELEMENT SELECTORS
-  // =====================
+// 🖥️ DOM ELEMENT
   const DOM = {
     authContainer: document.getElementById("authContainer"),
     signupPage: document.getElementById("signupPage"),
@@ -62,14 +58,12 @@ toggleForms(false); // Show signup first
 DOM.dashboard.classList.add('hidden'); // Hide dashboard initially
 DOM.fullPageBanner.classList.remove('hidden'); // Add this
 DOM.profileSection.classList.add('hidden'); // Add this
-  
-  // Create Google Sign-In button HERE
 // Create Google Sign-In button
   const googleSignInBtn = document.createElement("button");
   googleSignInBtn.className = "google-signin-btn";
   DOM.authContainer.appendChild(googleSignInBtn);
   
-  // Initialize Firebase FIRST
+  // 🔥 🔥 🔥 Initialize Firebase 🔥 🔥 🔥 🔥 
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
     authDomain: "swiftreach2025.firebaseapp.com",
@@ -1144,8 +1138,9 @@ function setupLogoutButton() {
 // ⚙️ SERVICE WORKER =============================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/PetStudio/service-worker.js', {
-      scope: '/PetStudio/'
+    // ✅ CORRECTED PATH: Remove extra '/PetStudio/' prefix
+    navigator.serviceWorker.register('service-worker.js', { 
+      scope: '/' // 🌟 Allow control over entire origin
     })
     .then(registration => {
       console.log('SW registered:', registration.scope);
@@ -1171,6 +1166,8 @@ if ('serviceWorker' in navigator) {
     })
     .catch(error => {
       console.error('SW registration failed:', error);
+      // 🚨 Add visual feedback for PWA issues
+      showErrorToUser('Offline features disabled. Check internet connection.');
     });
 
     // Handle controller changes
