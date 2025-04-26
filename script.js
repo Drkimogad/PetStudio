@@ -47,8 +47,9 @@ document.addEventListener('DOMContentLoaded', async function() { // ✅ Added as
 
   try {
     // 🔥 INITIALIZE FIREBASE FIRST
-    const { app, auth } = await initializeFirebase(); // ✅ Get auth instance
-    
+    const firebaseInit = await initializeFirebase();
+    auth     = firebaseInit.auth;
+
     // 🔄 INIT AUTH LISTENERS AFTER FIREBASE
     initAuthListeners(auth); // ✅ Pass auth dependency
 
@@ -65,11 +66,12 @@ document.addEventListener('DOMContentLoaded', async function() { // ✅ Added as
 
     // ✅ MOVED GOOGLE BUTTON CREATION HERE
     const googleSignInBtn = document.createElement("button");
+    googleSignInBtn.id = "googleSignInBtn";
     googleSignInBtn.className = "google-signin-btn";
     DOM.authContainer.appendChild(googleSignInBtn);
 
-    // 🔥 INIT PROVIDER AFTER AUTH
-    const provider = new firebase.auth.GoogleAuthProvider();
+    // 🔥 INIT PROVIDER AFTER AUTH    
+    provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/drive.file');
     provider.addScope('https://www.googleapis.com/auth/userinfo.email');
 
