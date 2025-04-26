@@ -488,10 +488,10 @@ DOM.profileSection.classList.add("hidden");
 DOM.fullPageBanner.classList.remove("hidden");
 isEditing = false;
 currentEditIndex = null;
-addPetProfileBtn?.addEventListener("click", (e) => {
+DOM.addPetProfileBtn?.addEventListener("click", (e) => {
   e.preventDefault();
   if(!isEditing) {
-    profileForm.reset();
+    DOM.profileForm.reset();
     currentEditIndex = null;
   }
   DOM.fullPageBanner.classList.remove("hidden");
@@ -949,7 +949,7 @@ function generateQRCode(profileIndex) {
   
   // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷
   // FORM SUBMISSION 🌟🌟🌟
-  profileForm?.addEventListener("submit", async (e) => {
+ DOM.profileForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     // 1. Hardcoded user ID (temporary until auth implementation)
     const userId = "test-user";
@@ -1020,7 +1020,7 @@ localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
 // Hide the form and banner
 DOM.profileSection.classList.add("hidden");
 // Reset form fields
-profileForm.reset();
+DOM.profileForm.reset();
 // Re-render profiles
 renderProfiles();
 window.scrollTo(0, 0); // Optional: Scroll to the top of the page
@@ -1089,7 +1089,7 @@ function toggleAuthUI(isAuthenticated) {
   //🟢=======AUTH FUNCTIONS =============
   // 🔼 Sign Up Handler🌟🌟🌟
 // Sign Up Handler
-signupForm?.addEventListener("submit", (e) => {
+DOM.signupForm?.addEventListener("submit", (e) => {
   e.preventDefault();
   
   if (!auth) {
@@ -1097,10 +1097,10 @@ signupForm?.addEventListener("submit", (e) => {
     return;
   }
 
-  const username = signupForm.querySelector("#signupEmail").value.trim();
-  const password = signupForm.querySelector("#signupPassword").value.trim();
+  const username = DOM.signupForm.querySelector("#signupEmail").value.trim();
+  const password = DOM.signupForm.querySelector("#signupPassword").value.trim();
   const email = `${username}@petstudio.com`;
-  const submitBtn = signupForm.querySelector("button[type='submit']");
+  const submitBtn = DOM.signupForm.querySelector("button[type='submit']");
 
   if (!username || !password) {
     showAuthError("Please fill all fields");
@@ -1128,18 +1128,18 @@ signupForm?.addEventListener("submit", (e) => {
     });
 });
 // 🔼 Login Handler 🌟🌟🌟
-  loginForm?.addEventListener("submit", (e) => {
+  DOM.loginForm?.addEventListener("submit", (e) => {
     e.preventDefault();
-    const username = loginForm.querySelector("#loginEmail")
+    const username = DOM.loginForm.querySelector("#loginEmail")
       ?.value.trim();
-    const password = loginForm.querySelector("#loginPassword")
+    const password = DOM.loginForm.querySelector("#loginPassword")
       ?.value.trim();
     const email = `${username}@petstudio.com`;
     if(!username || !password) {
       alert("Please fill all fields");
       return;
     }
-    const submitBtn = loginForm.querySelector("button[type='submit']");
+    const submitBtn = DOM.loginForm.querySelector("button[type='submit']");
     submitBtn.disabled = true;
     submitBtn.textContent = "Logging in...";
     auth.signInWithEmailAndPassword(email, password)
