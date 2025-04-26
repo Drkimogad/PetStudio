@@ -644,9 +644,16 @@ function renderProfiles() {
     document.getElementById("petDob")
       .value = profile.dob;
     document.getElementById("petBirthday")
-      .value = profile.birthday;
+      .value = profile.birthday;  // Populate mood history into form
+    const moodInput = document.getElementById("moodHistoryInput");
+    if (moodInput) {
+    moodInput.value = profile.moodHistory
+      .map(entry => `${entry.date}:${entry.mood}`)
+      .join("\n");
+  }
+
     DOM.profileSection.classList.remove("hidden"); 
-    fullPageBanner.classList.add("hidden");
+    DOM.fullPageBanner.classList.add("hidden");
   }
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
 // PRINT PROFILE FUNCTION 🌟🌟🌟
@@ -989,26 +996,45 @@ function generateQRCode(profileIndex) {
 const galleryUrls = await Promise.all(
   galleryFiles.map(async file => {
     const url = URL.createObjectURL(file);
+// Read mood history from form input (once)
+const moodHistoryInput = document.getElementById("moodHistoryInput");
+let moodHistory = [];
+if (moodHistoryInput && moodHistoryInput.value.trim()) {
+  moodHistory = moodHistoryInput.value
+    .trim()
+    .split("\n")
+    .map(line => {
+      const [date, mood] = line.split(":");
+      return { date: date.trim(), mood: mood.trim() };
+    });
+}
+
+// Handle gallery files with URL cleanup
+const galleryUrls = await Promise.all(
+  galleryFiles.map(async file => {
+    const url = URL.createObjectURL(file);
     const img = new Image();
     await new Promise(resolve => {
-      img.onerror = resolve; // Handle failed loads
-      img.onload = resolve;
-      img.src = url;
+      img.onerror = resolve;
+      img.onload  = resolve;
+      img.src     = url;
     });
-    return url; // Don't revoke here
+    return url;
   })
 );
-    // 4. Build profile object
-    const newProfile = {
-      id: Date.now(),
-      name: petName,
-      breed: petBreed,
-      dob: petDob,
-      birthday: birthday,
-      gallery: galleryUrls,      
-      moodHistory: [],
-      coverPhotoIndex: 0
-    };
+
+// 4. Build profile object
+const newProfile = {
+  id: Date.now(),
+  name: petName,
+  breed: petBreed,
+  dob: petDob,
+  birthday: birthday,
+  gallery: galleryUrls,
+  moodHistory: moodHistory,   // use parsed logs
+  coverPhotoIndex: 0
+};
+
     if(isEditing) {
       petProfiles[currentEditIndex] = newProfile;
     }
@@ -1023,8 +1049,8 @@ DOM.profileSection.classList.add("hidden");
 DOM.profileForm.reset();
 // Re-render profiles
 renderProfiles();
-window.scrollTo(0, 0); // Optional: Scroll to the top of the page
-}); // 🧩
+window.scrollTo(0, 0); 
+}); 
   
 // 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢    
 // AUTH FORM SWITCHING 🌟🌟🌟
