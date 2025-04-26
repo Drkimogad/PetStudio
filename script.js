@@ -147,7 +147,7 @@ if(urlParams.has('profile')) {
   }
 }
 // ======================
-// UI EVENT LISTENERS
+// UI EVENT LISTENERS 🌟🌟🌟
 // ======================
 if(DOM.switchToLogin && DOM.switchToSignup) {
   DOM.switchToLogin.addEventListener('click', () => {
@@ -161,7 +161,7 @@ if(DOM.switchToLogin && DOM.switchToSignup) {
   });
  }
   // ======================
-  // PET PROFILE INIT
+  // PET PROFILE INIT 🌟🌟🌟
   // ======================
   if(window.petProfiles?.length > 0) {
     renderProfiles();
@@ -170,7 +170,7 @@ if(DOM.switchToLogin && DOM.switchToSignup) {
   }
 
 // ======================
-// GOOGLE API INIT FLOW //
+// GOOGLE API INIT FLOW 🌟🌟🌟
 // ======================
 async function initializeGoogleAPI() {
   return new Promise((resolve, reject) => {
@@ -229,7 +229,7 @@ function showErrorToUser(message) {
 }
 
 // =====================
-// 🔐 AUTHENTICATION FLOW ========================
+// 🔐 AUTHENTICATION FLOW 🌟🌟🌟
 // =====================
 async function refreshDriveTokenIfNeeded() {
   try {
@@ -249,7 +249,7 @@ async function refreshDriveTokenIfNeeded() {
 }
 
 // ======================
-// SCRIPT LOADING FIXES //
+// SCRIPT LOADING FIXES 🌟🌟🌟
 // ======================
 function loadGAPI() {
   return new Promise((resolve, reject) => {
@@ -265,7 +265,7 @@ function loadGAPI() {
   });
 }
   // =====================
-  // Fixed Google Sign-In
+  // Fixed Google Sign-In 🌟🌟🌟
   // =====================
   if (auth) {
     if (!auth.currentUser) {
@@ -275,7 +275,7 @@ function loadGAPI() {
             <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
             Continue with Google
           </button>`;
-        authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
+        DOM.authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
         document.getElementById('googleSignInBtn').addEventListener('click', () => {
           signInWithRedirect(auth, provider);
         });
@@ -321,7 +321,7 @@ function initUI() {
   // Your existing UI initialization code
   checkAuthState();
 }
-// FUNCTION CHECK AUTH STATE
+// FUNCTION CHECK AUTH STATE 🌟🌟🌟
 async function checkAuthState() {
   const user = await auth.currentUser;
   if (user) {
@@ -344,15 +344,15 @@ function initAuthListeners() {
   });
 }
 
-// FUNCTION HANDLE AUTH ACTION
+// FUNCTION HANDLE AUTH ACTION 🌟🌟🌟
 function handleAuthAction() {
   // ✅ Safe to use auth/provider here
   if(auth && provider) {
     auth.signInWithRedirect(provider);
   }
 }
-// 🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈
-// DRIVE FOLDER MANAGEMENT
+//🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+// DRIVE FOLDER MANAGEMENT🌟🌟🌟
 // 🔄 Get or Create Drive Folder ID
 async function getOrCreateDriveFolderId() {
   const response = await gapi.client.drive.files.list({
@@ -473,7 +473,7 @@ async function deleteProfileFromDrive(fileId, gallery = []) {
   }
 }
   
-// 🔼 NEW FUNCTION (add around line ~650)
+// 🔼 NEW FUNCTION 🌟🌟🌟
 function handleAuthenticatedUser(user) {
   console.log("✅ Auth success:", user.uid);
   DOM.dashboard.classList.remove('hidden');
@@ -484,8 +484,8 @@ function handleAuthenticatedUser(user) {
 // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷  
 // 🔄 UI UPDATES
 renderProfiles();
-profileSection.classList.add("hidden");
-fullPageBanner.classList.remove("hidden");
+DOM.profileSection.classList.add("hidden");
+DOM.fullPageBanner.classList.remove("hidden");
 isEditing = false;
 currentEditIndex = null;
 addPetProfileBtn?.addEventListener("click", (e) => {
@@ -494,8 +494,8 @@ addPetProfileBtn?.addEventListener("click", (e) => {
     profileForm.reset();
     currentEditIndex = null;
   }
-  fullPageBanner.classList.add("hidden");
-  profileSection.classList.remove("hidden");
+  DOM.fullPageBanner.classList.remove("hidden");
+  DOM.profileSection.classList.add("hidden");
 });
 // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷  
 // PROFILE RENDERING FUNCTIONS  
@@ -550,7 +550,7 @@ function renderProfiles() {
             </div>
         `;
       // =====================
-      // EVENT LISTENERS - CORRECTED
+      // EVENT LISTENERS 🌟🌟🌟
       // =====================
       // Edit Button
       petCard.querySelector(".editBtn")
@@ -586,7 +586,7 @@ function renderProfiles() {
   } 
 }
 
-  // WHEN CREATING NEW PROFILES
+  // WHEN CREATING NEW PROFILES 🌟🌟🌟
   function createNewProfile() {
     const timestamp = Date.now();
     const newProfile = {
@@ -609,7 +609,7 @@ function renderProfiles() {
     renderProfiles();
   }
   // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
-  // DAYS COUNTDOWN FUNCTION
+  // DAYS COUNTDOWN FUNCTION 🌟🌟🌟
   function getCountdown(birthday) {
     const today = new Date();
     const nextBirthday = new Date(birthday);
@@ -619,7 +619,7 @@ function renderProfiles() {
     return `${diffDays} days until birthday! 🎉`;
   }
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
-  // MOOD HISTORY FUNCTION
+  // MOOD HISTORY FUNCTION 🌟🌟🌟
   function renderMoodHistory(profile) {
     if(!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
     return profile.moodHistory
@@ -632,7 +632,7 @@ function renderProfiles() {
     return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
   }
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
-  // EDIT PROFILE FUNCTION
+  // EDIT PROFILE FUNCTION 🌟🌟🌟
   function openEditForm(index) {
     isEditing = true;
     currentEditIndex = index;
@@ -649,7 +649,7 @@ function renderProfiles() {
     fullPageBanner.classList.add("hidden");
   }
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
-// PRINT PROFILE FUNCTION (Refactored)
+// PRINT PROFILE FUNCTION 🌟🌟🌟
 function printProfile(profile) {
   const printWindow = window.open('', '_blank');
   const printDocument = printWindow.document;
@@ -720,7 +720,7 @@ function printProfile(profile) {
   });
 }
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀  
-// 🔼 SHARE PET CARD FUNCTION (FIXED VERSION)
+// 🔼 SHARE PET CARD FUNCTION 🌟🌟🌟
 async function sharePetCard(profile) {
   const loader = document.getElementById('processing-loader');
   let shareBtn, originalText; // 🚨 Moved to parent scope
@@ -796,7 +796,7 @@ async function sharePetCard(profile) {
   }
 }
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
-  // AGE CALCULATION FUNCTION
+  // AGE CALCULATION FUNCTION 🌟🌟🌟
   function calculateAge(dobString) {
     try {
       const birthDate = new Date(dobString);
@@ -814,7 +814,7 @@ async function sharePetCard(profile) {
     }
   }
 // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷
-// QR CODE MODAL MANAGEMENT
+// QR CODE MODAL MANAGEMENT 🌟🌟🌟
 // GENERATE, PRINT, DOWNLOAD, SHARE AND CLOSE QR CODE
 // Generate QR Code
 function generateQRCode(profileIndex) {
@@ -921,7 +921,7 @@ function generateQRCode(profileIndex) {
     }, 3000);
   }
 
-  // LOG MOOD FUNCTION    
+  // LOG MOOD FUNCTION 🌟🌟🌟  
   function logMood(profileIndex, mood) {
     const today = new Date()
       .toISOString()
@@ -934,13 +934,13 @@ function generateQRCode(profileIndex) {
     localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
     renderProfiles();
   }
-  // SET COVERPHOTO FUNCTION
+  // SET COVERPHOTO FUNCTION 🌟🌟🌟
   function setCoverPhoto(profileIndex, imageIndex) {
     petProfiles[profileIndex].coverPhotoIndex = imageIndex;
     localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
     renderProfiles();
   }
-  // FORM HANDLING WITH REMINDER CREATION //
+  // FORM HANDLING WITH REMINDER CREATION 🌟🌟🌟
   function formatFirestoreDate(dateString) {
     const date = new Date(dateString);
     return date.toISOString()
@@ -948,7 +948,7 @@ function generateQRCode(profileIndex) {
   }
   
   // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷
-  // FORM SUBMISSION
+  // FORM SUBMISSION 🌟🌟🌟
   profileForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     // 1. Hardcoded user ID (temporary until auth implementation)
@@ -1023,13 +1023,12 @@ DOM.profileSection.classList.add("hidden");
 profileForm.reset();
 // Re-render profiles
 renderProfiles();
-// ✅ Let auth state observer handle UI visibility
 window.scrollTo(0, 0); // Optional: Scroll to the top of the page
 }); // 🧩
   
 // 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢    
-// AUTH FORM SWITCHING
-// 🟢 NEW TOGGLEFORMS FUNCTION
+// AUTH FORM SWITCHING 🌟🌟🌟
+// 🟢 NEW TOGGLEFORMS FUNCTION🌟🌟🌟
 function toggleForms(showLogin) {
   DOM.signupPage.classList.toggle('hidden', showLogin);
   DOM.loginPage.classList.toggle('hidden', !showLogin);
@@ -1044,7 +1043,7 @@ function toggleForms(showLogin) {
     }
   });
 }
-// 🟢 AUTHENTICATION SECTION
+// 🟢 AUTHENTICATION SECTION 🌟🌟🌟
   // 1. AUTH STATE OBSERVER
   function showAuthError(message) {
     // Custom error display function (could be a modal or notification)
@@ -1072,7 +1071,7 @@ auth.onAuthStateChanged((user) => {
     toggleForms(showLogin);
   }
 });
-// 🟢 CORRECTED TOGGLEAUTHUI FUNCTION
+// 🟢 CORRECTED TOGGLEAUTHUI FUNCTION🌟🌟🌟
 function toggleAuthUI(isAuthenticated) {
   // Only control container visibility - not individual forms
   const authElements = [DOM.authContainer];
@@ -1088,7 +1087,7 @@ function toggleAuthUI(isAuthenticated) {
   }
 }
   //🟢=======AUTH FUNCTIONS =============
-  // 🔼 Sign Up Handler
+  // 🔼 Sign Up Handler🌟🌟🌟
 // Sign Up Handler
 signupForm?.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -1128,7 +1127,7 @@ signupForm?.addEventListener("submit", (e) => {
       submitBtn.textContent = "Sign Up";
     });
 });
-// 🔼 Login Handler
+// 🔼 Login Handler 🌟🌟🌟
   loginForm?.addEventListener("submit", (e) => {
     e.preventDefault();
     const username = loginForm.querySelector("#loginEmail")
@@ -1157,7 +1156,7 @@ signupForm?.addEventListener("submit", (e) => {
       });
   });
 
-// 🔼 Logout Handler
+// 🔼 Logout Handler🌟🌟🌟
 function setupLogoutButton() {
   DOM.logoutBtn?.addEventListener('click', async (e) => {
     e.preventDefault();
