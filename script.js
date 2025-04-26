@@ -136,9 +136,8 @@ googleSignInBtn.addEventListener('click', () => {
 });  
     
 initQRModal();
-loadGoogleAPIs();
-
-console.log("Firebase initialized successfully");
+await main();            // initialize Google APIs + render profiles
+console.log("App fully initialized");
     
 // 📄 MODIFIED URL PARAM HANDLING
 const urlParams = new URLSearchParams(window.location.search); // Add this line
