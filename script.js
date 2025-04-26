@@ -43,14 +43,12 @@ document.addEventListener('DOMContentLoaded', function() {
     profileForm: document.getElementById("profileForm")
   };
   
-  // ===================
-  // ELEMENT VALIDATION
-  // ===================
+// 💠💠 ELEMENT VALIDATION 💠💠💠💠💠💠💠💠💠💠💠💠💠💠💠💠💠💠
   if (!DOM.authContainer) {
     console.error('Critical Error: Auth container not found!');
     showErrorToUser('Application failed to load. Please refresh.');
     disableUI();
-    return; // ✅ Now valid inside the callback function
+    return;
   }
   
  // 🟢 INITIAL FORM STATE
@@ -723,45 +721,81 @@ function printProfile(profile) {
   });
 }
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀  
-// 🔼 SHARE PET CARD FUNCTION
-  async function sharePetCard(profile) {
-// 1. Generate Shareable Link
-    const shareUrl = `${window.location.origin}/PetStudio/?profile=${pet.id}`;    // 2. Try Web Share API first
+// 🔼 SHARE PET CARD FUNCTION (FIXED VERSION)
+async function sharePetCard(profile) {
+  const loader = document.getElementById('processing-loader');
+  let shareBtn, originalText; // 🚨 Moved to parent scope
+
+  try {
+    // 🚦 SHOW LOADER
+    loader.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // 🔄 CAPTURE BUTTON PROPERLY
+    shareBtn = event?.target || document.querySelector(`[onclick*="sharePetCard(${profile.id})"]`);
+    if(shareBtn) {
+      originalText = shareBtn.innerHTML;
+      shareBtn.innerHTML = '🔄 Preparing...';
+      shareBtn.disabled = true;
+    }
+
+    // 1. Generate CORRECT Shareable Link
+    const shareUrl = `${window.location.origin}/PetStudio/?profile=${profile.id}`; // ✅ profile.id not pet.id
+
+    // 2. Try Web Share API 
     if(navigator.share) {
       try {
         await navigator.share({
-          title: `Meet ${pet.name}! 🐾`,
-          text: `Check out ${pet.name}'s profile on PetStudio!`,
+          title: `Meet ${profile.name}! 🐾`, // ✅ profile.name
+          text: `Check out ${profile.name}'s profile on PetStudio!`,
           url: shareUrl,
         });
         return;
       }
-      catch (err) {
-        console.log("Share cancelled:", err);
+      catch (error) { // ✅ Fixed err -> error
+        console.log("Share cancelled:", error);
+        return; // Exit early
       }
     }
+
     // 3. Desktop/Image Fallback
-    try {
-      const cardElement = document.getElementById(`pet-card-${profile.id}`);
-      if(!cardElement) throw new Error('Card element missing');
-      
-      const canvas = await html2canvas(cardElement);
-      const imageUrl = canvas.toDataURL('image/png');
-      // 4. Create and trigger download
-      const downloadLink = document.createElement('a');
-      downloadLink.href = imageUrl;
-      downloadLink.download = `${pet.name}-petstudio.png`.replace(/[^a-z0-9]/gi, '_');
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-      // Copy to clipboard
-      await navigator.clipboard.writeText(shareUrl);
-      alert(`${pet.name}'s card saved! 🔗 Link copied to clipboard.`);
-    }
-    catch (error) {
-      console.error('Sharing failed:', error);
+    const cardElement = document.getElementById(`pet-card-${profile.id}`);
+    if(!cardElement) throw new Error('Card element missing');
+    
+    // 🖼️ ADD HTML2CANVAS CONFIG FROM PREVIOUS FIXES
+    const canvas = await html2canvas(cardElement, {
+      useCORS: true,
+      scale: 2,
+      logging: false
+    });
+    
+    const imageUrl = canvas.toDataURL('image/png');
+    
+    // 4. Download Handling
+    const downloadLink = document.createElement('a');
+    downloadLink.href = imageUrl;
+    downloadLink.download = `${profile.name}-petstudio.png`.replace(/[^a-z0-9]/gi, '_'); // ✅ profile.name
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+
+    // 5. Clipboard Handling
+    await navigator.clipboard.writeText(shareUrl);
+    showErrorToUser(`${profile.name}'s card saved! 🔗 Link copied.`); // ✅ Better than alert()
+
+  } catch (error) {
+    console.error('Sharing failed:', error);
+    showErrorToUser('Sharing failed. Please try again.'); // ✅ User feedback
+  } finally {
+    // 🚦 CLEANUP
+    loader.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+    if(shareBtn) {
+      shareBtn.innerHTML = originalText;
+      shareBtn.disabled = false;
     }
   }
+}
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
   // AGE CALCULATION FUNCTION
   function calculateAge(dobString) {
