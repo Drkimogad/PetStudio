@@ -1,4 +1,5 @@
-  // 🔶DECLARE GLOBALS🔶🔶🔶
+//🌟🌟PetStudio SCRIPT.JS 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+// 🔶DECLARE GLOBALS🔶🔶🔶
   let auth = null; 
   let provider = null;
   let isSignupInProgress = false;
@@ -499,9 +500,9 @@ addPetProfileBtn?.addEventListener("click", (e) => {
 // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷  
 // PROFILE RENDERING FUNCTIONS  
 function renderProfiles() {
-  petList.innerHTML = ''; // Clear current profiles
+  DOM.petList.innerHTML = '';
   if(petProfiles.length === 0) {
-    petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
+  DOM.petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
   }
   else {
     petProfiles.forEach((profile, index) => {
@@ -580,7 +581,7 @@ function renderProfiles() {
         btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
       });
 
-      petList.appendChild(petCard);
+      DOM.petList.appendChild(petCard);
     });
   } 
 }
