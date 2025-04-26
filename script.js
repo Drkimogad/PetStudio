@@ -1,11 +1,11 @@
-  // 🔶DECLARE GLOBALS🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶
+  // 🔶DECLARE GLOBALS🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶
   let auth = null; 
   let provider = null;
   let isSignupInProgress = false;
   let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   let isEditing = false;
   let currentEditIndex = null;
-// 🌐 Global DOM element references
+// 🌐 Global DOM element references🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶
 const DOM = {
   authContainer:  document.getElementById("authContainer"),
   signupPage:     document.getElementById("signupPage"),
@@ -914,8 +914,6 @@ function generateQRCode(profileIndex) {
       statusEl.style.color = '';
     }, 3000);
   }
-  // Initialize QR Module
-  document.addEventListener('DOMContentLoaded', initQRModal);
 
   // LOG MOOD FUNCTION    
   function logMood(profileIndex, mood) {
