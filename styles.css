@@ -866,6 +866,7 @@ form {
   text-align: center;
   color: #666;
 }
+     
 /* 🌟 LOADER STYLES RECENTLY ADDED 🌟 */
 .loader-overlay {
   position: fixed;
@@ -907,4 +908,17 @@ form {
 @keyframes pulse {
   0%, 100% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.05); opacity: 0.9; }
+}
+body.loading {
+  cursor: wait !important;
+  pointer-events: none !important;
+}
+
+body.loading::after {
+  content: "🐢 Initializing...";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
 }
