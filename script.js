@@ -1177,45 +1177,18 @@ function setupLogoutButton() {
 // ⚙️ SERVICE WORKER =============================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // ✅ CORRECTED PATH: Remove extra '/PetStudio/' prefix
-    navigator.serviceWorker.register('service-worker.js', { 
-      scope: '/' // 🌟 Allow control over entire origin
+    // ✅ PROPER PATH & SCOPE
+    navigator.serviceWorker.register('/PetStudio/service-worker.js', {
+      scope: '/PetStudio/'
     })
     .then(registration => {
-      console.log('SW registered:', registration.scope);
-
-      // Check for updates immediately
-      registration.update();
-
-      // Listen for updates
-      registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing;
-        console.log('New service worker found:', newWorker);
-
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed') {
-            if (navigator.serviceWorker.controller) {
-              if (confirm('New version available! Reload to update?')) {
-                newWorker.postMessage({ action: 'skipWaiting' });
-              }
-            }
-          }
-        });
-      });
+      console.log('SW registered for scope:', registration.scope);
     })
     .catch(error => {
       console.error('SW registration failed:', error);
-      // 🚨 Add visual feedback for PWA issues
-      showErrorToUser('Offline features disabled. Check internet connection.');
-    });
-
-    // Handle controller changes
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      console.log('Controller changed - reloading');
-      window.location.reload();
     });
   });
-} 
+}
 // 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
   // 🟢 PUSH NOTIFICATIONS LOGIC
   // 🟢 Global VAPID Configuration
