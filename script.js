@@ -45,6 +45,10 @@ function disableUI() {
 // 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
 // MAIN INITIALIZATION
 document.addEventListener('DOMContentLoaded', async function() { // ✅ Added async
+  await loadEssentialScripts();
+  initQRModal();
+  console.log("App fully initialized");
+  
   // ⏳ ADD LOADING STATE
   document.body.classList.add('loading');
 
@@ -120,10 +124,6 @@ async function loadEssentialScripts() {
     }, 100); // ✅ Faster checking interval
   });
 }
-
-initQRModal();
-await main();            // initialize Google APIs + render profiles
-console.log("App fully initialized");
     
 // 📄 MODIFIED URL PARAM HANDLING
 const urlParams = new URLSearchParams(window.location.search); // Add this line
