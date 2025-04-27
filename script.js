@@ -311,16 +311,17 @@ function loadGAPI() {
 // Set persistence and initialize listeners
 if(auth) { // ✅ Add this check
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  .then(() => {
-    initAuthListeners();
-    initUI();
-  })
+    .then(() => {
+      initAuthListeners();
+      initUI();
+    })
+    .catch((error) => { // ✅ Keep .catch INSIDE the promise chain
+      console.error("Persistence error:", error);
+      showErrorToUser("Authentication system failed to initialize");
+    });
 }
-  .catch((error) => {
-    console.error("Persistence error:", error);
-    showErrorToUser("Authentication system failed to initialize");
-  });
-  // Add these if missing
+
+// Add these if missing
 function initUI() {
   // Your existing UI initialization code
   checkAuthState();
