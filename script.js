@@ -1269,4 +1269,3 @@ async function sendSubscriptionToServer(subscription) {
   if(petProfiles.length > 0) {
     renderProfiles();
   }
-});
