@@ -113,6 +113,7 @@ async function initializeFirebase() {
 // 🧩 IMPROVED SCRIPT LOADING
 async function loadEssentialScripts() {
 // Initialize Google APIs + render profiles
+    await loadGAPI(); // ✅ Load gapi FIRST
     await main();
     setupLogoutButton();
   return new Promise((resolve) => {
@@ -190,13 +191,13 @@ async function main() {
     await initializeGoogleAPI();
     
     // Unified gapi client init
-  await gapi.client.init({
+await gapi.client.init({
   apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
   client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
   discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
   scope: 'https://www.googleapis.com/auth/drive.file',
-  ux_mode: 'redirect', // ✅ Required for modern auth
-  plugin_name: 'PetStudio' // ✅ Add plugin name
+  ux_mode: 'redirect', // ✅ Required
+  plugin_name: 'PetStudio' // ✅ Add this
 });
 
     console.log("✅ Google API client initialized");
@@ -335,6 +336,7 @@ async function checkAuthState() {
 }
 // Auth listeners function
 function initAuthListeners() {
+    if(auth) { // ✅ Add null check
   auth.onAuthStateChanged((user) => {
     if (user) {
       console.log("User logged in:", user.uid);
