@@ -992,24 +992,19 @@ function generateQRCode(profileIndex) {
       }
     }
   // Handle gallery files with URL cleanup
- // Modify gallery handling
-const galleryUrls = await Promise.all(
-  galleryFiles.map(async file => {
-    const url = URL.createObjectURL(file);
-// Read mood history from form input (once)
+// 1️⃣ Parse Mood Logs (once)
 const moodHistoryInput = document.getElementById("moodHistoryInput");
-let moodHistory = [];
-if (moodHistoryInput && moodHistoryInput.value.trim()) {
-  moodHistory = moodHistoryInput.value
-    .trim()
-    .split("\n")
-    .map(line => {
-      const [date, mood] = line.split(":");
-      return { date: date.trim(), mood: mood.trim() };
-    });
-}
+const moodHistory = moodHistoryInput && moodHistoryInput.value.trim()
+  ? moodHistoryInput.value
+      .trim()
+      .split("\n")
+      .map(line => {
+        const [date, mood] = line.split(":");
+        return { date: date.trim(), mood: mood.trim() };
+      })
+  : [];
 
-// Handle gallery files with URL cleanup
+// 2️⃣ Build gallery URLs
 const galleryUrls = await Promise.all(
   galleryFiles.map(async file => {
     const url = URL.createObjectURL(file);
@@ -1022,7 +1017,6 @@ const galleryUrls = await Promise.all(
     return url;
   })
 );
-
 // 4. Build profile object
 const newProfile = {
   id: Date.now(),
