@@ -190,12 +190,14 @@ async function main() {
     await initializeGoogleAPI();
     
     // Unified gapi client init
-    await gapi.client.init({
-      apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-      clientId: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
-      discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-      scope: 'https://www.googleapis.com/auth/drive.file'
-    });
+  await gapi.client.init({
+  apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+  client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
+  discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+  scope: 'https://www.googleapis.com/auth/drive.file',
+  ux_mode: 'redirect', // ✅ Required for modern auth
+  plugin_name: 'PetStudio' // ✅ Add plugin name
+});
 
     console.log("✅ Google API client initialized");
     
@@ -256,7 +258,7 @@ function loadGAPI() {
     if(window.gapi) return resolve();
     
     const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js';
+    script.src = 'https://accounts.google.com/gsi/client'; // ✅ New GIS client
     script.async = true;
     script.defer = true;
     script.onload = resolve;
@@ -307,11 +309,13 @@ function loadGAPI() {
 })();
   
 // Set persistence and initialize listeners
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+if(auth) { // ✅ Add this check
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
   .then(() => {
     initAuthListeners();
     initUI();
   })
+}
   .catch((error) => {
     console.error("Persistence error:", error);
     showErrorToUser("Authentication system failed to initialize");
