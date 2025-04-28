@@ -349,7 +349,8 @@ function initAuthListeners() {
       }
     }
   });
-}
+ } // <-- Added missing closing brace for the function
+} // <-- This brace was missing
 
 // FUNCTION HANDLE AUTH ACTION 🌟🌟🌟
 function handleAuthAction() {
