@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async function() { // ✅ Added as
     auth     = firebaseInit.auth;
 
     // 🔄 INIT AUTH LISTENERS AFTER FIREBASE
-    initAuthListeners(auth); // ✅ Pass auth dependency
+    initAuthListeners(); // ✅ Remove parameter, use global auth
 
     // ✅ MOVED DOM VALIDATION HERE
     if (!DOM.authContainer) {
@@ -81,7 +81,8 @@ document.addEventListener('DOMContentLoaded', async function() { // ✅ Added as
     provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/drive.file');
     provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-
+    
+    // ✅ MAINTAIN YOUR SCRIPT LOADING ORDER
     await loadEssentialScripts();
 
   } catch (error) {
@@ -92,6 +93,59 @@ document.addEventListener('DOMContentLoaded', async function() { // ✅ Added as
     document.body.classList.remove('loading');
   }
 });
+// 🟢 FIXED AUTH LISTENER IMPLEMENTATION (PRESERVES YOUR BEHAVIOR)
+function initAuthListeners() {
+  if (!auth) {
+    console.warn('Auth not initialized yet');
+    return;
+  }
+
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      // YOUR ORIGINAL AUTHENTICATED BEHAVIOR
+      DOM.dashboard.classList.remove('hidden');
+      DOM.authContainer.classList.add('hidden');
+      renderProfiles();
+    } else {
+      // YOUR ORIGINAL UNAUTHENTICATED BEHAVIOR
+      DOM.dashboard.classList.add('hidden');
+      DOM.authContainer.classList.remove('hidden');
+      
+      // PRESERVE FORM STATE LOGIC
+      const showLogin = !document.getElementById('loginPage').classList.contains('hidden');
+      toggleForms(showLogin);
+    }
+  });
+}
+// 🧩 IMPROVED SCRIPT LOADING
+async function loadEssentialScripts() {
+// Initialize Google APIs + render profiles
+    await loadGAPI(); // ✅ Load gapi FIRST
+    await main();
+    setupLogoutButton();
+  return new Promise((resolve) => {
+    const checkInterval = setInterval(() => {
+      if(window.firebase?.auth && window.gapi?.client) {
+        clearInterval(checkInterval);
+        resolve();
+      }
+    }, 100); // ✅ Faster checking interval
+  });
+}
+
+// 🟢 CORRECTED GAPI LOADER (PRESERVES YOUR CODE STRUCTURE)
+function loadGAPI() {
+  return new Promise((resolve) => {
+    if (window.gapi) return resolve();
+    
+    const script = document.createElement('script');
+    script.src = 'https://apis.google.com/js/api.js'; // ✅ Correct URL
+    script.async = true;
+    script.defer = true;
+    script.onload = resolve;
+    document.head.appendChild(script);
+  });
+}
 
 // 🧩 PROPER FIREBASE INIT FUNCTION
 async function initializeFirebase() {
@@ -108,22 +162,6 @@ async function initializeFirebase() {
   const app = firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth(app);
   return { app, auth }; // ✅ Return critical instances
-}
-
-// 🧩 IMPROVED SCRIPT LOADING
-async function loadEssentialScripts() {
-// Initialize Google APIs + render profiles
-    await loadGAPI(); // ✅ Load gapi FIRST
-    await main();
-    setupLogoutButton();
-  return new Promise((resolve) => {
-    const checkInterval = setInterval(() => {
-      if(window.firebase?.auth && window.gapi?.client) {
-        clearInterval(checkInterval);
-        resolve();
-      }
-    }, 100); // ✅ Faster checking interval
-  });
 }
     
 // 📄 MODIFIED URL PARAM HANDLING
@@ -190,7 +228,7 @@ async function main() {
     await loadGAPI();
     await initializeGoogleAPI();
     
-    // Unified gapi client init
+// Unified gapi client init
 await gapi.client.init({
   apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
   client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
@@ -251,22 +289,6 @@ async function refreshDriveTokenIfNeeded() {
   }
 }
 
-// ======================
-// SCRIPT LOADING FIXES 🌟🌟🌟
-// ======================
-function loadGAPI() {
-  return new Promise((resolve, reject) => {
-    if(window.gapi) return resolve();
-    
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client'; // ✅ New GIS client
-    script.async = true;
-    script.defer = true;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
   // =====================
   // Fixed Google Sign-In 🌟🌟🌟
   // =====================
@@ -1072,48 +1094,50 @@ function toggleForms(showLogin) {
   });
 }
 // 🟢 AUTHENTICATION SECTION 🌟🌟🌟
-  // 1. AUTH STATE OBSERVER
-  function showAuthError(message) {
-    // Custom error display function (could be a modal or notification)
-    const errorElement = document.createElement('div');
-    errorElement.className = 'auth-error';
-    errorElement.innerText = `🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`;
-    document.body.appendChild(errorElement);
-    setTimeout(() => errorElement.remove(), 5000); // Remove the error after 5 seconds
-  }
-// 2. AUTH STATE CHANGED
-// 🔼 auth.onAuthStateChanged
-auth.onAuthStateChanged((user) => {
-  if (user) {
-    // Authenticated
-    DOM.dashboard.classList.remove('hidden');
-    DOM.authContainer.classList.add('hidden');
-    renderProfiles();
-  } else {
-    // Not authenticated
-    DOM.dashboard.classList.add('hidden');
-    DOM.authContainer.classList.remove('hidden');
-    
-    // ✅ Preserve form state
-    const showLogin = !document.getElementById('loginPage').classList.contains('hidden');
-    toggleForms(showLogin);
-  }
-});
-// 🟢 CORRECTED TOGGLEAUTHUI FUNCTION🌟🌟🌟
-function toggleAuthUI(isAuthenticated) {
-  // Only control container visibility - not individual forms
-  const authElements = [DOM.authContainer];
-  const dashboardElements = [DOM.dashboard, DOM.profileSection, DOM.fullPageBanner, DOM.logoutBtn];
+// 1. AUTH STATE OBSERVER - UNCHANGED
+function showAuthError(message) {
+  const errorElement = document.createElement('div');
+  errorElement.className = 'auth-error';
+  errorElement.innerText = `🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`;
+  document.body.appendChild(errorElement);
+  setTimeout(() => errorElement.remove(), 5000);
+}
 
-  DOM.authContainer.classList.toggle('hidden', isAuthenticated);
-  DOM.dashboard.classList.toggle('hidden', !isAuthenticated);
+// 2. AUTH STATE HANDLER - MOVED TO PROPER INIT FLOW
+function initAuthStateListener() {
+  if (!auth) return; // Safety check
   
-  // Reset UI state when authenticated
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      // Original authenticated behavior
+      DOM.dashboard.classList.remove('hidden');
+      DOM.authContainer.classList.add('hidden');
+      renderProfiles();
+    } else {
+      // Original unauthenticated behavior
+      DOM.dashboard.classList.add('hidden');
+      DOM.authContainer.classList.remove('hidden');
+      
+      // Preserved form state logic
+      const showLogin = !document.getElementById('loginPage').classList.contains('hidden');
+      toggleForms(showLogin);
+    }
+  });
+}
+
+// 3. TOGGLEAUTHUI - KEPT INTACT WITH SAFETY CHECKS
+function toggleAuthUI(isAuthenticated) {
+  // Original toggle logic with null checks
+  if (DOM.authContainer) DOM.authContainer.classList.toggle('hidden', isAuthenticated);
+  if (DOM.dashboard) DOM.dashboard.classList.toggle('hidden', !isAuthenticated);
+  
+  // Original UI reset behavior
   if(isAuthenticated) {
-    DOM.fullPageBanner.classList.remove('hidden');
-    DOM.profileSection.classList.add('hidden');
+    if (DOM.fullPageBanner) DOM.fullPageBanner.classList.remove('hidden');
+    if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
   }
 }
+
   //🟢=======AUTH FUNCTIONS =============
   // 🔼 Sign Up Handler🌟🌟🌟
 // Sign Up Handler
