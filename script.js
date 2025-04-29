@@ -7,6 +7,7 @@
   let isEditing = false;
   let currentEditIndex = null;
 // 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+
 // 🌟 GIS-AUTH MAIN FUNCTION NEW IMPLEMENTATION 🌟
 async function main() {
   return new Promise((resolve, reject) => {
@@ -49,6 +50,8 @@ async function main() {
           gapi.client.setToken({ access_token: window.gapiToken });
           console.log("✅ GAPI initialized with token");
           renderProfiles();
+       // ✅ INSERT THIS LINE *RIGHT BELOW* renderProfiles():
+          setupGoogleLoginButton();
         });
       }
     });
@@ -147,7 +150,6 @@ function setupGoogleLoginButton() {
     
 // ✅ MAINTAIN YOUR SCRIPT LOADING ORDER
     await loadEssentialScripts();
-
   } catch (error) {
     console.error('Initialization failed:', error);
     showErrorToUser('Failed to initialize. Please refresh.');
@@ -156,13 +158,13 @@ function setupGoogleLoginButton() {
     document.body.classList.remove('loading');
   }
 });
+
 // 🟢 FIXED AUTH LISTENER IMPLEMENTATION (PRESERVES YOUR BEHAVIOR)
 function initAuthListeners() {
   if (!auth) {
     console.warn('Auth not initialized yet');
     return;
   }
-
   auth.onAuthStateChanged((user) => {
     if (user) {
       // YOUR ORIGINAL AUTHENTICATED BEHAVIOR
@@ -180,6 +182,7 @@ function initAuthListeners() {
     }
   });
 }
+
 // 🧩 IMPROVED SCRIPT LOADING
 async function loadEssentialScripts() {
 // Initialize Google APIs + render profiles
@@ -199,8 +202,7 @@ async function loadEssentialScripts() {
 // 🟢 CORRECTED GAPI LOADER (PRESERVES YOUR CODE STRUCTURE)
 function loadGAPI() {
   return new Promise((resolve) => {
-    if (window.gapi) return resolve();
-    
+    if (window.gapi) return resolve();    
     const script = document.createElement('script');
     script.src = 'https://apis.google.com/js/api.js'; // ✅ Correct URL
     script.async = true;
@@ -220,14 +222,10 @@ async function initializeFirebase() {
     messagingSenderId: "540185558422",
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
   };
-  // ✅ ACTUALLY INITIALIZE FIREBASE
   const app = firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth(app);
-  return { app, auth }; // ✅ Return critical instances
+  return { app, auth };
 }
-
-// 🌟 CALL GOOGLE LOGIN BTN NEW IMPLEMENTATION:
- setupGoogleLoginButton();
 
 // 📄 MODIFIED URL PARAM HANDLING 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
 const urlParams = new URLSearchParams(window.location.search); // Add this line
@@ -236,7 +234,6 @@ if(urlParams.has('profile')) {
     const profileIndex = parseInt(urlParams.get('profile'));
     // 🔄 IMPROVED VALIDATION
     if(Number.isNaN(profileIndex)) throw new Error('Invalid profile ID');
-    
     const validProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
     if(validProfiles.length > profileIndex) {
       printProfile(validProfiles[profileIndex]); // ✅ Pass actual profile data
@@ -250,6 +247,7 @@ if(urlParams.has('profile')) {
     window.history.replaceState({}, document.title, window.location.pathname);
   }
 }
+
 // ======================
 // UI EVENT LISTENERS 🌟🌟🌟
 // ======================
