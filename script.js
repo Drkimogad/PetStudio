@@ -319,22 +319,27 @@ async function checkAuthState() {
   }
 }
   
-//🌟 Auth listeners function
+// 🟢 CORRECTED AUTH LISTENER (FINAL FIX)
 function initAuthListeners() {
-    if(auth) { 
+  if (!auth) {
+    console.warn('Auth not initialized yet');
+    return;
+  }
   auth.onAuthStateChanged((user) => {
     if (user) {
-      console.log("User logged in:", user.uid);
-      handleAuthenticatedUser(user);
+      // User is logged in
+      DOM.dashboard.classList.remove('hidden');
+      DOM.authContainer.classList.add('hidden');
+      renderProfiles();
     } else {
-      console.log("No active session");
-      if(!isSignupInProgress) {
-        toggleForms(true);
+      // User is logged out - ONLY TOGGLE FORMS IF NOT IN SIGNUP FLOW
+      if (!isSignupInProgress) { // ⭐⭐ CRUCIAL LINE ADDED ⭐⭐
+        DOM.dashboard.classList.add('hidden');
         DOM.authContainer.classList.remove('hidden');
+        toggleForms(true); // Show login by default
       }
     }
   });
- }
 }
 
 // 🌟 FUNCTION HANDLE AUTH ACTION
@@ -1082,11 +1087,11 @@ function toggleAuthUI(isAuthenticated) {
   // 🔼 Sign Up Handler🌟🌟🌟
 DOM.signupForm?.addEventListener("submit", (e) => {
   e.preventDefault();
-  isSignupInProgress = true; // 🔼 CRITICAL FLAG SET
+  isSignupInProgress = true; // ⭐ FLAG SET ON SUBMIT
 
   if (!auth) {
     showErrorToUser("Authentication system not ready");
-    isSignupInProgress = false; // 🔼 RESET FLAG ON ERROR
+    isSignupInProgress = false; // ⭐ RESET ON ERROR
     return;
   }
 
@@ -1097,7 +1102,7 @@ DOM.signupForm?.addEventListener("submit", (e) => {
 
   if (!username || !password) {
     showAuthError("Please fill all fields");
-    isSignupInProgress = false; // 🔼 RESET FLAG ON VALIDATION FAIL
+    isSignupInProgress = false; // ⭐ RESET ON VALIDATION FAIL
     return;
   }
 
@@ -1107,15 +1112,14 @@ DOM.signupForm?.addEventListener("submit", (e) => {
   auth.createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
       DOM.signupForm.reset();
-      // 🔼 MAINTAIN SIGNUP STATE DURING REDIRECT
-      window.location.href = '/PetStudio/main-app.html';
+      window.location.href = '/PetStudio/main-app.html'; 
     })
     .catch((error) => {
       showAuthError(error.message);
       console.error("Signup Error:", error);
     })
     .finally(() => {
-      isSignupInProgress = false; // 🔼 CRUCIAL FLAG RESET
+      isSignupInProgress = false; // ⭐ RESET FLAG WHEN DONE
       submitBtn.disabled = false;
       submitBtn.textContent = "Sign Up";
     });
