@@ -71,18 +71,30 @@ document.addEventListener('DOMContentLoaded', async function() { // ✅ Added as
     DOM.fullPageBanner.classList.remove('hidden');
     DOM.profileSection.classList.add('hidden');
 
-    // ✅ MOVED GOOGLE BUTTON CREATION HERE
-    const googleSignInBtn = document.createElement("button");
-    googleSignInBtn.id = "googleSignInBtn";
-    googleSignInBtn.className = "google-signin-btn";
-    DOM.authContainer.appendChild(googleSignInBtn);
+// 🌟 GIS LOGIN BUTTON HANDLER NEW IMPLEMENTATION 🌟
+function setupGoogleLoginButton() {
+  const existingBtn = document.getElementById('googleSignInBtn');
+  if (existingBtn) existingBtn.remove();
 
-    // 🔥 INIT PROVIDER AFTER AUTH    
-    provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/drive.file');
-    provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+  const btn = document.createElement("button");
+  btn.id = "googleSignInBtn";
+  btn.className = "auth-btn google-btn";
+  btn.innerHTML = `
+    <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
+    Continue with Google
+  `;
+  DOM.authContainer.appendChild(btn);
+
+  btn.addEventListener("click", () => {
+    if (window.tokenClient) {
+      window.tokenClient.requestAccessToken();
+    } else {
+      showErrorToUser("Google Identity not ready. Please reload.");
+    }
+  });
+}
     
-    // ✅ MAINTAIN YOUR SCRIPT LOADING ORDER
+// ✅ MAINTAIN YOUR SCRIPT LOADING ORDER
     await loadEssentialScripts();
 
   } catch (error) {
@@ -163,7 +175,10 @@ async function initializeFirebase() {
   const auth = firebase.auth(app);
   return { app, auth }; // ✅ Return critical instances
 }
-    
+
+// 🌟 CALL GOOGLE LOGIN BTN NEW IMPLEMENTATION:
+ setupGoogleLoginButton();
+   
 // 📄 MODIFIED URL PARAM HANDLING
 const urlParams = new URLSearchParams(window.location.search); // Add this line
 if(urlParams.has('profile')) {
@@ -208,48 +223,57 @@ if(DOM.switchToLogin && DOM.switchToSignup) {
     DOM.petList?.classList.add('empty-state');
   }
 
-// ======================
-// GOOGLE API INIT FLOW 🌟🌟🌟
-// ======================
-async function initializeGoogleAPI() {
-  return new Promise((resolve, reject) => {
-    gapi.load('client:auth2', {
-      callback: () => resolve(),
-      onerror: reject
-    });
-  });
-}
-
 // ====================
 // CORE FUNCTIONALITY 🌟🌟🌟🌟🌟🌟
-// MAIN FUNCTION 🌟🌟🌟🌟🌟🌟
+// 🌟 GIS-AUTH MAIN FUNCTION NEW IMPLEMENTATION 🌟
 async function main() {
-  try {
-    await loadGAPI();
-    await initializeGoogleAPI();
-    
-// Unified gapi client init
-await gapi.client.init({
-  apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-  client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
-  discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-  scope: 'https://www.googleapis.com/auth/drive.file',
-  ux_mode: 'redirect', // ✅ Required
-  plugin_name: 'PetStudio' // ✅ Add this
-});
+  return new Promise((resolve, reject) => {
+    // 1. Load GIS client
+    const gisScript = document.createElement("script");
+    gisScript.src = "https://accounts.google.com/gsi/client";
+    gisScript.onload = () => resolve();
+    gisScript.onerror = () => reject(new Error("Failed to load Google Identity Services"));
+    document.head.appendChild(gisScript);
+  }).then(() => {
+    // 2. Initialize GIS OAuth 2.0 Token Client
+    window.tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: '540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com',
+      scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email',
+      prompt: '', // auto prompt if needed
+      callback: async (tokenResponse) => {
+        if (tokenResponse.error) {
+          console.error("Token error:", tokenResponse);
+          return showErrorToUser("Google login failed.");
+        }
 
-    console.log("✅ Google API client initialized");
-    
-    // Safety checks
-    if(window.petProfiles?.length > 0) {
-      renderProfiles();
-    } else {
-      DOM.petList.innerHTML = '';
-    }
-  } catch (error) {
-    console.error("❌ main() failed:", error);
-    showErrorToUser(`Initialization error: ${error.message}`);
-  }
+        console.log("✅ GIS token received:", tokenResponse);
+
+        // 3. Store token
+        window.gapiToken = tokenResponse.access_token;
+
+        // 4. Load gapi client
+        await new Promise((resolve) => {
+          const script = document.createElement('script');
+          script.src = 'https://apis.google.com/js/api.js';
+          script.onload = resolve;
+          document.head.appendChild(script);
+        });
+
+        // 5. Initialize gapi client with access token
+        await gapi.load("client", async () => {
+          await gapi.client.init({
+            apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+          });
+          gapi.client.setToken({ access_token: window.gapiToken });
+          console.log("✅ GAPI initialized with token");
+          renderProfiles();
+        });
+      }
+    });
+  }).catch((error) => {
+    console.error("GIS init failed:", error);
+    showErrorToUser("Failed to load Google services");
+  });
 }
 
 // ================
@@ -270,7 +294,7 @@ function showErrorToUser(message) {
 }
 
 // =====================
-// 🔐 AUTHENTICATION FLOW 🌟🌟🌟
+// 🔐 AUTHENTICATION FLOW 🌟🌟🌟 TO BE REVIEWED LATER
 // =====================
 async function refreshDriveTokenIfNeeded() {
   try {
@@ -289,48 +313,6 @@ async function refreshDriveTokenIfNeeded() {
   }
 }
 
-  // =====================
-  // Fixed Google Sign-In 🌟🌟🌟
-  // =====================
-  if (auth) {
-    if (!auth.currentUser) {
-      if (!document.getElementById('googleSignInBtn')) {
-        const googleSignInHTML = `
-          <button id="googleSignInBtn" class="auth-btn google-btn">
-            <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
-            Continue with Google
-          </button>`;
-        DOM.authContainer.insertAdjacentHTML('beforeend', googleSignInHTML);
-        document.getElementById('googleSignInBtn').addEventListener('click', () => {
-          signInWithRedirect(auth, provider);
-        });
-      }
-    } else {
-      handleAuthenticatedUser(auth.currentUser);
-    }
-  } 
-// Handle redirect result
-(async function handleRedirectResult() {
-  if(!auth) return;
-  
-  try {
-    // Use proper firebase.auth() method
-    const result = await firebase.auth().getRedirectResult();
-    
-    if(result.user) {
-      const credential = firebase.auth.GoogleAuthProvider.credentialFromResult(result);
-      const accessToken = credential.accessToken;
-      await initDriveAPI(accessToken);
-      await initializeDriveAPIForGoogleUsers();
-      window.location.href = '/main-app';
-    }
-  }
-  catch (error) {
-    console.error("Redirect error:", error);
-    showAuthError(`Auth failed: ${error.message}`);
-  }
-})();
-  
 // Set persistence and initialize listeners
 if(auth) { // ✅ Add this check
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
