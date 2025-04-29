@@ -1,4 +1,4 @@
-//🌟🌟PetStudio SCRIPT.JS 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+//🌟PetStudio SCRIPT.JS 🌟
 // 🔶DECLARE GLOBALS🔶🔶🔶
   let auth = null; 
   let provider = null;
@@ -6,7 +6,6 @@
   let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   let isEditing = false;
   let currentEditIndex = null;
-// 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
 
 // 🌟 GIS-AUTH MAIN FUNCTION NEW IMPLEMENTATION 🌟
 async function main() {
@@ -60,7 +59,7 @@ async function main() {
     showErrorToUser("Failed to load Google services");
   });
 }
-//🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+//🌟
 // 🌐 Global DOM element references🔶🔶🔶
 const DOM = {
   authContainer:  document.getElementById("authContainer"),
@@ -78,7 +77,7 @@ const DOM = {
   fullPageBanner:    document.getElementById("fullPageBanner"),
   profileForm:       document.getElementById("profileForm")
 };
-//🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+
 // 🔶 State Management🔶🔶🔶
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
@@ -96,18 +95,16 @@ function disableUI() {
     </h1>
   `;
 }
-// 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
-// MAIN INITIALIZATION
-document.addEventListener('DOMContentLoaded', async function() { // ✅ Added async
+
+// 🌟 MAIN INITIALIZATION
+document.addEventListener('DOMContentLoaded', async function() {
 // 🟢 INITIAL FORM STATE
 toggleForms(false);
 DOM.dashboard.classList.add('hidden');
 DOM.fullPageBanner.classList.remove('hidden');
 DOM.profileSection.classList.add('hidden');
 
-// ======================
-// UI EVENT LISTENERS 🌟🌟🌟
-// ======================
+// 🌟 UI EVENT LISTENERS 
 if(DOM.switchToLogin && DOM.switchToSignup) {
   DOM.switchToLogin.addEventListener('click', () => {
     DOM.signupPage.classList.add('hidden');
@@ -119,14 +116,13 @@ if(DOM.switchToLogin && DOM.switchToSignup) {
     DOM.signupPage.classList.remove('hidden');
   });
  }
-🌟🌟🌟🌟🌟
+  
+//🌟
   await loadEssentialScripts();
   initQRModal();
   console.log("App fully initialized");
-  
   // ⏳ ADD LOADING STATE
   document.body.classList.add('loading');
-
   try {
     // 🔥 INITIALIZE FIREBASE FIRST
     const firebaseInit = await initializeFirebase();
@@ -143,14 +139,12 @@ if(DOM.switchToLogin && DOM.switchToSignup) {
   });
 
 
-    // 🔄 INIT AUTH LISTENERS AFTER FIREBASE
-    initAuthListeners(); // ✅ Remove parameter, use global auth
-
-    // ✅ MOVED DOM VALIDATION HERE
+// 🔄 INIT AUTH LISTENERS AFTER FIREBASE
+    initAuthListeners();
     if (!DOM.authContainer) {
       throw new Error('Auth container element missing');
     }
-
+    
 // 🌟 GIS LOGIN BUTTON HANDLER NEW IMPLEMENTATION 🌟
 function setupGoogleLoginButton() {
   const existingBtn = document.getElementById('googleSignInBtn');
@@ -164,7 +158,6 @@ function setupGoogleLoginButton() {
     Continue with Google
   `;
   DOM.authContainer.appendChild(btn);
-
   btn.addEventListener("click", () => {
     if (window.tokenClient) {
       window.tokenClient.requestAccessToken();
@@ -192,16 +185,13 @@ function initAuthListeners() {
   }
   auth.onAuthStateChanged((user) => {
     if (user) {
-      // YOUR ORIGINAL AUTHENTICATED BEHAVIOR
       DOM.dashboard.classList.remove('hidden');
       DOM.authContainer.classList.add('hidden');
       renderProfiles();
     } else {
-      // YOUR ORIGINAL UNAUTHENTICATED BEHAVIOR
       DOM.dashboard.classList.add('hidden');
       DOM.authContainer.classList.remove('hidden');
       
-      // PRESERVE FORM STATE LOGIC
       const showLogin = !document.getElementById('loginPage').classList.contains('hidden');
       toggleForms(showLogin);
     }
@@ -211,7 +201,7 @@ function initAuthListeners() {
 // 🧩 IMPROVED SCRIPT LOADING
 async function loadEssentialScripts() {
 // Initialize Google APIs + render profiles
-    await loadGAPI(); // ✅ Load gapi FIRST
+    await loadGAPI();
     await main();
     setupLogoutButton();
   return new Promise((resolve) => {
@@ -220,16 +210,16 @@ async function loadEssentialScripts() {
         clearInterval(checkInterval);
         resolve();
       }
-    }, 100); // ✅ Faster checking interval
+    }, 100);
   });
 }
 
-// 🟢 CORRECTED GAPI LOADER (PRESERVES YOUR CODE STRUCTURE)
+// 🟢 GAPI LOADER
 function loadGAPI() {
   return new Promise((resolve) => {
     if (window.gapi) return resolve();    
     const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js'; // ✅ Correct URL
+    script.src = 'https://apis.google.com/js/api.js';
     script.async = true;
     script.defer = true;
     script.onload = resolve;
@@ -237,7 +227,7 @@ function loadGAPI() {
   });
 }
 
-// 🧩 PROPER FIREBASE INIT FUNCTION
+// 🧩 FIREBASE INIT FUNCTION
 async function initializeFirebase() {
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
@@ -252,7 +242,7 @@ async function initializeFirebase() {
   return { app, auth };
 }
 
-// 📄 MODIFIED URL PARAM HANDLING 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+// 🌟 URL PARAM HANDLING 
 const urlParams = new URLSearchParams(window.location.search); // Add this line
 if(urlParams.has('profile')) {
   try {
@@ -261,7 +251,7 @@ if(urlParams.has('profile')) {
     if(Number.isNaN(profileIndex)) throw new Error('Invalid profile ID');
     const validProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
     if(validProfiles.length > profileIndex) {
-      printProfile(validProfiles[profileIndex]); // ✅ Pass actual profile data
+      printProfile(validProfiles[profileIndex]);
     } else {
       showErrorToUser('Requested profile not found');
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -273,18 +263,14 @@ if(urlParams.has('profile')) {
   }
 }
 
-  // ======================
-  // PET PROFILE INIT 🌟🌟🌟
-  // ======================
+// 🌟 PET PROFILE INIT
   if(window.petProfiles?.length > 0) {
     renderProfiles();
   } else {
     DOM.petList?.classList.add('empty-state');
   }
 
-// ================
-// ERROR HANDLING ❌❌❌❌❌❌
-// ================
+// 🌟 ERROR HANDLING ❌
 function showErrorToUser(message) {
   try {
     const errorDiv = document.getElementById('error-message');
@@ -292,16 +278,14 @@ function showErrorToUser(message) {
       errorDiv.textContent = message;
       errorDiv.style.display = 'block';
     } else {
-      alert(message); // Fallback
+      alert(message);
     }
   } catch (fallbackError) {
-    alert(message); // Ultimate fallback
+    alert(message);
   }
 }
 
-// =====================
-// 🔐 AUTHENTICATION FLOW 🌟🌟🌟 TO BE REVIEWED LATER
-// =====================
+// 🌟🔐 AUTHENTICATION FLOW // TO BE REVIEWED LATER
 async function refreshDriveTokenIfNeeded() {
   try {
     if(!auth?.currentUser) throw new Error("No authenticated user");
@@ -319,21 +303,23 @@ async function refreshDriveTokenIfNeeded() {
   }
 }
 
-// Add these if missing
+// 🌟 Init UI 
 function initUI() {
   // Your existing UI initialization code
   checkAuthState();
 }
-// FUNCTION CHECK AUTH STATE 🌟🌟🌟
+  
+// 🌟 FUNCTION CHECK AUTH STATE
 async function checkAuthState() {
   const user = await auth.currentUser;
   if (user) {
-    window.location.href = '/main-app'; // Your app's main page
+    window.location.href = '/main-app';
   }
 }
-// Auth listeners function
+  
+//🌟 Auth listeners function
 function initAuthListeners() {
-    if(auth) { // ✅ Add null check
+    if(auth) { 
   auth.onAuthStateChanged((user) => {
     if (user) {
       console.log("User logged in:", user.uid);
@@ -341,23 +327,23 @@ function initAuthListeners() {
     } else {
       console.log("No active session");
       if(!isSignupInProgress) {
-        toggleForms(true); // 🌟 Use existing form toggle
+        toggleForms(true);
         DOM.authContainer.classList.remove('hidden');
       }
     }
   });
- } // <-- Added missing closing brace for the function
-} // <-- This brace was missing
+ }
+}
 
-// FUNCTION HANDLE AUTH ACTION 🌟🌟🌟
+// 🌟 FUNCTION HANDLE AUTH ACTION
 function handleAuthAction() {
-  // ✅ Safe to use auth/provider here
   if(auth && provider) {
     auth.signInWithRedirect(provider);
   }
 }
+  
 //🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
-// DRIVE FOLDER MANAGEMENT🌟🌟🌟
+//🌟 DRIVE FOLDER MANAGEMENT
 // 🔄 Get or Create Drive Folder ID
 async function getOrCreateDriveFolderId() {
   const response = await gapi.client.drive.files.list({
