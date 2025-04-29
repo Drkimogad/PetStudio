@@ -110,6 +110,17 @@ document.addEventListener('DOMContentLoaded', async function() { // ✅ Added as
     // 🔥 INITIALIZE FIREBASE FIRST
     const firebaseInit = await initializeFirebase();
     auth = firebase.auth(app);
+    
+    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(() => {
+    initAuthListeners();
+    initUI();
+  })
+  .catch((error) => {
+    console.error("Persistence error:", error);
+    showErrorToUser("Authentication system failed to initialize");
+  });
+
 
     // 🔄 INIT AUTH LISTENERS AFTER FIREBASE
     initAuthListeners(); // ✅ Remove parameter, use global auth
@@ -306,19 +317,6 @@ async function refreshDriveTokenIfNeeded() {
     console.error("Token refresh error:", error);
     showErrorToUser('Session expired - please re-login');
   }
-}
-
-// Set persistence and initialize listeners
-if(auth) { // ✅ Add this check
-  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-    .then(() => {
-      initAuthListeners();
-      initUI();
-    })
-    .catch((error) => { // ✅ Keep .catch INSIDE the promise chain
-      console.error("Persistence error:", error);
-      showErrorToUser("Authentication system failed to initialize");
-    });
 }
 
 // Add these if missing
