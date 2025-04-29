@@ -177,7 +177,7 @@ function setupGoogleLoginButton() {
     document.body.classList.remove('loading');
   }
 
-// 🟢 FIXED AUTH LISTENER IMPLEMENTATION (PRESERVES YOUR BEHAVIOR)
+// 🟢 CORRECTED AUTH LISTENER IMPLEMENTATION
 function initAuthListeners() {
   if (!auth) {
     console.warn('Auth not initialized yet');
@@ -185,15 +185,17 @@ function initAuthListeners() {
   }
   auth.onAuthStateChanged((user) => {
     if (user) {
+      // User is authenticated
       DOM.dashboard.classList.remove('hidden');
       DOM.authContainer.classList.add('hidden');
       renderProfiles();
     } else {
-      DOM.dashboard.classList.add('hidden');
-      DOM.authContainer.classList.remove('hidden');
-      
-      const showLogin = !document.getElementById('loginPage').classList.contains('hidden');
-      toggleForms(true);
+      // User not authenticated - RESPECT SIGNUP FLAG
+      if (!isSignupInProgress) { // ⭐⭐ CRUCIAL CHECK ⭐⭐
+        DOM.dashboard.classList.add('hidden');
+        DOM.authContainer.classList.remove('hidden');
+        toggleForms(true); // Show login by default
+      }
     }
   });
 }
