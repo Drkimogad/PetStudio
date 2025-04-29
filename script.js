@@ -193,7 +193,7 @@ function initAuthListeners() {
       DOM.authContainer.classList.remove('hidden');
       
       const showLogin = !document.getElementById('loginPage').classList.contains('hidden');
-      toggleForms(showLogin);
+      toggleForms(true);
     }
   });
 }
@@ -1078,12 +1078,13 @@ function toggleAuthUI(isAuthenticated) {
 
   //🟢=======AUTH FUNCTIONS =============
   // 🔼 Sign Up Handler🌟🌟🌟
-// Sign Up Handler
 DOM.signupForm?.addEventListener("submit", (e) => {
   e.preventDefault();
-  
+  isSignupInProgress = true; // 🔼 CRITICAL FLAG SET
+
   if (!auth) {
     showErrorToUser("Authentication system not ready");
+    isSignupInProgress = false; // 🔼 RESET FLAG ON ERROR
     return;
   }
 
@@ -1094,6 +1095,7 @@ DOM.signupForm?.addEventListener("submit", (e) => {
 
   if (!username || !password) {
     showAuthError("Please fill all fields");
+    isSignupInProgress = false; // 🔼 RESET FLAG ON VALIDATION FAIL
     return;
   }
 
@@ -1102,21 +1104,21 @@ DOM.signupForm?.addEventListener("submit", (e) => {
 
   auth.createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
-      // Successful signup - automatic login
       DOM.signupForm.reset();
-      
-      // Direct redirect without signout
-      window.location.href = '/PetStudio/main-app.html'; 
+      // 🔼 MAINTAIN SIGNUP STATE DURING REDIRECT
+      window.location.href = '/PetStudio/main-app.html';
     })
     .catch((error) => {
       showAuthError(error.message);
       console.error("Signup Error:", error);
     })
     .finally(() => {
+      isSignupInProgress = false; // 🔼 CRUCIAL FLAG RESET
       submitBtn.disabled = false;
       submitBtn.textContent = "Sign Up";
     });
 });
+  
 // 🔼 Login Handler 🌟🌟🌟
   DOM.loginForm?.addEventListener("submit", (e) => {
     e.preventDefault();
