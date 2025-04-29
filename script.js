@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async function() { // ✅ Added as
   try {
     // 🔥 INITIALIZE FIREBASE FIRST
     const firebaseInit = await initializeFirebase();
-    auth     = firebaseInit.auth;
+    auth = firebase.auth(app);
 
     // 🔄 INIT AUTH LISTENERS AFTER FIREBASE
     initAuthListeners(); // ✅ Remove parameter, use global auth
