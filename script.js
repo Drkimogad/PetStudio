@@ -1055,7 +1055,7 @@ function toggleForms(showLogin) {
   });
 }
 // 🟢 AUTHENTICATION SECTION 🌟🌟🌟
-// 1. AUTH STATE OBSERVER - UNCHANGED
+// AUTH STATE OBSERVER - UNCHANGED
 function showAuthError(message) {
   const errorElement = document.createElement('div');
   errorElement.className = 'auth-error';
@@ -1063,30 +1063,7 @@ function showAuthError(message) {
   document.body.appendChild(errorElement);
   setTimeout(() => errorElement.remove(), 5000);
 }
-
-// 2. AUTH STATE HANDLER - MOVED TO PROPER INIT FLOW
-function initAuthStateListener() {
-  if (!auth) return; // Safety check
-  
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      // Original authenticated behavior
-      DOM.dashboard.classList.remove('hidden');
-      DOM.authContainer.classList.add('hidden');
-      renderProfiles();
-    } else {
-      // Original unauthenticated behavior
-      DOM.dashboard.classList.add('hidden');
-      DOM.authContainer.classList.remove('hidden');
-      
-      // Preserved form state logic
-      const showLogin = !document.getElementById('loginPage').classList.contains('hidden');
-      toggleForms(showLogin);
-    }
-  });
-}
-
-// 3. TOGGLEAUTHUI - KEPT INTACT WITH SAFETY CHECKS
+// TOGGLEAUTHUI - KEPT INTACT WITH SAFETY CHECKS
 function toggleAuthUI(isAuthenticated) {
   // Original toggle logic with null checks
   if (DOM.authContainer) DOM.authContainer.classList.toggle('hidden', isAuthenticated);
