@@ -99,6 +99,27 @@ function disableUI() {
 // 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
 // MAIN INITIALIZATION
 document.addEventListener('DOMContentLoaded', async function() { // ✅ Added async
+// 🟢 INITIAL FORM STATE
+toggleForms(false);
+DOM.dashboard.classList.add('hidden');
+DOM.fullPageBanner.classList.remove('hidden');
+DOM.profileSection.classList.add('hidden');
+
+// ======================
+// UI EVENT LISTENERS 🌟🌟🌟
+// ======================
+if(DOM.switchToLogin && DOM.switchToSignup) {
+  DOM.switchToLogin.addEventListener('click', () => {
+    DOM.signupPage.classList.add('hidden');
+    DOM.loginPage.classList.remove('hidden');
+  });
+
+  DOM.switchToSignup.addEventListener('click', () => {
+    DOM.loginPage.classList.add('hidden');
+    DOM.signupPage.classList.remove('hidden');
+  });
+ }
+🌟🌟🌟🌟🌟
   await loadEssentialScripts();
   initQRModal();
   console.log("App fully initialized");
@@ -129,12 +150,6 @@ document.addEventListener('DOMContentLoaded', async function() { // ✅ Added as
     if (!DOM.authContainer) {
       throw new Error('Auth container element missing');
     }
-
-    // 🟢 INITIAL FORM STATE
-    toggleForms(false);
-    DOM.dashboard.classList.add('hidden');
-    DOM.fullPageBanner.classList.remove('hidden');
-    DOM.profileSection.classList.add('hidden');
 
 // 🌟 GIS LOGIN BUTTON HANDLER NEW IMPLEMENTATION 🌟
 function setupGoogleLoginButton() {
@@ -258,20 +273,6 @@ if(urlParams.has('profile')) {
   }
 }
 
-// ======================
-// UI EVENT LISTENERS 🌟🌟🌟
-// ======================
-if(DOM.switchToLogin && DOM.switchToSignup) {
-  DOM.switchToLogin.addEventListener('click', () => {
-    DOM.signupPage.classList.add('hidden');
-    DOM.loginPage.classList.remove('hidden');
-  });
-
-  DOM.switchToSignup.addEventListener('click', () => {
-    DOM.loginPage.classList.add('hidden');
-    DOM.signupPage.classList.remove('hidden');
-  });
- }
   // ======================
   // PET PROFILE INIT 🌟🌟🌟
   // ======================
