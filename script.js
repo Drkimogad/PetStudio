@@ -174,6 +174,54 @@ async function initializeFirebase() {
   const auth = firebase.auth(app);
   return { app, auth }; // ✅ Return critical instances
 }
+
+// 🌟 CALL GOOGLE LOGIN BTN NEW IMPLEMENTATION:
+ setupGoogleLoginButton();
+
+// 📄 MODIFIED URL PARAM HANDLING 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+const urlParams = new URLSearchParams(window.location.search); // Add this line
+if(urlParams.has('profile')) {
+  try {
+    const profileIndex = parseInt(urlParams.get('profile'));
+    // 🔄 IMPROVED VALIDATION
+    if(Number.isNaN(profileIndex)) throw new Error('Invalid profile ID');
+    
+    const validProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+    if(validProfiles.length > profileIndex) {
+      printProfile(validProfiles[profileIndex]); // ✅ Pass actual profile data
+    } else {
+      showErrorToUser('Requested profile not found');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  } catch(error) {
+    console.error('Profile load error:', error);
+    showErrorToUser('Invalid profile URL');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+}
+// ======================
+// UI EVENT LISTENERS 🌟🌟🌟
+// ======================
+if(DOM.switchToLogin && DOM.switchToSignup) {
+  DOM.switchToLogin.addEventListener('click', () => {
+    DOM.signupPage.classList.add('hidden');
+    DOM.loginPage.classList.remove('hidden');
+  });
+
+  DOM.switchToSignup.addEventListener('click', () => {
+    DOM.loginPage.classList.add('hidden');
+    DOM.signupPage.classList.remove('hidden');
+  });
+ }
+  // ======================
+  // PET PROFILE INIT 🌟🌟🌟
+  // ======================
+  if(window.petProfiles?.length > 0) {
+    renderProfiles();
+  } else {
+    DOM.petList?.classList.add('empty-state');
+  }
+
 // 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
 // 🌟 GIS-AUTH MAIN FUNCTION NEW IMPLEMENTATION 🌟
 async function main() {
@@ -225,56 +273,6 @@ async function main() {
     showErrorToUser("Failed to load Google services");
   });
 }
-// 🌟 CALL GOOGLE LOGIN BTN NEW IMPLEMENTATION:
- setupGoogleLoginButton();
-// 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟   
-// 📄 MODIFIED URL PARAM HANDLING
-const urlParams = new URLSearchParams(window.location.search); // Add this line
-if(urlParams.has('profile')) {
-  try {
-    const profileIndex = parseInt(urlParams.get('profile'));
-    // 🔄 IMPROVED VALIDATION
-    if(Number.isNaN(profileIndex)) throw new Error('Invalid profile ID');
-    
-    const validProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-    if(validProfiles.length > profileIndex) {
-      printProfile(validProfiles[profileIndex]); // ✅ Pass actual profile data
-    } else {
-      showErrorToUser('Requested profile not found');
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  } catch(error) {
-    console.error('Profile load error:', error);
-    showErrorToUser('Invalid profile URL');
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
-}
-// ======================
-// UI EVENT LISTENERS 🌟🌟🌟
-// ======================
-if(DOM.switchToLogin && DOM.switchToSignup) {
-  DOM.switchToLogin.addEventListener('click', () => {
-    DOM.signupPage.classList.add('hidden');
-    DOM.loginPage.classList.remove('hidden');
-  });
-
-  DOM.switchToSignup.addEventListener('click', () => {
-    DOM.loginPage.classList.add('hidden');
-    DOM.signupPage.classList.remove('hidden');
-  });
- }
-  // ======================
-  // PET PROFILE INIT 🌟🌟🌟
-  // ======================
-  if(window.petProfiles?.length > 0) {
-    renderProfiles();
-  } else {
-    DOM.petList?.classList.add('empty-state');
-  }
-
-// ====================
-// CORE FUNCTIONALITY 🌟🌟🌟🌟🌟🌟
-
 
 // ================
 // ERROR HANDLING ❌❌❌❌❌❌
