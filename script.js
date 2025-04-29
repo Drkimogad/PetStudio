@@ -168,7 +168,6 @@ function setupGoogleLoginButton() {
   } finally {
     document.body.classList.remove('loading');
   }
-});
 
 // 🟢 FIXED AUTH LISTENER IMPLEMENTATION (PRESERVES YOUR BEHAVIOR)
 function initAuthListeners() {
@@ -1276,3 +1275,4 @@ async function sendSubscriptionToServer(subscription) {
   if(petProfiles.length > 0) {
     renderProfiles();
   }
+});
