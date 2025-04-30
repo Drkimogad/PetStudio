@@ -99,8 +99,8 @@ function disableUI() {
 // 🌟 MAIN INITIALIZATION
 document.addEventListener('DOMContentLoaded', async function() {
 // 🟢 INITIAL FORM STATE
-DOM.signupPage.classList.add('hidden'); // Start with login visible
-DOM.loginPage.classList.remove('hidden');
+DOM.signupPage.classList.remove('hidden'); // Show signup form by default
+DOM.loginPage.classList.add('hidden'); // Hide login form initially
 DOM.dashboard.classList.add('hidden');
 DOM.fullPageBanner.classList.remove('hidden');
 DOM.profileSection.classList.add('hidden');
