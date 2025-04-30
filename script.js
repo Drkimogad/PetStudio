@@ -194,7 +194,6 @@ function initAuthListeners() {
       if (!isSignupInProgress) { // ⭐⭐ CRUCIAL CHECK ⭐⭐
         DOM.dashboard.classList.add('hidden');
         DOM.authContainer.classList.remove('hidden');
-        toggleForms(true); // Show login by default
       }
     }
   });
