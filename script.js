@@ -325,18 +325,17 @@ function initAuthListeners() {
     console.warn('Auth not initialized yet');
     return;
   }
+// MODIFIED!!
   auth.onAuthStateChanged((user) => {
     if (user) {
-      // User is logged in
+      isSignupInProgress = false;
       DOM.dashboard.classList.remove('hidden');
       DOM.authContainer.classList.add('hidden');
       renderProfiles();
     } else {
-      // User is logged out - ONLY TOGGLE FORMS IF NOT IN SIGNUP FLOW
-      if (!isSignupInProgress) { // ⭐⭐ CRUCIAL LINE ADDED ⭐⭐
+      if (!isSignupInProgress) { 
         DOM.dashboard.classList.add('hidden');
         DOM.authContainer.classList.remove('hidden');
-        toggleForms(true); // Show login by default
       }
     }
   });
@@ -1120,10 +1119,9 @@ DOM.signupForm?.addEventListener("submit", (e) => {
     .catch((error) => {
       showAuthError(error.message);
       console.error("Signup Error:", error);
+      isSignupInProgress = false; // Reset only on error
     })
     .finally(() => {
-    // 🚫 DON'T RESET isSignupInProgress HERE
-      isSignupInProgress = false; // ⭐ RESET FLAG WHEN DONE
       submitBtn.disabled = false;
       submitBtn.textContent = "Sign Up";
     });
