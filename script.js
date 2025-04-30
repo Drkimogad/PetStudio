@@ -185,7 +185,8 @@ function initAuthListeners() {
   }
   auth.onAuthStateChanged((user) => {
     if (user) {
-      // User is authenticated
+    // ✅ RESET FLAG ONLY WHEN AUTH CONFIRMED
+      isSignupInProgress = false;
       DOM.dashboard.classList.remove('hidden');
       DOM.authContainer.classList.add('hidden');
       renderProfiles();
@@ -1111,13 +1112,17 @@ DOM.signupForm?.addEventListener("submit", (e) => {
   auth.createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
       DOM.signupForm.reset();
+    // 🔼 DELAY REDIRECT UNTIL AUTH STATE UPDATES
+      setTimeout(() => {
       window.location.href = '/PetStudio/main-app.html'; 
+    }, 1000); // Short delay to let auth listener process
     })
     .catch((error) => {
       showAuthError(error.message);
       console.error("Signup Error:", error);
     })
     .finally(() => {
+    // 🚫 DON'T RESET isSignupInProgress HERE
       isSignupInProgress = false; // ⭐ RESET FLAG WHEN DONE
       submitBtn.disabled = false;
       submitBtn.textContent = "Sign Up";
