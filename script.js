@@ -99,7 +99,8 @@ function disableUI() {
 // 🌟 MAIN INITIALIZATION
 document.addEventListener('DOMContentLoaded', async function() {
 // 🟢 INITIAL FORM STATE
-toggleForms(true);
+DOM.signupPage.classList.add('hidden'); // Start with login visible
+DOM.loginPage.classList.remove('hidden');
 DOM.dashboard.classList.add('hidden');
 DOM.fullPageBanner.classList.remove('hidden');
 DOM.profileSection.classList.add('hidden');
@@ -1046,10 +1047,7 @@ window.scrollTo(0, 0);
 // 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢    
 // AUTH FORM SWITCHING 🌟🌟🌟
 // 🟢 NEW TOGGLEFORMS FUNCTION🌟🌟🌟
-function toggleForms(showLogin) {
-  DOM.signupPage.classList.toggle('hidden', showLogin);
-  DOM.loginPage.classList.toggle('hidden', !showLogin);
-  
+function toggleForms(showLogin) {  
   // Reset validation on hidden forms
   [DOM.signupForm, DOM.loginForm].forEach(form => {
     if(form.classList.contains('hidden')) {
