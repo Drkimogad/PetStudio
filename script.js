@@ -193,7 +193,7 @@ function initAuthListeners() {
     // ✅ RESET FLAG ONLY WHEN AUTH CONFIRMED
       isSignupInProgress = false;
       DOM.dashboard.classList.remove('hidden');
-      DOM.authContainer.classList.remove('hidden');
+      DOM.authContainer.classList.add('hidden');
       renderProfiles();
     } else {
       // User not authenticated - RESPECT SIGNUP FLAG
