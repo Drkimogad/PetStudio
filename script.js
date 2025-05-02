@@ -98,29 +98,40 @@ function disableUI() {
 
 // 🌟 MAIN INITIALIZATION
 document.addEventListener('DOMContentLoaded', async function() {
-// 🟢 INITIAL FORM STATE
-DOM.signupPage.classList.add('hidden'); // Show signup form by default
-DOM.loginPage.classList.add('hidden'); // Hide login form initially
-DOM.dashboard.classList.add('hidden');
-DOM.fullPageBanner.classList.remove('hidden');
-DOM.profileSection.classList.add('hidden');
+// 🟢 INITIAL FORM STATE (using our helpers)
+ showAuthForm('login');                 // always show login first
+ DOM.dashboard.classList.add('hidden'); // hide dashboard on load
+ DOM.fullPageBanner.classList.remove('hidden');
+ DOM.profileSection.classList.add('hidden');
 
-// 🌟 UI EVENT LISTENERS 
-if(DOM.switchToLogin && DOM.switchToSignup) {
-  DOM.switchToLogin.addEventListener('click', () => {
-    DOM.signupPage.classList.add('hidden');
-    DOM.loginPage.classList.remove('hidden');
-    DOM.signupForm.reset(); // Clear signup form
-  document.querySelectorAll('.auth-error').forEach(el => el.remove()); // Clear errors   
+
+// Auth Helper functions
+  function showAuthForm(form) {
+  DOM.authContainer.classList.remove('hidden');
+  DOM.loginPage.classList.toggle('hidden', form !== 'login');
+  DOM.signupPage.classList.toggle('hidden', form !== 'signup');
+}
+
+function showDashboard() {
+  DOM.authContainer.classList.add('hidden');
+  DOM.dashboard.classList.remove('hidden');
+  // reset banner/profile state:
+  DOM.fullPageBanner.classList.remove('hidden');
+  DOM.profileSection.classList.add('hidden');
+}
+  
+// UI Listeners
+   DOM.switchToLogin.addEventListener('click', (e) => {
+     e.preventDefault();
+     showAuthForm('login');
+     document.querySelectorAll('.auth-error').forEach(el => el.remove());
+  });
+DOM.switchToSignup.addEventListener('click', (e) => {
+    e.preventDefault();
+    showAuthForm('signup');
+    document.querySelectorAll('.auth-error').forEach(el => el.remove());
   });
 
-  DOM.switchToSignup.addEventListener('click', () => {
-    DOM.loginPage.classList.add('hidden');
-    DOM.signupPage.classList.remove('hidden');
-    DOM.loginForm.reset(); // Clear login form
-  document.querySelectorAll('.auth-error').forEach(el => el.remove()); // Clear errors
-  });
- }
   
 //🌟
   await loadEssentialScripts();
@@ -326,24 +337,14 @@ async function checkAuthState() {
   
 // 🟢 CORRECTED AUTH LISTENER
 function initAuthListeners() {
-  auth?.onAuthStateChanged((user) => {
+  auth.onAuthStateChanged((user) => {
     if (user) {
-      // Successful signup/login
-      isSignupInProgress = false;
-      DOM.dashboard.classList.remove('hidden');
-      DOM.authContainer.classList.add('hidden');
-      DOM.signupPage.classList.add('hidden');
-      DOM.loginPage.classList.add('hidden');
+      showDashboard();
       renderProfiles();
     } else {
-      // Not authenticated - show auth container
-      if (!isSignupInProgress) {
-        DOM.dashboard.classList.add('hidden');
-        DOM.authContainer.classList.remove('hidden');
-      }
+      showAuthForm('login');
     }
   });
-}
 
 // 🌟 FUNCTION HANDLE AUTH ACTION
 function handleAuthAction() {
@@ -1047,44 +1048,8 @@ renderProfiles();
 window.scrollTo(0, 0); 
 }); 
   
-// 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢    
-// AUTH FORM SWITCHING 🌟🌟🌟
-// 🟢 NEW TOGGLEFORMS FUNCTION🌟🌟🌟
-function toggleForms(showLogin) {  
-  // Reset validation on hidden forms
-  [DOM.signupForm, DOM.loginForm].forEach(form => {
-    if(form.classList.contains('hidden')) {
-      form.reset();
-      form.querySelectorAll('input').forEach(input => {
-        input.setCustomValidity('');
-      });
-    }
-  });
-}
-// 🟢 AUTHENTICATION SECTION 🌟🌟🌟
-// AUTH STATE OBSERVER - UNCHANGED
-function showAuthError(message) {
-  const errorElement = document.createElement('div');
-  errorElement.className = 'auth-error';
-  errorElement.innerText = `🚫 Authentication Error: ${message}\nPlease try again or check your internet connection.`;
-  document.body.appendChild(errorElement);
-  setTimeout(() => errorElement.remove(), 5000);
-}
-// TOGGLEAUTHUI - KEPT INTACT WITH SAFETY CHECKS
-function toggleAuthUI(isAuthenticated) {
-  // Original toggle logic with null checks
-  if (DOM.authContainer) DOM.authContainer.classList.toggle('hidden', isAuthenticated);
-  if (DOM.dashboard) DOM.dashboard.classList.toggle('hidden', !isAuthenticated);
-  
-  // Original UI reset behavior
-  if(isAuthenticated) {
-    if (DOM.fullPageBanner) DOM.fullPageBanner.classList.remove('hidden');
-    if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
-  }
-}
-
-  //🟢=======AUTH FUNCTIONS =============
-  // 🔼 Sign Up Handler🌟🌟🌟
+// 🟢🟢🟢AUTH FUNCTIONS🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢    
+// 🔼 Sign Up Handler🌟🌟🌟
 DOM.signupForm?.addEventListener("submit", (e) => {
   e.preventDefault();
   isSignupInProgress = true; // ⭐ FLAG SET ON SUBMIT
@@ -1102,7 +1067,7 @@ DOM.signupForm?.addEventListener("submit", (e) => {
   auth.createUserWithEmailAndPassword(email, password)
     .then(() => {
       DOM.signupForm.reset();
-      // PROPERLY HANDLE UI UPDATE VIA AUTH LISTENER
+     showAuthForm('login');  // immediately show login after successful signup
     })
     .catch((error) => {
       showAuthError(error.message);
