@@ -99,7 +99,7 @@ function disableUI() {
 // 🌟 MAIN INITIALIZATION
 document.addEventListener('DOMContentLoaded', async function() {
 // 🟢 INITIAL FORM STATE
-DOM.signupPage.classList.remove('hidden'); // Show signup form by default
+DOM.signupPage.classList.add('hidden'); // Show signup form by default
 DOM.loginPage.classList.add('hidden'); // Hide login form initially
 DOM.dashboard.classList.add('hidden');
 DOM.fullPageBanner.classList.remove('hidden');
@@ -110,11 +110,15 @@ if(DOM.switchToLogin && DOM.switchToSignup) {
   DOM.switchToLogin.addEventListener('click', () => {
     DOM.signupPage.classList.add('hidden');
     DOM.loginPage.classList.remove('hidden');
+    DOM.signupForm.reset(); // Clear signup form
+  document.querySelectorAll('.auth-error').forEach(el => el.remove()); // Clear errors   
   });
 
   DOM.switchToSignup.addEventListener('click', () => {
     DOM.loginPage.classList.add('hidden');
     DOM.signupPage.classList.remove('hidden');
+    DOM.loginForm.reset(); // Clear login form
+  document.querySelectorAll('.auth-error').forEach(el => el.remove()); // Clear errors
   });
  }
   
@@ -189,7 +193,7 @@ function initAuthListeners() {
     // ✅ RESET FLAG ONLY WHEN AUTH CONFIRMED
       isSignupInProgress = false;
       DOM.dashboard.classList.remove('hidden');
-      DOM.authContainer.classList.add('hidden');
+      DOM.authContainer.classList.remove('hidden');
       renderProfiles();
     } else {
       // User not authenticated - RESPECT SIGNUP FLAG
@@ -320,21 +324,20 @@ async function checkAuthState() {
   }
 }
   
-// 🟢 CORRECTED AUTH LISTENER (FINAL FIX)
+// 🟢 CORRECTED AUTH LISTENER
 function initAuthListeners() {
-  if (!auth) {
-    console.warn('Auth not initialized yet');
-    return;
-  }
-// MODIFIED!!
-  auth.onAuthStateChanged((user) => {
+  auth?.onAuthStateChanged((user) => {
     if (user) {
+      // Successful signup/login
       isSignupInProgress = false;
       DOM.dashboard.classList.remove('hidden');
       DOM.authContainer.classList.add('hidden');
+      DOM.signupPage.classList.add('hidden');
+      DOM.loginPage.classList.add('hidden');
       renderProfiles();
     } else {
-      if (!isSignupInProgress) { 
+      // Not authenticated - show auth container
+      if (!isSignupInProgress) {
         DOM.dashboard.classList.add('hidden');
         DOM.authContainer.classList.remove('hidden');
       }
@@ -1086,16 +1089,9 @@ DOM.signupForm?.addEventListener("submit", (e) => {
   e.preventDefault();
   isSignupInProgress = true; // ⭐ FLAG SET ON SUBMIT
 
-  if (!auth) {
-    showErrorToUser("Authentication system not ready");
-    isSignupInProgress = false; // ⭐ RESET ON ERROR
-    return;
-  }
-
   const username = DOM.signupForm.querySelector("#signupEmail").value.trim();
   const password = DOM.signupForm.querySelector("#signupPassword").value.trim();
   const email = `${username}@petstudio.com`;
-  const submitBtn = DOM.signupForm.querySelector("button[type='submit']");
 
   if (!username || !password) {
     showAuthError("Please fill all fields");
@@ -1103,25 +1099,17 @@ DOM.signupForm?.addEventListener("submit", (e) => {
     return;
   }
 
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Creating account...";
-
   auth.createUserWithEmailAndPassword(email, password)
-    .then((userCredential) => {
+    .then(() => {
       DOM.signupForm.reset();
-    // 🔼 DELAY REDIRECT UNTIL AUTH STATE UPDATES
-      setTimeout(() => {
-      window.location.href = '/PetStudio/main-app.html'; 
-    }, 1000); // Short delay to let auth listener process
+      // PROPERLY HANDLE UI UPDATE VIA AUTH LISTENER
     })
     .catch((error) => {
       showAuthError(error.message);
-      console.error("Signup Error:", error);
-      isSignupInProgress = false; // Reset only on error
+      isSignupInProgress = false;
     })
     .finally(() => {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Sign Up";
+      DOM.signupForm.querySelector("button[type='submit']").disabled = false;
     });
 });
   
