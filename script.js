@@ -98,6 +98,14 @@ function disableUI() {
 
 // 🌟 MAIN INITIALIZATION
 document.addEventListener('DOMContentLoaded', async function() {
+  try {
+    await initializeFirebase();
+    console.log("Firebase and Auth initialized");
+  } catch (error) {
+    console.error("Initialization error:", error);
+    disableUI();
+  }
+});
 // 🟢 INITIAL FORM STATE (using our helpers)
  showAuthForm('login');                 // always show login first
  DOM.dashboard.classList.add('hidden'); // hide dashboard on load
@@ -256,13 +264,23 @@ async function initializeFirebase() {
     projectId: "swiftreach2025",
     storageBucket: "swiftreach2025.appspot.com",
     messagingSenderId: "540185558422",
-    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
+    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7",
   };
-  const app = firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth(app);
-// Add this line to initialize the listeners
-  initAuthListeners();
-  return { app, auth };
+
+  try {
+    const app = firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth(app);
+
+    console.log("✅ Firebase initialized successfully");
+
+    // Add this line to initialize the listeners
+    initAuthListeners();
+
+    return { app, auth };
+  } catch (error) {
+    console.error("❌ Firebase initialization failed:", error);
+    showErrorToUser("Failed to initialize Firebase. Please try again later.");
+  }
 }
 
 // 🌟 URL PARAM HANDLING 
