@@ -130,25 +130,21 @@ function showDashboard() {
 }
   
 // UI Listeners
-  if (switchToSignupButton) {
-    // Attach the event listener
-    switchToSignupButton.addEventListener('click', (e) => {
+  // Attach event listener for "Create Account" button
+  if (DOM.switchToSignup) {
+    DOM.switchToSignup.addEventListener('click', (e) => {
       e.preventDefault();
-      // Toggle to the sign-up form
-      document.getElementById('loginPage').classList.add('hidden');
-      document.getElementById('signupPage').classList.remove('hidden');
+      showAuthForm('signup'); // Toggle to the sign-up form
     });
   } else {
     console.error("The 'Create Account' button with id='switchToSignup' was not found in the DOM.");
   }
 
-  if (switchToLoginButton) {
-    // Attach the event listener
-    switchToLoginButton.addEventListener('click', (e) => {
+  // Attach event listener for "Back to Login" button
+  if (DOM.switchToLogin) {
+    DOM.switchToLogin.addEventListener('click', (e) => {
       e.preventDefault();
-      // Toggle to the login form
-      document.getElementById('signupPage').classList.add('hidden');
-      document.getElementById('loginPage').classList.remove('hidden');
+      showAuthForm('login'); // Toggle to the login form
     });
   } else {
     console.error("The 'Back to Login' button with id='switchToLogin' was not found in the DOM.");
