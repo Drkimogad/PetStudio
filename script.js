@@ -1061,20 +1061,26 @@ DOM.signupForm?.addEventListener("submit", (e) => {
 
   if (!username || !password) {
     showAuthError("Please fill all fields");
-    isSignupInProgress = false; // ⭐ RESET ON VALIDATION FAIL
+    isSignupInProgress = false;
+    return;
+  }
+
+  if (password.length < 6) {
+    showAuthError("Password must be at least 6 characters long");
+    isSignupInProgress = false;
     return;
   }
 
   auth.createUserWithEmailAndPassword(email, password)
     .then(() => {
       DOM.signupForm.reset();
-     showAuthForm('login');  // immediately show login after successful signup
+      showAuthForm('login');  // Immediately show login after successful signup
     })
     .catch((error) => {
       showAuthError(error.message);
-      isSignupInProgress = false;
     })
     .finally(() => {
+      isSignupInProgress = false;
       DOM.signupForm.querySelector("button[type='submit']").disabled = false;
     });
 });
