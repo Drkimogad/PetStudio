@@ -135,11 +135,20 @@ function showDashboard() {
      showAuthForm('login');
      document.querySelectorAll('.auth-error').forEach(el => el.remove());
   });
-DOM.switchToSignup.addEventListener('click', (e) => {
-  e.preventDefault();
-  alert('Switching to Sign-Up');
-  showAuthForm('signup');
-  document.querySelectorAll('.auth-error').forEach(el => el.remove());
+
+if (DOM.switchToSignup) {
+    // Add debug logs
+    console.log("Registering event listener for 'Create Account' button");
+
+    DOM.switchToSignup.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('Switching to Sign-Up'); // Debugging alert
+      showAuthForm('signup');
+      document.querySelectorAll('.auth-error').forEach(el => el.remove());
+    });
+  } else {
+    console.error("'Create Account' button not found in the DOM");
+  }
 });
 
   
