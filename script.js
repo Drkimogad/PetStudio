@@ -1086,33 +1086,39 @@ DOM.signupForm?.addEventListener("submit", (e) => {
 });
   
 // 🔼 Login Handler 🌟🌟🌟
-  DOM.loginForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const username = DOM.loginForm.querySelector("#loginEmail")
-      ?.value.trim();
-    const password = DOM.loginForm.querySelector("#loginPassword")
-      ?.value.trim();
-    const email = `${username}@petstudio.com`;
-    if(!username || !password) {
-      alert("Please fill all fields");
-      return;
-    }
-    const submitBtn = DOM.loginForm.querySelector("button[type='submit']");
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Logging in...";
-    auth.signInWithEmailAndPassword(email, password)
-      .catch((error) => {
-        let errorMessage = "Login failed: ";
-        if(error.code === "auth/wrong-password") errorMessage += "Wrong password";
-        else if(error.code === "auth/user-not-found") errorMessage += "User not found";
-        else errorMessage += error.message;
-        alert(errorMessage);
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Log In";
-      });
-  });
+DOM.loginForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const username = DOM.loginForm.querySelector("#loginEmail")?.value.trim();
+  const password = DOM.loginForm.querySelector("#loginPassword")?.value.trim();
+  const email = `${username}@petstudio.com`;
+
+  if (!username || !password) {
+    showAuthError("Please fill all fields");
+    return;
+  }
+
+  const submitBtn = DOM.loginForm.querySelector("button[type='submit']");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Logging in...";
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then(() => {
+      // Immediately redirect to the dashboard
+      showDashboard();
+    })
+    .catch((error) => {
+      let errorMessage = "Login failed: ";
+      if (error.code === "auth/wrong-password") errorMessage += "Wrong password";
+      else if (error.code === "auth/user-not-found") errorMessage += "User not found";
+      else errorMessage += error.message;
+      showAuthError(errorMessage);
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Log In";
+    });
+});
 
 // 🔼 Logout Handler🌟🌟🌟
 function setupLogoutButton() {
