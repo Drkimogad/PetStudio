@@ -130,24 +130,28 @@ function showDashboard() {
 }
   
 // UI Listeners
-   DOM.switchToLogin.addEventListener('click', (e) => {
-     e.preventDefault();
-     showAuthForm('login');
-     document.querySelectorAll('.auth-error').forEach(el => el.remove());
-  });
-
-if (DOM.switchToSignup) {
-    // Add debug logs
-    console.log("Registering event listener for 'Create Account' button");
-
-    DOM.switchToSignup.addEventListener('click', (e) => {
+  if (switchToSignupButton) {
+    // Attach the event listener
+    switchToSignupButton.addEventListener('click', (e) => {
       e.preventDefault();
-      alert('Switching to Sign-Up'); // Debugging alert
-      showAuthForm('signup');
-      document.querySelectorAll('.auth-error').forEach(el => el.remove());
+      // Toggle to the sign-up form
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('signupPage').classList.remove('hidden');
     });
   } else {
-    console.error("'Create Account' button not found in the DOM");
+    console.error("The 'Create Account' button with id='switchToSignup' was not found in the DOM.");
+  }
+
+  if (switchToLoginButton) {
+    // Attach the event listener
+    switchToLoginButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Toggle to the login form
+      document.getElementById('signupPage').classList.add('hidden');
+      document.getElementById('loginPage').classList.remove('hidden');
+    });
+  } else {
+    console.error("The 'Back to Login' button with id='switchToLogin' was not found in the DOM.");
   }
 });
 
