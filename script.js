@@ -114,10 +114,11 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 
 // Auth Helper functions
-  function showAuthForm(form) {
-  DOM.authContainer.classList.remove('hidden');
-  DOM.loginPage.classList.toggle('hidden', form !== 'login');
-  DOM.signupPage.classList.toggle('hidden', form !== 'signup');
+function showAuthForm(form) {
+    alert(`Switching to ${form} page`);
+    DOM.authContainer.classList.remove('hidden');
+    DOM.loginPage.classList.toggle('hidden', form !== 'login');
+    DOM.signupPage.classList.toggle('hidden', form !== 'signup');
 }
 
 function showDashboard() {
