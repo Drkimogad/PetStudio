@@ -345,7 +345,8 @@ function initAuthListeners() {
       showAuthForm('login');
     }
   });
-
+}
+  
 // 🌟 FUNCTION HANDLE AUTH ACTION
 function handleAuthAction() {
   if(auth && provider) {
@@ -1200,5 +1201,4 @@ async function sendSubscriptionToServer(subscription) {
   if(petProfiles.length > 0) {
     renderProfiles();
   }
-  }); // 👈 This closes the DOMContentLoaded function properly
-});   // 👈 This closes the event listener: document.addEventListener("DOMContentLoaded", ...)
+});
