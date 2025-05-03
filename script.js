@@ -135,10 +135,11 @@ function showDashboard() {
      document.querySelectorAll('.auth-error').forEach(el => el.remove());
   });
 DOM.switchToSignup.addEventListener('click', (e) => {
-    e.preventDefault();
-    showAuthForm('signup');
-    document.querySelectorAll('.auth-error').forEach(el => el.remove());
-  });
+  e.preventDefault();
+  alert('Switching to Sign-Up');
+  showAuthForm('signup');
+  document.querySelectorAll('.auth-error').forEach(el => el.remove());
+});
 
   
 //🌟
