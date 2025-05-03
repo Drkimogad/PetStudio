@@ -199,16 +199,19 @@ function initAuthListeners() {
     console.warn('Auth not initialized yet');
     return;
   }
+
   auth.onAuthStateChanged((user) => {
+    console.log('Auth state changed:', user ? 'Authenticated' : 'Unauthenticated');
+
     if (user) {
-    // ✅ RESET FLAG ONLY WHEN AUTH CONFIRMED
+      // ✅ Reset flag only when authentication is confirmed
       isSignupInProgress = false;
       DOM.dashboard.classList.remove('hidden');
       DOM.authContainer.classList.add('hidden');
       renderProfiles();
     } else {
-      // User not authenticated - RESPECT SIGNUP FLAG
-      if (!isSignupInProgress) { // ⭐⭐ CRUCIAL CHECK ⭐⭐
+      // User not authenticated - Respect signup flag
+      if (!isSignupInProgress) {
         DOM.dashboard.classList.add('hidden');
         DOM.authContainer.classList.remove('hidden');
       }
@@ -257,6 +260,8 @@ async function initializeFirebase() {
   };
   const app = firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth(app);
+// Add this line to initialize the listeners
+  initAuthListeners();
   return { app, auth };
 }
 
