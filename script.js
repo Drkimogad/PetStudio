@@ -139,7 +139,6 @@ function disableUI() {
 }
 
 // 🌟 MAIN INITIALIZATION
-// 🌟 MAIN INITIALIZATION
 document.addEventListener("DOMContentLoaded", async function () {
   console.log("🔄 Application initialization started...");
 
@@ -299,98 +298,224 @@ try {
 
 
 // 🔄 INIT AUTH LISTENERS AFTER FIREBASE / next
-    initAuthListeners();
-    if (!DOM.authContainer) {
-      throw new Error('Auth container element missing');
-    }
-    
+// 🔄 Initialize Authentication Listeners
+try {
+  console.log("🔄 Initializing authentication listeners...");
+  initAuthListeners();
+  if (!DOM.authContainer) {
+    throw new Error("❌ Auth container element is missing in the DOM.");
+  }
+  console.log("✅ Authentication listeners initialized successfully.");
+} catch (error) {
+  console.error("❌ Failed to initialize authentication listeners:", error.message, error.stack);
+  showErrorToUser(
+    "Critical error: Unable to set up authentication. Please refresh the page or contact support."
+  );
+}
+
 // 🌟 GIS LOGIN BUTTON HANDLER NEW IMPLEMENTATION 🌟
 function setupGoogleLoginButton() {
-  const existingBtn = document.getElementById('googleSignInBtn');
-  if (existingBtn) existingBtn.remove();
-
-  const btn = document.createElement("button");
-  btn.id = "googleSignInBtn";
-  btn.className = "auth-btn google-btn";
-  btn.innerHTML = `
-    <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
-    Continue with Google
-  `;
-  DOM.authContainer.appendChild(btn);
-  btn.addEventListener("click", () => {
-    if (window.tokenClient) {
-      window.tokenClient.requestAccessToken();
-    } else {
-      showErrorToUser("Google Identity not ready. Please reload.");
+  try {
+    console.log("🔄 Setting up Google Sign-In button...");
+    
+    // Remove existing button if it exists
+    const existingBtn = document.getElementById("googleSignInBtn");
+    if (existingBtn) {
+      console.warn("⚠️ Existing Google Sign-In button found. Removing it...");
+      existingBtn.remove();
     }
-  });
+
+    // Create and configure the new button
+    const btn = document.createElement("button");
+    btn.id = "googleSignInBtn";
+    btn.className = "auth-btn google-btn";
+    btn.innerHTML = `
+      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
+      Continue with Google
+    `;
+
+    if (!DOM.authContainer) {
+      throw new Error("❌ Auth container element is missing in the DOM.");
+    }
+
+    DOM.authContainer.appendChild(btn);
+    console.log("✅ Google Sign-In button added successfully.");
+
+    // Attach click event listener
+    btn.addEventListener("click", () => {
+      console.log("🔄 Google Sign-In button clicked...");
+      if (window.tokenClient) {
+        console.log("✅ Requesting Google access token...");
+        window.tokenClient.requestAccessToken();
+      } else {
+        console.error("❌ Google Identity Services not ready.");
+        showErrorToUser("Google Identity Services are not ready. Please reload the page.");
+      }
+    });
+  } catch (error) {
+    console.error("❌ Failed to set up Google Sign-In button:", error.message, error.stack);
+    showErrorToUser(
+      "An error occurred while setting up Google Sign-In. Please refresh the page or contact support."
+    );
+  }
 }
     
 // ✅ MAINTAIN YOUR SCRIPT LOADING ORDER
     await loadEssentialScripts();
-  } catch (error) {
-    console.error('Initialization failed:', error);
-    showErrorToUser('Failed to initialize. Please refresh.');
-    disableUI();
-  } finally {
-    document.body.classList.remove('loading');
-  }
+// ✅ MAINTAIN YOUR SCRIPT LOADING ORDER
+try {
+  console.log("🔄 Loading essential scripts...");
+  await loadEssentialScripts();
+  console.log("✅ Essential scripts loaded successfully.");
+} catch (error) {
+  console.error("❌ Initialization failed:", error.message, error.stack);
+  showErrorToUser(
+    "Critical error: Failed to initialize the application. Please refresh the page or contact support."
+  );
+  disableUI(); // Disable the UI to prevent further actions
+} finally {
+  console.log("⏳ Removing loading state...");
+  document.body.classList.remove("loading");
+}
 
 // 🟢 CORRECTED AUTH LISTENER IMPLEMENTATION
 function initAuthListeners() {
-  if (!auth) {
-    console.warn('Auth not initialized yet');
-    return;
-  }
+  try {
+    console.log("🔄 Initializing authentication listeners...");
 
-  auth.onAuthStateChanged((user) => {
-    console.log('Auth state changed:', user ? 'Authenticated' : 'Unauthenticated');
-
-    if (user) {
-      // ✅ Reset flag only when authentication is confirmed
-      isSignupInProgress = false;
-      DOM.dashboard.classList.remove('hidden');
-      DOM.authContainer.classList.add('hidden');
-      renderProfiles();
-    } else {
-      // User not authenticated - Respect signup flag
-      if (!isSignupInProgress) {
-        DOM.dashboard.classList.add('hidden');
-        DOM.authContainer.classList.remove('hidden');
-      }
+    if (!auth) {
+      console.warn("⚠️ Auth not initialized yet. Retrying later...");
+      return;
     }
-  });
+
+    auth.onAuthStateChanged((user) => {
+      console.log("🔄 Auth state changed:", user ? "Authenticated" : "Unauthenticated");
+
+      if (user) {
+        console.log("✅ User authenticated. Updating UI...");
+        // ✅ Reset flag only when authentication is confirmed
+        isSignupInProgress = false;
+
+        if (!DOM.dashboard || !DOM.authContainer) {
+          throw new Error("⚠️ Critical DOM elements (dashboard or authContainer) are missing.");
+        }
+
+        DOM.dashboard.classList.remove("hidden");
+        DOM.authContainer.classList.add("hidden");
+        renderProfiles();
+      } else {
+        console.log("🚪 User not authenticated.");
+        // User not authenticated - Respect signup flag
+        if (!isSignupInProgress) {
+          if (!DOM.dashboard || !DOM.authContainer) {
+            throw new Error("⚠️ Critical DOM elements (dashboard or authContainer) are missing.");
+          }
+
+          DOM.dashboard.classList.add("hidden");
+          DOM.authContainer.classList.remove("hidden");
+        }
+      }
+    });
+
+    console.log("✅ Authentication listeners set up successfully.");
+  } catch (error) {
+    console.error("❌ Failed to initialize authentication listeners:", error.message, error.stack);
+    showErrorToUser(
+      "An error occurred while setting up authentication. Please refresh the page or contact support."
+    );
+  }
 }
 
 // 🧩 IMPROVED SCRIPT LOADING
+// 🧩 IMPROVED SCRIPT LOADING
 async function loadEssentialScripts() {
-// Initialize Google APIs + render profiles
+  try {
+    console.log("🔄 Loading essential scripts...");
+
+    // Initialize Google APIs and render profiles
+    console.log("🎯 Loading Google APIs...");
     await loadGAPI();
+    console.log("✅ Google APIs loaded successfully.");
+
+    console.log("🎯 Running main application initialization...");
     await main();
+    console.log("✅ Application main initialization completed.");
+
+    console.log("🎯 Setting up logout button...");
     setupLogoutButton();
-  return new Promise((resolve) => {
-    const checkInterval = setInterval(() => {
-      if(window.firebase?.auth && window.gapi?.client) {
+    console.log("✅ Logout button set up successfully.");
+
+    // Wait for Firebase Auth and GAPI Client to be ready
+    console.log("⏳ Waiting for Firebase Auth and GAPI Client to be ready...");
+    return new Promise((resolve, reject) => {
+      const checkInterval = setInterval(() => {
+        if (window.firebase?.auth && window.gapi?.client) {
+          clearInterval(checkInterval);
+          console.log("✅ Firebase Auth and GAPI Client are loaded.");
+          resolve();
+        }
+      }, 100);
+
+      // Timeout after 10 seconds if Firebase/GAPI are not ready
+      setTimeout(() => {
         clearInterval(checkInterval);
-        resolve();
-      }
-    }, 100);
-  });
+        const errorMsg = "❌ Timeout: Firebase Auth or GAPI Client failed to load.";
+        console.error(errorMsg);
+        reject(new Error(errorMsg));
+      }, 10000);
+    });
+  } catch (error) {
+    console.error("❌ Failed to load essential scripts:", error.message, error.stack);
+    showErrorToUser(
+      "Critical error: Unable to load essential scripts. Please refresh the page or contact support."
+    );
+    throw error; // Re-throw the error to handle it in the calling function
+  }
 }
 
 // 🟢 GAPI LOADER
 function loadGAPI() {
-  return new Promise((resolve) => {
-    if (window.gapi) return resolve();    
-    const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js';
-    script.async = true;
-    script.defer = true;
-    script.onload = resolve;
-    document.head.appendChild(script);
+  return new Promise((resolve, reject) => {
+    try {
+      console.log("🔄 Loading Google API client...");
+
+      if (window.gapi) {
+        console.log("✅ Google API client already loaded.");
+        return resolve();
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://apis.google.com/js/api.js";
+      script.async = true;
+      script.defer = true;
+
+      // Event listeners for success and failure
+      script.onload = () => {
+        console.log("✅ Google API client script loaded successfully.");
+        resolve();
+      };
+      script.onerror = () => {
+        const errorMsg = "❌ Failed to load Google API client script.";
+        console.error(errorMsg);
+        showErrorToUser(
+          "Critical error: Unable to load Google API client. Please refresh the page."
+        );
+        reject(new Error(errorMsg));
+      };
+
+      // Append the script to the document head
+      document.head.appendChild(script);
+    } catch (error) {
+      console.error("❌ Unexpected error while loading Google API client:", error.message, error.stack);
+      showErrorToUser(
+        "An unexpected error occurred while loading Google API client. Please refresh the page."
+      );
+      reject(error);
+    }
   });
 }
 
+// 🧩 FIREBASE INIT FUNCTION
 // 🧩 FIREBASE INIT FUNCTION
 async function initializeFirebase() {
   const firebaseConfig = {
@@ -403,117 +528,214 @@ async function initializeFirebase() {
   };
 
   try {
+    console.log("🔄 Initializing Firebase with the provided configuration...");
     const app = firebase.initializeApp(firebaseConfig);
+    console.log("✅ Firebase app initialized successfully.");
+
     auth = firebase.auth(app);
+    console.log("🔒 Firebase Auth initialized successfully.");
 
-    console.log("✅ Firebase initialized successfully");
-
-    // Add this line to initialize the listeners
+    // Initialize authentication listeners
+    console.log("🎯 Initializing authentication listeners...");
     initAuthListeners();
+    console.log("✅ Authentication listeners initialized successfully.");
 
     return { app, auth };
   } catch (error) {
-    console.error("❌ Firebase initialization failed:", error);
-    showErrorToUser("Failed to initialize Firebase. Please try again later.");
+    console.error("❌ Firebase initialization failed:", error.message, error.stack);
+    showErrorToUser(
+      "Critical error: Failed to initialize Firebase. Please refresh the page or contact support."
+    );
+    throw error; // Re-throw the error for further handling
   }
 }
 
-// 🌟 URL PARAM HANDLING 
-const urlParams = new URLSearchParams(window.location.search); // Add this line
-if(urlParams.has('profile')) {
-  try {
-    const profileIndex = parseInt(urlParams.get('profile'));
+// 🌟 URL PARAM HANDLING
+try {
+  console.log("🔄 Parsing URL parameters...");
+  const urlParams = new URLSearchParams(window.location.search);
+
+  // Check if the 'profile' parameter is present
+  if (urlParams.has("profile")) {
+    console.log("🔍 'profile' parameter detected in URL.");
+
+    const profileIndex = parseInt(urlParams.get("profile"), 10);
+
     // 🔄 IMPROVED VALIDATION
-    if(Number.isNaN(profileIndex)) throw new Error('Invalid profile ID');
-    const validProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-    if(validProfiles.length > profileIndex) {
-      printProfile(validProfiles[profileIndex]);
+    if (Number.isNaN(profileIndex)) {
+      throw new Error("Invalid profile ID: Not a number.");
+    }
+
+    console.log(`📂 Requested profile index: ${profileIndex}`);
+
+    // Retrieve valid profiles from localStorage
+    const validProfiles = JSON.parse(localStorage.getItem("petProfiles")) || [];
+    console.log(`📊 Total profiles available: ${validProfiles.length}`);
+
+    if (validProfiles.length > profileIndex) {
+      console.log("✅ Valid profile found. Displaying profile...");
+      printProfile(validProfiles[profileIndex]); // Display the requested profile
     } else {
-      showErrorToUser('Requested profile not found');
+      console.warn("⚠️ Requested profile index out of bounds.");
+      showErrorToUser("Requested profile not found.");
+      // Clean up the URL to remove invalid query parameters
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  } catch(error) {
-    console.error('Profile load error:', error);
-    showErrorToUser('Invalid profile URL');
-    window.history.replaceState({}, document.title, window.location.pathname);
+  } else {
+    console.log("ℹ️ No 'profile' parameter found in URL.");
   }
+} catch (error) {
+  console.error("❌ Profile load error:", error.message, error.stack);
+  showErrorToUser("Invalid profile URL. Please check the link or try again.");
+  // Clean up the URL to remove invalid query parameters
+  window.history.replaceState({}, document.title, window.location.pathname);
 }
 
 // 🌟 PET PROFILE INIT
-  if(window.petProfiles?.length > 0) {
-    renderProfiles();
+// 🌟 PET PROFILE INIT
+try {
+  console.log("🔄 Initializing pet profiles...");
+  
+  if (window.petProfiles?.length > 0) {
+    console.log(`✅ Found ${window.petProfiles.length} pet profiles. Rendering profiles...`);
+    renderProfiles(); // Render the available pet profiles
   } else {
-    DOM.petList?.classList.add('empty-state');
+    console.warn("⚠️ No pet profiles found. Switching to empty state...");
+    DOM.petList?.classList.add("empty-state"); // Show an empty state if no profiles are found
   }
+} catch (error) {
+  console.error("❌ Failed to initialize pet profiles:", error.message, error.stack);
+  showErrorToUser(
+    "An error occurred while initializing pet profiles. Please refresh the page or contact support."
+  );
+}
 
 // 🌟 ERROR HANDLING ❌
 function showErrorToUser(message) {
   try {
-    const errorDiv = document.getElementById('error-message');
-    if(errorDiv) {
-      errorDiv.textContent = message;
-      errorDiv.style.display = 'block';
+    console.log("⚠️ Displaying error message to user:", message);
+
+    const errorDiv = document.getElementById("error-message");
+    if (errorDiv) {
+      errorDiv.textContent = message; // Update the error message in the DOM
+      errorDiv.style.display = "block"; // Show the error message div
+      console.log("✅ Error message displayed using error div.");
     } else {
-      alert(message);
+      console.warn("⚠️ Error div not found. Falling back to alert.");
+      alert(message); // Fallback to alert if error div is not available
     }
   } catch (fallbackError) {
-    alert(message);
+    console.error(
+      "❌ An error occurred while displaying the error message:",
+      fallbackError.message,
+      fallbackError.stack
+    );
+    alert(message); // Ensure the message is still shown in case of a secondary error
   }
 }
 
-// 🌟🔐 AUTHENTICATION FLOW // TO BE REVIEWED LATER
+// 🌟🔐 AUTHENTICATION FLOW
 async function refreshDriveTokenIfNeeded() {
   try {
-    if(!auth?.currentUser) throw new Error("No authenticated user");
-    
+    console.log("🔄 Checking if Drive token refresh is needed...");
+
+    if (!auth?.currentUser) {
+      throw new Error("No authenticated user. Unable to refresh token.");
+    }
+
+    // Retrieve the ID token and its expiration time
     const authResponse = await auth.currentUser.getIdTokenResult();
     const expiration = new Date(authResponse.expirationTime);
-    
-    if(expiration <= new Date()) {
-      console.log("Token expired, requesting re-authentication");
-      await signInWithRedirect(auth, provider);
+    console.log(`📅 Token expiration time: ${expiration.toISOString()}`);
+
+    // Check if the token is expired or about to expire
+    if (expiration <= new Date()) {
+      console.warn("⚠️ Token expired. Requesting re-authentication...");
+      await signInWithRedirect(auth, provider); // Trigger re-authentication
+    } else {
+      console.log("✅ Token is valid. No re-authentication required.");
     }
   } catch (error) {
-    console.error("Token refresh error:", error);
-    showErrorToUser('Session expired - please re-login');
+    console.error("❌ Token refresh error:", error.message, error.stack);
+    showErrorToUser("Session expired - please log in again.");
   }
 }
 
-// 🌟 Init UI 
+// 🌟 Init UI
 function initUI() {
-  // Your existing UI initialization code
-  checkAuthState();
-}
-  
-// 🌟 FUNCTION CHECK AUTH STATE
-async function checkAuthState() {
-  const user = await auth.currentUser;
-  if (user) {
-    window.location.href = '/main-app';
+  console.log("🔄 Initializing UI...");
+  try {
+    // Your existing UI initialization code
+    checkAuthState(); // Check the current authentication state
+    console.log("✅ UI initialized successfully.");
+  } catch (error) {
+    console.error("❌ UI initialization error:", error.message, error.stack);
+    showErrorToUser("Failed to initialize the UI. Please refresh the page.");
   }
 }
-  
+
+// 🌟 FUNCTION CHECK AUTH STATE
+async function checkAuthState() {
+  try {
+    console.log("🔍 Checking authentication state...");
+    const user = await auth.currentUser;
+
+    if (user) {
+      console.log("✅ User is authenticated. Redirecting to main app...");
+      window.location.href = "/main-app"; // Redirect to the main app
+    } else {
+      console.log("🚪 User is not authenticated. Showing login form...");
+      showAuthForm("login"); // Show the login screen
+    }
+  } catch (error) {
+    console.error("❌ Error checking authentication state:", error.message, error.stack);
+    showErrorToUser("An error occurred while checking authentication status.");
+  }
+}
+
 // 🟢 CORRECTED AUTH LISTENER
 function initAuthListeners() {
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      showDashboard();
-      renderProfiles();
-    } else {
-      showAuthForm('login');
-    }
-  });
+  try {
+    console.log("🔄 Initializing authentication listeners...");
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log("✅ User authenticated. Showing dashboard...");
+        showDashboard(); // Show the dashboard for authenticated users
+        renderProfiles(); // Render user-specific profiles
+      } else {
+        console.log("🚪 User unauthenticated. Showing login form...");
+        showAuthForm("login"); // Show the login form for unauthenticated users
+      }
+    });
+    console.log("✅ Authentication listeners initialized successfully.");
+  } catch (error) {
+    console.error("❌ Error initializing authentication listeners:", error.message, error.stack);
+    showErrorToUser(
+      "An error occurred while setting up authentication listeners. Please refresh the page."
+    );
+  }
 }
-  
+
 // 🌟 FUNCTION HANDLE AUTH ACTION
 function handleAuthAction() {
-  if(auth && provider) {
-    auth.signInWithRedirect(provider);
+  try {
+    console.log("🔄 Handling authentication action...");
+    if (auth && provider) {
+      console.log("✅ Redirecting to authentication provider...");
+      auth.signInWithRedirect(provider); // Redirect to the authentication provider
+    } else {
+      throw new Error("Authentication or provider is not configured.");
+    }
+  } catch (error) {
+    console.error("❌ Error handling authentication action:", error.message, error.stack);
+    showErrorToUser(
+      "An error occurred while attempting to authenticate. Please try again or contact support."
+    );
   }
 }
   
 //🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
-//🌟 DRIVE FOLDER MANAGEMENT
+//🌟 DRIVE FOLDER MANAGEMENT next
 // 🔄 Get or Create Drive Folder ID
 async function getOrCreateDriveFolderId() {
   const response = await gapi.client.drive.files.list({
