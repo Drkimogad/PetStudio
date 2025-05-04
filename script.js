@@ -98,11 +98,12 @@ function disableUI() {
 
 // 🌟 MAIN INITIALIZATION
 document.addEventListener('DOMContentLoaded', async function() {
-  try {
-    await initializeFirebase();
-    console.log("Firebase and Auth initialized");
+   try {
+    await loadEssentialScripts(); // ✅ This is now valid because the function is async
+    initQRModal();
+    console.log("App fully initialized");
   } catch (error) {
-    console.error("Initialization error:", error);
+    console.error("Initialization failed:", error);
     disableUI();
   }
 });
