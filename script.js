@@ -149,8 +149,6 @@ function showDashboard() {
   } else {
     console.error("The 'Back to Login' button with id='switchToLogin' was not found in the DOM.");
   }
-});
-
   
 //🌟
   await loadEssentialScripts();
