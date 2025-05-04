@@ -1168,7 +1168,7 @@ function setupLogoutButton() {
 }
 // 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
 // ⚙️ SERVICE WORKER =============================
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator) 
   window.addEventListener('load', () => {
     // ✅ PROPER PATH & SCOPE
     navigator.serviceWorker.register('/PetStudio/service-worker.js', {
@@ -1181,7 +1181,7 @@ if ('serviceWorker' in navigator) {
       console.error('SW registration failed:', error);
     });
   });
-}
+
 // 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
   // 🟢 PUSH NOTIFICATIONS LOGIC
   // 🟢 Global VAPID Configuration
@@ -1247,4 +1247,3 @@ async function sendSubscriptionToServer(subscription) {
   if(petProfiles.length > 0) {
     renderProfiles();
   }
-});
