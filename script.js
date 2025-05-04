@@ -734,135 +734,169 @@ function handleAuthAction() {
   }
 }
   
-//🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
-//🌟 DRIVE FOLDER MANAGEMENT next
 // 🔄 Get or Create Drive Folder ID
 async function getOrCreateDriveFolderId() {
-  const response = await gapi.client.drive.files.list({
-    q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder' and trashed=false",
-    fields: "files(id)",
-    spaces: 'drive'
-  });
-  if(response.result.files.length > 0) {
-    return response.result.files[0].id;
+  try {
+    console.log("🔄 Checking for existing 'PetStudio' folder in Google Drive...");
+    const response = await gapi.client.drive.files.list({
+      q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder' and trashed=false",
+      fields: "files(id)",
+      spaces: "drive",
+    });
+
+    if (response.result.files.length > 0) {
+      console.log("✅ Found existing 'PetStudio' folder.");
+      return response.result.files[0].id;
+    }
+
+    console.log("📂 'PetStudio' folder not found. Creating a new folder...");
+    const folder = await gapi.client.drive.files.create({
+      resource: {
+        name: "PetStudio",
+        mimeType: "application/vnd.google-apps.folder",
+      },
+      fields: "id",
+    });
+
+    console.log("✅ 'PetStudio' folder created successfully:", folder.result.id);
+    return folder.result.id;
+  } catch (error) {
+    console.error("❌ Error in getting or creating Drive folder:", error.message, error.stack);
+    throw new Error("Failed to ensure Drive folder existence.");
   }
-  const folder = await gapi.client.drive.files.create({
-    resource: {
-      name: 'PetStudio',
-      mimeType: 'application/vnd.google-apps.folder'
-    },
-    fields: 'id'
-  });
-  return folder.result.id;
 }
+
 // 💾 Save a Profile to Google Drive
 async function saveProfileToDrive(profile) {
   try {
-    if(!gapi.client.drive) {
-      throw new Error("Drive API not initialized");
+    console.log("🔄 Saving profile to Google Drive...");
+    if (!gapi.client.drive) {
+      throw new Error("Drive API not initialized.");
     }
+
     const folderId = await getOrCreateDriveFolderId();
+
     // Create a unique and clean file name
     const fileName = `${profile.name.replace(/\s+/g, "_")}_${profile.id || Date.now()}.json`;
     const metadata = {
       name: fileName,
-      mimeType: 'application/json',
-      parents: [folderId]
+      mimeType: "application/json",
+      parents: [folderId],
     };
+
     const fileContent = JSON.stringify({
       ...profile,
-      lastUpdated: new Date()
-        .toISOString()
+      lastUpdated: new Date().toISOString(),
     });
+
     const file = await gapi.client.drive.files.create({
       resource: metadata,
       media: {
-        mimeType: 'application/json',
-        body: fileContent
+        mimeType: "application/json",
+        body: fileContent,
       },
-      fields: 'id,name,webViewLink'
+      fields: "id,name,webViewLink",
     });
-    console.log("✅ Saved to Drive:", file.result);
+
+    console.log("✅ Profile saved to Drive:", file.result);
     return file.result;
-  }
-  catch (error) {
-    console.error("❌ Drive save failed:", error);
-    throw error;
+  } catch (error) {
+    console.error("❌ Failed to save profile to Drive:", error.message, error.stack);
+    throw new Error("Drive save failed.");
   }
 }
+
 // 🧩 Unified Save Function (Local + Drive + Firestore fallback)
 async function savePetProfile(profile) {
-  if(isEditing) {
-    petProfiles[currentEditIndex] = profile;
-  }
-  else {
-    petProfiles.push(profile);
-  }
-  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  const isGoogleUser = auth.currentUser?.providerData?.some(
-    p => p.providerId === 'google.com'
-  );
-  if(isGoogleUser && gapi.client?.drive) {
-    try {
-      await saveProfileToDrive(profile);
+  try {
+    console.log("🔄 Saving pet profile...");
+    if (isEditing) {
+      petProfiles[currentEditIndex] = profile;
+    } else {
+      petProfiles.push(profile);
     }
-    catch (driveError) {
-      console.warn("⚠️ Drive backup failed. Falling back to Firestore.");
+
+    // Save to LocalStorage
+    localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+    console.log("✅ Profile saved to LocalStorage.");
+
+    // Attempt to save to Google Drive if the user is a Google user
+    const isGoogleUser = auth.currentUser?.providerData?.some(
+      (p) => p.providerId === "google.com"
+    );
+
+    if (isGoogleUser && gapi.client?.drive) {
       try {
-        await saveToFirestore(profile);
-      }
-      catch (firestoreError) {
-        console.error("❌ Firestore fallback also failed:", firestoreError);
+        await saveProfileToDrive(profile);
+      } catch (driveError) {
+        console.warn("⚠️ Drive backup failed. Falling back to Firestore...");
+        try {
+          await saveToFirestore(profile);
+        } catch (firestoreError) {
+          console.error("❌ Firestore fallback also failed:", firestoreError.message, firestoreError.stack);
+        }
       }
     }
+  } catch (error) {
+    console.error("❌ Error saving pet profile:", error.message, error.stack);
+    showErrorToUser("An error occurred while saving the profile. Please try again.");
   }
 }
-// Delete function with Drive cleanup
+
+// 🗑️ Delete function with Drive cleanup
 async function deleteProfile(index) {
   const profile = petProfiles[index];
+
   // Confirm deletion
   if (!confirm("Are you sure you want to delete this profile?")) return;
-  
+
   // Try to delete from Google Drive if applicable
   const fileId = profile.driveFileId;
   if (fileId) {
     try {
       await deleteProfileFromDrive(fileId, profile.gallery); // Pass gallery here
-      console.log("Drive files deleted successfully");
+      console.log("✅ Drive files deleted successfully.");
     } catch (driveError) {
-      console.error("Error deleting Drive files:", driveError);
+      console.error("❌ Error deleting Drive files:", driveError.message, driveError.stack);
     }
   }
 
-  // Now delete the profile from petProfiles array and update localStorage
+  // Remove the profile from LocalStorage
   petProfiles.splice(index, 1);
-  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+  console.log("✅ Profile deleted locally.");
   renderProfiles();
 }
 
 // Helper function to delete pet images and profile file from Google Drive
 async function deleteProfileFromDrive(fileId, gallery = []) {
-  if (gallery.length > 0) {
+  try {
+    console.log("🔄 Deleting profile and gallery files from Google Drive...");
+
     for (let img of gallery) {
       await deleteImageFromDrive(img); // Assuming `img` contains the Drive fileId
     }
-  }
 
-  try {
     await gapi.client.drive.files.delete({ fileId });
-    console.log('Profile file deleted from Google Drive');
+    console.log("✅ Profile file deleted from Google Drive.");
   } catch (error) {
-    console.error('Error deleting profile from Google Drive:', error);
+    console.error("❌ Error deleting profile from Google Drive:", error.message, error.stack);
   }
 }
-  
-// 🔼 NEW FUNCTION 🌟🌟🌟
+
+// 🔼 NEW FUNCTION 🌟🌟🌟 Handle Authenticated User
 function handleAuthenticatedUser(user) {
-  console.log("✅ Auth success:", user.uid);
-  DOM.dashboard.classList.remove('hidden');
-  DOM.authContainer.classList.add('hidden');
-  initializeGoogleAPI(); // Ensure Drive is ready
+  try {
+    console.log("✅ Authenticated successfully:", user.uid);
+    DOM.dashboard.classList.remove("hidden");
+    DOM.authContainer.classList.add("hidden");
+    initializeGoogleAPI(); // Ensure Drive is ready
+  } catch (error) {
+    console.error("❌ Error handling authenticated user:", error.message, error.stack);
+    showErrorToUser("An error occurred while setting up the dashboard. Please refresh the page.");
+  }
 }
+
 // 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
 // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷  
 // 🔄 UI UPDATES
