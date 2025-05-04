@@ -80,127 +80,225 @@ async function main() {
     );
   }
 }
-//🌟
+
 // 🌐 Global DOM element references🔶🔶🔶
 const DOM = {
-  authContainer:  document.getElementById("authContainer"),
-  signupPage:     document.getElementById("signupPage"),
-  loginPage:      document.getElementById("loginPage"),
-  dashboard:      document.getElementById("dashboard"),
-  logoutBtn:      document.getElementById("logoutBtn"),
-  signupForm:     document.getElementById("signupForm"),
-  loginForm:      document.getElementById("loginForm"),
-  switchToLogin:  document.getElementById("switchToLogin"),
+  authContainer: document.getElementById("authContainer"),
+  signupPage: document.getElementById("signupPage"),
+  loginPage: document.getElementById("loginPage"),
+  dashboard: document.getElementById("dashboard"),
+  logoutBtn: document.getElementById("logoutBtn"),
+  signupForm: document.getElementById("signupForm"),
+  loginForm: document.getElementById("loginForm"),
+  switchToLogin: document.getElementById("switchToLogin"),
   switchToSignup: document.getElementById("switchToSignup"),
-  addPetProfileBtn:  document.getElementById("addPetProfileBtn"),
-  profileSection:    document.getElementById("profileSection"),
-  petList:           document.getElementById("petList"),
-  fullPageBanner:    document.getElementById("fullPageBanner"),
-  profileForm:       document.getElementById("profileForm")
+  addPetProfileBtn: document.getElementById("addPetProfileBtn"),
+  profileSection: document.getElementById("profileSection"),
+  petList: document.getElementById("petList"),
+  fullPageBanner: document.getElementById("fullPageBanner"),
+  profileForm: document.getElementById("profileForm"),
 };
 
-// 🔶 State Management🔶🔶🔶
-const VALID_ORIGINS = [
-  'https://drkimogad.github.io',
-  'https://drkimogad.github.io/PetStudio'
-];
-// Runtime origin check
-if (!VALID_ORIGINS.includes(window.location.origin)) {
-  window.location.href = 'https://drkimogad.github.io/PetStudio';
+// 🌟 Validate DOM elements and provide user-friendly error feedback
+function validateDOMElements() {
+  for (const [key, element] of Object.entries(DOM)) {
+    if (!element) {
+      console.error(`❌ Missing DOM element: ${key}`);
+      showErrorToUser(
+        `Critical error: Unable to find the required element "${key}". Please contact support.`
+      );
+    }
+  }
 }
-// HELPER FUNCTION DISABLE UI (MOVE TO TOP)    
+
+// Run validation
+validateDOMElements();
+
+// 🔶 Runtime origin check
+if (!VALID_ORIGINS.includes(window.location.origin)) {
+  console.warn(
+    `⚠️ Invalid origin detected: ${window.location.origin}. Redirecting to a valid origin.`
+  );
+  // Provide user-friendly feedback before redirecting
+  showErrorToUser(
+    "You are being redirected because this application is not supported on the current domain."
+  );
+  setTimeout(() => {
+    window.location.href = "https://drkimogad.github.io/PetStudio";
+  }, 3000); // Allow time for the user to read the message
+}
+
+// 🔶 HELPER FUNCTION DISABLE UI (MOVE TO TOP)
 function disableUI() {
-   document.body.innerHTML = `
+  console.error("❌ Critical Error: Application interface failed to load.");
+  document.body.innerHTML = `
     <h1 style="color: red; padding: 2rem; text-align: center">
-      Critical Error: Failed to load application interface
+      Critical Error: Failed to load application interface. Please try refreshing the page or contact support.
     </h1>
   `;
 }
 
 // 🌟 MAIN INITIALIZATION
-document.addEventListener('DOMContentLoaded', async function () {
+// 🌟 MAIN INITIALIZATION
+document.addEventListener("DOMContentLoaded", async function () {
+  console.log("🔄 Application initialization started...");
+
   try {
-    console.log("Starting to load essential scripts...");
+    console.log("🚀 Loading essential scripts...");
     await loadEssentialScripts(); // ✅ This is now valid because the function is async
-    console.log("Essential scripts loaded successfully.");
+    console.log("✅ Essential scripts loaded successfully.");
 
-    console.log("Initializing QR modal...");
-    initQRModal();
-    console.log("QR modal initialized.");
+    console.log("🎯 Initializing QR modal...");
+    initQRModal(); // Initialize QR modal
+    console.log("✅ QR modal initialized successfully.");
 
-    console.log("App fully initialized");
+    console.log("🎉 Application fully initialized.");
   } catch (error) {
-    console.error("Initialization failed:", error.message, error.stack);
-    disableUI();
+    console.error("❌ Initialization failed:", error.message, error.stack);
+    showErrorToUser(
+      "Critical error: Unable to initialize the application. Please refresh the page or contact support."
+    );
+    disableUI(); // Show critical error message and disable UI
   }
 });
+
 // 🟢 INITIAL FORM STATE (using our helpers)
- showAuthForm('login');                 // always show login first
- DOM.dashboard.classList.add('hidden'); // hide dashboard on load
- DOM.fullPageBanner.classList.remove('hidden');
- DOM.profileSection.classList.add('hidden');
+try {
+  console.log("🔄 Setting initial form states...");
+  showAuthForm("login"); // Always show login first
+  DOM.dashboard.classList.add("hidden"); // Hide dashboard on load
+  DOM.fullPageBanner.classList.remove("hidden");
+  DOM.profileSection.classList.add("hidden");
+  console.log("✅ Initial form states set successfully.");
+} catch (error) {
+  console.error("❌ Failed to set initial form states:", error.message, error.stack);
+  showErrorToUser(
+    "Application error: Unable to set initial form states. Some features may not work as expected."
+  );
+}
 
 
 // Auth Helper functions
+// 🔶 Auth Helper Functions
 function showAuthForm(form) {
-    alert(`Switching to ${form} page`);
-    DOM.authContainer.classList.remove('hidden');
-    DOM.loginPage.classList.toggle('hidden', form !== 'login');
-    DOM.signupPage.classList.toggle('hidden', form !== 'signup');
+  try {
+    console.log(`🔄 Switching to ${form} page...`);
+
+    if (!DOM.authContainer || !DOM.loginPage || !DOM.signupPage) {
+      throw new Error("Required DOM elements for authentication forms are missing.");
+    }
+
+    alert(`Switching to ${form} page`); // Inform user explicitly
+    DOM.authContainer.classList.remove("hidden");
+    DOM.loginPage.classList.toggle("hidden", form !== "login");
+    DOM.signupPage.classList.toggle("hidden", form !== "signup");
+
+    console.log(`✅ Successfully switched to ${form} page.`);
+  } catch (error) {
+    console.error("❌ Failed to switch authentication forms:", error.message, error.stack);
+    showErrorToUser(
+      `An error occurred while switching to the ${form} page. Please refresh the page or contact support.`
+    );
+  }
 }
 
 function showDashboard() {
-  DOM.authContainer.classList.add('hidden');
-  DOM.dashboard.classList.remove('hidden');
-  // reset banner/profile state:
-  DOM.fullPageBanner.classList.remove('hidden');
-  DOM.profileSection.classList.add('hidden');
+  try {
+    console.log("🔄 Switching to dashboard...");
+
+    if (!DOM.authContainer || !DOM.dashboard || !DOM.fullPageBanner || !DOM.profileSection) {
+      throw new Error("Required DOM elements for the dashboard are missing.");
+    }
+
+    DOM.authContainer.classList.add("hidden");
+    DOM.dashboard.classList.remove("hidden");
+
+    // Reset banner/profile state
+    DOM.fullPageBanner.classList.remove("hidden");
+    DOM.profileSection.classList.add("hidden");
+
+    console.log("✅ Dashboard displayed successfully.");
+  } catch (error) {
+    console.error("❌ Failed to display the dashboard:", error.message, error.stack);
+    showErrorToUser(
+      "An error occurred while displaying the dashboard. Please refresh the page or contact support."
+    );
+  }
+}
+
+// 🔶 UI Listeners
+// Attach event listener for "Create Account" button
+if (DOM.switchToSignup) {
+  console.log("✅ 'Create Account' button found. Attaching event listener...");
+  DOM.switchToSignup.addEventListener("click", (e) => {
+    e.preventDefault();
+    console.log("🔄 Switching to sign-up form...");
+    showAuthForm("signup"); // Toggle to the sign-up form
+  });
+} else {
+  const errorMsg = "❌ The 'Create Account' button with id='switchToSignup' was not found in the DOM.";
+  console.error(errorMsg);
+  showErrorToUser("Unable to locate the 'Create Account' button. Please refresh the page or contact support.");
+}
+
+// Attach event listener for "Back to Login" button
+if (DOM.switchToLogin) {
+  console.log("✅ 'Back to Login' button found. Attaching event listener...");
+  DOM.switchToLogin.addEventListener("click", (e) => {
+    e.preventDefault();
+    console.log("🔄 Switching to login form...");
+    showAuthForm("login"); // Toggle to the login form
+  });
+} else {
+  const errorMsg = "❌ The 'Back to Login' button with id='switchToLogin' was not found in the DOM.";
+  console.error(errorMsg);
+  showErrorToUser("Unable to locate the 'Back to Login' button. Please refresh the page or contact support.");
 }
   
-// UI Listeners
-  // Attach event listener for "Create Account" button
-  if (DOM.switchToSignup) {
-    DOM.switchToSignup.addEventListener('click', (e) => {
-      e.preventDefault();
-      showAuthForm('signup'); // Toggle to the sign-up form
+// 🌟 Load essential scripts and initialize application
+await loadEssentialScripts();
+initQRModal();
+console.log("✅ App fully initialized.");
+
+// ⏳ ADD LOADING STATE
+document.body.classList.add("loading");
+
+try {
+  console.log("🔥 Initializing Firebase...");
+  const firebaseInit = await initializeFirebase();
+  auth = firebase.auth(app);
+  console.log("✅ Firebase initialized successfully.");
+
+  console.log("🔒 Setting authentication persistence...");
+  await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .then(() => {
+      console.log("✅ Authentication persistence set to LOCAL.");
+      console.log("🔄 Initializing authentication listeners...");
+      initAuthListeners();
+      console.log("✅ Authentication listeners initialized successfully.");
+
+      console.log("🎨 Initializing UI...");
+      initUI();
+      console.log("✅ UI initialized successfully.");
+    })
+    .catch((error) => {
+      console.error("❌ Persistence error:", error.message, error.stack);
+      showErrorToUser(
+        "Authentication system failed to initialize. Please refresh the page or contact support."
+      );
     });
-  } else {
-    console.error("The 'Create Account' button with id='switchToSignup' was not found in the DOM.");
-  }
-
-  // Attach event listener for "Back to Login" button
-  if (DOM.switchToLogin) {
-    DOM.switchToLogin.addEventListener('click', (e) => {
-      e.preventDefault();
-      showAuthForm('login'); // Toggle to the login form
-    });
-  } else {
-    console.error("The 'Back to Login' button with id='switchToLogin' was not found in the DOM.");
-  }
-  
-//🌟
-  await loadEssentialScripts();
-  initQRModal();
-  console.log("App fully initialized");
-  // ⏳ ADD LOADING STATE
-  document.body.classList.add('loading');
-  try {
-    // 🔥 INITIALIZE FIREBASE FIRST
-    const firebaseInit = await initializeFirebase();
-    auth = firebase.auth(app);
-    
-    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  .then(() => {
-    initAuthListeners();
-    initUI();
-  })
-  .catch((error) => {
-    console.error("Persistence error:", error);
-    showErrorToUser("Authentication system failed to initialize");
-  });
+} catch (error) {
+  console.error("❌ Firebase initialization failed:", error.message, error.stack);
+  showErrorToUser(
+    "Critical error: Unable to initialize Firebase. Please refresh the page or contact support."
+  );
+} finally {
+  console.log("⏳ Removing loading state...");
+  document.body.classList.remove("loading");
+}
 
 
-// 🔄 INIT AUTH LISTENERS AFTER FIREBASE
+// 🔄 INIT AUTH LISTENERS AFTER FIREBASE / next
     initAuthListeners();
     if (!DOM.authContainer) {
       throw new Error('Auth container element missing');
