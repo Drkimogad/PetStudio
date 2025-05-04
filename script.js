@@ -427,7 +427,6 @@ function initAuthListeners() {
 }
 
 // 🧩 IMPROVED SCRIPT LOADING
-// 🧩 IMPROVED SCRIPT LOADING
 async function loadEssentialScripts() {
   try {
     console.log("🔄 Loading essential scripts...");
@@ -516,7 +515,6 @@ function loadGAPI() {
 }
 
 // 🧩 FIREBASE INIT FUNCTION
-// 🧩 FIREBASE INIT FUNCTION
 async function initializeFirebase() {
   const firebaseConfig = {
     apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
@@ -591,7 +589,6 @@ try {
   window.history.replaceState({}, document.title, window.location.pathname);
 }
 
-// 🌟 PET PROFILE INIT
 // 🌟 PET PROFILE INIT
 try {
   console.log("🔄 Initializing pet profiles...");
@@ -733,7 +730,8 @@ function handleAuthAction() {
     );
   }
 }
-  
+// 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+// DRIVE MANAGEMENT  SECTION
 // 🔄 Get or Create Drive Folder ID
 async function getOrCreateDriveFolderId() {
   try {
@@ -900,109 +898,150 @@ function handleAuthenticatedUser(user) {
 // 🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
 // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷  
 // 🔄 UI UPDATES
-renderProfiles();
+renderProfiles(); // Render all pet profiles
 DOM.profileSection.classList.add("hidden");
 DOM.fullPageBanner.classList.remove("hidden");
 isEditing = false;
 currentEditIndex = null;
+
+// Add event listener to the "Add Pet Profile" button
 DOM.addPetProfileBtn?.addEventListener("click", (e) => {
   e.preventDefault();
-  if(!isEditing) {
+  console.log("➕ Add Pet Profile button clicked.");
+  
+  if (!isEditing) {
+    console.log("🔄 Resetting profile form for new entry...");
     DOM.profileForm.reset();
     currentEditIndex = null;
   }
+  
+  console.log("🔄 Switching to add profile view...");
   DOM.fullPageBanner.classList.remove("hidden");
   DOM.profileSection.classList.add("hidden");
 });
-// 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷  
-// PROFILE RENDERING FUNCTIONS  
+
+// 🔷 PROFILE RENDERING FUNCTIONS
 function renderProfiles() {
+  console.log("🔄 Rendering pet profiles...");
+  
+  // Clear the profile list before rendering
   DOM.petList.innerHTML = '';
-  if(petProfiles.length === 0) {
-  DOM.petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
+
+  if (petProfiles.length === 0) {
+    console.warn("⚠️ No profiles found. Displaying empty state.");
+    DOM.petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
+    return;
   }
-  else {
-    petProfiles.forEach((profile, index) => {
-      const petCard = document.createElement("div");
-      petCard.classList.add("petCard");
-      petCard.id = `pet-card-${profile.id}`; // Required for html2canvas
-      const coverPhotoUrl = profile.gallery[profile.coverPhotoIndex];
-      const profileHeaderStyle = coverPhotoUrl ? `style="background-image: url('${coverPhotoUrl}');"` : '';
-      petCard.innerHTML = `
-            <div class="profile-header" ${profileHeaderStyle}>
-                <h3>${profile.name}</h3>
-                <p class="countdown">${getCountdown(profile.birthday)}</p>
-            </div>
-            <div class="profile-details">
-                <p><strong>Breed:</strong> ${profile.breed}</p>
-                <p><strong>DOB:</strong> ${profile.dob}</p>
-                <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
-            </div>
-            <div class="gallery-grid">
-                ${profile.gallery.map((img, imgIndex) => `
-                    <div class="gallery-item">
-                       <img src="${img}" alt="Pet Photo" onload="this.classList.add('loaded')">
-                        <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-                                data-index="${imgIndex}">★</button>
-                    </div>
-                `).join('')}
-            </div>
-            <div class="mood-tracker">
-                <div class="mood-buttons">
-                    <span>Log Mood:</span>
-                    <button class="mood-btn" data-mood="happy">😊</button>
-                    <button class="mood-btn" data-mood="neutral">😐</button>
-                    <button class="mood-btn" data-mood="sad">😞</button>
-                </div>
-                <div class="mood-history">
-                    ${renderMoodHistory(profile)}
-                </div>
-            </div>
-            <div class="action-buttons">
-                <button class="editBtn">✏️ Edit</button>
-                <button class="deleteBtn">🗑️ Delete</button>
-                <button class="printBtn">🖨️ Print</button>
-                <button class="shareBtn" onclick="sharePetCard(${JSON.stringify(profile)})">📤 Share</button>
-                <button class="qrBtn">🔲 QR Code</button>
-            </div>
-        `;
-      // =====================
-      // EVENT LISTENERS 🌟🌟🌟
-      // =====================
-      // Edit Button
-      petCard.querySelector(".editBtn")
-        .addEventListener("click", () => openEditForm(index));
-      
-      // Delete Button
-      petCard.querySelector(".deleteBtn")
-        .addEventListener("click", () => deleteProfile(index));
-      
-      // Print Button
-      petCard.querySelector(".printBtn")
-        .addEventListener("click", () => printProfile(profile));
-      // Share Button
-      petCard.querySelector('.shareBtn')
-       .addEventListener('click', () => sharePetCard(profile));
-      
-      // QR Button
-      petCard.querySelector(".qrBtn")
-        .addEventListener("click", () => generateQRCode(index));
 
-      // Mood Buttons
-      petCard.querySelectorAll(".mood-btn").forEach(btn => {
-        btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
-      });
+  // Render each profile
+  petProfiles.forEach((profile, index) => {
+    console.log(`📄 Rendering profile: ${profile.name} (Index: ${index})`);
 
-      // Cover Photo Buttons
-      petCard.querySelectorAll(".cover-btn").forEach(btn => {
-        btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
-      });
+    // Create the profile card container
+    const petCard = document.createElement("div");
+    petCard.classList.add("petCard");
+    petCard.id = `pet-card-${profile.id}`; // For compatibility with html2canvas
 
-      DOM.petList.appendChild(petCard);
+    // Get cover photo URL and apply as background if available
+    const coverPhotoUrl = profile.gallery[profile.coverPhotoIndex];
+    const profileHeaderStyle = coverPhotoUrl ? `style="background-image: url('${coverPhotoUrl}');"` : '';
+
+    // Populate the pet card with profile details
+    petCard.innerHTML = `
+      <div class="profile-header" ${profileHeaderStyle}>
+          <h3>${profile.name}</h3>
+          <p class="countdown">${getCountdown(profile.birthday)}</p>
+      </div>
+      <div class="profile-details">
+          <p><strong>Breed:</strong> ${profile.breed}</p>
+          <p><strong>DOB:</strong> ${profile.dob}</p>
+          <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+      </div>
+      <div class="gallery-grid">
+          ${profile.gallery.map((img, imgIndex) => `
+              <div class="gallery-item">
+                 <img src="${img}" alt="Pet Photo" onload="this.classList.add('loaded')">
+                  <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}" data-index="${imgIndex}">★</button>
+              </div>
+          `).join('')}
+      </div>
+      <div class="mood-tracker">
+          <div class="mood-buttons">
+              <span>Log Mood:</span>
+              <button class="mood-btn" data-mood="happy">😊</button>
+              <button class="mood-btn" data-mood="neutral">😐</button>
+              <button class="mood-btn" data-mood="sad">😞</button>
+          </div>
+          <div class="mood-history">
+              ${renderMoodHistory(profile)}
+          </div>
+      </div>
+      <div class="action-buttons">
+          <button class="editBtn">✏️ Edit</button>
+          <button class="deleteBtn">🗑️ Delete</button>
+          <button class="printBtn">🖨️ Print</button>
+          <button class="shareBtn" onclick="sharePetCard(${JSON.stringify(profile)})">📤 Share</button>
+          <button class="qrBtn">🔲 QR Code</button>
+      </div>
+    `;
+    
+    // =====================
+    // EVENT LISTENERS 🌟🌟🌟
+    // ===================== 
+    // Edit Button
+    petCard.querySelector(".editBtn").addEventListener("click", () => {
+      console.log(`✏️ Edit button clicked for profile: ${profile.name}`);
+      openEditForm(index);
     });
-  } 
+
+    // Delete Button
+    petCard.querySelector(".deleteBtn").addEventListener("click", () => {
+      console.log(`🗑️ Delete button clicked for profile: ${profile.name}`);
+      deleteProfile(index);
+    });
+
+    // Print Button
+    petCard.querySelector(".printBtn").addEventListener("click", () => {
+      console.log(`🖨️ Print button clicked for profile: ${profile.name}`);
+      printProfile(profile);
+    });
+
+    // Share Button
+    petCard.querySelector(".shareBtn").addEventListener("click", () => {
+      console.log(`📤 Share button clicked for profile: ${profile.name}`);
+      sharePetCard(profile);
+    });
+
+    // QR Button
+    petCard.querySelector(".qrBtn").addEventListener("click", () => {
+      console.log(`🔲 QR Code button clicked for profile: ${profile.name}`);
+      generateQRCode(index);
+    });
+
+    // Mood Buttons
+    petCard.querySelectorAll(".mood-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        console.log(`😊 Mood button clicked: ${btn.dataset.mood} for profile: ${profile.name}`);
+        logMood(index, btn.dataset.mood);
+      });
+    });
+
+    // Cover Photo Buttons
+    petCard.querySelectorAll(".cover-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        console.log(`📷 Cover photo button clicked for image index: ${btn.dataset.index}`);
+        setCoverPhoto(index, parseInt(btn.dataset.index));
+      });
+    });
+
+    // Append the profile card to the pet list
+    DOM.petList.appendChild(petCard);
+  });
+
+  console.log("✅ Profiles rendered successfully.");
 }
 
+// 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷  next
   // WHEN CREATING NEW PROFILES 🌟🌟🌟
   function createNewProfile() {
     const timestamp = Date.now();
