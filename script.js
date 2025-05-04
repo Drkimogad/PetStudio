@@ -9,55 +9,76 @@
 
 // 🌟 GIS-AUTH MAIN FUNCTION NEW IMPLEMENTATION 🌟
 async function main() {
-  return new Promise((resolve, reject) => {
-    // 1. Load GIS client
-    const gisScript = document.createElement("script");
-    gisScript.src = "https://accounts.google.com/gsi/client";
-    gisScript.onload = () => resolve();
-    gisScript.onerror = () => reject(new Error("Failed to load Google Identity Services"));
-    document.head.appendChild(gisScript);
-  }).then(() => {
-    // 2. Initialize GIS OAuth 2.0 Token Client
-    window.tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: '540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com',
-      scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email',
-      prompt: '', // auto prompt if needed
-      callback: async (tokenResponse) => {
-        if (tokenResponse.error) {
-          console.error("Token error:", tokenResponse);
-          return showErrorToUser("Google login failed.");
-        }
-
-        console.log("✅ GIS token received:", tokenResponse);
-
-        // 3. Store token
-        window.gapiToken = tokenResponse.access_token;
-
-        // 4. Load gapi client
-        await new Promise((resolve) => {
-          const script = document.createElement('script');
-          script.src = 'https://apis.google.com/js/api.js';
-          script.onload = resolve;
-          document.head.appendChild(script);
-        });
-
-        // 5. Initialize gapi client with access token
-        await gapi.load("client", async () => {
-          await gapi.client.init({
-            apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-          });
-          gapi.client.setToken({ access_token: window.gapiToken });
-          console.log("✅ GAPI initialized with token");
-          renderProfiles();
-       // ✅ INSERT THIS LINE *RIGHT BELOW* renderProfiles():
-          setupGoogleLoginButton();
-        });
-      }
+  try {
+    // Load GIS client
+    console.log("Loading Google Identity Services client...");
+    await new Promise((resolve, reject) => {
+      const gisScript = document.createElement("script");
+      gisScript.src = "https://accounts.google.com/gsi/client";
+      gisScript.onload = () => resolve();
+      gisScript.onerror = () =>
+        reject(new Error("Failed to load Google Identity Services script."));
+      document.head.appendChild(gisScript);
     });
-  }).catch((error) => {
-    console.error("GIS init failed:", error);
-    showErrorToUser("Failed to load Google services");
-  });
+
+    console.log("Google Identity Services client loaded successfully.");
+
+    // Initialize GIS OAuth 2.0 Token Client
+    window.tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id:
+        "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
+      scope:
+        "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email",
+      prompt: "", // auto prompt if needed
+      callback: async (tokenResponse) => {
+        try {
+          if (tokenResponse.error) {
+            console.error("Token error:", tokenResponse);
+            return showErrorToUser("Google login failed. Please try again.");
+          }
+
+          console.log("✅ GIS token received:", tokenResponse);
+
+          // Store token
+          window.gapiToken = tokenResponse.access_token;
+
+          // Load GAPI client
+          console.log("Loading Google API client...");
+          await new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = "https://apis.google.com/js/api.js";
+            script.onload = resolve;
+            script.onerror = () =>
+              reject(new Error("Failed to load Google API client script."));
+            document.head.appendChild(script);
+          });
+
+          console.log("Google API client loaded successfully.");
+
+          // Initialize GAPI client with access token
+          await gapi.load("client", async () => {
+            await gapi.client.init({
+              apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+            });
+            gapi.client.setToken({ access_token: window.gapiToken });
+            console.log("✅ GAPI initialized with token");
+            renderProfiles();
+
+            // Set up Google login button
+            setupGoogleLoginButton();
+          });
+        } catch (error) {
+          console.error("Error during GIS callback:", error);
+          showErrorToUser("An error occurred during Google login.");
+        }
+      },
+    });
+  } catch (error) {
+    console.error("GIS initialization failed:", error);
+    showErrorToUser(
+      "Failed to load Google services. Please check your connection and try again."
+    );
+  }
 }
 //🌟
 // 🌐 Global DOM element references🔶🔶🔶
@@ -97,13 +118,19 @@ function disableUI() {
 }
 
 // 🌟 MAIN INITIALIZATION
-document.addEventListener('DOMContentLoaded', async function() {
-   try {
+document.addEventListener('DOMContentLoaded', async function () {
+  try {
+    console.log("Starting to load essential scripts...");
     await loadEssentialScripts(); // ✅ This is now valid because the function is async
+    console.log("Essential scripts loaded successfully.");
+
+    console.log("Initializing QR modal...");
     initQRModal();
+    console.log("QR modal initialized.");
+
     console.log("App fully initialized");
   } catch (error) {
-    console.error("Initialization failed:", error);
+    console.error("Initialization failed:", error.message, error.stack);
     disableUI();
   }
 });
