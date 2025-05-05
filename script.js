@@ -1249,76 +1249,111 @@ function sanitizeDate(date) {
   }
 }
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
-// PRINT PROFILE FUNCTION 🌟🌟🌟
+// 🌟🌟🌟 PRINT PROFILE FUNCTION
 function printProfile(profile) {
-  const printWindow = window.open('', '_blank');
-  const printDocument = printWindow.document;
+  try {
+    console.log(`🖨️ Preparing to print profile for: ${profile.name}`);
 
-  // Create single root element
-  const html = `
-  <html>
-    <head>
-      <title>${profile.name}'s Profile</title>
-      <style>
-        body {
-          font-family: Arial;
-          padding: 20px;
-          -webkit-print-color-adjust: exact !important;
-        }
-        .print-header {
-          text-align: center;
-          margin-bottom: 20px;
-        }
-        .print-gallery {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 10px;
-          margin: 20px 0;
-        }
-        .print-gallery img {
-          width: 100%;
-          height: auto;
-          object-fit: cover;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="print-header">
-        <h1>${profile.name}'s Profile</h1>
-        <p>Generated on ${new Date().toLocaleDateString()}</p>
-      </div>
-      <div class="print-details">
-        <p><strong>Breed:</strong> ${profile.breed}</p>
-        <p><strong>Date of Birth:</strong> ${profile.dob}</p>
-        <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
-      </div>
-      <h3>Gallery</h3>
-      <div class="print-gallery">
-        ${profile.gallery.map(imgSrc => 
-          `<img src="${imgSrc}" alt="Pet photo" onload="this.style.opacity = '1'">`
-        ).join('')}
-      </div>
-    </body>
-  </html>`;
-
-  printDocument.write(html);
-  printDocument.close();
-
-  // Image load handling
-  const images = printDocument.querySelectorAll('img');
-  let loaded = 0;
-  
-  const checkPrint = () => {
-    if (++loaded === images.length) {
-      printWindow.print();
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      throw new Error("Unable to open print window. Please check your browser settings.");
     }
-  };
 
-  images.forEach(img => {
-    if (img.complete) checkPrint();
-    else img.addEventListener('load', checkPrint);
-  });
+    const printDocument = printWindow.document;
+
+    // Generate the HTML for the print content
+    const html = `
+    <html>
+      <head>
+        <title>${profile.name}'s Profile</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+          .print-header {
+            text-align: center;
+            margin-bottom: 20px;
+          }
+          .print-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+          }
+          .print-gallery img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="print-header">
+          <h1>${profile.name}'s Profile</h1>
+          <p>Generated on ${new Date().toLocaleDateString()}</p>
+        </div>
+        <div class="print-details">
+          <p><strong>Breed:</strong> ${profile.breed}</p>
+          <p><strong>Date of Birth:</strong> ${profile.dob}</p>
+          <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+        </div>
+        <h3>Gallery</h3>
+        <div class="print-gallery">
+          ${profile.gallery.map(imgSrc => 
+            `<img src="${imgSrc}" alt="Pet photo">`
+          ).join('')}
+        </div>
+      </body>
+    </html>`;
+
+    // Write content to the new document
+    printDocument.write(html);
+    printDocument.close();
+
+    console.log("📄 Print content written to the new window.");
+
+    // Handle image loading before printing
+    const images = printDocument.querySelectorAll("img");
+    if (images.length === 0) {
+      console.warn("⚠️ No images found in the gallery. Proceeding with print.");
+      printWindow.print();
+      return;
+    }
+
+    let loadedImages = 0;
+
+    // Function to check if all images are loaded before printing
+    const checkPrint = () => {
+      loadedImages++;
+      if (loadedImages === images.length) {
+        console.log("✅ All images loaded. Sending to printer...");
+        printWindow.print();
+      }
+    };
+
+    images.forEach(img => {
+      if (img.complete) {
+        checkPrint(); // If the image is already loaded
+      } else {
+        img.addEventListener("load", checkPrint); // Wait for the image to load
+        img.addEventListener("error", () => {
+          console.error("❌ Error loading image:", img.src);
+          checkPrint(); // Continue even if an image fails to load
+        });
+      }
+    });
+  } catch (error) {
+    console.error("❌ Error occurred during profile printing:", error.message, error.stack);
+    showErrorToUser("An error occurred while preparing the print. Please try again.");
+  }
 }
+
+
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀  
 // 🔼 SHARE PET CARD FUNCTION 🌟🌟🌟
 async function sharePetCard(profile) {
