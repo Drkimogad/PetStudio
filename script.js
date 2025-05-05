@@ -1479,112 +1479,146 @@ function calculateAge(dobString) {
 // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷
 // QR CODE MODAL MANAGEMENT 🌟🌟🌟
 // GENERATE, PRINT, DOWNLOAD, SHARE AND CLOSE QR CODE
-// Generate QR Code
+// 🌟🌟🌟 GENERATE QR CODE FUNCTION
 function generateQRCode(profileIndex) {
-  const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-  currentQRProfile = savedProfiles[profileIndex];
-  const modal = document.getElementById('qr-modal');
-  const container = document.getElementById('qrcode-container');
-  
+  const savedProfiles = JSON.parse(localStorage.getItem("petProfiles")) || [];
+  const currentQRProfile = savedProfiles[profileIndex];
+  const modal = document.getElementById("qr-modal");
+  const container = document.getElementById("qrcode-container");
+
   // Clear previous QR code
-  container.innerHTML = '';
-  
-  // Generate new QR code with proper error handling
+  container.innerHTML = "";
+
+  // Generate new QR code with error handling
   try {
+    if (!currentQRProfile) throw new Error("Profile not found!");
+
     new QRCode(container, {
       text: `${window.location.origin}/?profile=${currentQRProfile.id}`, // Shortened URL
       width: 256,
       height: 256,
       colorDark: "#000000",
       colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
+      correctLevel: QRCode.CorrectLevel.H,
     });
-    modal.style.display = 'block';
+
+    modal.style.display = "block";
+    document.body.style.overflow = "hidden"; // Prevent background scrolling
   } catch (error) {
-    console.error('QR Generation Error:', error);
-    alert('QR code generation failed. Profile data might be too large.');
+    console.error("QR Generation Error:", error);
+    alert("QR code generation failed. Profile data might be too large.");
   }
 }
-  // Print QR Code
-  function printQR() {
-    const printContent = document.querySelector('#qr-modal .printable-area')
-      .cloneNode(true);
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write('<html><head><title>Print QR Code</title></head><body>');
-    printWindow.document.write(printContent.innerHTML);
-    printWindow.document.write('</body></html>');
+
+// 🌟 PRINT QR CODE FUNCTION
+function printQR() {
+  try {
+    const printContent = document.querySelector("#qr-modal .printable-area").cloneNode(true);
+    const printWindow = window.open("", "_blank");
+
+    if (!printWindow) throw new Error("Unable to open print preview window.");
+
+    printWindow.document.write(`
+      <html>
+        <head><title>Print QR Code</title></head>
+        <body>${printContent.innerHTML}</body>
+      </html>
+    `);
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
     printWindow.close();
+
+    console.log("✅ QR Code printed successfully.");
+  } catch (error) {
+    console.error("❌ Error printing QR Code:", error);
+    alert("Failed to print QR Code. Please try again.");
   }
-  // Download QR Code
-  function downloadQR() {
-    const canvas = document.querySelector('#qrcode-container canvas');
-    if(canvas) {
-      const link = document.createElement('a');
-      link.download = `${currentQRProfile?.name || 'pet_profile'}_qr.png`.replace(/[^a-z0-9]/gi, '_');
-      link.href = canvas.toDataURL();
-      link.click();
+}
+
+// 🌟 DOWNLOAD QR CODE FUNCTION
+function downloadQR() {
+  try {
+    const canvas = document.querySelector("#qrcode-container canvas");
+
+    if (!canvas) throw new Error("QR code canvas not found.");
+
+    const link = document.createElement("a");
+    link.download = `${currentQRProfile?.name || "pet_profile"}_qr.png`.replace(/[^a-z0-9]/gi, "_");
+    link.href = canvas.toDataURL();
+    link.click();
+
+    console.log("✅ QR Code downloaded successfully.");
+  } catch (error) {
+    console.error("❌ Error downloading QR Code:", error);
+    alert("Failed to download QR Code. Please try again.");
+  }
+}
+
+// 🌟 SHARE QR CODE FUNCTION
+async function shareQR() {
+  try {
+    if (!currentQRProfile) throw new Error("No profile selected for sharing.");
+
+    const shareData = {
+      title: `${currentQRProfile.name}'s Pet Profile`,
+      text: `Check out ${currentQRProfile.name}'s details!`,
+      url: `${window.location.origin}/?profile=${currentQRProfile.id}`,
+    };
+
+    if (navigator.share) {
+      console.log("🌐 Using Web Share API...");
+      await navigator.share(shareData);
+    } else {
+      console.log("📋 Copying share URL to clipboard...");
+      await navigator.clipboard.writeText(shareData.url);
+      showQRStatus("Link copied to clipboard!", true);
     }
+  } catch (error) {
+    console.error("❌ Sharing failed:", error);
+    showQRStatus("Sharing failed. Please copy manually.", false);
   }
-  // Share QR Code
-  async function shareQR() {
-    try {
-      if(!currentQRProfile) return;
-      const shareData = {
-        title: `${currentQRProfile.name}'s Pet Profile`,
-        text: `Check out ${currentQRProfile.name}'s details!`,
-        url: window.location.href
-      };
-      if(navigator.share) {
-        await navigator.share(shareData);
-      }
-      else {
-        await navigator.clipboard.writeText(shareData.url);
-        showQRStatus('Link copied to clipboard!', true);
-      }
+}
+
+// 🌟 QR MODAL INITIALIZATION FUNCTION
+function initQRModal() {
+  document.addEventListener("click", (e) => {
+    const modal = document.getElementById("qr-modal");
+
+    if (!e.target.closest("#qr-modal")) return;
+
+    if (e.target.classList.contains("qr-print")) {
+      printQR();
+    } else if (e.target.classList.contains("qr-download")) {
+      downloadQR();
+    } else if (e.target.classList.contains("qr-share")) {
+      shareQR();
+    } else if (e.target.classList.contains("qr-close")) {
+      modal.style.display = "none";
+      document.body.style.overflow = "auto"; // Allow scrolling again
     }
-    catch (err) {
-      showQRStatus('Sharing failed. Please copy manually.', false);
-    }
-  }
-  // QR Modal Initialization
-  function initQRModal() {
-    document.addEventListener('click', (e) => {
-         // ✅ Only handle clicks inside QR modal
-    if (!e.target.closest('#qr-modal')) return;
-    const modal = document.getElementById('qr-modal');
-    modal.style.display = 'block'; 
-    document.body.style.overflow = 'hidden'; // Prevent scrolling
-      
-      if(e.target.classList.contains('qr-print')) {
-        printQR();
-      }
-      else if(e.target.classList.contains('qr-download')) {
-        downloadQR();
-      }
-      else if(e.target.classList.contains('qr-share')) {
-        shareQR();
-      }
-      else if(e.target.classList.contains('qr-close')) {
-        modal.style.display = 'none';
-      }
-    });
-  }
-  // QR Status Helper
-  function showQRStatus(message, isSuccess) {
-    const statusEl = document.getElementById('qr-status');
-    if(!statusEl) return;
-    statusEl.textContent = message;
-    statusEl.style.color = isSuccess ? '#28a745' : '#dc3545';
-    setTimeout(() => {
-      statusEl.textContent = '';
-      statusEl.style.color = '';
-    }, 3000);
+  });
+}
+
+// 🌟 QR STATUS HELPER FUNCTION
+function showQRStatus(message, isSuccess) {
+  const statusEl = document.getElementById("qr-status");
+
+  if (!statusEl) {
+    console.warn("⚠️ Status element not found. Skipping status update.");
+    return;
   }
 
-  // LOG MOOD FUNCTION 🌟🌟🌟  
+  statusEl.textContent = message;
+  statusEl.style.color = isSuccess ? "#28a745" : "#dc3545";
+
+  setTimeout(() => {
+    statusEl.textContent = "";
+    statusEl.style.color = "";
+  }, 3000);
+}
+
+  // LOG MOOD FUNCTION 🌟🌟🌟  next
   function logMood(profileIndex, mood) {
     const today = new Date()
       .toISOString()
