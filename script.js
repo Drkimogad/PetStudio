@@ -1857,166 +1857,278 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
 });
   
 // 🟢🟢🟢AUTH FUNCTIONS🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢    
-// 🔼 Sign Up Handler🌟🌟🌟
+// 🌟🌟🌟 SIGN UP HANDLER
 DOM.signupForm?.addEventListener("submit", (e) => {
   e.preventDefault();
-  isSignupInProgress = true; // ⭐ FLAG SET ON SUBMIT
 
-  const username = DOM.signupForm.querySelector("#signupEmail").value.trim();
-  const password = DOM.signupForm.querySelector("#signupPassword").value.trim();
-  const email = `${username}@petstudio.com`;
+  try {
+    console.log("🔄 Starting signup process...");
 
-  if (!username || !password) {
-    showAuthError("Please fill all fields");
-    isSignupInProgress = false;
-    return;
-  }
+    isSignupInProgress = true; // ⭐ FLAG SET ON SUBMIT
 
-  if (password.length < 6) {
-    showAuthError("Password must be at least 6 characters long");
-    isSignupInProgress = false;
-    return;
-  }
+    // Get form values
+    const username = DOM.signupForm.querySelector("#signupEmail")?.value.trim();
+    const password = DOM.signupForm.querySelector("#signupPassword")?.value.trim();
+    const email = `${username}@petstudio.com`;
 
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      DOM.signupForm.reset();
-      showAuthForm('login');  // Immediately show login after successful signup
-    })
-    .catch((error) => {
-      showAuthError(error.message);
-    })
-    .finally(() => {
+    // Validate inputs
+    if (!username || !password) {
+      showAuthError("Please fill all fields.");
       isSignupInProgress = false;
-      DOM.signupForm.querySelector("button[type='submit']").disabled = false;
-    });
+      return;
+    }
+
+    if (password.length < 6) {
+      showAuthError("Password must be at least 6 characters long.");
+      isSignupInProgress = false;
+      return;
+    }
+
+    console.log("✅ Input validation successful.");
+
+    // Disable submit button during signup
+    const submitButton = DOM.signupForm.querySelector("button[type='submit']");
+    submitButton.disabled = true;
+
+    // Create user with email and password
+    console.log("🔄 Creating user with email and password...");
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        console.log("✅ Signup successful. Resetting form and showing login form.");
+        DOM.signupForm.reset(); // Reset form fields
+        showAuthForm("login"); // Immediately show login form
+      })
+      .catch((error) => {
+        console.error("❌ Signup error:", error.message);
+        showAuthError(error.message); // Display error message to user
+      })
+      .finally(() => {
+        console.log("🔄 Resetting signup progress.");
+        isSignupInProgress = false;
+        submitButton.disabled = false; // Re-enable submit button
+      });
+  } catch (error) {
+    console.error("❌ Unexpected error during signup:", error.message, error.stack);
+    showAuthError("An unexpected error occurred. Please try again.");
+    isSignupInProgress = false;
+  }
 });
   
-// 🔼 Login Handler 🌟🌟🌟
+// 🌟🌟🌟 LOGIN HANDLER
 DOM.loginForm?.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const username = DOM.loginForm.querySelector("#loginEmail")?.value.trim();
-  const password = DOM.loginForm.querySelector("#loginPassword")?.value.trim();
-  const email = `${username}@petstudio.com`;
+  try {
+    console.log("🔄 Starting login process...");
 
-  if (!username || !password) {
-    showAuthError("Please fill all fields");
-    return;
+    // Get form values
+    const username = DOM.loginForm.querySelector("#loginEmail")?.value.trim();
+    const password = DOM.loginForm.querySelector("#loginPassword")?.value.trim();
+    const email = `${username}@petstudio.com`;
+
+    // Validate inputs
+    if (!username || !password) {
+      showAuthError("Please fill all fields.");
+      return;
+    }
+
+    console.log("✅ Input validation successful.");
+
+    // Disable submit button during login
+    const submitBtn = DOM.loginForm.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Logging in...";
+
+    // Sign in with email and password
+    console.log("🔄 Attempting to log in...");
+    auth.signInWithEmailAndPassword(email, password)
+      .then(() => {
+        console.log("✅ Login successful. Redirecting to dashboard...");
+        showDashboard(); // Redirect to the dashboard after successful login
+      })
+      .catch((error) => {
+        console.error("❌ Login error:", error.message);
+
+        // Map Firebase error codes to user-friendly messages
+        let errorMessage = "Login failed: ";
+        if (error.code === "auth/wrong-password") {
+          errorMessage += "Wrong password.";
+        } else if (error.code === "auth/user-not-found") {
+          errorMessage += "User not found.";
+        } else {
+          errorMessage += error.message;
+        }
+
+        // Display error message to user
+        showAuthError(errorMessage);
+      })
+      .finally(() => {
+        console.log("🔄 Resetting login button state...");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Log In"; // Restore button text
+      });
+  } catch (error) {
+    console.error("❌ Unexpected error during login:", error.message, error.stack);
+    showAuthError("An unexpected error occurred. Please try again.");
   }
-
-  const submitBtn = DOM.loginForm.querySelector("button[type='submit']");
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Logging in...";
-
-  auth.signInWithEmailAndPassword(email, password)
-    .then(() => {
-      // Immediately redirect to the dashboard
-      showDashboard();
-    })
-    .catch((error) => {
-      let errorMessage = "Login failed: ";
-      if (error.code === "auth/wrong-password") errorMessage += "Wrong password";
-      else if (error.code === "auth/user-not-found") errorMessage += "User not found";
-      else errorMessage += error.message;
-      showAuthError(errorMessage);
-    })
-    .finally(() => {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Log In";
-    });
 });
 
-// 🔼 Logout Handler🌟🌟🌟
+// 🌟🌟🌟 LOGOUT HANDLER
 function setupLogoutButton() {
-  DOM.logoutBtn?.addEventListener('click', async (e) => {
+  DOM.logoutBtn?.addEventListener("click", async (e) => {
     e.preventDefault();
+
     try {
+      console.log("🔄 Logging out...");
+
+      // Attempt to sign out
       await auth.signOut();
-      window.location.href = '/PetStudio/'; // Full redirect
+
+      console.log("✅ Logout successful. Redirecting to home page...");
+      window.location.href = "/PetStudio/"; // Full redirect to the home page
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error("❌ Logout failed:", error.message);
+
+      // Provide user feedback
+      alert("Logout failed. Please try again.");
     }
   });
 }
 // 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
-// ⚙️ SERVICE WORKER =============================
-if ('serviceWorker' in navigator) 
+// 🌟🌟🌟 SERVICE WORKER REGISTRATION
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // ✅ PROPER PATH & SCOPE
-    navigator.serviceWorker.register('/PetStudio/service-worker.js', {
-      scope: '/PetStudio/'
-    })
-    .then(registration => {
-      console.log('SW registered for scope:', registration.scope);
-    })
-    .catch(error => {
-      console.error('SW registration failed:', error);
-    });
+    console.log('🔄 Attempting to register Service Worker...');
+
+    // Register the Service Worker with proper path and scope
+    navigator.serviceWorker
+      .register('/PetStudio/service-worker.js', {
+        scope: '/PetStudio/',
+      })
+      .then((registration) => {
+        console.log('✅ Service Worker registered successfully for scope:', registration.scope);
+
+        // Optional: Listen for updates in the Service Worker
+        registration.onupdatefound = () => {
+          const installingWorker = registration.installing;
+          if (installingWorker) {
+            console.log('🔄 New Service Worker update found.');
+            installingWorker.onstatechange = () => {
+              if (installingWorker.state === 'installed') {
+                if (navigator.serviceWorker.controller) {
+                  console.log('✨ New Service Worker installed. A page refresh is recommended.');
+                } else {
+                  console.log('🎉 Service Worker installed for the first time. Ready to use offline!');
+                }
+              }
+            };
+          }
+        };
+      })
+      .catch((error) => {
+        console.error('❌ Service Worker registration failed:', error.message, error.stack);
+      });
   });
+}
 
 // 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
-  // 🟢 PUSH NOTIFICATIONS LOGIC
-  // 🟢 Global VAPID Configuration
-  const VAPID_PUBLIC_KEY = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
-  const VERCEL_API = 'https://pet-studio.vercel.app/api/save-subscription';
-  // Push Notification Subscription
-  async function subscribeUserToPushNotifications(registration) {
-    try {
-      const existingSubscription = await registration.pushManager.getSubscription();
-      if(existingSubscription) {
-        console.log('Already subscribed:', existingSubscription);
-        return sendSubscriptionToServer(existingSubscription);
-      }
-      const newSubscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-      });
-      await sendSubscriptionToServer(newSubscription);
-      console.log('Push subscription successful:', newSubscription);
+// 🌟🌟🌟 PUSH NOTIFICATIONS LOGIC
+// 🟢 Global VAPID Configuration
+const VAPID_PUBLIC_KEY = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
+const VERCEL_API = 'https://pet-studio.vercel.app/api/save-subscription';
+
+// 🟢 Push Notification Subscription
+async function subscribeUserToPushNotifications(registration) {
+  try {
+    console.log("🔄 Checking existing push subscription...");
+    const existingSubscription = await registration.pushManager.getSubscription();
+
+    if (existingSubscription) {
+      console.log("✅ Already subscribed:", existingSubscription);
+      return await sendSubscriptionToServer(existingSubscription); // Send existing subscription to server
     }
-    catch (error) {
-      console.error('Subscription failed:', error);
-    }
+
+    console.log("🔄 Creating new push subscription...");
+    const newSubscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+    });
+
+    console.log("✅ Push subscription successful:", newSubscription);
+    await sendSubscriptionToServer(newSubscription); // Send new subscription to server
+  } catch (error) {
+    console.error("❌ Subscription failed:", error.message, error.stack);
   }
-  //🟢 Send to Vercel API
+}
+
+// 🟢 Send Subscription to Vercel API
 async function sendSubscriptionToServer(subscription) {
   try {
+    console.log("🔄 Sending subscription to Vercel API...");
     const user = auth.currentUser;
+
     if (!user) {
-      console.error('User not authenticated');
+      console.error("❌ User not authenticated. Subscription cannot be saved.");
       return;
     }
+
     const response = await fetch(`${VERCEL_API}/save-subscription`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${await user.getIdToken()}`
+        'Authorization': `Bearer ${await user.getIdToken()}`,
       },
       body: JSON.stringify({
         subscription,
         userId: user.uid,
-        vapidPublicKey: VAPID_PUBLIC_KEY
-      })
+        vapidPublicKey: VAPID_PUBLIC_KEY,
+      }),
     });
-    if (!response.ok) throw new Error('Vercel API rejected subscription');
-    console.log('Subscription saved via Vercel API');
-  } catch (error) { // <-- Corrected "catch" block
-    console.error('Subscription sync failed:', error); 
-    throw error;
+
+    if (!response.ok) throw new Error("Vercel API rejected subscription");
+    console.log("✅ Subscription saved via Vercel API.");
+  } catch (error) {
+    console.error("❌ Subscription sync failed:", error.message, error.stack);
+    throw error; // Re-throw error for further handling if needed
   }
 }
-  // 🟢 Helper function for VAPID key conversion
-  function urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding)
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
-    const rawData = window.atob(base64);
-    return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
+
+// 🟢 Helper Function: VAPID Key Conversion
+function urlBase64ToUint8Array(base64String) {
+  console.log("🔄 Converting VAPID key...");
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const byteArray = Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+  console.log("✅ VAPID key converted successfully.");
+  return byteArray;
+}
+
+// 🟢 Initialize Push Notifications
+async function initializePushNotifications() {
+  if (!('serviceWorker' in navigator)) {
+    console.warn("⚠️ Service Workers are not supported in this browser.");
+    return;
   }
-// 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
-  // 🟢 Initialize
-  if(petProfiles.length > 0) {
-    renderProfiles();
+
+  try {
+    console.log("🔄 Registering Service Worker for Push Notifications...");
+    const registration = await navigator.serviceWorker.register('/PetStudio/service-worker.js', {
+      scope: '/PetStudio/',
+    });
+
+    console.log("✅ Service Worker registered successfully:", registration.scope);
+
+    // Subscribe user to push notifications
+    await subscribeUserToPushNotifications(registration);
+  } catch (error) {
+    console.error("❌ Push Notifications initialization failed:", error.message, error.stack);
   }
+}
+
+// 🟢 Initialize Profiles and Push Notifications
+if (petProfiles.length > 0) {
+  console.log("🔄 Rendering profiles...");
+  renderProfiles(); // Render profiles if available
+  initializePushNotifications(); // Initialize Push Notifications
+}
