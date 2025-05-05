@@ -1619,122 +1619,242 @@ function showQRStatus(message, isSuccess) {
 }
 
   // LOG MOOD FUNCTION 🌟🌟🌟  next
-  function logMood(profileIndex, mood) {
-    const today = new Date()
-      .toISOString()
-      .split('T')[0];
-    if(!petProfiles[profileIndex].moodHistory) petProfiles[profileIndex].moodHistory = [];
-    petProfiles[profileIndex].moodHistory.push({
+// 🌟🌟🌟 LOG MOOD FUNCTION
+function logMood(profileIndex, mood) {
+  try {
+    console.log(`🔄 Logging mood for profile at index: ${profileIndex} with mood: ${mood}`);
+
+    // Validate profile index
+    if (profileIndex < 0 || profileIndex >= petProfiles.length) {
+      throw new Error("Invalid profile index provided.");
+    }
+
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split("T")[0];
+
+    // Ensure moodHistory exists for the profile
+    const profile = petProfiles[profileIndex];
+    profile.moodHistory = profile.moodHistory || [];
+
+    // Add the new mood entry
+    profile.moodHistory.push({
       date: today,
-      mood: mood
+      mood: mood,
     });
-    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+
+    // Save updated profiles to localStorage
+    console.log("💾 Saving updated profiles to localStorage...");
+    localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+
+    // Re-render profiles
+    console.log("🔄 Re-rendering profiles...");
     renderProfiles();
+
+    // Provide user feedback
+    showMoodStatus(`${profile.name}'s mood logged successfully!`, true);
+    console.log(`✅ Mood logged successfully for ${profile.name}.`);
+  } catch (error) {
+    console.error("❌ Error logging mood:", error.message, error.stack);
+    showMoodStatus("Failed to log mood. Please try again.", false);
   }
+}
+
+// 🌟 MOOD STATUS HELPER
+function showMoodStatus(message, isSuccess) {
+  const statusEl = document.getElementById("mood-status");
+  if (!statusEl) {
+    console.warn("⚠️ Mood status element not found. Skipping status update.");
+    return;
+  }
+
+  statusEl.textContent = message;
+  statusEl.style.color = isSuccess ? "#28a745" : "#dc3545";
+
+  setTimeout(() => {
+    statusEl.textContent = "";
+    statusEl.style.color = "";
+  }, 3000);
+}
+
   // SET COVERPHOTO FUNCTION 🌟🌟🌟
-  function setCoverPhoto(profileIndex, imageIndex) {
-    petProfiles[profileIndex].coverPhotoIndex = imageIndex;
-    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+// 🌟🌟🌟 SET COVER PHOTO FUNCTION
+function setCoverPhoto(profileIndex, imageIndex) {
+  try {
+    console.log(`🔄 Setting cover photo for profile at index: ${profileIndex}, image index: ${imageIndex}`);
+
+    // Validate profile index
+    if (profileIndex < 0 || profileIndex >= petProfiles.length) {
+      throw new Error("Invalid profile index provided.");
+    }
+
+    const profile = petProfiles[profileIndex];
+
+    // Validate image index
+    if (imageIndex < 0 || imageIndex >= profile.gallery.length) {
+      throw new Error("Invalid image index provided.");
+    }
+
+    // Set the cover photo index
+    profile.coverPhotoIndex = imageIndex;
+
+    // Save updated profiles to localStorage
+    console.log("💾 Saving updated profiles to localStorage...");
+    localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+
+    // Re-render profiles
+    console.log("🔄 Re-rendering profiles...");
     renderProfiles();
+
+    console.log(`✅ Cover photo set successfully for ${profile.name}.`);
+  } catch (error) {
+    console.error("❌ Error setting cover photo:", error.message, error.stack);
+    alert("Failed to set cover photo. Please try again.");
   }
-  // FORM HANDLING WITH REMINDER CREATION 🌟🌟🌟
-  function formatFirestoreDate(dateString) {
+}
+
+// 🌟🌟🌟 FORMAT FIRESTORE DATE FUNCTION
+function formatFirestoreDate(dateString) {
+  try {
+    console.log(`🔄 Formatting date for Firestore: ${dateString}`);
+
+    // Parse the date
     const date = new Date(dateString);
-    return date.toISOString()
-      .split('T')[0]; // "YYYY-MM-DD"
+
+    // Validate date
+    if (isNaN(date.getTime())) {
+      throw new Error("Invalid date format provided.");
+    }
+
+    // Return date in "YYYY-MM-DD" format
+    const formattedDate = date.toISOString().split("T")[0];
+    console.log(`✅ Date formatted successfully: ${formattedDate}`);
+    return formattedDate;
+  } catch (error) {
+    console.error("❌ Error formatting date:", error.message, error.stack);
+    return null; // Return null for invalid dates
   }
+}
   
-  // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷
-  // FORM SUBMISSION 🌟🌟🌟
- DOM.profileForm?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    // 1. Hardcoded user ID (temporary until auth implementation)
+// 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷
+// 🌟🌟🌟 FORM SUBMISSION
+DOM.profileForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  try {
+    console.log("🔄 Submitting profile form...");
+
+    // 1️⃣ Hardcoded user ID (temporary until auth implementation)
     const userId = "test-user";
-    // 2. Get form values
-    const petName = document.getElementById("petName")
-      .value;
-    const petBreed = document.getElementById("petBreed")
-      .value;
-    const petDob = document.getElementById("petDob")
-      .value;
-    const birthday = document.getElementById("petBirthday")
-      .value;
-    const galleryFiles = Array.from(document.getElementById("petGallery")
-      .files);
-    // 3. Firestore birthday reminder (if birthday is provided)
-    if(birthday) {
+
+    // 2️⃣ Get form values
+    const petName = document.getElementById("petName")?.value.trim();
+    const petBreed = document.getElementById("petBreed")?.value.trim();
+    const petDob = document.getElementById("petDob")?.value.trim();
+    const birthday = document.getElementById("petBirthday")?.value.trim();
+
+    // Validate required fields
+    if (!petName || !petBreed || !petDob) {
+      throw new Error("Required fields (Name, Breed, DOB) are missing.");
+    }
+
+    console.log("✅ Form values captured successfully.");
+
+    // 3️⃣ Handle birthday reminders in Firestore (if birthday is provided)
+    if (birthday) {
       const reminderData = {
         userId: userId,
         petName: petName,
         date: formatFirestoreDate(birthday), // "YYYY-MM-DD"
         message: `It's ${petName}'s birthday today. We wish our pawsome friend a fabulous day! 🐾🎉`,
-        createdAt: new Date()
-          .toISOString()
+        createdAt: new Date().toISOString(),
       };
+
       try {
-        await firebase.firestore()
-          .collection("reminders")
-          .add(reminderData);
-        console.log("Reminder created successfully");
-      }
-      catch (error) {
-        console.error("Error creating reminder:", error);
+        console.log("🔄 Creating birthday reminder in Firestore...");
+        await firebase.firestore().collection("reminders").add(reminderData);
+        console.log("✅ Reminder created successfully.");
+      } catch (error) {
+        console.error("❌ Error creating reminder:", error.message);
       }
     }
-  // Handle gallery files with URL cleanup
-// 1️⃣ Parse Mood Logs (once)
-const moodHistoryInput = document.getElementById("moodHistoryInput");
-const moodHistory = moodHistoryInput && moodHistoryInput.value.trim()
-  ? moodHistoryInput.value
-      .trim()
-      .split("\n")
-      .map(line => {
-        const [date, mood] = line.split(":");
-        return { date: date.trim(), mood: mood.trim() };
+
+    // 4️⃣ Parse Mood Logs
+    const moodHistoryInput = document.getElementById("moodHistoryInput");
+    const moodHistory =
+      moodHistoryInput && moodHistoryInput.value.trim()
+        ? moodHistoryInput.value
+            .trim()
+            .split("\n")
+            .map((line) => {
+              const [date, mood] = line.split(":");
+              return { date: date.trim(), mood: mood.trim() };
+            })
+        : [];
+
+    console.log("✅ Mood history parsed:", moodHistory);
+
+    // 5️⃣ Build gallery URLs
+    const galleryFiles = Array.from(document.getElementById("petGallery")?.files || []);
+    const galleryUrls = await Promise.all(
+      galleryFiles.map(async (file) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        await new Promise((resolve) => {
+          img.onerror = resolve;
+          img.onload = resolve;
+          img.src = url;
+        });
+        return url;
       })
-  : [];
+    );
 
-// 2️⃣ Build gallery URLs
-const galleryUrls = await Promise.all(
-  galleryFiles.map(async file => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    await new Promise(resolve => {
-      img.onerror = resolve;
-      img.onload  = resolve;
-      img.src     = url;
-    });
-    return url;
-  })
-);
-// 4. Build profile object
-const newProfile = {
-  id: Date.now(),
-  name: petName,
-  breed: petBreed,
-  dob: petDob,
-  birthday: birthday,
-  gallery: galleryUrls,
-  moodHistory: moodHistory,   // use parsed logs
-  coverPhotoIndex: 0
-};
+    console.log("✅ Gallery URLs generated:", galleryUrls);
 
-    if(isEditing) {
+    // 6️⃣ Build profile object
+    const newProfile = {
+      id: Date.now(), // Unique ID
+      name: petName,
+      breed: petBreed,
+      dob: petDob,
+      birthday: birthday,
+      gallery: galleryUrls,
+      moodHistory: moodHistory,
+      coverPhotoIndex: 0, // Default cover photo
+    };
+
+    console.log("✅ New profile object created:", newProfile);
+
+    // 7️⃣ Update profiles array
+    if (isEditing) {
       petProfiles[currentEditIndex] = newProfile;
-    }
-    else {
+      console.log(`✏️ Profile edited at index: ${currentEditIndex}`);
+    } else {
       petProfiles.push(newProfile);
+      console.log("➕ New profile added to the profiles array.");
     }
-// Save the updated profiles to localStorage
-localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-// Hide the form and banner
-DOM.profileSection.classList.add("hidden");
-// Reset form fields
-DOM.profileForm.reset();
-// Re-render profiles
-renderProfiles();
-window.scrollTo(0, 0); 
-}); 
+
+    // 8️⃣ Save updated profiles to localStorage
+    console.log("💾 Saving profiles to localStorage...");
+    localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+
+    // 9️⃣ Hide the form and banner
+    DOM.profileSection.classList.add("hidden");
+
+    // 🔟 Reset form fields
+    DOM.profileForm.reset();
+
+    // 🔄 Re-render profiles
+    renderProfiles();
+
+    // ⬆️ Scroll to top
+    window.scrollTo(0, 0);
+
+    console.log("✅ Profile form submission completed successfully.");
+  } catch (error) {
+    console.error("❌ Error during form submission:", error.message, error.stack);
+    alert("Form submission failed. Please check your inputs and try again.");
+  }
+});
   
 // 🟢🟢🟢AUTH FUNCTIONS🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢    
 // 🔼 Sign Up Handler🌟🌟🌟
