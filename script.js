@@ -1438,23 +1438,44 @@ async function sharePetCard(profile) {
 
 
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
-  // AGE CALCULATION FUNCTION 🌟🌟🌟
-  function calculateAge(dobString) {
-    try {
-      const birthDate = new Date(dobString);
-      const today = new Date();
-      let years = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      if(monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        years--;
-      }
-      const months = (today.getMonth() + 12 - birthDate.getMonth()) % 12;
-      return `${years} years, ${months} months`;
+// 🌟🌟🌟 AGE CALCULATION FUNCTION
+function calculateAge(dobString) {
+  try {
+    console.log("🔄 Calculating age for date of birth:", dobString);
+
+    // Parse the date of birth
+    const birthDate = new Date(dobString);
+    if (isNaN(birthDate.getTime())) {
+      throw new Error("Invalid date format");
     }
-    catch {
-      return 'N/A';
+
+    const today = new Date();
+
+    // Calculate years
+    let years = today.getFullYear() - birthDate.getFullYear();
+
+    // Adjust years if the current date is before the birthday this year
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      years--;
     }
+
+    // Calculate months
+    let months = (today.getMonth() - birthDate.getMonth() + 12) % 12;
+
+    // Adjust months to account for the day of the month
+    if (today.getDate() < birthDate.getDate()) {
+      months = (months + 11) % 12; // Compensate by subtracting another month
+    }
+
+    const result = `${years} years, ${months} months`;
+    console.log("✅ Age calculated successfully:", result);
+    return result;
+  } catch (error) {
+    console.error("❌ Error calculating age:", error.message, error.stack);
+    return "N/A"; // Return 'N/A' for invalid or missing dates
   }
+}
 // 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷
 // QR CODE MODAL MANAGEMENT 🌟🌟🌟
 // GENERATE, PRINT, DOWNLOAD, SHARE AND CLOSE QR CODE
