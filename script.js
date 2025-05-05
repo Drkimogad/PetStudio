@@ -1041,76 +1041,213 @@ function renderProfiles() {
   console.log("✅ Profiles rendered successfully.");
 }
 
-// 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷  next
-  // WHEN CREATING NEW PROFILES 🌟🌟🌟
-  function createNewProfile() {
-    const timestamp = Date.now();
+// 🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷
+// 🌟🌟🌟 FUNCTION TO CREATE NEW PROFILES
+function createNewProfile() {
+  try {
+    console.log("➕ Creating a new pet profile...");
+
+    const timestamp = Date.now(); // Generate unique ID based on timestamp
+
+    // Retrieve profile input values
+    const name = document.getElementById("petName")?.value.trim();
+    const breed = document.getElementById("petBreed")?.value.trim();
+    const petDob = document.getElementById("petDob")?.value.trim();
+    const birthday = document.getElementById("petBirthday")?.value.trim();
+
+    // Validate required input fields
+    if (!name || !breed || !petDob || !birthday) {
+      console.warn("⚠️ Missing required fields. Please fill in all fields.");
+      showErrorToUser("All fields are required. Please fill them out before proceeding.");
+      return;
+    }
+
+    // Construct the new profile object
     const newProfile = {
       id: timestamp, // Simple unique ID
       fileName: `pet_${timestamp}`, // 🔒 Stable file name for Drive storage
-      name: document.getElementById('petName')
-        .value,
-      breed: document.getElementById('petBreed')
-        .value,
-      petDob: document.getElementById("petDob")
-        .value,
-      birthday: document.getElementById("petBirthday")
-        .value,
-      gallery: [],
-      moodHistory: [],
-      coverPhotoIndex: 0
+      name,
+      breed,
+      petDob,
+      birthday,
+      gallery: [], // Initialize with an empty gallery
+      moodHistory: [], // Initialize with an empty mood history
+      coverPhotoIndex: 0, // Default to the first photo
     };
+
+    console.log("📄 New profile created:", newProfile);
+
+    // Add the new profile to the profiles array
     petProfiles.push(newProfile);
+
+    // Save the profile locally and remotely
+    console.log("💾 Saving new profile...");
     savePetProfile(newProfile);
+
+    // Re-render the profiles to include the new one
+    console.log("🔄 Rendering profiles...");
     renderProfiles();
+
+    console.log("✅ New pet profile successfully created and saved.");
+  } catch (error) {
+    console.error("❌ Error creating new profile:", error.message, error.stack);
+    showErrorToUser("An error occurred while creating the profile. Please try again.");
   }
+}
   // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
-  // DAYS COUNTDOWN FUNCTION 🌟🌟🌟
-  function getCountdown(birthday) {
+// 🌟🌟🌟 DAYS COUNTDOWN FUNCTION
+function getCountdown(birthday) {
+  try {
+    console.log("🔄 Calculating countdown for birthday:", birthday);
+
     const today = new Date();
     const nextBirthday = new Date(birthday);
+
+    // Validate if the provided date is valid
+    if (isNaN(nextBirthday.getTime())) {
+      throw new Error("Invalid birthday date provided.");
+    }
+
+    // Adjust the year to the closest upcoming birthday
     nextBirthday.setFullYear(today.getFullYear());
-    if(nextBirthday < today) nextBirthday.setFullYear(today.getFullYear() + 1);
+    if (nextBirthday < today) {
+      nextBirthday.setFullYear(today.getFullYear() + 1);
+    }
+
+    // Calculate the difference in days
     const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
-    return `${diffDays} days until birthday! 🎉`;
+    const countdownMessage = `${diffDays} days until birthday! 🎉`;
+
+    console.log("✅ Countdown calculated successfully:", countdownMessage);
+    return countdownMessage;
+  } catch (error) {
+    console.error("❌ Error calculating countdown:", error.message, error.stack);
+    return "Invalid date provided. Please check the birthday input.";
   }
+}
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
   // MOOD HISTORY FUNCTION 🌟🌟🌟
-  function renderMoodHistory(profile) {
-    if(!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
-    return profile.moodHistory
-      .slice(-7)
-      .map(entry => `${entry.date}: ${getMoodEmoji(entry.mood)}`)
-      .join('<br>');
-  }
+// 🌟🌟🌟 RENDER MOOD HISTORY FUNCTION
+function renderMoodHistory(profile) {
+  try {
+    console.log("🔄 Rendering mood history for profile:", profile.name);
 
-  function getMoodEmoji(mood) {
-    return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
+    // Check if mood history exists and has entries
+    if (!profile.moodHistory || profile.moodHistory.length === 0) {
+      console.log("ℹ️ No mood history available for this profile.");
+      return "No mood logs yet.";
+    }
+
+    // Render the last 7 mood entries
+    const moodHistoryHTML = profile.moodHistory
+      .slice(-7) // Limit to the last 7 entries
+      .map((entry) => {
+        const date = sanitizeDate(entry.date);
+        const emoji = getMoodEmoji(entry.mood);
+        return `${date}: ${emoji}`;
+      })
+      .join("<br>");
+
+    console.log("✅ Mood history rendered successfully.");
+    return moodHistoryHTML;
+  } catch (error) {
+    console.error("❌ Error rendering mood history:", error.message, error.stack);
+    return "An error occurred while loading mood history.";
   }
+}
+
+// 🌟🌟🌟 GET MOOD EMOJI FUNCTION
+function getMoodEmoji(mood) {
+  try {
+    console.log("🔄 Converting mood to emoji:", mood);
+
+    // Define mood-to-emoji mapping
+    const moodEmojiMap = {
+      happy: "😊",
+      sad: "😞",
+      neutral: "😐",
+    };
+
+    // Return the corresponding emoji or a default one if mood is unknown
+    const emoji = moodEmojiMap[mood] || "❓";
+    console.log("✅ Mood converted to emoji:", emoji);
+    return emoji;
+  } catch (error) {
+    console.error("❌ Error getting mood emoji:", error.message, error.stack);
+    return "❓"; // Return a default emoji in case of an error
+  }
+}
+
+// 🌟 HELPERS: DATE SANITIZATION
+function sanitizeDate(date) {
+  try {
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      throw new Error("Invalid date format.");
+    }
+    return parsedDate.toLocaleDateString(); // Format date to a user-friendly string
+  } catch (error) {
+    console.error("❌ Error sanitizing date:", error.message, error.stack);
+    return "Invalid date"; // Fallback date if parsing fails
+  }
+}
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
-  // EDIT PROFILE FUNCTION 🌟🌟🌟
-  function openEditForm(index) {
-    isEditing = true;
-    currentEditIndex = index;
+// 🌟🌟🌟 EDIT PROFILE FUNCTION
+function openEditForm(index) {
+  try {
+    console.log(`✏️ Opening edit form for profile at index: ${index}`);
+
+    isEditing = true; // Mark the state as editing
+    currentEditIndex = index; // Track the index of the profile being edited
     const profile = petProfiles[index];
-    document.getElementById("petName")
-      .value = profile.name;
-    document.getElementById("petBreed")
-      .value = profile.breed;
-    document.getElementById("petDob")
-      .value = profile.dob;
-    document.getElementById("petBirthday")
-      .value = profile.birthday;  // Populate mood history into form
+
+    if (!profile) {
+      throw new Error(`Profile at index ${index} does not exist.`);
+    }
+
+    // Populate form fields with profile data
+    console.log("🔄 Populating form fields with profile data...");
+    document.getElementById("petName").value = profile.name || "";
+    document.getElementById("petBreed").value = profile.breed || "";
+    document.getElementById("petDob").value = profile.petDob || ""; // Ensure `petDob` is used correctly
+    document.getElementById("petBirthday").value = profile.birthday || "";
+
+    // Populate mood history into a text area (if it exists)
     const moodInput = document.getElementById("moodHistoryInput");
     if (moodInput) {
-    moodInput.value = profile.moodHistory
-      .map(entry => `${entry.date}:${entry.mood}`)
-      .join("\n");
-  }
+      console.log("🔄 Populating mood history...");
+      moodInput.value = (profile.moodHistory || [])
+        .map((entry) => `${sanitizeDate(entry.date)}: ${entry.mood}`)
+        .join("\n");
+    } else {
+      console.warn("⚠️ Mood history input field not found.");
+    }
 
-    DOM.profileSection.classList.remove("hidden"); 
+    // Update UI to show the profile section and hide the full-page banner
+    console.log("🔄 Updating UI for editing...");
+    DOM.profileSection.classList.remove("hidden");
     DOM.fullPageBanner.classList.add("hidden");
+
+    console.log("✅ Edit form opened successfully.");
+  } catch (error) {
+    console.error("❌ Error opening edit form:", error.message, error.stack);
+    showErrorToUser("An error occurred while opening the edit form. Please try again.");
   }
+}
+
+// 🌟 HELPERS: DATE SANITIZATION
+function sanitizeDate(date) {
+  try {
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      throw new Error("Invalid date format.");
+    }
+    return parsedDate.toLocaleDateString(); // Format date to a user-friendly string
+  } catch (error) {
+    console.error("❌ Error sanitizing date:", error.message, error.stack);
+    return "Invalid date"; // Fallback date if parsing fails
+  }
+}
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀
 // PRINT PROFILE FUNCTION 🌟🌟🌟
 function printProfile(profile) {
