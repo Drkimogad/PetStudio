@@ -255,9 +255,11 @@ if (DOM.switchToLogin) {
 }
   
 // 🌟 Load essential scripts and initialize application
-await loadEssentialScripts();
-initQRModal();
-console.log("✅ App fully initialized.");
+(async function initializeApp() {
+    await loadEssentialScripts();
+    initQRModal();
+    console.log("✅ App fully initialized.");
+})();
 
 // ⏳ ADD LOADING STATE
 document.body.classList.add("loading");
