@@ -1201,4 +1201,3 @@ async function sendSubscriptionToServer(subscription) {
     renderProfiles();
   }
   }); // 👈 This closes the DOMContentLoaded function properly
-});   // 👈 This closes the event listener: document.addEventListener("DOMContentLoaded", ...)
