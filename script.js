@@ -152,8 +152,6 @@ DOM.switchToSignup.addEventListener('click', (e) => {
   .catch((error) => {
     console.error("Persistence error:", error);
     showErrorToUser("Authentication system failed to initialize");
-  });
-
 
 // 🔄 INIT AUTH LISTENERS AFTER FIREBASE
     initAuthListeners();
