@@ -266,9 +266,20 @@ document.body.classList.add("loading");
 
 try {
   console.log("🔥 Initializing Firebase...");
-  const firebaseInit = await initializeFirebase();
-  auth = firebase.auth(app);
-  console.log("✅ Firebase initialized successfully.");
+  
+  // Wrap the asynchronous code inside an immediately invoked async function
+  (async function initializeFirebaseApp() {
+    const firebaseInit = await initializeFirebase();
+    auth = firebase.auth(app);
+    console.log("✅ Firebase initialized successfully.");
+  })();
+} catch (error) {
+  console.error("❌ Firebase initialization failed:", error.message, error.stack);
+  showErrorToUser("Critical error: Unable to initialize Firebase. Please refresh the page or contact support.");
+} finally {
+  console.log("⏳ Removing loading state...");
+  document.body.classList.remove("loading");
+}
 
   console.log("🔒 Setting authentication persistence...");
   await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
