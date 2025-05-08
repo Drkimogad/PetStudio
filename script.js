@@ -1041,7 +1041,7 @@ window.scrollTo(0, 0);
   
 // 🟢🟢🟢AUTH FUNCTIONS🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢    
 // 🔼 Sign Up Handler🌟🌟🌟
-// 🌱 [SIGNUP] Username → username@petstudio.com
+// 🌱 [SIGNUP] Username → username@petstudio.com (with auto-logout and login prefill)
 DOM.signupForm?.addEventListener("submit", (e) => {
   e.preventDefault();
   isSignupInProgress = true;
@@ -1058,8 +1058,15 @@ DOM.signupForm?.addEventListener("submit", (e) => {
 
   auth.createUserWithEmailAndPassword(email, password)
     .then(() => {
-      DOM.signupForm.reset();
-      showAuthForm('login'); // Redirect to login after signup
+      // ✅ Show login form instead
+      showAuthForm('login');
+
+      // ✅ Prefill login form with same credentials
+      document.getElementById("loginEmail").value = username;
+      document.getElementById("loginPassword").value = password;
+
+      // ✅ Logout silently to prevent auto-login
+      return auth.signOut();
     })
     .catch((error) => {
       showAuthError(error.message);
