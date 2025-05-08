@@ -341,8 +341,9 @@ function initAuthListeners() {
       renderProfiles();
     } else {
       showAuthForm('login');
-    });
-  }
+    }
+  });
+}
 
 // 🌟 FUNCTION HANDLE AUTH ACTION
 function handleAuthAction() {
