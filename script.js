@@ -46,6 +46,7 @@ async function main() {
           await gapi.client.init({
             apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
           });
+          
           gapi.client.setToken({ access_token: window.gapiToken });
           console.log("✅ GAPI initialized with token");
           renderProfiles();
