@@ -183,14 +183,19 @@ function setupGoogleLoginButton() {
 }
     
 // ✅ MAINTAIN YOUR SCRIPT LOADING ORDER
-    await loadEssentialScripts();
-  } catch (error) {
-    console.error('Initialization failed:', error);
-    showErrorToUser('Failed to initialize. Please refresh.');
-    disableUI();
-  } finally {
-    document.body.classList.remove('loading');
-  }
+function initializeApp() {
+  (async () => {
+    try {
+      await loadEssentialScripts();
+    } catch (error) {
+      console.error('Initialization failed:', error);
+      showErrorToUser('Failed to initialize. Please refresh.');
+      disableUI();
+    } finally {
+      document.body.classList.remove('loading');
+    }
+  })();
+}
 
 // 🟢 CORRECTED AUTH LISTENER IMPLEMENTATION
 // 🌟 [AUTH LISTENER] Firebase login/logout UI control
