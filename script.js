@@ -159,7 +159,8 @@ DOM.switchToSignup.addEventListener('click', (e) => {
     if (!DOM.authContainer) {
       throw new Error('Auth container element missing');
     }
-    
+ }); // ✅ ADD THIS TO CLOSE THE .catch()
+   
 // 🌟 GIS LOGIN BUTTON HANDLER NEW IMPLEMENTATION 🌟
 function setupGoogleLoginButton() {
   const existingBtn = document.getElementById('googleSignInBtn');
