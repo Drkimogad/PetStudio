@@ -192,27 +192,20 @@ function setupGoogleLoginButton() {
   }
 
 // 🟢 CORRECTED AUTH LISTENER IMPLEMENTATION
+// 🌟 [AUTH LISTENER] Firebase login/logout UI control
 function initAuthListeners() {
-  if (!auth) {
-    console.warn('Auth not initialized yet');
-    return;
-  }
   auth.onAuthStateChanged((user) => {
     if (user) {
-    // ✅ RESET FLAG ONLY WHEN AUTH CONFIRMED
-      isSignupInProgress = false;
-      DOM.dashboard.classList.remove('hidden');
-      DOM.authContainer.classList.add('hidden');
+      console.log("✅ Logged in:", user.email);
+      showDashboard();
       renderProfiles();
     } else {
-      // User not authenticated - RESPECT SIGNUP FLAG
-      if (!isSignupInProgress) { // ⭐⭐ CRUCIAL CHECK ⭐⭐
-        DOM.dashboard.classList.add('hidden');
-        DOM.authContainer.classList.remove('hidden');
-      }
+      console.log("🚪 Logged out");
+      showAuthForm('login');
     }
   });
 }
+
 
 // 🧩 IMPROVED SCRIPT LOADING
 async function loadEssentialScripts() {
@@ -1048,9 +1041,10 @@ window.scrollTo(0, 0);
   
 // 🟢🟢🟢AUTH FUNCTIONS🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢    
 // 🔼 Sign Up Handler🌟🌟🌟
+// 🌱 [SIGNUP] Username → username@petstudio.com
 DOM.signupForm?.addEventListener("submit", (e) => {
   e.preventDefault();
-  isSignupInProgress = true; // ⭐ FLAG SET ON SUBMIT
+  isSignupInProgress = true;
 
   const username = DOM.signupForm.querySelector("#signupEmail").value.trim();
   const password = DOM.signupForm.querySelector("#signupPassword").value.trim();
@@ -1058,65 +1052,68 @@ DOM.signupForm?.addEventListener("submit", (e) => {
 
   if (!username || !password) {
     showAuthError("Please fill all fields");
-    isSignupInProgress = false; // ⭐ RESET ON VALIDATION FAIL
+    isSignupInProgress = false;
     return;
   }
 
   auth.createUserWithEmailAndPassword(email, password)
     .then(() => {
       DOM.signupForm.reset();
-     showAuthForm('login');  // immediately show login after successful signup
+      showAuthForm('login'); // Redirect to login after signup
     })
     .catch((error) => {
       showAuthError(error.message);
       isSignupInProgress = false;
-    })
-    .finally(() => {
-      DOM.signupForm.querySelector("button[type='submit']").disabled = false;
     });
 });
+
   
 // 🔼 Login Handler 🌟🌟🌟
-  DOM.loginForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const username = DOM.loginForm.querySelector("#loginEmail")
-      ?.value.trim();
-    const password = DOM.loginForm.querySelector("#loginPassword")
-      ?.value.trim();
-    const email = `${username}@petstudio.com`;
-    if(!username || !password) {
-      alert("Please fill all fields");
-      return;
-    }
-    const submitBtn = DOM.loginForm.querySelector("button[type='submit']");
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Logging in...";
-    auth.signInWithEmailAndPassword(email, password)
-      .catch((error) => {
-        let errorMessage = "Login failed: ";
-        if(error.code === "auth/wrong-password") errorMessage += "Wrong password";
-        else if(error.code === "auth/user-not-found") errorMessage += "User not found";
-        else errorMessage += error.message;
-        alert(errorMessage);
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Log In";
-      });
-  });
+// 🔐 [LOGIN] Username → username@petstudio.com
+DOM.loginForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const username = DOM.loginForm.querySelector("#loginEmail")?.value.trim();
+  const password = DOM.loginForm.querySelector("#loginPassword")?.value.trim();
+  const email = `${username}@petstudio.com`;
+
+  if (!username || !password) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  const submitBtn = DOM.loginForm.querySelector("button[type='submit']");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Logging in...";
+
+  auth.signInWithEmailAndPassword(email, password)
+    .catch((error) => {
+      let msg = "Login failed: ";
+      if (error.code === "auth/wrong-password") msg += "Wrong password";
+      else if (error.code === "auth/user-not-found") msg += "User not found";
+      else msg += error.message;
+      alert(msg);
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Login";
+    });
+});
+
 
 // 🔼 Logout Handler🌟🌟🌟
 function setupLogoutButton() {
-  DOM.logoutBtn?.addEventListener('click', async (e) => {
+  DOM.logoutBtn?.addEventListener("click", async (e) => {
     e.preventDefault();
     try {
       await auth.signOut();
-      window.location.href = '/PetStudio/'; // Full redirect
+      window.location.href = '/PetStudio/'; // Redirect to login/home
     } catch (error) {
       console.error('Logout failed:', error);
     }
   });
 }
+
 // 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
 // ⚙️ SERVICE WORKER =============================
 if ('serviceWorker' in navigator) {
