@@ -341,8 +341,8 @@ function initAuthListeners() {
       renderProfiles();
     } else {
       showAuthForm('login');
-    }
-  });
+    });
+  }
 
 // 🌟 FUNCTION HANDLE AUTH ACTION
 function handleAuthAction() {
@@ -1209,4 +1209,5 @@ async function sendSubscriptionToServer(subscription) {
   if(petProfiles.length > 0) {
     renderProfiles();
   }
-  }); // 👈 This closes the DOMContentLoaded function properly
+  });
+console.log("✅ File loaded successfully"); // Add this line
