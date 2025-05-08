@@ -1205,9 +1205,10 @@ async function sendSubscriptionToServer(subscription) {
     return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
   }
 // 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
-  // 🟢 Initialize
-  if(petProfiles.length > 0) {
-    renderProfiles();
-  }
-  });
-console.log("✅ File loaded successfully"); // Add this line
+// 🟢 Initialize
+if (petProfiles.length > 0) {
+  renderProfiles();
+}
+
+}); // ✅ CORRECTLY CLOSES DOMContentLoaded AFTER ALL CODE
+console.log("✅ File loaded successfully"); // Now outside (valid)
