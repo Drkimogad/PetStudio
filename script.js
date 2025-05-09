@@ -114,10 +114,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 }
 
 function showDashboard() {
+  // ✅ Hide auth forms
   DOM.authContainer.classList.add('hidden');
+  // ✅ Show dashboard
   DOM.dashboard.classList.remove('hidden');
-  // reset banner/profile state:
-  DOM.fullPageBanner.classList.remove('hidden');
+  // ✅ Hide banner when editing/creating profiles
+  DOM.fullPageBanner.classList.add('hidden');
   DOM.profileSection.classList.add('hidden');
 }
   
