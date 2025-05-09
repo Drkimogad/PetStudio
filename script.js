@@ -141,26 +141,30 @@ DOM.switchToSignup.addEventListener('click', (e) => {
   // ⏳ ADD LOADING STATE
   document.body.classList.add('loading');
   try {
-    // 🔥 INITIALIZE FIREBASE FIRST
+// 🔥 INITIALIZE FIREBASE FIRST
     const firebaseInit = await initializeFirebase();
     auth = firebase.auth(app);
     
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  .then(() => {
-    initAuthListeners();
-    initUI();
-  })
-  .catch((error) => {
-    console.error("Persistence error:", error);
-    showErrorToUser("Authentication system failed to initialize");
+      .then(() => {
+        initAuthListeners();
+        initUI();
+      })
+      .catch((error) => {
+        console.error("Persistence error:", error);
+        showErrorToUser("Authentication system failed to initialize");
+      }); // ✅ CLOSES .catch()
 
-// 🔄 INIT AUTH LISTENERS AFTER FIREBASE
+    // 🔄 INIT AUTH LISTENERS AFTER FIREBASE
     initAuthListeners();
     if (!DOM.authContainer) {
       throw new Error('Auth container element missing');
     }
- }); // ✅ ADD THIS TO CLOSE THE .catch()
-   
+  } catch (error) { // 🚨 ADDED MISSING CATCH FOR TRY BLOCK
+    console.error("Firebase initialization failed:", error);
+    showErrorToUser("Failed to initialize authentication");
+    disableUI();
+  }   
 // 🌟 GIS LOGIN BUTTON HANDLER NEW IMPLEMENTATION 🌟
 function setupGoogleLoginButton() {
   const existingBtn = document.getElementById('googleSignInBtn');
