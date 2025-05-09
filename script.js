@@ -207,11 +207,11 @@ function initializeApp() {
 function initAuthListeners() {
   auth.onAuthStateChanged((user) => {
     if (user) {
-      console.log("✅ Logged in:", user.email);
+      console.log("✅ Logged in:", user.email); // // 🐢 DEBUG LINE
       showDashboard();
       renderProfiles();
     } else {
-      console.log("🚪 Logged out");
+      console.log("🚪 Logged out"); // 🐢 DEBUG LINE
       showAuthForm('login');
     }
   });
@@ -337,18 +337,6 @@ async function checkAuthState() {
   }
 }
   
-// 🟢 CORRECTED AUTH LISTENER
-function initAuthListeners() {
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      showDashboard();
-      renderProfiles();
-    } else {
-      showAuthForm('login');
-    }
-  });
-}
-
 // 🌟 FUNCTION HANDLE AUTH ACTION
 function handleAuthAction() {
   if(auth && provider) {
@@ -1105,18 +1093,23 @@ DOM.loginForm?.addEventListener("submit", (e) => {
   submitBtn.disabled = true;
   submitBtn.textContent = "Logging in...";
 
-  auth.signInWithEmailAndPassword(email, password)
-    .catch((error) => {
-      let msg = "Login failed: ";
-      if (error.code === "auth/wrong-password") msg += "Wrong password";
-      else if (error.code === "auth/user-not-found") msg += "User not found";
-      else msg += error.message;
-      alert(msg);
-    })
-    .finally(() => {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Login";
-    });
+auth.signInWithEmailAndPassword(email, password)
+  .then((userCredential) => {  // ✅ ADD THIS .then() BLOCK
+    // FORCE UI UPDATE FOR EDGE CASES WHERE AUTH LISTENER IS DELAYED
+    showDashboard();
+    renderProfiles();
+  })
+  .catch((error) => {
+    let msg = "Login failed: ";
+    if (error.code === "auth/wrong-password") msg += "Wrong password";
+    else if (error.code === "auth/user-not-found") msg += "User not found";
+    else msg += error.message;
+    alert(msg);
+  })
+  .finally(() => {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Login";
+  });
 });
 
 
