@@ -922,3 +922,23 @@ body.loading::after {
   transform: translate(-50%, -50%);
   font-size: 1.5rem;
 }
+
+/* recently added */     
+/* Ensure initial hidden state */
+#petList {
+  display: none;
+}
+
+/* Profile section visibility */
+#profileSection.hidden {
+  display: none;
+}
+
+/* Banner transitions */
+.banner {
+  transition: opacity 0.3s ease;
+}
+.banner.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
