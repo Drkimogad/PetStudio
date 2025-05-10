@@ -114,16 +114,37 @@ document.addEventListener('DOMContentLoaded', async function() {
 }
 
 function showDashboard() {
-  // ✅ Hide auth forms
+  // Always show these elements
   DOM.authContainer.classList.add('hidden');
-  // ✅ Show dashboard
   DOM.dashboard.classList.remove('hidden');
-  // ✅ Hide banner when editing/creating profiles
-  DOM.fullPageBanner.classList.add('hidden');
+  DOM.addPetProfileBtn.classList.remove('hidden');
+  DOM.fullPageBanner.classList.remove('hidden');
+
+  // Always hide these initially
   DOM.profileSection.classList.add('hidden');
+  DOM.petList.classList.add('hidden');
+  
+  // Only show pet list if profiles exist
+  if(petProfiles.length > 0) {
+    DOM.petList.classList.remove('hidden');
+    renderProfiles();
+  }
 }
   
 // UI Listeners
+  DOM.addPetProfileBtn?.addEventListener("click", (e) => {
+  e.preventDefault();
+  // Hide banner and show form
+  DOM.fullPageBanner.classList.add('hidden');
+  DOM.profileSection.classList.remove('hidden');
+  
+  // If profiles exist, show them
+  if(petProfiles.length > 0) {
+    DOM.petList.classList.remove('hidden');
+    renderProfiles();
+  }
+});
+  
    DOM.switchToLogin.addEventListener('click', (e) => {
      e.preventDefault();
      showAuthForm('login');
@@ -1039,8 +1060,8 @@ const newProfile = {
 localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
 // Hide the form and banner
 DOM.profileSection.classList.add("hidden");
-// Reset form fields
-DOM.profileForm.reset();
+DOM.petList.classList.remove("hidden"); // Always show after submission
+
 // Re-render profiles
 renderProfiles();
 window.scrollTo(0, 0); 
@@ -1056,20 +1077,23 @@ DOM.signupForm?.addEventListener("submit", (e) => {
   const password = DOM.signupForm.querySelector("#signupPassword").value.trim();
   const email = `${username}@petstudio.com`;
 
-  if (!username || !password) {
-    showAuthError("Please fill all fields");
-    isSignupInProgress = false;
-    return;
-  }
-
   auth.createUserWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      // ✅ Success: Show confirmation and let auth listener handle redirection
-      showErrorToUser("Account created successfully! Redirecting...");
-      // 🚫 Remove signOut() and login form switching
+    .then(() => {
+      // Force logout after signup
+      return auth.signOut();
+    })
+    .then(() => {
+      // Redirect to login with success message
+      showAuthForm('login');
+      showErrorToUser("Account created! Please login", true);
+      // Pre-fill login form
+      document.getElementById("loginEmail").value = username;
+      document.getElementById("loginPassword").value = password;
     })
     .catch((error) => {
       showAuthError(error.message);
+    })
+    .finally(() => {
       isSignupInProgress = false;
     });
 });
