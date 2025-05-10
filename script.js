@@ -292,15 +292,20 @@ if(urlParams.has('profile')) {
     DOM.petList?.classList.add('empty-state');
   }
 
-// 🌟 ERROR HANDLING ❌
-function showErrorToUser(message) {
+// 🌟 SHOW ERROR TO USERS ❌
+function showErrorToUser(message, isSuccess = false) {
   try {
     const errorDiv = document.getElementById('error-message');
-    if(errorDiv) {
-      errorDiv.textContent = message;
-      errorDiv.style.display = 'block';
+    if (!errorDiv) {
+      const newErrorDiv = document.createElement('div');
+      newErrorDiv.id = 'error-message';
+      newErrorDiv.className = isSuccess ? 'success-message' : 'auth-error';
+      newErrorDiv.textContent = message;
+      document.querySelector('#authContainer').prepend(newErrorDiv);
     } else {
-      alert(message);
+      errorDiv.textContent = message;
+      errorDiv.className = isSuccess ? 'success-message' : 'auth-error';
+      errorDiv.style.display = 'block';
     }
   } catch (fallbackError) {
     alert(message);
@@ -1043,7 +1048,6 @@ window.scrollTo(0, 0);
   
 // 🟢🟢🟢AUTH FUNCTIONS🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢    
 // 🔼 Sign Up Handler🌟🌟🌟
-// 🌱 [SIGNUP] Username → username@petstudio.com (with auto-logout and login prefill)
 DOM.signupForm?.addEventListener("submit", (e) => {
   e.preventDefault();
   isSignupInProgress = true;
@@ -1059,16 +1063,10 @@ DOM.signupForm?.addEventListener("submit", (e) => {
   }
 
   auth.createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      // ✅ Show login form instead
-      showAuthForm('login');
-
-      // ✅ Prefill login form with same credentials
-      document.getElementById("loginEmail").value = username;
-      document.getElementById("loginPassword").value = password;
-
-      // ✅ Logout silently to prevent auto-login
-      return auth.signOut();
+    .then((userCredential) => {
+      // ✅ Success: Show confirmation and let auth listener handle redirection
+      showErrorToUser("Account created successfully! Redirecting...");
+      // 🚫 Remove signOut() and login form switching
     })
     .catch((error) => {
       showAuthError(error.message);
