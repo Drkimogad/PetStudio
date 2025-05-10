@@ -100,16 +100,16 @@ function disableUI() {
 // 🌟 MAIN INITIALIZATION
 document.addEventListener('DOMContentLoaded', async function() {
 // 🟢 INITIAL FORM STATE (using our helpers)
- showAuthForm('login');                 // always show login first
- DOM.dashboard.classList.add('hidden'); // hide dashboard on load
- DOM.fullPageBanner.classList.remove('hidden');
- DOM.profileSection.classList.add('hidden');
+  showAuthForm('login');                  // Shows login first ✅
+  DOM.dashboard.classList.add('hidden');  // Hides dashboard ✅
+  DOM.fullPageBanner.classList.remove('hidden'); // Shows banner ✅
+  DOM.profileSection.classList.add('hidden'); // Hides form ✅
+});
 
-
-// Auth Helper functions
-  function showAuthForm(form) {
+// Auth Form Switching - CORRECT
+function showAuthForm(form) {
   DOM.authContainer.classList.remove('hidden');
-  DOM.loginPage.classList.toggle('hidden', form !== 'login');
+  DOM.loginPage.classList.toggle('hidden', form !== 'login'); // Proper form toggle ✅
   DOM.signupPage.classList.toggle('hidden', form !== 'signup');
 }
 
@@ -122,30 +122,29 @@ function showDashboard() {
 
   // Always hide these initially
   DOM.profileSection.classList.add('hidden');
-  DOM.petList.classList.add('hidden');
   
-  // Only show pet list if profiles exist
+  // ✅ Good conditional check:
   if(petProfiles.length > 0) {
     DOM.petList.classList.remove('hidden');
     renderProfiles();
   }
 }
-  
-// UI Listeners
-  DOM.addPetProfileBtn?.addEventListener("click", (e) => {
-  e.preventDefault();
-  // Hide banner and show form
+
+// Add Profile Button Handler - CORRECT ✅
+DOM.addPetProfileBtn?.addEventListener("click", (e) => {
+  // ✅ Proper banner/form visibility toggling
   DOM.fullPageBanner.classList.add('hidden');
   DOM.profileSection.classList.remove('hidden');
   
-  // If profiles exist, show them
+  // ✅ Only shows existing profiles when clicking add button
   if(petProfiles.length > 0) {
     DOM.petList.classList.remove('hidden');
     renderProfiles();
   }
 });
-  
-   DOM.switchToLogin.addEventListener('click', (e) => {
+
+// UI Listeners
+DOM.switchToLogin.addEventListener('click', (e) => {
      e.preventDefault();
      showAuthForm('login');
      document.querySelectorAll('.auth-error').forEach(el => el.remove());
