@@ -1,4 +1,25 @@
 // auth.js - Combined version with initialization
+console.log("Auth.js loading...");
+console.log("DOM elements:", {
+  authContainer: document.getElementById("authContainer"),
+  signupPage: document.getElementById("signupPage"),
+  loginPage: document.getElementById("loginPage"),
+  dashboard: document.getElementById("dashboard"),
+  logoutBtn: document.getElementById("logoutBtn"),
+  signupForm: document.getElementById("signupForm"),
+  loginForm: document.getElementById("loginForm"),
+  switchToLogin: document.getElementById("switchToLogin"),
+  switchToSignup: document.getElementById("switchToSignup"),
+  addPetProfileBtn: document.getElementById("addPetProfileBtn"),
+  profileSection: document.getElementById("profileSection"),
+  petList: document.getElementById("petList"),
+  fullPageBanner: document.getElementById("fullPageBanner"),
+  profileForm: document.getElementById("profileForm")
+});
+
+if (!document.getElementById("authContainer")) {
+  console.error("Critical: authContainer element missing!");
+}
 
 // ====== DOM Elements ======
 const DOM = {
