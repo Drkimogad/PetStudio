@@ -1,3 +1,8 @@
+// 🔶DECLARE GLOBALS🔶🔶🔶
+  let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+  let isEditing = false;
+  let currentEditIndex = null;
+
 window.DOM = {
   authContainer:  document.getElementById("authContainer"),
   signupPage:     document.getElementById("signupPage"),
