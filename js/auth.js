@@ -227,18 +227,20 @@ function setupLogoutButton() {
 // ====== Initialization ======
 async function initializeAuth() {
   try {
-    // Initialize Firebase first
+    // 1. Load Google APIs
+    loadGoogleAPIs();
+    
+    // 2. Initialize Firebase
     const { auth } = await initializeFirebase();
     
-    // Verify auth exists before setting persistence
-    if (!auth) throw new Error("Firebase auth not initialized");
-    
+    // 3. Set persistence
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     
-    // Rest of your initialization
+    // 4. Initialize auth listeners
     initAuthListeners();
-    setupAuthForms();
-    setupLogoutButton();
+    
+    // 5. Set up UI
+    showAuthForm('login');
     
   } catch (error) {
     console.error("Auth initialization failed:", error);
@@ -246,11 +248,9 @@ async function initializeAuth() {
   }
 }
 
-// Start auth initialization when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
+// Start initialization when DOM is ready
+if (document.readyState === 'complete') {
   initializeAuth();
-  showAuthForm('login');
-  DOM.dashboard.classList.add('hidden');
-  DOM.fullPageBanner.classList.remove('hidden');
-  DOM.profileSection.classList.add('hidden');
-});
+} else {
+  document.addEventListener('DOMContentLoaded', initializeAuth);
+}
