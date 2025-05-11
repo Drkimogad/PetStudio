@@ -154,9 +154,7 @@ DOM.switchToSignup.addEventListener('click', (e) => {
     showAuthForm('signup');
     document.querySelectorAll('.auth-error').forEach(el => el.remove());
   });
-
   
-//🌟
 // 🌟 Initialize App (wrap all top-level awaits in one async function)
 async function initApp() {
   // Load essentials and QR modal
@@ -176,10 +174,11 @@ async function initApp() {
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     initAuthListeners();
     initUI();
-  }
-  catch (error) {
-    console.error("Initialization error:", error);
-    showErrorToUser("Initialization failed. Please refresh."); // user feedback
+  } catch (error) {
+    // 🚨 CATCH BLOCK (balanced braces ensure no syntax error)
+    console.error("Firebase initialization failed:", error);
+    showErrorToUser("Failed to initialize authentication");
+    disableUI();
   }
 }
 
