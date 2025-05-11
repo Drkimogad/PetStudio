@@ -1,19 +1,40 @@
-window.DOM = {
-  authContainer:  document.getElementById("authContainer"),
-  signupPage:     document.getElementById("signupPage"),
-  loginPage:      document.getElementById("loginPage"),
-  dashboard:      document.getElementById("dashboard"),
-  logoutBtn:      document.getElementById("logoutBtn"),
-  signupForm:     document.getElementById("signupForm"),
-  loginForm:      document.getElementById("loginForm"),
-  switchToLogin:  document.getElementById("switchToLogin"),
+// DOM Elements
+const DOM = {
+  authContainer: document.getElementById("authContainer"),
+  signupPage: document.getElementById("signupPage"),
+  loginPage: document.getElementById("loginPage"),
+  dashboard: document.getElementById("dashboard"),
+  logoutBtn: document.getElementById("logoutBtn"),
+  signupForm: document.getElementById("signupForm"),
+  loginForm: document.getElementById("loginForm"),
+  switchToLogin: document.getElementById("switchToLogin"),
   switchToSignup: document.getElementById("switchToSignup"),
-  addPetProfileBtn:  document.getElementById("addPetProfileBtn"),
-  profileSection:    document.getElementById("profileSection"),
-  petList:           document.getElementById("petList"),
-  fullPageBanner:    document.getElementById("fullPageBanner"),
-  profileForm:       document.getElementById("profileForm"),
+  addPetProfileBtn: document.getElementById("addPetProfileBtn"),
+  profileSection: document.getElementById("profileSection"),
+  petList: document.getElementById("petList"),
+  fullPageBanner: document.getElementById("fullPageBanner"),
+  profileForm: document.getElementById("profileForm")
 };
+
+// Auth Form Switching
+function showAuthForm(form) {
+  DOM.authContainer.classList.remove('hidden');
+  DOM.loginPage.classList.toggle('hidden', form !== 'login');
+  DOM.signupPage.classList.toggle('hidden', form !== 'signup');
+}
+
+function showDashboard() {
+  DOM.authContainer.classList.add('hidden');
+  DOM.dashboard.classList.remove('hidden');
+  DOM.addPetProfileBtn.classList.remove('hidden');
+  DOM.fullPageBanner.classList.remove('hidden');
+  DOM.profileSection.classList.add('hidden');
+  
+  if(petProfiles.length > 0) {
+    DOM.petList.classList.remove('hidden');
+    renderProfiles();
+  }
+}
 
 (function () {
   let auth = null;
