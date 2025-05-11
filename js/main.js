@@ -1,5 +1,12 @@
 //🌟 Main Application Initialization 🌟
-
+// Start the application
+document.addEventListener('DOMContentLoaded', async function() {
+  // These functions are now available from auth.js
+  showAuthForm('login');
+  DOM.dashboard.classList.add('hidden');
+  DOM.fullPageBanner.classList.remove('hidden');
+  DOM.profileSection.classList.add('hidden');
+  
 // Main initialization function
 async function main() {
   return new Promise((resolve, reject) => {
