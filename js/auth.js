@@ -230,13 +230,19 @@ function setupLogoutButton() {
 // ====== Initialization ======
 async function initializeAuth() {
   try {
-    loadGoogleAPIs();
-    await initializeFirebase();
+    // Initialize Firebase first
+    const { auth } = await initializeFirebase();
+    
+    // Verify auth exists before setting persistence
+    if (!auth) throw new Error("Firebase auth not initialized");
+    
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    
+    // Rest of your initialization
     initAuthListeners();
     setupAuthForms();
     setupLogoutButton();
-    setupGoogleLoginButton();
+    
   } catch (error) {
     console.error("Auth initialization failed:", error);
     Utils.disableUI();
