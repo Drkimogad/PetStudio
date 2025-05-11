@@ -1,6 +1,4 @@
 //🌟 QR Code Management 🌟
-let currentQRProfile = null;
-
 // Generate QR code
 function generateQRCode(profileIndex) {
   const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
