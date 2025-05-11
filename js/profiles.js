@@ -1,7 +1,4 @@
 //🌟 Pet Profile Management 🌟
-let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-let isEditing = false;
-let currentEditIndex = null;
 
 // Render all pet profiles
 function renderProfiles() {
