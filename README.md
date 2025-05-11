@@ -42,6 +42,20 @@ Dashboard: Once logged in, users can create new pet profiles or manage existing 
 Pet Profiles: The app displays a list of pet profiles with the option to delete or print them.
 Profile Management: Users can upload photos, edit pet details, and store them in their local storage..
 
+# js
+│
+├── auth.js              → handles login/signup/logout
+├── firebase.js          → Firebase init and auth listeners
+├── drive.js             → Google Drive integration
+├── profiles.js          → pet profile creation, editing, rendering
+├── mood.js              → mood tracking logic
+├── qr.js                → QR code generation & sharing
+├── notifications.js     → push notifications logic
+├── utils.js             → helper functions (date formatting, countdown, etc.)
+├── dom.js               → global DOM references
+└── main.js              → main entry point (calls init, sets up events)
+
+
 ## License
 
 This project is licensed under the [Proprietary License](LICENSE).
