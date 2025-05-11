@@ -44,9 +44,6 @@
         defer
 </script>
 
-<!-- Google API Loaders  MOVED TO AUTH.INIT.JS TO AVOID CSP VIOLATION-->
-    <!-- Third-Party Libraries -->
-   <!-- Replace the existing html2canvas script with this -->
     <script 
       src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" 
       integrity="sha256-6H5VB5QyLldKH9oMFUmjxw2uWpPZETQXpCkBaDjquMs=" 
@@ -198,9 +195,8 @@
     <script src="js/auth.js"></script>
 
     <!-- 2. Feature modules (depend on auth/DOM being available) -->
-    <script src="js/drive.js"></script>
+    <script src="js/googledrive.js"></script>
     <script src="js/profiles.js"></script>
-    <script src="js/qr.js"></script>
     <script src="js/notifications.js"></script>
 
     <!-- 3. Main last (initializes everything + contains utils) -->
