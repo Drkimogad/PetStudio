@@ -84,6 +84,74 @@
     }
   }
 
+// 🔼 Sign Up Handler🌟🌟🌟
+DOM.signupForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  isSignupInProgress = true;
+
+  const username = DOM.signupForm.querySelector("#signupEmail").value.trim();
+  const password = DOM.signupForm.querySelector("#signupPassword").value.trim();
+  const email = `${username}@petstudio.com`;
+
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      // Force logout after signup
+      return auth.signOut();
+    })
+    .then(() => {
+      // Redirect to login with success message
+      showAuthForm('login');
+      showErrorToUser("Account created! Please login", true);
+      // Pre-fill login form
+      document.getElementById("loginEmail").value = username;
+      document.getElementById("loginPassword").value = password;
+    })
+    .catch((error) => {
+      showAuthError(error.message);
+    })
+    .finally(() => {
+      isSignupInProgress = false;
+    });
+});
+
+  
+// 🔼 Login Handler 🌟🌟🌟
+DOM.loginForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const username = DOM.loginForm.querySelector("#loginEmail")?.value.trim();
+  const password = DOM.loginForm.querySelector("#loginPassword")?.value.trim();
+  const email = `${username}@petstudio.com`;
+
+  if (!username || !password) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  const submitBtn = DOM.loginForm.querySelector("button[type='submit']");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Logging in...";
+
+auth.signInWithEmailAndPassword(email, password)
+  .then((userCredential) => {  // ✅ ADD THIS .then() BLOCK
+    // FORCE UI UPDATE FOR EDGE CASES WHERE AUTH LISTENER IS DELAYED
+    showDashboard();
+    renderProfiles();
+  })
+  .catch((error) => {
+    let msg = "Login failed: ";
+    if (error.code === "auth/wrong-password") msg += "Wrong password";
+    else if (error.code === "auth/user-not-found") msg += "User not found";
+    else msg += error.message;
+    alert(msg);
+  })
+  .finally(() => {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Login";
+  });
+});
+
+  
   // Logout handler
   function setupLogoutButton() {
     DOM.logoutBtn?.addEventListener("click", async (e) => {
