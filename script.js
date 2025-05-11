@@ -157,25 +157,34 @@ DOM.switchToSignup.addEventListener('click', (e) => {
 
   
 //🌟
-  await loadEssentialScripts();
-  initQRModal();
-  console.log("App fully initialized");
-  // ⏳ ADD LOADING STATE
+// 🌟 Initialize App (wrap all top-level awaits in one async function)
+async function initApp() {
+  // Load essentials and QR modal
+  await loadEssentialScripts();             // 🚀 same as before
+  initQRModal();                            // ⭐️ no change
+  console.log("App fully initialized");     // 📝 same log
+
+  // ⏳ Show loading state
   document.body.classList.add('loading');
+
   try {
-// 🔥 INITIALIZE FIREBASE FIRST
+    // 🔥 Initialize Firebase and set up auth
     const firebaseInit = await initializeFirebase();
     auth = firebase.auth(app);
-    
-    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .then(() => {
-        initAuthListeners();
-        initUI();
-      })
-      .catch((error) => {
-        console.error("Persistence error:", error);
-        showErrorToUser("Authentication system failed to initialize");
-      }); // ✅ CLOSES .catch()
+
+    // Persist login locally, then wire up auth listeners & UI
+    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    initAuthListeners();
+    initUI();
+  }
+  catch (error) {
+    console.error("Initialization error:", error);
+    showErrorToUser("Initialization failed. Please refresh."); // user feedback
+  }
+}
+
+// Kick off the async init
+initApp();
 
     // 🔄 INIT AUTH LISTENERS AFTER FIREBASE
     initAuthListeners();
