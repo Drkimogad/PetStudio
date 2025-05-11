@@ -1,4 +1,16 @@
-// auth.js - Combined version with initialization
+// GLOBAL DECLARATIONS- AUTH-INITIALIZATION
+// GLOBAL DECLARATIONS 
+let currentQRProfile = null;
+let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+let isEditing = false;
+let currentEditIndex = null;
+// ====== Auth State ======
+let auth = null;
+let provider = null;
+let isSignupInProgress = false;
+
+
+// CONSOLE LOG
 console.log("Auth.js loading...");
 console.log("DOM elements:", {
   authContainer: document.getElementById("authContainer"),
@@ -38,11 +50,6 @@ const DOM = {
   fullPageBanner: document.getElementById("fullPageBanner"),
   profileForm: document.getElementById("profileForm")
 };
-
-// ====== Auth State ======
-let auth = null;
-let provider = null;
-let isSignupInProgress = false;
 
 // ====== Core Functions ======
 function showAuthForm(form) {
