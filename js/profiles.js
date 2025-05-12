@@ -263,6 +263,7 @@ async function sharePetCard(profile) {
       shareBtn.disabled = false;
     }
   }
+} // <-- THIS WAS MISSING (closing brace for sharePetCard)
 
 //🌟 QR Code Management 🌟
 // Generate QR code
