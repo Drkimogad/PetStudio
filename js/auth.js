@@ -111,27 +111,22 @@ async function initializeFirebase() {
     messagingSenderId: "540185558422",
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
   };
-  
-  // Initialize Firebase (if not already initialized)
+
+  // Initialize Firebase if not already initialized
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
 
-  // Set global auth reference
-  auth = firebase.auth();  // ✅ Use the global `auth` variable
-  provider = new firebase.auth.GoogleAuthProvider();
-  
-  return auth; // Return only auth (app not needed)
+  // Return the auth instance directly
+  return {
+    auth: firebase.auth(),
+    provider: new firebase.auth.GoogleAuthProvider()
+  };
 }
 
 // ====== Auth Listeners ======
-function initAuthListeners() {
-  // Check if auth is properly initialized before setting up listeners
-  if (auth === null) {
-    console.error("Auth is not initialized!");
-    return;
-  }
-  auth.onAuthStateChanged((user) => {
+function initAuthListeners(authInstance) {
+  authInstance.onAuthStateChanged((user) => {
     if (user) {
       console.log("✅ Logged in:", user.email);
       showDashboard();
@@ -264,22 +259,30 @@ async function initializeAuth() {
     // 1. Load Google APIs
     loadGoogleAPIs();
 
-    // 2. Initialize Firebase and get auth instance
-    auth = await initializeFirebase(); // ✅ Assign to global `auth`
-    window.auth = auth; // Optional: Expose to window for debugging
-
+    // 2. Initialize Firebase
+    const { auth, provider } = await initializeFirebase();
+    
     // 3. Set persistence
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
     // 4. Initialize auth listeners
-    initAuthListeners();
+    initAuthListeners(auth); // Pass auth as parameter
 
     // 5. Set up UI
     showAuthForm('login');
+    
+    return { auth, provider }; // Return auth for other modules
   } catch (error) {
     console.error("Auth initialization failed:", error);
-    disableUI(); // Use your existing disable function
+    disableUI();
+    throw error; // Re-throw for calling code
   }
+}
+
+// Add Loading States:
+function showLoading(state) {
+  document.getElementById('loadingIndicator').style.display = 
+    state ? 'block' : 'none';
 }
 
 // Start initialization when DOM is ready
