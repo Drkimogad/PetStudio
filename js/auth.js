@@ -113,13 +113,18 @@ async function initializeFirebase() {
   };
   
   const app = firebase.initializeApp(firebaseConfig);
-  auth = firebase.auth(app);
+  const auth = firebase.auth(app);  // Initialize auth object here
   provider = new firebase.auth.GoogleAuthProvider();
   return { app, auth };
 }
 
 // ====== Auth Listeners ======
 function initAuthListeners() {
+  // Check if auth is properly initialized before setting up listeners
+  if (auth === null) {
+    console.error("Auth is not initialized!");
+    return;
+  }
   auth.onAuthStateChanged((user) => {
     if (user) {
       console.log("✅ Logged in:", user.email);
@@ -252,19 +257,19 @@ async function initializeAuth() {
   try {
     // 1. Load Google APIs
     loadGoogleAPIs();
-    
-    // 2. Initialize Firebase
-    const { auth } = await initializeFirebase();
-    
+
+    // 2. Initialize Firebase and get auth instance
+    const { auth } = await initializeFirebase(); // Ensure auth is initialized
+    window.auth = auth; // Set global auth reference
+
     // 3. Set persistence
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    
+
     // 4. Initialize auth listeners
     initAuthListeners();
-    
+
     // 5. Set up UI
     showAuthForm('login');
-    
   } catch (error) {
     console.error("Auth initialization failed:", error);
     Utils.disableUI();
