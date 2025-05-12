@@ -112,10 +112,16 @@ async function initializeFirebase() {
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
   };
   
-  const app = firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth(app);  // Initialize auth object here
+  // Initialize Firebase (if not already initialized)
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  // Set global auth reference
+  auth = firebase.auth();  // ✅ Use the global `auth` variable
   provider = new firebase.auth.GoogleAuthProvider();
-  return { app, auth };
+  
+  return auth; // Return only auth (app not needed)
 }
 
 // ====== Auth Listeners ======
@@ -259,8 +265,8 @@ async function initializeAuth() {
     loadGoogleAPIs();
 
     // 2. Initialize Firebase and get auth instance
-    const { auth } = await initializeFirebase(); // Ensure auth is initialized
-    window.auth = auth; // Set global auth reference
+    auth = await initializeFirebase(); // ✅ Assign to global `auth`
+    window.auth = auth; // Optional: Expose to window for debugging
 
     // 3. Set persistence
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
@@ -272,7 +278,7 @@ async function initializeAuth() {
     showAuthForm('login');
   } catch (error) {
     console.error("Auth initialization failed:", error);
-    Utils.disableUI();
+    disableUI(); // Use your existing disable function
   }
 }
 
