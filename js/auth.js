@@ -1,14 +1,30 @@
 // GLOBAL DECLARATIONS- AUTH-INITIALIZATION
-// GLOBAL DECLARATIONS 
+// 🔶 GLOBAL DECLARATIONS🔶🔶🔶
+let auth = null;
+let provider = null;
+let isSignupInProgress = false;
 let currentQRProfile = null;
 let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 let isEditing = false;
 let currentEditIndex = null;
-// ====== Auth State ======
-let auth = null;
-let provider = null;
-let isSignupInProgress = false;
 
+// 🔶 State Management🔶🔶🔶
+const VALID_ORIGINS = [
+  'https://drkimogad.github.io',
+  'https://drkimogad.github.io/PetStudio'
+];
+// Runtime origin check
+if (!VALID_ORIGINS.includes(window.location.origin)) {
+  window.location.href = 'https://drkimogad.github.io/PetStudio';
+}
+// HELPER FUNCTION DISABLE UI (MOVE TO TOP)    
+function disableUI() {
+   document.body.innerHTML = `
+    <h1 style="color: red; padding: 2rem; text-align: center">
+      Critical Error: Failed to load application interface
+    </h1>
+  `;
+}
 
 // CONSOLE LOG
 console.log("Auth.js loading...");
