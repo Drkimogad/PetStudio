@@ -139,7 +139,9 @@ function initAuthListeners(authInstance) {
 }
 
 // ====== Google Login Button ======
-function setupGoogleLoginButton() {
+function setupGoogleLoginButton(auth) {
+  btn.addEventListener("click", () => auth.signInWithPopup(provider));
+  
   const existingBtn = document.getElementById('googleSignInBtn');
   if (existingBtn) existingBtn.remove();
 
@@ -246,6 +248,7 @@ function setupLogoutButton() {
     e.preventDefault();
     try {
       await auth.signOut();
+      delete window._tempAuth; // Clean up
       window.location.href = '/PetStudio/';
     } catch (error) {
       console.error('Logout failed:', error);
