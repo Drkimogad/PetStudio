@@ -112,17 +112,29 @@ async function initApp() {
   try {
     await loadEssentialScripts();
     initQRModal();
-    const firebaseInit = await initializeFirebase();
-    auth = firebase.auth(app);
+    
+    // Initialize Firebase and get auth instance
+    const { auth } = await initializeFirebase();  // Modified to return auth directly
+    
+    // Store auth for other functions (without making it fully global)
+    window._tempAuth = auth;
+    
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    initAuthListeners();
+    
+    // Initialize auth-dependent components
+    initAuthListeners(auth);  // Pass auth as parameter
+    setupGoogleLoginButton(auth);
+    setupAuthForms(auth);
+    setupLogoutButton(auth);
+    
     initUI();
   } catch (error) {
     console.error("Initialization failed:", error);
-    showErrorToUser("Failed to initialize authentication");
-    disableUI();
+    Utils.showErrorToUser("Failed to initialize authentication");
+    Utils.disableUI();
   } finally {
     document.body.classList.remove('loading');
+    delete window._tempAuth; // Clean up temporary reference
   }
 }
 
@@ -164,9 +176,14 @@ async function initializeFirebase() {
     messagingSenderId: "540185558422",
     appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
   };
-  const app = firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth(app);
-  return { app, auth };
+
+  // Initialize only if not already initialized
+  const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+  
+  return {
+    auth: firebase.auth(app),
+    provider: new firebase.auth.GoogleAuthProvider()
+  };
 }
 
 // Initialize UI
@@ -184,10 +201,17 @@ async function checkAuthState() {
   
 // ================= INITIALIZATION =================
 document.addEventListener('DOMContentLoaded', async function() {
+  // Show initial UI state
   showAuthForm('login');
   DOM.dashboard.classList.add('hidden');
   DOM.fullPageBanner.classList.remove('hidden');
   DOM.profileSection.classList.add('hidden');
   
-  initApp();
+  // Initialize app
+  await initApp();
+  
+  // Optional: Load profiles after auth is ready
+  if (window._tempAuth?.currentUser) {
+    renderProfiles();
+  }
 });
