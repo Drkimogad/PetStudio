@@ -187,16 +187,17 @@
     <footer>
         <p>&copy; 2024 PetStudio. All rights reserved.</p>
     </footer>
-    <!-- 1. Auth first (contains DOM references and auth functions) -->
-    <script src="./js/auth.js"></script>
+    
+    <!-- 1. Auth first -->
+    <script src="./js/auth.js" defer></script>
 
-    <!-- 2. Feature modules (depend on auth/DOM being available) -->
-    <script src="./js/googledrive.js"></script>
-    <script src="./js/profiles.js"></script>
-    <script src="./js/notifications.js"></script>
+    <!-- 2. Feature modules -->
+    <script src="./js/googledrive.js" defer></script>
+    <script src="./js/profiles.js" defer></script>
+    <script src="./js/notifications.js" defer></script>
 
-    <!-- 3. Main last (initializes everything + contains utils) -->
-    <script src="./js/main.js"></script>
+    <!-- 3. Main last -->
+    <script src="./js/main.js" defer></script>
     
     <!-- In index.html QR Modal (hidden by default -->
 <div id="qr-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000;">
