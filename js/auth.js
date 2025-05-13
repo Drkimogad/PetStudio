@@ -87,16 +87,8 @@ function showDashboard() {
   }
 }
 
-// ====== Google APIs Initialization ======
-function loadGoogleAPIs(callback) {
-  const gsiScript = document.createElement('script');
-  gsiScript.src = 'https://accounts.google.com/gsi/client';
-  gsiScript.async = true;
-  gsiScript.defer = true;
-
-  gsiScript.onload = () => {
-    console.log("✅ GSI client script loaded");
-    
+// ====== Google APIs Initialization ======    
+// google api loading function was removed
     // Initialize Google OAuth client
     window.tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
