@@ -88,18 +88,25 @@ function showDashboard() {
 }
 
 // ====== Google APIs Initialization ======
-function loadGoogleAPIs() {
-  // Simplified version without integrity checks
-  const gapiScript = document.createElement('script');
-  gapiScript.src = 'https://apis.google.com/js/api.js';
-  gapiScript.crossOrigin = 'anonymous';
-
+function loadGoogleAPIs(callback) {
   const gsiScript = document.createElement('script');
   gsiScript.src = 'https://accounts.google.com/gsi/client';
-  gsiScript.crossOrigin = 'anonymous';
+  gsiScript.async = true;
+  gsiScript.defer = true;
 
-  document.head.append(gapiScript, gsiScript);
+  gsiScript.onload = () => {
+    console.log("✅ GSI client script loaded");
+    if (typeof callback === "function") callback();
+  };
+
+  gsiScript.onerror = () => {
+    console.error("❌ Failed to load GSI client script");
+    Utils.showErrorToUser("Failed to load Google Sign-In. Please try again later.");
+  };
+
+  document.head.appendChild(gsiScript);
 }
+
 
 // ====== Firebase Integration ======
 async function initializeFirebase() {
@@ -140,8 +147,6 @@ function initAuthListeners(authInstance) {
 
 // ====== Google Login Button ======
 function setupGoogleLoginButton(auth) {
-  btn.addEventListener("click", () => auth.signInWithPopup(provider));
-  
   const existingBtn = document.getElementById('googleSignInBtn');
   if (existingBtn) existingBtn.remove();
 
@@ -153,6 +158,7 @@ function setupGoogleLoginButton(auth) {
     Continue with Google
   `;
   DOM.authContainer.appendChild(btn);
+
   btn.addEventListener("click", () => {
     if (window.tokenClient) {
       window.tokenClient.requestAccessToken();
@@ -161,6 +167,7 @@ function setupGoogleLoginButton(auth) {
     }
   });
 }
+
 
 // ====== Token Management ======
 async function refreshDriveTokenIfNeeded() {
