@@ -94,24 +94,29 @@ function loadGoogleAPIs(callback) {
   gsiScript.async = true;
   gsiScript.defer = true;
 
-gsiScript.onload = () => {
-  console.log("✅ GSI client script loaded");
-  
-  // Initialize Google OAuth client
-  window.tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com", // Replace with yours!
-    scope: "https://www.googleapis.com/auth/drive.file", // Adjust scopes as needed
-    callback: (tokenResponse) => {
-      if (tokenResponse && tokenResponse.access_token) {
-        console.log("Google token received");
-        // Handle token (e.g., pass to Firebase)
-      }
-    },
-  });
-  
-  if (typeof callback === "function") callback();
-};
+  gsiScript.onload = () => {
+    console.log("✅ GSI client script loaded");
+    
+    // Initialize Google OAuth client
+    window.tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
+      scope: "https://www.googleapis.com/auth/drive.file",
+      callback: (tokenResponse) => {
+        if (tokenResponse && tokenResponse.access_token) {
+          console.log("Google token received");
+        }
+      },
+    });
+    
+    if (typeof callback === "function") callback();
+  }; // THIS BRACE WAS MISSING
 
+  gsiScript.onerror = () => {
+    console.error("❌ Failed to load GSI client script");
+  };
+
+  document.head.appendChild(gsiScript);
+}
 
 // ====== Firebase Integration ======
 async function initializeFirebase() {
