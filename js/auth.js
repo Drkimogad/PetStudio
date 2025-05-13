@@ -94,18 +94,23 @@ function loadGoogleAPIs(callback) {
   gsiScript.async = true;
   gsiScript.defer = true;
 
-  gsiScript.onload = () => {
-    console.log("✅ GSI client script loaded");
-    if (typeof callback === "function") callback();
-  };
-
-  gsiScript.onerror = () => {
-    console.error("❌ Failed to load GSI client script");
-    Utils.showErrorToUser("Failed to load Google Sign-In. Please try again later.");
-  };
-
-  document.head.appendChild(gsiScript);
-}
+gsiScript.onload = () => {
+  console.log("✅ GSI client script loaded");
+  
+  // Initialize Google OAuth client
+  window.tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com", // Replace with yours!
+    scope: "https://www.googleapis.com/auth/drive.file", // Adjust scopes as needed
+    callback: (tokenResponse) => {
+      if (tokenResponse && tokenResponse.access_token) {
+        console.log("Google token received");
+        // Handle token (e.g., pass to Firebase)
+      }
+    },
+  });
+  
+  if (typeof callback === "function") callback();
+};
 
 
 // ====== Firebase Integration ======
@@ -146,28 +151,22 @@ function initAuthListeners(authInstance) {
 }
 
 // ====== Google Login Button ======
-function setupGoogleLoginButton(auth) {
+function setupGoogleLoginButton() {
   const existingBtn = document.getElementById('googleSignInBtn');
   if (existingBtn) existingBtn.remove();
 
-  const btn = document.createElement("button");
-  btn.id = "googleSignInBtn";
-  btn.className = "auth-btn google-btn";
-  btn.innerHTML = `
-    <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google logo">
-    Continue with Google
-  `;
-  DOM.authContainer.appendChild(btn);
-
-  btn.addEventListener("click", () => {
-    if (window.tokenClient) {
-      window.tokenClient.requestAccessToken();
-    } else {
-      Utils.showErrorToUser("Google Identity not ready. Please reload.");
+  // Use Google's official button renderer
+  google.accounts.id.renderButton(
+    document.getElementById("authContainer"), // Target container
+    { 
+      type: "standard",
+      theme: "filled_blue",
+      size: "large",
+      text: "continue_with",
+      shape: "rectangular"
     }
-  });
+  );
 }
-
 
 // ====== Token Management ======
 async function refreshDriveTokenIfNeeded() {
@@ -265,28 +264,10 @@ function setupLogoutButton() {
 
 // ====== Initialization ======
 async function initializeAuth() {
-  try {
-    // 1. Load Google APIs
-    loadGoogleAPIs();
-
-    // 2. Initialize Firebase
-    const { auth, provider } = await initializeFirebase();
-    
-    // 3. Set persistence
-    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-
-    // 4. Initialize auth listeners
-    initAuthListeners(auth); // Pass auth as parameter
-
-    // 5. Set up UI
-    showAuthForm('login');
-    
-    return { auth, provider }; // Return auth for other modules
-  } catch (error) {
-    console.error("Auth initialization failed:", error);
-    disableUI();
-    throw error; // Re-throw for calling code
-  }
+  const { auth, provider } = await initializeFirebase();
+  initAuthListeners(auth);
+  setupGoogleLoginButton(); // Add this line
+  showAuthForm('login');
 }
 
 // Add Loading States:
