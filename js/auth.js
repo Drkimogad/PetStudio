@@ -269,10 +269,28 @@ function setupLogoutButton() {
 
 // ====== Initialization ======
 async function initializeAuth() {
-  const { auth, provider } = await initializeFirebase();
-  initAuthListeners(auth);
-  setupGoogleLoginButton(); // Add this line
-  showAuthForm('login');
+  try {
+    // 1. First load Firebase (since it's essential)
+    const { auth, provider } = await initializeFirebase();
+    
+    // 2. Set up auth listeners early
+    initAuthListeners(auth);
+    
+    // 3. Load Google APIs in parallel
+    await new Promise((resolve) => {
+      loadGoogleAPIs(resolve);
+      setTimeout(resolve, 3000); // Fallback timeout
+    });
+    
+    // 4. Set up UI
+    showAuthForm('login');
+    setupGoogleLoginButton();
+    
+    return { auth, provider };
+  } catch (error) {
+    console.error("Initialization failed:", error);
+    disableUI();
+  }
 }
 
 // Add Loading States:
