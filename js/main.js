@@ -107,26 +107,30 @@ async function main() {
 }
 
 // Initialize app
+// Initialize app
 async function initApp() {
   document.body.classList.add('loading');
   try {
-    await loadEssentialScripts();
+    await loadEssentialScripts();          // still loads GAPI
     initQRModal();
     
     // Initialize Firebase and get auth instance
-    const { auth } = await initializeFirebase();  // Modified to return auth directly
-    
-    // Store auth for other functions (without making it fully global)
+    const { auth } = await initializeFirebase();
     window._tempAuth = auth;
     
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     
-    // Initialize auth-dependent components
-    initAuthListeners(auth);  // Pass auth as parameter
-    setupGoogleLoginButton(auth);
+    // 🔄 Replace main() with refactored logic:
+    await new Promise((resolve) => {
+      loadGoogleAPIs(() => {
+        setupGoogleLoginButton(auth);      // Moved here ✅
+        resolve();
+      });
+    });
+
+    initAuthListeners(auth);
     setupAuthForms(auth);
     setupLogoutButton(auth);
-    
     initUI();
   } catch (error) {
     console.error("Initialization failed:", error);
@@ -134,18 +138,17 @@ async function initApp() {
     Utils.disableUI();
   } finally {
     document.body.classList.remove('loading');
-    delete window._tempAuth; // Clean up temporary reference
+    delete window._tempAuth;
   }
 }
 
 // Load essential scripts
 async function loadEssentialScripts() {
-  await loadGAPI();
-  await main();
-  setupLogoutButton();
+  await loadGAPI();    // Keep this to ensure gapi.client is available
+  setupLogoutButton(); // Run early setup
   return new Promise((resolve) => {
     const checkInterval = setInterval(() => {
-      if(window.firebase?.auth && window.gapi?.client) {
+      if (window.firebase?.auth && window.gapi?.client) {
         clearInterval(checkInterval);
         resolve();
       }
