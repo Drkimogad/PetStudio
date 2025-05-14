@@ -111,54 +111,19 @@
     </style>
 </head>
 <body>   
-    <!-- Auth Container (holds both forms) -->
-    <div id="authContainer">
-        <div id="googleSignInBtn"></div>
-        <!-- Login Page (shown first) -->
-        <div id="loginPage">
-            <div class="auth-header">
-                <h1>PetStudio</h1>
-                <h2>Celebrate your pet's milestones</h2>
-            </div>
-            <form id="loginForm" autocomplete="on" novalidate>
-                <div class="form-group">
-                    <label for="loginEmail">Username:</label>
-                    <input type="text" id="loginEmail" name="email" autocomplete="username" required>
-                    <span class="email-suffix">@petstudio.com</span>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Password:</label>
-                    <input type="password" id="loginPassword" name="password" autocomplete="current-password" required>
-                </div>
-                <button type="submit" class="button">Login</button>
-                <div class="auth-message">Don't have an account?</div>
-                <button id="switchToSignup" class="auth-switch-btn">Create Account</button>
-            </form>
-        </div>
+<!-- Auth Container -->
+<div id="authContainer">
+    <div class="auth-header">
+        <h1>PetStudio</h1>
+        <h2>Capture your pets' special moments and never miss a birthday with PetStudio!</h2>
+    </div>
 
-        <!-- Sign-Up Page (hidden initially) -->
-        <div id="signupPage" class="hidden">
-            <div class="auth-header">
-                <h1>PetStudio</h1>
-                <h2>Create your account</h2>
-            </div>
-            <form id="signupForm" autocomplete="on" novalidate>
-                <div class="form-group">
-                    <label for="signupEmail">Choose a username:</label>
-                    <input type="text" id="signupEmail" name="email" autocomplete="username" required>
-                    <span class="email-suffix">@petstudio.com</span>
-                </div>
-                <div class="form-group">
-                    <label for="signupPassword">Create password:</label>
-                    <input type="password" id="signupPassword" name="password" autocomplete="new-password" required>
-                    <div class="password-hint">(At least 6 characters)</div>
-                </div>
-                <button type="submit" class="button">Sign Up</button>
-                <div class="auth-message">Already have an account?</div>
-                <button id="switchToLogin" class="auth-switch-btn">Back to Login</button>
-            </form>
-        </div>
-    </div>
+    <div id="googleSignInWrapper">
+        <div id="googleSignInBtn"></div>
+        <p class="auth-message">Sign in with your Google account to continue</p>
+    </div>
+</div>
+
 
     <!-- Dashboard -->
     <div id="dashboard" class="hidden">
