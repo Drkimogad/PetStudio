@@ -1,76 +1,73 @@
-//🌟 Google Drive Integration 🌟
+//🌟 Dropbox Integration 🌟
 
-// Get or create Drive folder
-async function getOrCreateDriveFolderId() {
-  const response = await gapi.client.drive.files.list({
-    q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder' and trashed=false",
-    fields: "files(id)",
-    spaces: 'drive'
-  });
-  if(response.result.files.length > 0) {
-    return response.result.files[0].id;
+// Initialize Dropbox SDK
+const dbx = new Dropbox.Dropbox({ accessToken: 'YOUR_ACCESS_TOKEN' });
+
+// Get or create a folder in Dropbox
+async function getOrCreateDropboxFolderId() {
+  try {
+    // Check if 'PetStudio' folder exists
+    const folderMetadata = await dbx.filesListFolder({ path: '' });
+    const folder = folderMetadata.entries.find(entry => entry.name === 'PetStudio');
+
+    if (folder) {
+      return folder.id;
+    }
+
+    // Create 'PetStudio' folder if it doesn't exist
+    const createdFolder = await dbx.filesCreateFolderV2({ path: '/PetStudio' });
+    return createdFolder.metadata.id;
+  } catch (error) {
+    console.error("❌ Dropbox folder creation failed:", error);
+    throw error;
   }
-  const folder = await gapi.client.drive.files.create({
-    resource: {
-      name: 'PetStudio',
-      mimeType: 'application/vnd.google-apps.folder'
-    },
-    fields: 'id'
-  });
-  return folder.result.id;
 }
 
-// Save profile to Drive
-async function saveProfileToDrive(profile) {
+// Save profile to Dropbox
+async function saveProfileToDropbox(profile) {
   try {
-    if(!gapi.client.drive) {
-      throw new Error("Drive API not initialized");
-    }
-    const folderId = await getOrCreateDriveFolderId();
+    const folderId = await getOrCreateDropboxFolderId();
     const fileName = `${profile.name.replace(/\s+/g, "_")}_${profile.id || Date.now()}.json`;
-    const metadata = {
-      name: fileName,
-      mimeType: 'application/json',
-      parents: [folderId]
-    };
+
     const fileContent = JSON.stringify({
       ...profile,
       lastUpdated: new Date().toISOString()
     });
-    const file = await gapi.client.drive.files.create({
-      resource: metadata,
-      media: {
-        mimeType: 'application/json',
-        body: fileContent
-      },
-      fields: 'id,name,webViewLink'
+
+    const fileBlob = new Blob([fileContent], { type: 'application/json' });
+    const fileUploadPath = `/PetStudio/${fileName}`;
+
+    const response = await dbx.filesUpload({
+      path: fileUploadPath,
+      contents: fileBlob
     });
-    console.log("✅ Saved to Drive:", file.result);
-    return file.result;
+
+    console.log("✅ Saved to Dropbox:", response);
+    return response;
   } catch (error) {
-    console.error("❌ Drive save failed:", error);
+    console.error("❌ Dropbox save failed:", error);
     throw error;
   }
 }
 
 // Unified save function
 async function savePetProfile(profile) {
-  if(isEditing) {
+  if (isEditing) {
     petProfiles[currentEditIndex] = profile;
   } else {
     petProfiles.push(profile);
   }
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  
-  const isGoogleUser = auth.currentUser?.providerData?.some(
-    p => p.providerId === 'google.com'
+
+  const isDropboxUser = auth.currentUser?.providerData?.some(
+    p => p.providerId === 'dropbox.com'
   );
-  
-  if(isGoogleUser && gapi.client?.drive) {
+
+  if (isDropboxUser && dbx) {
     try {
-      await saveProfileToDrive(profile);
-    } catch (driveError) {
-      console.warn("⚠️ Drive backup failed. Falling back to Firestore.");
+      await saveProfileToDropbox(profile);
+    } catch (dropboxError) {
+      console.warn("⚠️ Dropbox backup failed. Falling back to Firestore.");
       try {
         await saveToFirestore(profile);
       } catch (firestoreError) {
@@ -84,13 +81,13 @@ async function savePetProfile(profile) {
 async function deleteProfile(index) {
   const profile = petProfiles[index];
   if (!confirm("Are you sure you want to delete this profile?")) return;
-  
-  const fileId = profile.driveFileId;
+
+  const fileId = profile.dropboxFileId;
   if (fileId) {
     try {
-      await deleteProfileFromDrive(fileId, profile.gallery);
-    } catch (driveError) {
-      console.error("Error deleting Drive files:", driveError);
+      await deleteProfileFromDropbox(fileId, profile.gallery);
+    } catch (dropboxError) {
+      console.error("Error deleting Dropbox files:", dropboxError);
     }
   }
 
@@ -99,17 +96,17 @@ async function deleteProfile(index) {
   renderProfiles();
 }
 
-// Delete from Drive
-async function deleteProfileFromDrive(fileId, gallery = []) {
+// Delete from Dropbox
+async function deleteProfileFromDropbox(fileId, gallery = []) {
   if (gallery.length > 0) {
     for (let img of gallery) {
-      await deleteImageFromDrive(img);
+      await deleteImageFromDropbox(img);
     }
   }
 
   try {
-    await gapi.client.drive.files.delete({ fileId });
+    await dbx.filesDeleteV2({ path: `/PetStudio/${fileId}` });
   } catch (error) {
-    console.error('Error deleting profile from Google Drive:', error);
+    console.error('Error deleting profile from Dropbox:', error);
   }
 }
