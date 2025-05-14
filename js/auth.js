@@ -74,7 +74,7 @@ function showDashboard() {
 }
 
 // ====== Google APIs Initialization ======
-// GSI logic removed — using Dropbox only for login now
+// GSI logic removed — using Dropbox only for login now.
 
 // ====== Firebase Integration ======
 async function initializeFirebase() {
