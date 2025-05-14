@@ -1,4 +1,30 @@
 //🌟 Pet Profile Management 🌟
+// Unified save function
+async function savePetProfile(profile) {
+  if (isEditing) {
+    petProfiles[currentEditIndex] = profile;
+  } else {
+    petProfiles.push(profile);
+  }
+  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+
+  const isDropboxUser = auth.currentUser?.providerData?.some(
+    p => p.providerId === 'dropbox.com'
+  );
+
+  if (isDropboxUser && dbx) {
+    try {
+      await saveProfileToDropbox(profile);  // Change from Google to Dropbox
+    } catch (dropboxError) {
+      console.warn("⚠️ Dropbox backup failed. Falling back to Firestore.");
+      try {
+        await saveToFirestore(profile);
+      } catch (firestoreError) {
+        console.error("❌ Firestore fallback also failed:", firestoreError);
+      }
+    }
+  }
+}
 
 // Render all pet profiles
 function renderProfiles() {
