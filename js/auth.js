@@ -73,79 +73,50 @@ function showDashboard() {
   }
 }
 
-// ====== Google APIs Initialization ======    
-function loadGoogleAPIs(callback) {
-  const gsiScript = document.createElement('script');
-  gsiScript.src = 'https://accounts.google.com/gsi/client';
-  gsiScript.async = true;
-  gsiScript.defer = true;
-  gsiScript.onload = () => {
-    console.log("✅ Google Identity Services loaded");
-    
-    // Initialize Google OAuth client
-    window.tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
-      scope: "https://www.googleapis.com/auth/drive.file",
-      callback: (tokenResponse) => {
-        if (tokenResponse && tokenResponse.access_token) {
-          console.log("Google token received");
-        }
-      },
-    });
-    
-    if (typeof callback === "function") callback();
-  };
-
-  gsiScript.onerror = () => {
-    console.error("❌ Failed to load GSI client script");
-  };
-
-  document.head.appendChild(gsiScript);
-}
+// ====== Google APIs Initialization ======
+// GSI logic removed — using Dropbox only for login now
 
 // ====== Firebase Integration ======
 async function initializeFirebase() {
-  const firebaseConfig = {
-    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-    authDomain: "swiftreach2025.firebaseapp.com",
-    projectId: "swiftreach2025",
-    storageBucket: "swiftreach2025.appspot.com",
-    messagingSenderId: "540185558422",
-    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
-  };
+  const firebaseConfig = {
+    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+    authDomain: "swiftreach2025.firebaseapp.com",
+    projectId: "swiftreach2025",
+    storageBucket: "swiftreach2025.appspot.com",
+    messagingSenderId: "540185558422",
+    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
+  };
 
-  // Initialize Firebase if not already initialized
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
 
-  // Return the auth instance directly
-  return {
-    auth: firebase.auth(),
-    provider: new firebase.auth.GoogleAuthProvider()
-  };
+  return {
+    auth: firebase.auth(),
+    provider: new firebase.auth.GoogleAuthProvider()
+  };
 }
 
-// Initialize Firebase and assign auth/provider to global variables
-initializeFirebase().then((res) => {
-  auth = res.auth;
-  provider = res.provider;
-  initAuthListeners(auth); // ✅ start listening for login state
-});
+// Function to authenticate Dropbox and obtain access token
+function authenticateDropbox() {
+  const redirectUri = 'YOUR_REDIRECT_URI';  // Make sure to configure in Dropbox console
+  const clientId = 'YOUR_DROPBOX_CLIENT_ID';
+
+  const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}`;
+  window.location.href = authUrl;
+}
 
 // ====== Auth Listeners ======
 function initAuthListeners(authInstance) {
-  authInstance.onAuthStateChanged((user) => {
-    if (user) {
-      console.log("✅ Logged in:", user.email);
-      showDashboard();
-      renderProfiles();
-    } else {
-      console.log("🚪 Logged out");
-      showAuthForm();
-    }
-  });
+  authInstance.onAuthStateChanged((user) => {
+    if (user) {
+      console.log("✅ Firebase user detected (used for push notifications only):", user.email);
+    } else {
+      console.log("ℹ️ No Firebase user (not required for Dropbox auth).");
+    }
+  });
 }
+
 
 // ====== Google Login Button ======
 function setupGoogleLoginButton() {
