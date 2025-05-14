@@ -165,6 +165,16 @@ function setupGoogleLoginButton() {
   );
 }
 
+// Function to authenticate Dropbox and obtain access token
+function authenticateDropbox() {
+  const redirectUri = 'YOUR_REDIRECT_URI';  // Make sure to set up this in your Dropbox app settings
+  const clientId = 'YOUR_DROPBOX_CLIENT_ID';
+
+  // Redirect to Dropbox OAuth
+  const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}`;
+  window.location.href = authUrl;
+}
+
 // ====== Token Management ======
 async function refreshDriveTokenIfNeeded() {
   try {
