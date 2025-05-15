@@ -17,7 +17,7 @@ if (!VALID_ORIGINS.includes(window.location.origin)) {
   window.location.href = 'https://drkimogad.github.io/PetStudio';
 }
 
-// HELPER FUNCTION DISABLE UI (MOVE TO TOP)    
+// HELPER FUNCTION DISABLE UI (MOVE TO TOP)
 function disableUI() {
    document.body.innerHTML = `
     <h1 style="color: red; padding: 2rem; text-align: center">
@@ -52,47 +52,69 @@ function showDashboard() {
   }
 }
 
+// Added function to handle Dropbox OAuth2 callback
+function handleDropboxCallback() {
+  // Check if the URL contains the access token fragment
+  const hashParams = new URLSearchParams(window.location.hash.substring(1)); // Remove '#'
+  const accessToken = hashParams.get('access_token');
+
+  if (accessToken) {
+    console.log("✅ Dropbox access token obtained:", accessToken);
+    localStorage.setItem('dropboxAccessToken', accessToken); // Store token securely (consider using memory for sensitive apps)
+    window.location.hash = ''; // Clear the fragment from the URL
+    showDashboard(); // Redirect to the dashboard
+  } else {
+    console.warn("⚠️ No Dropbox access token found in URL fragment.");
+  }
+}
+
 // ====== Firebase Integration ======
 async function initializeFirebase() {
-  const firebaseConfig = {
-    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-    authDomain: "swiftreach2025.firebaseapp.com",
-    projectId: "swiftreach2025",
-    storageBucket: "swiftreach2025.appspot.com",
-    messagingSenderId: "540185558422",
-    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
-  };
+  const firebaseConfig = {
+    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+    authDomain: "swiftreach2025.firebaseapp.com",
+    projectId: "swiftreach2025",
+    storageBucket: "swiftreach2025.appspot.com",
+    messagingSenderId: "540185558422",
+    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
+  };
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
 
-  return {
-    auth: firebase.auth(),
-    provider: new firebase.auth.GoogleAuthProvider()
-  };
+  return {
+    auth: firebase.auth(),
+    provider: new firebase.auth.GoogleAuthProvider()
+  };
 }
 
 // Function to authenticate Dropbox and obtain access token
 function authenticateDropbox() {
-  const redirectUri = 'https://drkimogad.github.io/PetStudio/';  // Make sure to configure in Dropbox console
-  const clientId = 'nq7ltevxbxaeped';
+  const existingToken = localStorage.getItem('dropboxAccessToken');
+  if (existingToken) {
+    console.log("ℹ️ Using existing Dropbox access token.");
+    showDashboard();
+    return;
+  }
 
-  const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}`;
-  window.location.href = authUrl;
+  const redirectUri = 'https://drkimogad.github.io/PetStudio/';  // Make sure to configure in Dropbox console
+  const clientId = 'nq7ltevxbxaeped';
+
+  const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}`;
+  window.location.href = authUrl;
 }
 
 // ====== Auth Listeners ======
 function initAuthListeners(authInstance) {
-  authInstance.onAuthStateChanged((user) => {
-    if (user) {
-      console.log("✅ Firebase user detected (used for push notifications only):", user.email);
-    } else {
-      console.log("ℹ️ No Firebase user (not required for Dropbox auth).");
-    }
-  });
+  authInstance.onAuthStateChanged((user) => {
+    if (user) {
+      console.log("✅ Firebase user detected (used for push notifications only):", user.email);
+    } else {
+      console.log("ℹ️ No Firebase user (not required for Dropbox auth).");
+    }
+  });
 }
-
 
 // ====== Google Login Button ======
 function setupGoogleLoginButton() {
@@ -136,6 +158,7 @@ function setupLogoutButton() {
     e.preventDefault();
     try {
       await auth.signOut();
+      localStorage.removeItem('dropboxAccessToken'); // Clear Dropbox token
       delete window._tempAuth; // Clean up
       window.location.href = '/PetStudio/';
     } catch (error) {
@@ -147,19 +170,22 @@ function setupLogoutButton() {
 // ====== Initialization ======
 async function initializeAuth() {
   try {
-    // 1. First load Firebase (since it's essential)
+    // 1. Handle Dropbox OAuth2 callback
+    handleDropboxCallback();
+
+    // 2. First load Firebase (since it's essential)
     const { auth, provider } = await initializeFirebase();
     
-    // 2. Set up auth listeners early
+    // 3. Set up auth listeners early
     initAuthListeners(auth);
     
-    // 3. Load Google APIs in parallel
+    // 4. Load Google APIs in parallel
     await new Promise((resolve) => {
       loadGoogleAPIs(resolve);
       setTimeout(resolve, 3000); // Fallback timeout
     });
     
-    // 4. Set up UI
+    // 5. Set up UI
     showAuthForm();
     setupGoogleLoginButton();
     
