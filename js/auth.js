@@ -83,12 +83,16 @@ function setupLogout() {
 function showDashboard() {
   DOM.authContainer?.classList.add('hidden');
   DOM.dashboard?.classList.remove('hidden');
-  renderPetProfiles(); // Your existing function
+  DOM.logoutBtn?.classList.add('dashboard-visible');
+  DOM.logoutBtn?.style.display = 'block'; // 👈 ensure it’s visible
+  renderPetProfiles();
 }
 
 function showAuthForm() {
   DOM.authContainer?.classList.remove('hidden');
   DOM.dashboard?.classList.add('hidden');
+  DOM.logoutBtn?.classList.remove('dashboard-visible');
+  DOM.logoutBtn?.style.display = 'none'; // 👈 hide it completely
 }
 
 // 🔶 Initialize App 🔶
