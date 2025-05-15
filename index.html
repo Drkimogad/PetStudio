@@ -33,24 +33,7 @@
     base-uri 'self';
     form-action 'self';
     worker-src 'self'">
-    
-<!-- Preload critical resources -->
-<link rel="preconnect" href="https://accounts.google.com">
-<link rel="preconnect" href="https://apis.google.com">
-<link rel="preload" href="https://accounts.google.com/gsi/client" as="script">
-
-<script>
-  window.handleScriptError = (error) => {
-    console.error('Script failed to load:', error);
-    document.getElementById('authContainer').innerHTML = `
-      <div class="error-message">
-        <h2>Application Error</h2>
-        <p>Failed to load required resources. Please refresh or try again later.</p>
-      </div>
-    `;
-  };
-</script>
-    
+       
 <!-- Firebase Core SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
@@ -138,7 +121,7 @@
     <script src="./js/auth.js" defer onerror="handleScriptError(event)"></script>
     
     <!-- 2. Feature modules -->
-    <script src="./js/googledrive.js" defer></script>
+    <script src="./js/dropbox.js" defer></script>
     <script src="./js/profiles.js" defer></script>
     <script src="./js/notifications.js" defer></script>
 
