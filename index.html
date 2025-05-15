@@ -1,92 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PetStudio</title>
     <meta name="description" content="Celebrate your pets' milestones and keep track of their birthdays with PetStudio">
+    
+    <!-- OpenGraph Meta -->
     <meta property="og:title" content="PetStudio - Pet Profile Manager">
     <meta property="og:description" content="Create and share your pet's profile with milestones and birthday reminders">
     <meta property="og:type" content="website">
-    
-    <!-- Enhanced CSP with Nonce -->
-<meta http-equiv="Content-Security-Policy" 
-  content="default-src 'self';
-    script-src 'self'
-               https://www.gstatic.com
-               https://cdn.jsdelivr.net
-               https://cdnjs.cloudflare.com
-               https://apis.google.com
-               https://accounts.google.com
-               https://www.googleapis.com
-               'unsafe-eval'
-               'unsafe-inline';
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    connect-src 'self'
-               https://www.googleapis.com
-               https://firestore.googleapis.com
-               https://*.googleapis.com
-               https://identitytoolkit.googleapis.com
-               https://pet-studio.vercel.app;
-    frame-src https://accounts.google.com;
-    font-src 'self' https://fonts.gstatic.com;
-    img-src 'self' blob: data: https://*.googleusercontent.com;
-    object-src 'none';
-    base-uri 'self';
-    form-action 'self';
-    worker-src 'self'">
-       
-<!-- Firebase Core SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-    
-    <!-- Add this BEFORE your main script -->
-<script src="https://accounts.google.com/gsi/client" async defer</script>  
-    
- </script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" 
-      integrity="sha256-6H5VB5QyLldKH9oMFUmjxw2uWpPZETQXpCkBaDjquMs=" 
-      crossorigin="anonymous"></script>    
-    
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-
-    <!-- Metadata -->
     <meta property="og:url" content="https://your-petstudio-url.com">
     <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- Simplified CSP -->
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self';
+                  script-src 'self' 
+                             https://cdn.jsdelivr.net 
+                             https://accounts.google.com 
+                             'unsafe-inline';
+                  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+                  img-src 'self' blob: data: https://*.googleusercontent.com;
+                  connect-src 'self';
+                  font-src 'self' https://fonts.gstatic.com;
+                  object-src 'none'">
+    
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <!-- Essential Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" 
+            integrity="sha256-6H5VB5QyLldKH9oMFUmjxw2uWpPZETQXpCkBaDjquMs=" 
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     
     <!-- Local Resources -->
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./styles.css">
     <link rel="manifest" href="./manifest.json">
 </head>
-<body>   
-<!-- Auth Container -->
-<div id="authContainer">
-    <div class="auth-header">
-        <h1>PetStudio</h1>
-        <h2>Design your pet gallery !</h2>
-    </div>
-
-    <div id="googleSignInWrapper">
-        <div id="googleSignInBtn"></div>
-        <p class="auth-message">Sign in with your Google account to continue</p>
-    </div>
-    <!-- Full Page Image/Banner -->
+<body>
+    <!-- Auth Container -->
+    <div id="authContainer">
+        <div class="auth-header">
+            <h1>PetStudio</h1>
+            <h2>Design your pet gallery!</h2>
+        </div>
+        <div id="googleSignInWrapper">
+            <div id="googleSignInBtn"></div>
+            <p class="auth-message">Sign in with your Google account to continue</p>
+        </div>
         <div id="fullPageBanner" class="banner">
             <img src="./banner/image.png" alt="Banner Image" class="banner-image">
             <div class="banner-message">
                 <p>Capture your pets' special moments and never miss a birthday with PetStudio!</p>
             </div>
         </div>
-</div>
-
+    </div>
 
     <!-- Dashboard -->
     <div id="dashboard" class="hidden">
         <h1>Welcome to your pet's dashboard</h1>
         <button id="addPetProfileBtn" class="button">Add Pet Profile</button>
         
-        <div id="petList" class="pet-list"></div>
-        
-        <!-- Profile Section -->
         <div id="profileSection" class="hidden">
             <h2>Create a Pet Profile</h2>
             <form id="profileForm" autocomplete="on">
@@ -100,46 +77,38 @@
                 <input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
                 <label for="petBirthday">Birthday Reminder:</label>
                 <input type="date" id="petBirthday" name="petBirthday">
-                <label for="moodHistoryInput">Mood Logs (one per line, format YYYY-MM-DD:mood):</label>
-               <textarea id="moodHistoryInput" name="moodHistoryInput" rows="4"
-                placeholder="2025-04-27:happy
-                2025-05-01:sad"></textarea>
+                <label for="moodHistoryInput">Mood Logs:</label>
+                <textarea id="moodHistoryInput" name="moodHistoryInput" rows="4"
+                    placeholder="2025-04-27:happy&#10;2025-05-01:sad"></textarea>
                 <button type="submit" class="button">Save Profile</button>
             </form>
         </div>
         
         <div id="petList" class="pet-list"></div>
-        
         <button id="logoutBtn" class="button">Logout</button>
+    </div>
+
+    <!-- QR Modal -->
+    <div id="qr-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000;">
+        <div style="background:white; width:400px; margin:50px auto; padding:20px; border-radius:10px; text-align:center;">
+            <div id="qrcode-container"></div>
+            <div id="qr-controls" style="margin-top:20px;">
+                <button class="qr-action" data-action="print">Print</button>
+                <button class="qr-action" data-action="download">Download</button>
+                <button class="qr-action" data-action="share" style="background:#9b59b6; color:white;">Share</button>
+                <button class="qr-action" data-action="close" style="background:#e74c3c; color:white;">Close</button>
+            </div>
+            <p id="qr-status" style="font-size:12px; color:#666; margin-top:10px;"></p>
+        </div>
     </div>
 
     <footer>
         <p>&copy; 2024 PetStudio. All rights reserved.</p>
     </footer>
     
-    <!-- 1. Auth first -->
-    <script src="./js/auth.js" defer onerror="handleScriptError(event)"></script>
-    
-    <!-- 2. Feature modules -->
-    <script src="./js/dropbox.js" defer></script>
+    <!-- Scripts (Optimized Order) -->
+    <script src="./js/auth.js" defer></script>
     <script src="./js/profiles.js" defer></script>
-    <script src="./js/notifications.js" defer></script>
-
-    <!-- 3. Main last -->
     <script src="./js/main.js" defer></script>
-    
-    <!-- In index.html QR Modal (hidden by default -->
-<div id="qr-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000;">
-  <div style="background:white; width:400px; margin:50px auto; padding:20px; border-radius:10px; text-align:center;">
-    <div id="qrcode-container"></div>
-    <div id="qr-controls" style="margin-top:20px;">
-      <button class="qr-action" data-action="print">Print</button>
-      <button class="qr-action" data-action="download">Download</button>
-      <button class="qr-action" data-action="share" style="background:#9b59b6; color:white;">Share</button>
-      <button class="qr-action" data-action="close" style="background:#e74c3c; color:white;">Close</button>
-    </div>
-    <p id="qr-status" style="font-size:12px; color:#666; margin-top:10px;"></p>
-  </div>
-</div>
 </body>
 </html>
