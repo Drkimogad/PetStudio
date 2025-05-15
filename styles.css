@@ -162,6 +162,20 @@ body {
 #logoutBtn:hover {
     background-color: #cc3700;
 }
+/* === Updated Logout Button Positioning for Dashboard Only === */
+#logoutBtn.dashboard-visible {
+    position: fixed;
+    bottom: 90px; /* Just above footer */
+    right: 20px;
+    z-index: 1000;
+    margin: 0;
+    width: auto;
+}
+
+/* Hide logout button by default (e.g. on auth pages) */
+#logoutBtn {
+    display: none;
+}
 
 footer {
     position: relative;
