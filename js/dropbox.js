@@ -1,7 +1,7 @@
 //🌟 Dropbox Integration 🌟
 
 // Initialize Dropbox SDK
-const dbx = new Dropbox.Dropbox({ accessToken: 'YOUR_ACCESS_TOKEN' });
+const dbx = new Dropbox.Dropbox({ accessToken: 'sl.u.AFsYUQzbocRuf4Y7rWh7PvjDjSTzq351iQ0j2DuOYXKuzsekrVeWTfAcQR0hpymZd5wal8d5g7E9UOzPX6s3Zu5FmfagcD9wJw3A5gp1k_iMiYpuMrFCBYV9VkcFfAMcKVGvm8zExrtj2VXy7v4avhapTese4V1ZYAxqUTbGN7onbCyTsO' });
 
 // Get or create a folder in Dropbox
 async function getOrCreateDropboxFolderId() {
