@@ -26,26 +26,8 @@ function disableUI() {
   `;
 }
 
-// CONSOLE LOG
-console.log("Auth.js loading...");
-console.log("DOM elements:", {
-  authContainer: document.getElementById("authContainer"),
-  dashboard: document.getElementById("dashboard"),
-  logoutBtn: document.getElementById("logoutBtn"),
-  addPetProfileBtn: document.getElementById("addPetProfileBtn"),
-  profileSection: document.getElementById("profileSection"),
-  petList: document.getElementById("petList"),
-  fullPageBanner: document.getElementById("fullPageBanner"),
-  profileForm: document.getElementById("profileForm")
-});
-
-if (!document.getElementById("authContainer")) {
-  console.error("Critical: authContainer element missing!");
-}
-
 // ====== DOM Elements ======
 const DOM = {
-  authContainer: document.getElementById("authContainer"),
   dashboard: document.getElementById("dashboard"),
   logoutBtn: document.getElementById("logoutBtn"),
   addPetProfileBtn: document.getElementById("addPetProfileBtn"),
@@ -56,10 +38,7 @@ const DOM = {
 };
 
 // ====== Core Functions ======
-function showAuthForm() {
-  DOM.authContainer.classList.remove('hidden');
-}
-
+// i removed function showAuth and I think we may need something for show auth via Google sign-in or Dropbox sign-in 
 function showDashboard() {
   DOM.authContainer.classList.add('hidden');
   DOM.dashboard.classList.remove('hidden');
@@ -72,9 +51,6 @@ function showDashboard() {
     renderProfiles();
   }
 }
-
-// ====== Google APIs Initialization ======
-// GSI logic removed — using Dropbox only for login now.
 
 // ====== Firebase Integration ======
 async function initializeFirebase() {
@@ -99,8 +75,8 @@ async function initializeFirebase() {
 
 // Function to authenticate Dropbox and obtain access token
 function authenticateDropbox() {
-  const redirectUri = 'YOUR_REDIRECT_URI';  // Make sure to configure in Dropbox console
-  const clientId = 'YOUR_DROPBOX_CLIENT_ID';
+  const redirectUri = 'https://drkimogad.github.io/PetStudio/';  // Make sure to configure in Dropbox console
+  const clientId = 'nq7ltevxbxaeped';
 
   const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}`;
   window.location.href = authUrl;
@@ -134,16 +110,6 @@ function setupGoogleLoginButton() {
       shape: "rectangular"
     }
   );
-}
-
-// Function to authenticate Dropbox and obtain access token
-function authenticateDropbox() {
-  const redirectUri = 'YOUR_REDIRECT_URI';  // Make sure to set up this in your Dropbox app settings
-  const clientId = 'YOUR_DROPBOX_CLIENT_ID';
-
-  // Redirect to Dropbox OAuth
-  const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}`;
-  window.location.href = authUrl;
 }
 
 // ====== Token Management ======
