@@ -52,7 +52,7 @@ async function initializeDriveAPI(idToken) {
   });
 
   await gapi.client.init({
-    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+    apiKey: "AIzaSyD_xWtrnzOql-sVMQk-0ruxF5kHgZhyO-g",
     clientId: '901433348522-n01acsr56ah7vqql8rqo2c4cp717bqe4.apps.googleusercontent.com',
     discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
     scope: "https://www.googleapis.com/auth/drive.file"
