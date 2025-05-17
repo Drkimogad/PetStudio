@@ -85,34 +85,59 @@ async function savePetProfile(profile) {
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
 
   // NEW GOOGLE DRIVE INTEGRATION (replaces Dropbox/Firestore)
-  if (window.currentUser?.email && window.GoogleDrive) {
-    try {
+    if (window.currentUser?.email && window.GoogleDrive) {
       await new Promise(resolve => {
         GoogleDrive.saveProfile(profile, (result) => {
-          profile.driveId = result.fileId; // Track Drive ID
+          profile.driveId = result.fileId;
+          Utils.showErrorToUser('Saved to Google Drive!', true);
           resolve();
         });
       });
-    } catch (driveError) {
-      console.warn("⚠️ Google Drive backup failed:", driveError);
     }
+  } catch (error) {
+    console.error("Save failed:", error);
+    Utils.showErrorToUser("Failed to save to Google Drive");
+   }
   }
 }
 
 // ADD THESE NEW FUNCTIONS RIGHT AFTER savePetProfile
 async function loadFromDrive() {
-  if (!window.GoogleDrive) return [];
-  
+  if (!window.GoogleDrive || !window.currentUser) return [];
+
   try {
+    // 1. Get folder ID
     const folderId = await new Promise(resolve => 
       GoogleDrive.getOrCreateFolder(resolve));
-    
-    // In a real implementation, you'd query Drive files here
-    // This is a placeholder - you'll need to implement actual Drive file loading
-    console.log("Would load files from folder:", folderId);
-    return []; 
+
+    // 2. List all JSON files in the folder
+    const response = await gapi.client.drive.files.list({
+      q: `'${folderId}' in parents and mimeType='application/json' and trashed=false`,
+      fields: 'files(id,name)',
+      orderBy: 'modifiedTime desc'
+    });
+
+    // 3. Download and parse each file
+    const driveProfiles = [];
+    for (const file of response.result.files) {
+      const fileContent = await gapi.client.drive.files.get({
+        fileId: file.id,
+        alt: 'media'
+      });
+      
+      try {
+        const profile = JSON.parse(fileContent.body);
+        profile.driveId = file.id; // Track Drive file ID
+        driveProfiles.push(profile);
+      } catch (e) {
+        console.warn(`Failed to parse ${file.name}`, e);
+      }
+    }
+
+    return driveProfiles;
   } catch (error) {
     console.error("Drive load failed:", error);
+    showErrorToUser("Failed to load from Google Drive");
     return [];
   }
 }
@@ -125,6 +150,7 @@ function mergeProfiles(local, drive) {
   });
   return merged;
 }
+
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀  
 // RENDER ALL PET PROFILES
 function renderProfiles() {
