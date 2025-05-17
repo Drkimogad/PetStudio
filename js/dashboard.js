@@ -1,3 +1,22 @@
+// DOM Elements Collection
+const DOM = {
+  // Form Elements
+  profileSection: document.getElementById('profileSection'),
+  fullPageBanner: document.getElementById('fullPageBanner'),
+  petList: document.getElementById('petList'),
+  profileForm: document.getElementById('profileForm'),
+  
+  // Input Fields
+  petName: document.getElementById('petName'),
+  petBreed: document.getElementById('petBreed'),
+  petDob: document.getElementById('petDob'),
+  petBirthday: document.getElementById('petBirthday'),
+  moodHistoryInput: document.getElementById('moodHistoryInput'),
+  
+  // QR Modal
+  qrModal: document.getElementById('qr-modal')
+};
+
 // Utility Functions 
 const Utils = {
   getCountdown: function(birthday) {
@@ -273,14 +292,13 @@ function openEditForm(index) {
   currentEditIndex = index;
   const profile = petProfiles[index];
   
-  document.getElementById("petName").value = profile.name;
-  document.getElementById("petBreed").value = profile.breed;
-  document.getElementById("petDob").value = profile.dob;
-  document.getElementById("petBirthday").value = profile.birthday;
+  DOM.petName.value = profile.name;
+  DOM.petBreed.value = profile.breed;
+  DOM.petDob.value = profile.dob;
+  DOM.petBirthday.value = profile.birthday;
   
-  const moodInput = document.getElementById("moodHistoryInput");
-  if (moodInput) {
-    moodInput.value = profile.moodHistory
+  if (DOM.moodHistoryInput) {
+    DOM.moodHistoryInput.value = profile.moodHistory
       .map(entry => `${entry.date}:${entry.mood}`)
       .join("\n");
   }
