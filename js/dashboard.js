@@ -61,6 +61,19 @@ const Utils = {
   }
 };
 
+// Service worker registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/PetStudio/service-worker.js', {
+      scope: '/PetStudio/'
+    }).then(registration => {
+      console.log('SW registered for scope:', registration.scope);
+    }).catch(error => {
+      console.error('SW registration failed:', error);
+    });
+  });
+}
+
 //🌟 Pet Profile Management 🌟
 // Unified save function
 async function savePetProfile(profile) {
