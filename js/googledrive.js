@@ -1,192 +1,109 @@
-//🌟 Google Drive Integration 🌟
-// ====== Google APIs Initialization ======    
-// google api loading function was removed
-    // Initialize Google OAuth client
-    window.tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
-      scope: "https://www.googleapis.com/auth/drive.file",
-      callback: (tokenResponse) => {
-        if (tokenResponse && tokenResponse.access_token) {
-          console.log("Google token received");
-        }
-      },
-    });
-    
-    if (typeof callback === "function") callback();
-  }; // THIS BRACE WAS MISSING
+//🌟 Google Drive Integration (Complete) 🌟
+// ====== Global Variables ======
+let driveAPILoaded = false;
+let driveAuthToken = null;
 
-  gsiScript.onerror = () => {
-    console.error("❌ Failed to load GSI client script");
-  };
-
-  document.head.appendChild(gsiScript);
-}
-// ====== Token Management ======
-async function refreshDriveTokenIfNeeded() {
-  try {
-    if (!auth?.currentUser) throw new Error("No authenticated user");
-
-    const authResponse = await auth.currentUser.getIdTokenResult();
-    const expiration = new Date(authResponse.expirationTime);
-
-    if (expiration <= new Date()) {
-      console.log("Token expired, requesting re-authentication");
-      await signInWithRedirect(auth, provider);
-    }
-  } catch (error) {
-    console.error("Token refresh error:", error);
-    Utils.showErrorToUser('Session expired - please re-login');
-  }
-}
-// ====== Initialization ======
-async function initializeAuth() {
-  try {
-    // 1. First load Firebase (since it's essential) removed
-       
-    // 2. Set up auth listeners early
-    initAuthListeners(auth);
-    
-    // 3. Load Google APIs in parallel
-    await new Promise((resolve) => {
-      loadGoogleAPIs(resolve);
-      setTimeout(resolve, 3000); // Fallback timeout
-    });
-    
-    // 4. Set up UI
-    showAuthForm('login');
-    setupGoogleLoginButton();
-    
-    return { auth, provider };
-  } catch (error) {
-    console.error("Initialization failed:", error);
-    disableUI();
+// ====== Initialize Drive API ======
+function initGoogleDriveAPI(token, callback) {
+  driveAuthToken = token;
+  
+  // Load GAPI client if not already loaded
+  if (window.gapi) {
+    initializeDriveClient(callback);
+  } else {
+    const script = document.createElement('script');
+    script.src = 'https://apis.google.com/js/api.js';
+    script.onload = () => initializeDriveClient(callback);
+    script.onerror = () => console.error('Failed to load Google API');
+    document.head.appendChild(script);
   }
 }
 
-// Add Loading States:
-function showLoading(state) {
-  document.getElementById('loadingIndicator').style.display = 
-    state ? 'block' : 'none';
-}
-
-// Start initialization when DOM is ready
-if (document.readyState === 'complete') {
-  initializeAuth();
-} else {
-  document.addEventListener('DOMContentLoaded', initializeAuth);
-}
-
-// 🌟 Drive folder management 🌟
-// Get or create Drive folder
-async function getOrCreateDriveFolderId() {
-  const response = await gapi.client.drive.files.list({
-    q: "name='PetStudio' and mimeType='application/vnd.google-apps.folder' and trashed=false",
-    fields: "files(id)",
-    spaces: 'drive'
+function initializeDriveClient(callback) {
+  gapi.load('client', () => {
+    gapi.client.init({
+      apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
+    }).then(() => {
+      driveAPILoaded = true;
+      gapi.client.setToken({ access_token: driveAuthToken });
+      if (callback) callback();
+    });
   });
-  if(response.result.files.length > 0) {
-    return response.result.files[0].id;
-  }
-  const folder = await gapi.client.drive.files.create({
+}
+
+// ====== Core Drive Operations ======
+function createDriveFolder(folderName, callback) {
+  if (!driveAPILoaded) return console.error('Drive API not loaded');
+  
+  gapi.client.drive.files.create({
     resource: {
-      name: 'PetStudio',
+      name: folderName,
       mimeType: 'application/vnd.google-apps.folder'
     },
     fields: 'id'
-  });
-  return folder.result.id;
+  }).then(response => callback(response.result.id))
+    .catch(error => console.error('Folder creation failed:', error));
 }
 
-// Save profile to Drive
-async function saveProfileToDrive(profile) {
-  try {
-    if(!gapi.client.drive) {
-      throw new Error("Drive API not initialized");
+function findDriveFolder(folderName, callback) {
+  gapi.client.drive.files.list({
+    q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+    fields: 'files(id)',
+    spaces: 'drive'
+  }).then(response => {
+    callback(response.result.files.length > 0 ? response.result.files[0].id : null);
+  });
+}
+
+function getOrCreateAppFolder(callback) {
+  findDriveFolder('PetStudio', (folderId) => {
+    if (folderId) {
+      callback(folderId);
+    } else {
+      createDriveFolder('PetStudio', callback);
     }
-    const folderId = await getOrCreateDriveFolderId();
-    const fileName = `${profile.name.replace(/\s+/g, "_")}_${profile.id || Date.now()}.json`;
-    const metadata = {
-      name: fileName,
-      mimeType: 'application/json',
-      parents: [folderId]
-    };
-    const fileContent = JSON.stringify({
-      ...profile,
-      lastUpdated: new Date().toISOString()
-    });
-    const file = await gapi.client.drive.files.create({
-      resource: metadata,
+  });
+}
+
+// ====== Profile Operations ======
+function saveProfileToDrive(profile, callback) {
+  getOrCreateAppFolder((folderId) => {
+    const fileName = `pet_${profile.id}_${Date.now()}.json`;
+    
+    gapi.client.drive.files.create({
+      resource: {
+        name: fileName,
+        mimeType: 'application/json',
+        parents: [folderId]
+      },
       media: {
         mimeType: 'application/json',
-        body: fileContent
+        body: JSON.stringify(profile)
       },
-      fields: 'id,name,webViewLink'
+      fields: 'id,webViewLink'
+    }).then(response => {
+      if (callback) callback({
+        fileId: response.result.id,
+        link: response.result.webViewLink
+      });
     });
-    console.log("✅ Saved to Drive:", file.result);
-    return file.result;
-  } catch (error) {
-    console.error("❌ Drive save failed:", error);
-    throw error;
-  }
+  });
 }
 
-// Unified save function
-async function savePetProfile(profile) {
-  if(isEditing) {
-    petProfiles[currentEditIndex] = profile;
-  } else {
-    petProfiles.push(profile);
-  }
-  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  
-  const isGoogleUser = auth.currentUser?.providerData?.some(
-    p => p.providerId === 'google.com'
-  );
-  
-  if(isGoogleUser && gapi.client?.drive) {
-    try {
-      await saveProfileToDrive(profile);
-    } catch (driveError) {
-      console.warn("⚠️ Drive backup failed. Falling back to Firestore.");
-      try {
-        await saveToFirestore(profile);
-      } catch (firestoreError) {
-        console.error("❌ Firestore fallback also failed:", firestoreError);
-      }
-    }
-  }
+function deleteDriveFile(fileId, callback) {
+  gapi.client.drive.files.delete({ fileId })
+    .then(() => callback(true))
+    .catch(error => {
+      console.error('Delete failed:', error);
+      callback(false);
+    });
 }
 
-// Delete profile
-async function deleteProfile(index) {
-  const profile = petProfiles[index];
-  if (!confirm("Are you sure you want to delete this profile?")) return;
-  
-  const fileId = profile.driveFileId;
-  if (fileId) {
-    try {
-      await deleteProfileFromDrive(fileId, profile.gallery);
-    } catch (driveError) {
-      console.error("Error deleting Drive files:", driveError);
-    }
-  }
-
-  petProfiles.splice(index, 1);
-  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  renderProfiles();
-}
-
-// Delete from Drive
-async function deleteProfileFromDrive(fileId, gallery = []) {
-  if (gallery.length > 0) {
-    for (let img of gallery) {
-      await deleteImageFromDrive(img);
-    }
-  }
-
-  try {
-    await gapi.client.drive.files.delete({ fileId });
-  } catch (error) {
-    console.error('Error deleting profile from Google Drive:', error);
-  }
-}
+// ====== Public Interface ======
+window.GoogleDrive = {
+  init: initGoogleDriveAPI,
+  saveProfile: saveProfileToDrive,
+  deleteFile: deleteDriveFile,
+  getOrCreateFolder: getOrCreateAppFolder
+};
