@@ -125,7 +125,7 @@ function mergeProfiles(local, drive) {
   });
   return merged;
 }
-
+// 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀  
 // RENDER ALL PET PROFILES
 function renderProfiles() {
   DOM.petList.innerHTML = '';
@@ -314,7 +314,6 @@ function printProfile(profile) {
   });
 }
 
-// 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀  
 // 🔼 SHARE PET CARD FUNCTION 🌟🌟🌟
 async function sharePetCard(profile) {
   const loader = document.getElementById('processing-loader');
@@ -576,6 +575,20 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
   }
 
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+// NEWLY ADDED THIS DRIVE SYNC CALL:
+  if (window.currentUser?.email && window.GoogleDrive) {
+    try {
+      await new Promise(resolve => {
+        GoogleDrive.saveProfile(newProfile, (result) => {
+          newProfile.driveId = result.fileId;
+          resolve();
+        });
+      });
+    } catch (driveError) {
+      console.warn("Drive sync failed:", driveError);
+    }
+  }
+  
   DOM.profileSection.classList.add("hidden");
   DOM.petList.classList.remove("hidden");
   renderProfiles();
