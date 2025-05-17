@@ -75,7 +75,7 @@ if ('serviceWorker' in navigator) {
 }
 
 //🌟 Pet Profile Management 🌟
-// Unified save function
+// Unified save function - REPLACE THIS ENTIRE FUNCTION
 async function savePetProfile(profile) {
   if (isEditing) {
     petProfiles[currentEditIndex] = profile;
@@ -84,25 +84,49 @@ async function savePetProfile(profile) {
   }
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
 
-  const isDropboxUser = auth.currentUser?.providerData?.some(
-    p => p.providerId === 'dropbox.com'
-  );
-
-  if (isDropboxUser && dbx) {
+  // NEW GOOGLE DRIVE INTEGRATION (replaces Dropbox/Firestore)
+  if (window.currentUser?.email && window.GoogleDrive) {
     try {
-      await saveProfileToDropbox(profile);  // Change from Google to Dropbox
-    } catch (dropboxError) {
-      console.warn("⚠️ Dropbox backup failed. Falling back to Firestore.");
-      try {
-        await saveToFirestore(profile);
-      } catch (firestoreError) {
-        console.error("❌ Firestore fallback also failed:", firestoreError);
-      }
+      await new Promise(resolve => {
+        GoogleDrive.saveProfile(profile, (result) => {
+          profile.driveId = result.fileId; // Track Drive ID
+          resolve();
+        });
+      });
+    } catch (driveError) {
+      console.warn("⚠️ Google Drive backup failed:", driveError);
     }
   }
 }
 
-// Render all pet profiles
+// ADD THESE NEW FUNCTIONS RIGHT AFTER savePetProfile
+async function loadFromDrive() {
+  if (!window.GoogleDrive) return [];
+  
+  try {
+    const folderId = await new Promise(resolve => 
+      GoogleDrive.getOrCreateFolder(resolve));
+    
+    // In a real implementation, you'd query Drive files here
+    // This is a placeholder - you'll need to implement actual Drive file loading
+    console.log("Would load files from folder:", folderId);
+    return []; 
+  } catch (error) {
+    console.error("Drive load failed:", error);
+    return [];
+  }
+}
+
+function mergeProfiles(local, drive) {
+  const merged = [...local];
+  drive.forEach(driveProfile => {
+    const exists = merged.some(p => p.id === driveProfile.id);
+    if (!exists) merged.push(driveProfile);
+  });
+  return merged;
+}
+
+// RENDER ALL PET PROFILES
 function renderProfiles() {
   DOM.petList.innerHTML = '';
   if(petProfiles.length === 0) {
