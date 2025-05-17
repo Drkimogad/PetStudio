@@ -11,22 +11,19 @@ const DOM = {
 
 // 🔶 Initialize Google Auth + Drive API 🔶
 async function initializeGoogleAuth() {
-  await new Promise((resolve) => {
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.onload = resolve;
-    document.head.appendChild(script);
-  });
-
+  await loadGoogleScript('https://accounts.google.com/gsi/client');
+  
   google.accounts.id.initialize({
     client_id: '901433348522-n01acsr56ah7vqql8rqo2c4cp717bqe4.apps.googleusercontent.com',
-    callback: handleGoogleSignIn
+    callback: handleGoogleSignIn,
+    login_uri: 'https://drkimogad.github.io/PetStudio/' // GitHub Pages URL
   });
 
   if (DOM.googleSignInBtn) {
     google.accounts.id.renderButton(DOM.googleSignInBtn, {
       theme: 'filled_blue',
-      size: 'large'
+      size: 'large',
+      text: 'continue_with'
     });
   }
 }
@@ -36,31 +33,52 @@ async function handleGoogleSignIn(response) {
   const user = parseJwt(response.credential);
   currentUser = {
     id: user.sub,
-    email: user.email
+    email: user.email,
+    name: user.name || user.email.split('@')[0]
   };
   localStorage.setItem('currentUser', JSON.stringify(currentUser));
   
-  // Initialize Drive API
-  await loadGapiClient();
+  // Initialize Drive API with token
+  await initializeDriveAPI(response.credential);
   showDashboard();
 }
 
 // 🔶 Load GAPI Client for Drive 🔶
-async function loadGapiClient() {
+async function initializeDriveAPI(idToken) {
+  await loadGoogleScript('https://apis.google.com/js/api.js');
+  
   await new Promise((resolve) => {
+    gapi.load('client:auth2', resolve);
+  });
+
+  await gapi.client.init({
+    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+    clientId: '901433348522-n01acsr56ah7vqql8rqo2c4cp717bqe4.apps.googleusercontent.com',
+    discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+    scope: "https://www.googleapis.com/auth/drive.file"
+  });
+
+  // Set the Google Auth token
+  const authResponse = await gapi.auth2.getAuthInstance().signIn({
+    id_token: idToken
+  });
+  window.gapiToken = authResponse.getAuthResponse().access_token;
+}
+
+// 🔶 Helper Functions 🔶
+async function loadGoogleScript(src) {
+  return new Promise((resolve) => {
     const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js';
+    script.src = src;
     script.onload = resolve;
     document.head.appendChild(script);
   });
+}
 
-  await gapi.load('client', async () => {
-    await gapi.client.init({
-      apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
-    });
-    gapi.client.setToken({ access_token: window.gapiToken });
-  });
+function parseJwt(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  return JSON.parse(atob(base64));
 }
 
 // 🔶 Parse JWT Token 🔶
