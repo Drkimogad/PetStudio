@@ -11,6 +11,50 @@ const DOM = {
   petList: document.getElementById("petList")
 };
 
+// Main initialization function
+async function main() {
+  return new Promise((resolve, reject) => {
+    const gisScript = document.createElement("script");
+    gisScript.src = "https://accounts.google.com/gsi/client";
+    gisScript.onload = () => resolve();
+    gisScript.onerror = () => reject(new Error("Failed to load Google Identity Services"));
+    document.head.appendChild(gisScript);
+  }).then(() => {
+    window.tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: '540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com',
+      scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email',
+      prompt: '',
+      callback: async (tokenResponse) => {
+        if (tokenResponse.error) {
+          console.error("Token error:", tokenResponse);
+          return showErrorToUser("Google login failed.");
+        }
+
+        window.gapiToken = tokenResponse.access_token;
+
+        await new Promise((resolve) => {
+          const script = document.createElement('script');
+          script.src = 'https://apis.google.com/js/api.js';
+          script.onload = resolve;
+          document.head.appendChild(script);
+        });
+
+        await gapi.load("client", async () => {
+          await gapi.client.init({
+            apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
+          });
+          gapi.client.setToken({ access_token: window.gapiToken });
+          renderProfiles();
+          setupGoogleLoginButton();
+        });
+      }
+    });
+  }).catch((error) => {
+    console.error("GIS init failed:", error);
+    showErrorToUser("Failed to load Google services");
+  });
+}
+
 // 🔶 Google OAuth 2.0 (Direct Implementation) 🔶
 function initializeGoogleAuth() {
   // Load Google API script dynamically
