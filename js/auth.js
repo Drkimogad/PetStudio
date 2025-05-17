@@ -19,7 +19,7 @@ async function initializeGoogleAuth() {
   });
 
   google.accounts.id.initialize({
-    client_id: '540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com',
+    client_id: '901433348522-n01acsr56ah7vqql8rqo2c4cp717bqe4.apps.googleusercontent.com',
     callback: handleGoogleSignIn
   });
 
