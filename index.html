@@ -12,19 +12,17 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://your-petstudio-url.com">
     <meta name="twitter:card" content="summary_large_image">
-    
-    <!-- Simplified CSP -->
+    <!-- Preload key resources -->
+    <link rel="preconnect" href="https://accounts.google.com">
+    <link rel="preconnect" href="https://apis.google.com">
+    <!-- Enhanced CSP -->
     <meta http-equiv="Content-Security-Policy" 
-          content="default-src 'self';
-                  script-src 'self' 
-                             https://cdn.jsdelivr.net 
-                             https://accounts.google.com 
-                             'unsafe-inline';
-                  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-                  img-src 'self' blob: data: https://*.googleusercontent.com;
-                  connect-src 'self';
-                  font-src 'self' https://fonts.gstatic.com;
-                  object-src 'none'">
+      content="default-src 'self';
+              script-src 'self' https://*.google.com https://*.googleapis.com;
+              connect-src 'self' https://*.googleapis.com;
+              img-src 'self' data: blob: https://*;
+              style-src 'self' 'unsafe-inline';
+              frame-src https://accounts.google.com">
     
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -42,6 +40,11 @@
     <link rel="manifest" href="./manifest.json">
 </head>
 <body>
+    <div id="loadingIndicator" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000;">
+  <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:white; text-align:center;">
+    <p>Syncing with Google Drive...</p>
+  </div>
+</div>
     <!-- Auth Container -->
     <div id="authContainer">
         <div class="auth-header">
