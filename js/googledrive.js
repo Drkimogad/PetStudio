@@ -1,77 +1,64 @@
-//🌟 Google Drive Integration (Complete) 🌟
-// ====== Global Variables ======
-let driveAPILoaded = false;
-let driveAuthToken = null;
+//🌟 Google Drive Integration (Optimized) 🌟
+let driveInitialized = false;
 
-// ====== Initialize Drive API ======
-function initGoogleDriveAPI(token, callback) {
-  driveAuthToken = token;
-  
-  // Load GAPI client if not already loaded
-  if (window.gapi) {
-    initializeDriveClient(callback);
-  } else {
-    const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js';
-    script.onload = () => initializeDriveClient(callback);
-    script.onerror = () => console.error('Failed to load Google API');
-    document.head.appendChild(script);
+// ====== Core Drive Operations ======
+async function ensureDriveReady() {
+  if (!driveInitialized) {
+    if (!window.gapi) {
+      await new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = 'https://apis.google.com/js/api.js';
+        script.onload = resolve;
+        document.head.appendChild(script);
+      });
+    }
+
+    await gapi.load('client', async () => {
+      await gapi.client.init({
+        apiKey: "AIzaSyD_xWtrnzOql-sVMQk-0ruxF5kHgZhyO-g",
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+        scope: "https://www.googleapis.com/auth/drive.file"
+      });
+      driveInitialized = true;
+    });
   }
 }
 
-function initializeDriveClient(callback) {
-  gapi.load('client', () => {
-    gapi.client.init({
-      apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
-    }).then(() => {
-      driveAPILoaded = true;
-      gapi.client.setToken({ access_token: driveAuthToken });
-      if (callback) callback();
-    });
-  });
-}
-
-// ====== Core Drive Operations ======
-function createDriveFolder(folderName, callback) {
-  if (!driveAPILoaded) return console.error('Drive API not loaded');
+async function createDriveFolder(folderName) {
+  await ensureDriveReady();
   
-  gapi.client.drive.files.create({
+  const response = await gapi.client.drive.files.create({
     resource: {
       name: folderName,
       mimeType: 'application/vnd.google-apps.folder'
     },
     fields: 'id'
-  }).then(response => callback(response.result.id))
-    .catch(error => console.error('Folder creation failed:', error));
+  });
+  return response.result.id;
 }
 
-function findDriveFolder(folderName, callback) {
-  gapi.client.drive.files.list({
+async function findDriveFolder(folderName) {
+  await ensureDriveReady();
+  
+  const response = await gapi.client.drive.files.list({
     q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder' and trashed=false`,
     fields: 'files(id)',
     spaces: 'drive'
-  }).then(response => {
-    callback(response.result.files.length > 0 ? response.result.files[0].id : null);
   });
+  return response.result.files[0]?.id || null;
 }
 
-function getOrCreateAppFolder(callback) {
-  findDriveFolder('PetStudio', (folderId) => {
-    if (folderId) {
-      callback(folderId);
-    } else {
-      createDriveFolder('PetStudio', callback);
-    }
-  });
+async function getOrCreateAppFolder() {
+  const folderId = await findDriveFolder('PetStudio');
+  return folderId || await createDriveFolder('PetStudio');
 }
 
-// ====== Profile Operations ======
-function saveProfileToDrive(profile, callback) {
-  getOrCreateAppFolder((folderId) => {
+async function saveProfileToDrive(profile) {
+  try {
+    const folderId = await getOrCreateAppFolder();
     const fileName = `pet_${profile.id}_${Date.now()}.json`;
     
-    gapi.client.drive.files.create({
+    const response = await gapi.client.drive.files.create({
       resource: {
         name: fileName,
         mimeType: 'application/json',
@@ -82,28 +69,51 @@ function saveProfileToDrive(profile, callback) {
         body: JSON.stringify(profile)
       },
       fields: 'id,webViewLink'
-    }).then(response => {
-      if (callback) callback({
-        fileId: response.result.id,
-        link: response.result.webViewLink
-      });
     });
-  });
+    
+    return {
+      fileId: response.result.id,
+      link: response.result.webViewLink
+    };
+  } catch (error) {
+    console.error('Drive save failed:', error);
+    throw new Error('Failed to save to Google Drive');
+  }
 }
 
-function deleteDriveFile(fileId, callback) {
-  gapi.client.drive.files.delete({ fileId })
-    .then(() => callback(true))
-    .catch(error => {
-      console.error('Delete failed:', error);
-      callback(false);
-    });
+async function deleteFromDrive(fileId) {
+  try {
+    await ensureDriveReady();
+    await gapi.client.drive.files.delete({ fileId });
+    return true;
+  } catch (error) {
+    console.error('Drive delete failed:', error);
+    return false;
+  }
+}
+
+async function listDriveFiles() {
+  await ensureDriveReady();
+  const folderId = await getOrCreateAppFolder();
+  
+  const response = await gapi.client.drive.files.list({
+    q: `'${folderId}' in parents and mimeType='application/json' and trashed=false`,
+    fields: 'files(id,name,createdTime,modifiedTime)',
+    orderBy: 'modifiedTime desc'
+  });
+  
+  return response.result.files || [];
 }
 
 // ====== Public Interface ======
 window.GoogleDrive = {
-  init: initGoogleDriveAPI,
   saveProfile: saveProfileToDrive,
-  deleteFile: deleteDriveFile,
+  deleteFile: deleteFromDrive,
+  listFiles: listDriveFiles,
   getOrCreateFolder: getOrCreateAppFolder
 };
+
+// Automatic initialization when gapi is ready
+if (window.gapi) {
+  ensureDriveReady().catch(console.error);
+}
