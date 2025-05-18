@@ -291,6 +291,7 @@ function openEditForm(index) {
       .map(entry => `${entry.date}:${entry.mood}`)
       .join("\n");
   }
+}
 function showPetProfiles() {
   DOM.petList.classList.remove('hidden');
   DOM.profileSection.classList.add('hidden');
