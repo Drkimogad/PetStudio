@@ -245,6 +245,7 @@ function createNewProfile() {
   petProfiles.push(newProfile);
   savePetProfile(newProfile);
   renderProfiles();
+  }  // <-- THIS CLOSING BRACE WAS MISSING
 // Add this NEW FUNCTION after renderProfiles()
 function showPetProfiles() {
   DOM.petList.classList.remove('hidden');
@@ -290,7 +291,7 @@ function openEditForm(index) {
       .map(entry => `${entry.date}:${entry.mood}`)
       .join("\n");
   }
-
+function showPetProfiles() {
   DOM.petList.classList.remove('hidden');
   DOM.profileSection.classList.add('hidden');
 }
