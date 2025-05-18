@@ -113,6 +113,9 @@ function setupLogout() {
 function showDashboard() {
   DOM.authContainer?.classList.add('hidden');
   DOM.dashboard?.classList.remove('hidden');
+    // Add these lines:
+  DOM.profileSection.classList.add('hidden'); // Hide form initially
+  DOM.petList.classList.add('hidden'); // Hide profiles initially
 }
 
 function showAuthForm() {
