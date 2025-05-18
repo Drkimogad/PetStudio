@@ -21,7 +21,10 @@ const DOM = {
   moodHistoryInput: document.getElementById('moodHistoryInput'),
   qrModal: document.getElementById('qr-modal')
 };
-
+// Add this right after your DOM declaration (line 19)
+if (window.DOM && typeof DOM !== 'undefined') {
+  console.warn('DOM already exists! Check other files for duplicate declarations');
+}
 // 🔶 Initialize Google Auth + Drive API 🔶
 async function initializeGoogleAuth() {
   await loadGoogleScript('https://accounts.google.com/gsi/client');
