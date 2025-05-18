@@ -96,6 +96,7 @@ if ('serviceWorker' in navigator) {
 //🌟 Pet Profile Management 🌟
 // Unified save function - REPLACE THIS ENTIRE FUNCTION
 async function savePetProfile(profile) {
+ try {  // <-- Added this
   if (isEditing) {
     petProfiles[currentEditIndex] = profile;
   } else {
@@ -117,7 +118,6 @@ async function savePetProfile(profile) {
     console.error("Save failed:", error);
     Utils.showErrorToUser("Failed to save to Google Drive");
    }
-  }
 }
 
 // ADD THESE NEW FUNCTIONS RIGHT AFTER savePetProfile
