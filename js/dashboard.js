@@ -1,25 +1,3 @@
-// DOM Elements Collection
-const DOM = {
-  // Form Elements
-  profileSection: document.getElementById('profileSection'),
-  fullPageBanner: document.getElementById('fullPageBanner'),
-  petList: document.getElementById('petList'),
-  profileForm: document.getElementById('profileForm'),
-  
-  // Input Fields
-  petName: document.getElementById('petName'),
-  petBreed: document.getElementById('petBreed'),
-  petDob: document.getElementById('petDob'),
-  petBirthday: document.getElementById('petBirthday'),
-  moodHistoryInput: document.getElementById('moodHistoryInput'),
-  
-  // QR Modal
-  qrModal: document.getElementById('qr-modal')
-};
-// Add this right after your DOM declaration (line 19)
-if (window.DOM && typeof DOM !== 'undefined') {
-  console.warn('DOM already exists! Check other files for duplicate declarations');
-}
 // Utility Functions 
 const Utils = {
   getCountdown: function(birthday) {
