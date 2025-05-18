@@ -3,10 +3,23 @@ let currentUser = null;
 
 // 🔶 DOM Elements 🔶
 const DOM = {
+  // Auth elements
   authContainer: document.getElementById("authContainer"),
   dashboard: document.getElementById("dashboard"),
   logoutBtn: document.getElementById("logoutBtn"),
-  googleSignInBtn: document.getElementById("googleSignInBtn")
+  googleSignInBtn: document.getElementById("googleSignInBtn"),
+
+  // Dashboard elements (moved from dashboard.js)
+  profileSection: document.getElementById('profileSection'),
+  fullPageBanner: document.getElementById('fullPageBanner'),
+  petList: document.getElementById('petList'),
+  profileForm: document.getElementById('profileForm'),
+  petName: document.getElementById('petName'),
+  petBreed: document.getElementById('petBreed'),
+  petDob: document.getElementById('petDob'),
+  petBirthday: document.getElementById('petBirthday'),
+  moodHistoryInput: document.getElementById('moodHistoryInput'),
+  qrModal: document.getElementById('qr-modal')
 };
 
 // 🔶 Initialize Google Auth + Drive API 🔶
