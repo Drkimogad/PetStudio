@@ -16,7 +16,10 @@ const DOM = {
   // QR Modal
   qrModal: document.getElementById('qr-modal')
 };
-
+// Add this right after your DOM declaration (line 19)
+if (window.DOM && typeof DOM !== 'undefined') {
+  console.warn('DOM already exists! Check other files for duplicate declarations');
+}
 // Utility Functions 
 const Utils = {
   getCountdown: function(birthday) {
