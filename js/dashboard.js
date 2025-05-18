@@ -227,6 +227,9 @@ function renderProfiles() {
 
 // Create new profile
 function createNewProfile() {
+  DOM.profileSection.classList.remove('hidden'); // Show form
+  DOM.petList.classList.add('hidden'); // Hide profiles while creating
+  
   const timestamp = Date.now();
   const newProfile = {
     id: timestamp,
@@ -242,6 +245,10 @@ function createNewProfile() {
   petProfiles.push(newProfile);
   savePetProfile(newProfile);
   renderProfiles();
+// Add this NEW FUNCTION after renderProfiles()
+function showPetProfiles() {
+  DOM.petList.classList.remove('hidden');
+  DOM.profileSection.classList.add('hidden');
 }
 
 // Calculate days until birthday
@@ -284,8 +291,8 @@ function openEditForm(index) {
       .join("\n");
   }
 
-  DOM.profileSection.classList.remove("hidden"); 
-  DOM.fullPageBanner.classList.add("hidden");
+  DOM.petList.classList.remove('hidden');
+  DOM.profileSection.classList.add('hidden');
 }
 
 // Print profile
