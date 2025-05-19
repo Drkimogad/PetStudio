@@ -16,6 +16,14 @@ body {
     background-color: #ffffff;
 }
 
+#authContainer .banner {
+    display: block;
+}
+
+#dashboard .banner {
+    display: none;
+}
+
 .petCard {
     border: 1px solid #ccc;
     border-radius: 5px;
