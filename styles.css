@@ -93,15 +93,36 @@ body {
 }
 
 /* Banner image */
+.banner-wrapper {
+    position: relative;
+    width: 100%;
+    max-height: 300px; /* Or use clamp(...) for responsive limit */
+    overflow: hidden;
+}
+
 .banner-image {
     width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
-    max-height: 100vh !important;
-    object-fit: contain !important;
+    height: 100% !important;
+    object-fit: cover !important;
     display: block !important;
     margin: 0 auto !important;
+    border-bottom: 3px solid #e1b12c;
     box-sizing: border-box !important;
+}
+
+.banner-wrapper .quote {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fffacd;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-style: italic;
+    max-width: 60%;
+    text-align: right;
+    line-height: 1.4;
 }
 
 .petCard img {
