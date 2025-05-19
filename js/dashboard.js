@@ -228,7 +228,7 @@ function renderProfiles() {
 // Create new profile
 function createNewProfile() {
   DOM.profileSection.classList.remove('hidden'); // Show form
-  DOM.petList.classList.add('hidden'); // Hide profiles while creating
+  DOM.petList.classList.remove('hidden');
   
   const timestamp = Date.now();
   const newProfile = {
