@@ -7,21 +7,39 @@ body {
     background-color: #f5f5f5;
 }
 
+/* Ensure hidden elements stay hidden */
 .hidden {
-    display: none;
+  display: none !important;
+  visibility: hidden !important;
 }
 
+/* Auth Container: Visible by default */
+#authContainer {
+  display: block;
+}
+
+/* Dashboard: Hidden by default */
 #dashboard {
-    padding: 20px;
-    background-color: #ffffff;
+  display: none;
+  padding: 20px;
+  background-color: #ffffff;
 }
 
-#authContainer .banner {
-    display: block;
+/* Show dashboard only when 'hidden' class is removed */
+#dashboard:not(.hidden) {
+  display: block;
 }
 
-#dashboard .banner {
-    display: none;
+/* Logout button: Only show in dashboard */
+#dashboard:not(.hidden) #logoutBtn {
+  display: block;
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  z-index: 1000;
+}
+#logoutBtn:hover {
+    background-color: #cc3700;
 }
 
 .petCard {
@@ -179,22 +197,6 @@ body {
     margin-bottom: 80px; /* Space so print button isn't hidden */
 }
 
-/* Final logout button (enhanced version) */
-#logoutBtn {
-    background-color: #ff4500;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: block;
-    margin: 20px auto;
-    width: 150px;
-}
-
-#logoutBtn:hover {
-    background-color: #cc3700;
-}
 /* === Updated Logout Button Positioning for Dashboard Only === */
 #logoutBtn.dashboard-visible {
     position: fixed;
