@@ -122,8 +122,8 @@ body {
 .banner-wrapper {
     position: relative;
     width: 100%; /* Changed from 80% to take full width */
-    max-height: 400px; /* Set a fixed max-height instead of vh */
-    height: 400px; /* Fixed height for consistency */
+    max-height: 800px; /* Set a fixed max-height instead of vh */
+    height: 800px; /* Fixed height for consistency */
     overflow: hidden;
     box-sizing: border-box;
     border-bottom: 3px solid #e1b12c;
