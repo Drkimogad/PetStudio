@@ -118,12 +118,12 @@ body {
     transition: opacity 0.3s ease;
 }
 
-/* Banner */
+/* Banner Styles */
 .banner-wrapper {
     position: relative;
-    width: 100%; /* Changed from 80% to take full width */
-    max-height: 800px; /* Set a fixed max-height instead of vh */
-    height: 800px; /* Fixed height for consistency */
+    width: 100%;
+    height: 100vh; /* Full viewport height */
+    max-height: 100vh; /* Prevent exceeding viewport */
     overflow: hidden;
     box-sizing: border-box;
     border-bottom: 3px solid #e1b12c;
@@ -131,28 +131,38 @@ body {
 }
 
 .banner-image {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important; /* This will cover the area without distorting */
-    object-position: center; /* Centers the image */
-    display: block !important;
-    margin: 0 auto !important;
-    box-sizing: border-box !important;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Changed from 'cover' to show full image */
+    object-position: center;
+    display: block;
+    margin: 0 auto;
 }
 
 .quote {
     position: absolute;
-    bottom: 20px; /* Reduced from 30px */
-    right: 20px;
+    bottom: 5%; /* Responsive positioning */
+    right: 5%;
     background: rgba(0, 0, 0, 0.6);
     color: #f5f5dc;
     padding: 10px 15px;
     border-radius: 5px;
     font-style: italic;
-    font-size: 1rem;
-    max-width: 50%; /* Reduced from 60% */
+    font-size: clamp(0.8rem, 2vw, 1.2rem); /* Responsive font size */
+    max-width: 45%;
     text-align: right;
-    margin: 0; /* Ensure no extra margin */
+    margin: 0;
+}
+
+/* For screens taller than wide (mobile) */
+@media (max-aspect-ratio: 1/1) {
+    .banner-image {
+        object-fit: cover; /* Better mobile display */
+    }
+    .quote {
+        max-width: 80%; /* More space for text on mobile */
+        font-size: 0.9rem; /* Slightly smaller text */
+    }
 }
 
 
