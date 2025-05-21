@@ -32,12 +32,8 @@ async function initializeGoogleAuth() {
   google.accounts.id.initialize({
     client_id: '901433348522-n01acsr56ah7vqql8rqo2c4cp717bqe4.apps.googleusercontent.com',
     callback: handleGoogleSignIn,
-    ux_mode: 'redirect', // Better for GitHub Pages than popup
-    login_uri: window.location.origin // Dynamic origin
+    login_uri: 'https://drkimogad.github.io/PetStudio/' // GitHub Pages URL
   });
-  // One-tap sign-in
-  google.accounts.id.prompt();
-}
 
   if (DOM.googleSignInBtn) {
     google.accounts.id.renderButton(DOM.googleSignInBtn, {
@@ -56,12 +52,9 @@ async function handleGoogleSignIn(response) {
     email: user.email,
     name: user.name || user.email.split('@')[0]
   };
- 
-  // Store only non-sensitive data
-  sessionStorage.setItem('currentUser', JSON.stringify({
-    email: currentUser.email,
-    name: currentUser.name
-  }));
+  localStorage.setItem('currentUser', JSON.stringify(currentUser));
+  
+  // Initialize Drive API with token
   await initializeDriveAPI(response.credential);
   showDashboard();
 }
