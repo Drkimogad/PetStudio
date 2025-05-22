@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "functions": {
+    "api/send-reminders.js": {
+      "runtime": "nodejs18.x",
+      "schedule": "@daily"
+    }
+  },
+  "builds": [
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    }
+  ]
+}
