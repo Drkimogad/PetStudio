@@ -387,76 +387,101 @@ function setCoverPhoto(profileIndex, imageIndex) {
 }
 
 // Profile form submission
+//🌟 Updated Profile Form Submission with Cloudinary 🌟
 DOM.profileForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const userId = "test-user";
-  const petName = document.getElementById("petName").value;
-  const petBreed = document.getElementById("petBreed").value;
-  const petDob = document.getElementById("petDob").value;
-  const birthday = document.getElementById("petBirthday").value;
-  const galleryFiles = Array.from(document.getElementById("petGallery").files);
   
-  if(birthday) {
-    const reminderData = {
-      userId: userId,
-      petName: petName,
-      date: formatFirestoreDate(birthday),
-      message: `It's ${petName}'s birthday today. We wish our pawsome friend a fabulous day! 🐾🎉`,
-      createdAt: new Date().toISOString()
-    };
-    try {
-      await firebase.firestore().collection("reminders").add(reminderData);
-    } catch (error) {
-      console.error("Error creating reminder:", error);
+  // Show loading state
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.innerHTML;
+  submitBtn.innerHTML = '⏳ Saving...';
+  submitBtn.disabled = true;
+
+  try {
+    // 1. Handle image uploads to Cloudinary
+    const galleryFiles = Array.from(document.getElementById("petGallery").files);
+    const uploadedImageUrls = [];
+    
+    for (const file of galleryFiles) {
+      try {
+        showLoading(true);
+        const result = await uploadToCloudinary(file);
+        if (result?.secure_url) {
+          uploadedImageUrls.push(result.secure_url);
+        }
+      } catch (uploadError) {
+        console.error('Failed to upload image:', uploadError);
+        Utils.showErrorToUser(`Failed to upload ${file.name}. Please try again.`);
+      } finally {
+        showLoading(false);
+      }
     }
+
+    // 2. Prepare mood history
+    const moodHistoryInput = document.getElementById("moodHistoryInput");
+    const moodHistory = moodHistoryInput?.value.trim() 
+      ? moodHistoryInput.value.trim().split("\n").map(line => {
+          const [date, mood] = line.split(":");
+          return { date: date.trim(), mood: mood.trim() };
+        })
+      : [];
+
+    // 3. Create profile object
+    const newProfile = {
+      id: Date.now(),
+      name: document.getElementById("petName").value,
+      breed: document.getElementById("petBreed").value,
+      dob: document.getElementById("petDob").value,
+      birthday: document.getElementById("petBirthday").value,
+      gallery: uploadedImageUrls, // Using Cloudinary URLs
+      moodHistory: moodHistory,
+      coverPhotoIndex: 0
+    };
+
+    // 4. Save to storage
+    if (isEditing) {
+      petProfiles[currentEditIndex] = newProfile;
+    } else {
+      petProfiles.push(newProfile);
+    }
+    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+
+    // 5. Handle birthday reminders (unchanged Firebase Firestore code)
+    if (newProfile.birthday) {
+      const reminderData = {
+        userId: auth.currentUser?.uid || "anonymous",
+        petName: newProfile.name,
+        date: formatFirestoreDate(newProfile.birthday),
+        message: `It's ${newProfile.name}'s birthday today! 🎉`,
+        createdAt: new Date().toISOString()
+      };
+      
+      try {
+        await firebase.firestore().collection("reminders").add(reminderData);
+      } catch (firestoreError) {
+        console.error("Reminder save failed:", firestoreError);
+        // Non-blocking error
+      }
+    }
+
+    // 6. Update UI
+    DOM.profileSection.classList.add("hidden");
+    DOM.petList.classList.remove("hidden");
+    renderProfiles();
+    window.scrollTo(0, 0);
+
+  } catch (error) {
+    console.error("Profile save failed:", error);
+    Utils.showErrorToUser("Failed to save profile. Please check your inputs.");
+  } finally {
+    submitBtn.innerHTML = originalBtnText;
+    submitBtn.disabled = false;
+    showLoading(false);
   }
-
-  const moodHistoryInput = document.getElementById("moodHistoryInput");
-  const moodHistory = moodHistoryInput && moodHistoryInput.value.trim()
-    ? moodHistoryInput.value.trim().split("\n").map(line => {
-        const [date, mood] = line.split(":");
-        return { date: date.trim(), mood: mood.trim() };
-      })
-    : [];
-
-  const galleryUrls = await Promise.all(
-    galleryFiles.map(async file => {
-      const url = URL.createObjectURL(file);
-      const img = new Image();
-      await new Promise(resolve => {
-        img.onerror = resolve;
-        img.onload = resolve;
-        img.src = url;
-      });
-      return url;
-    })
-  );
-
-  const newProfile = {
-    id: Date.now(),
-    name: petName,
-    breed: petBreed,
-    dob: petDob,
-    birthday: birthday,
-    gallery: galleryUrls,
-    moodHistory: moodHistory,
-    coverPhotoIndex: 0
-  };
-
-  if(isEditing) {
-    petProfiles[currentEditIndex] = newProfile;
-  } else {
-    petProfiles.push(newProfile);
-  }
-
-  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  DOM.profileSection.classList.add("hidden");
-  DOM.petList.classList.remove("hidden");
-  renderProfiles();
-  window.scrollTo(0, 0);
 });
 
+// Helper function (keep this)
 function formatFirestoreDate(dateString) {
   const date = new Date(dateString);
   return date.toISOString().split('T')[0];
- }
+}
