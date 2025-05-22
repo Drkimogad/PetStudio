@@ -1,4 +1,9 @@
 // GLOBAL DECLARATIONS- AUTH-INITIALIZATION
+// 🔶 Add this at the TOP of your global declarations (around line 3)
+const CLOUDINARY_CONFIG = {
+  cloudName: 'YOUR_CLOUD_NAME',  // ← Replace with yours from Cloudinary dashboard
+  uploadPreset: 'petStudio'      // ← Create this in Cloudinary settings
+};
 // 🔶 GLOBAL DECLARATIONS🔶🔶🔶
 let auth = null;
 let provider = null;
