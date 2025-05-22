@@ -1,44 +1,114 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PetStudio</title>
     <meta name="description" content="Celebrate your pets' milestones and keep track of their birthdays with PetStudio">
-    
-    <!-- OpenGraph Meta -->
     <meta property="og:title" content="PetStudio - Pet Profile Manager">
     <meta property="og:description" content="Create and share your pet's profile with milestones and birthday reminders">
     <meta property="og:type" content="website">
+    
+    <!-- Enhanced CSP with Nonce -->
+<meta http-equiv="Content-Security-Policy" 
+  content="default-src 'self';
+    script-src 'self'
+               https://www.gstatic.com
+               https://cdn.jsdelivr.net
+               https://cdnjs.cloudflare.com
+               https://apis.google.com
+               https://accounts.google.com
+               https://www.googleapis.com
+               'unsafe-eval'
+               'unsafe-inline';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    connect-src 'self'
+               https://www.googleapis.com
+               https://firestore.googleapis.com
+               https://*.googleapis.com
+               https://identitytoolkit.googleapis.com
+               https://pet-studio.vercel.app;
+    frame-src https://accounts.google.com;
+    font-src 'self' https://fonts.gstatic.com;
+    img-src 'self' blob: data: https://*.googleusercontent.com;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    worker-src 'self'">
+    
+<!-- Preload critical resources -->
+<link rel="preconnect" href="https://accounts.google.com">
+<link rel="preconnect" href="https://apis.google.com">
+<link rel="preload" href="https://accounts.google.com/gsi/client" as="script">
+
+<script>
+  window.handleScriptError = (error) => {
+    console.error('Script failed to load:', error);
+    document.getElementById('authContainer').innerHTML = `
+      <div class="error-message">
+        <h2>Application Error</h2>
+        <p>Failed to load required resources. Please refresh or try again later.</p>
+      </div>
+    `;
+  };
+</script>
+    
+<!-- Firebase Core SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Add this BEFORE your main script -->
+<script src="https://accounts.google.com/gsi/client" async defer</script>  
+     </script>    
+      src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" 
+      integrity="sha256-6H5VB5QyLldKH9oMFUmjxw2uWpPZETQXpCkBaDjquMs=" 
+      crossorigin="anonymous">
+    </script>    
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <!-- Metadata -->
     <meta property="og:url" content="https://your-petstudio-url.com">
     <meta name="twitter:card" content="summary_large_image">
-    <!-- Preload key resources -->
-    <link rel="preconnect" href="https://accounts.google.com">
-    <link rel="preconnect" href="https://apis.google.com">
-    <!-- Enhanced CSP -->
-    <meta http-equiv="Content-Security-Policy" 
-          content="default-src 'self';
-          script-src 'self' https://*.google.com https://*.googleapis.com https://cdn.jsdelivr.net;
-          connect-src 'self' https://*.googleapis.com;
-          img-src 'self' data: blob: https://*;
-          style-src 'self' 'unsafe-inline' https://accounts.google.com;
-          font-src 'self' https://fonts.gstatic.com;
-          frame-src https://accounts.google.com">
-    
-    <!-- Google Identity Services -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    
-    <!-- Essential Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" 
-            integrity="sha256-6H5VB5QyLldKH9oMFUmjxw2uWpPZETQXpCkBaDjquMs=" 
-            crossorigin="anonymous"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     
     <!-- Local Resources -->
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./styles.css">
     <link rel="manifest" href="./manifest.json">
+    <style>
+        /* Additional auth-specific styles */
+        .auth-switch-btn {
+            background: none;
+            border: none;
+            color: #0066cc;
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 10px 0;
+            font-size: 1rem;
+            margin-top: 15px;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .auth-switch-btn:hover {
+            color: #004499;
+        }
+
+        .button[disabled] {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .auth-message {
+            text-align: center;
+            margin: 15px 0;
+            color: #666;
+        }
+        .success-message {
+       color: #28a745;
+       text-align: center;
+       margin: 15px 0;
+        }
+    </style>
 </head>
 <body>
     <div id="loadingIndicator" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000;">
