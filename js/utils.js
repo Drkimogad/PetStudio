@@ -1,5 +1,37 @@
 //🌟 Main Application-Initialization-UTILs 🌟
 // ================= UTILITY FUNCTIONS =================
+// 🔶 Add this HELPER FUNCTION anywhere in your utilities section
+//🌟 Improve uploadToCloudinary()
+async function uploadToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+  formData.append('folder', 'pet-images'); // Add folder organization
+
+  try {
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/upload`,
+      { 
+        method: 'POST', 
+        body: formData,
+        signal: AbortSignal.timeout(15000) // Add timeout
+      }
+    );
+    
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+    
+  } catch (error) {
+    console.error('Cloudinary upload failed:', error);
+    throw error; // Re-throw for caller handling
+  }
+}
+//🌟 Consider adding for Cloudinary
+function getOptimizedImageUrl(url, width = 500) {
+  if (!url.includes('cloudinary')) return url;
+  return url.replace('/upload/', `/upload/w_${width},q_auto/`);
+}
+// OLD SECTION
 const Utils = {
   getCountdown: function(birthday) {
     const today = new Date();
@@ -61,68 +93,7 @@ const Utils = {
     `;
   }
 };
-// 🔶 Add this HELPER FUNCTION anywhere in your utilities section
-async function uploadToCloudinary(file) {
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
 
-  try {
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`,
-      { method: 'POST', body: formData }
-    );
-    return await response.json();
-  } catch (error) {
-    console.error('Cloudinary upload failed:', error);
-    return null;
-  }
-}
-// Main initialization function
-async function main() {
-  return new Promise((resolve, reject) => {
-    const gisScript = document.createElement("script");
-    gisScript.src = "https://accounts.google.com/gsi/client";
-    gisScript.onload = () => resolve();
-    gisScript.onerror = () => reject(new Error("Failed to load Google Identity Services"));
-    document.head.appendChild(gisScript);
-  }).then(() => {
-    window.tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: '540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com',
-      scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email',
-      prompt: '',
-      callback: async (tokenResponse) => {
-        if (tokenResponse.error) {
-          console.error("Token error:", tokenResponse);
-          return showErrorToUser("Google login failed.");
-        }
-
-        window.gapiToken = tokenResponse.access_token;
-
-        await new Promise((resolve) => {
-          const script = document.createElement('script');
-          script.src = 'https://apis.google.com/js/api.js';
-          script.onload = resolve;
-          document.head.appendChild(script);
-        });
-
-        await gapi.load("client", async () => {
-          await gapi.client.init({
-            apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-          });
-          gapi.client.setToken({ access_token: window.gapiToken });
-          renderProfiles();
-          setupGoogleLoginButton();
-        });
-      }
-    });
-  }).catch((error) => {
-    console.error("GIS init failed:", error);
-    showErrorToUser("Failed to load Google services");
-  });
-}
-
-// Initialize app
 // Initialize app
 async function initApp() {
   document.body.classList.add('loading');
@@ -187,14 +158,15 @@ function loadGAPI() {
 
 // Initialize Firebase
 async function initializeFirebase() {
-  const firebaseConfig = {
-    apiKey: "AIzaSyB42agDYdC2-LF81f0YurmwiDmXptTpMVw",
-    authDomain: "swiftreach2025.firebaseapp.com",
-    projectId: "swiftreach2025",
-    storageBucket: "swiftreach2025.appspot.com",
-    messagingSenderId: "540185558422",
-    appId: "1:540185558422:web:d560ac90eb1dff3e5071b7"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCbJAQKCsD8CXqm3Q2CtD-qPncm_5MkZmk",
+  authDomain: "petstudio-4811d.firebaseapp.com",
+  projectId: "petstudio-4811d",
+  storageBucket: "petstudio-4811d.firebasestorage.app",
+  messagingSenderId: "712319738169",
+  appId: "1:712319738169:web:02bcc67f6684d1550c88e8",
+  measurementId: "G-LPLXKYKE3P"
+};
 
   // Initialize only if not already initialized
   const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
