@@ -87,27 +87,46 @@ function showDashboard() {
   }
 }
 
-// ====== Google APIs Initialization ======    
-// google api loading function was removed
-    // Initialize Google OAuth client
-    window.tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
-      scope: "https://www.googleapis.com/auth/drive.file",
-      callback: (tokenResponse) => {
-        if (tokenResponse && tokenResponse.access_token) {
-          console.log("Google token received");
-        }
-      },
-    });
-    
-    if (typeof callback === "function") callback();
-  }; // THIS BRACE WAS MISSING
+// ====== Google Sign-In Initialization ======
+function setupGoogleLoginButton() {
+  // Initialize Google Identity Services
+  google.accounts.id.initialize({
+    client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
+    callback: async (response) => {
+      // Handle Google Sign-In with Firebase
+      try {
+        showLoading(true);
+        const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
+        await auth.signInWithCredential(credential);
+        showDashboard();
+      } catch (error) {
+        console.error("Google Sign-In failed:", error);
+        Utils.showErrorToUser("Google Sign-In failed. Please try again.");
+      } finally {
+        showLoading(false);
+      }
+    }
+  });
 
-  gsiScript.onerror = () => {
-    console.error("❌ Failed to load GSI client script");
-  };
+  // Render the button in the correct container
+  google.accounts.id.renderButton(
+    document.getElementById("googleSignInBtn"), // Targets the specific button div
+    { 
+      type: "standard",
+      theme: "filled_blue",
+      size: "large",
+      text: "continue_with",
+      shape: "rectangular",
+      width: 250 // Explicit width to prevent layout shifts
+    }
+  );
 
-  document.head.appendChild(gsiScript);
+  // Optional: Add "One Tap" sign-in prompt
+  google.accounts.id.prompt((notification) => {
+    if (notification.isNotDisplayed()) {
+      console.log("One Tap prompt wasn't shown. Reason:", notification.getNotDisplayedReason());
+    }
+  });
 }
 
 // ====== Firebase Integration ======
@@ -126,169 +145,48 @@ async function initializeFirebase() {
     firebase.initializeApp(firebaseConfig);
   }
 
-  // Return the auth instance directly
-  return {
-    auth: firebase.auth(),
-    provider: new firebase.auth.GoogleAuthProvider()
-  };
+  return firebase.auth(); // Return only auth instance
 }
 
-// ====== Auth Listeners ======
+// ====== Auth State Listener ======
 function initAuthListeners(authInstance) {
   authInstance.onAuthStateChanged((user) => {
     if (user) {
-      console.log("✅ Logged in:", user.email);
+      console.log("✅ User signed in:", user.email);
       showDashboard();
       renderProfiles();
     } else {
-      console.log("🚪 Logged out");
+      console.log("🚪 User signed out");
       showAuthForm('login');
     }
   });
 }
 
-// ====== Google Login Button ======
-function setupGoogleLoginButton() {
-  const existingBtn = document.getElementById('googleSignInBtn');
-  if (existingBtn) existingBtn.remove();
-
-  // Use Google's official button renderer
-  google.accounts.id.renderButton(
-    document.getElementById("authContainer"), // Target container
-    { 
-      type: "standard",
-      theme: "filled_blue",
-      size: "large",
-      text: "continue_with",
-      shape: "rectangular"
-    }
-  );
-}
-
-// ====== Token Management ======
-async function refreshDriveTokenIfNeeded() {
-  try {
-    if (!auth?.currentUser) throw new Error("No authenticated user");
-
-    const authResponse = await auth.currentUser.getIdTokenResult();
-    const expiration = new Date(authResponse.expirationTime);
-
-    if (expiration <= new Date()) {
-      console.log("Token expired, requesting re-authentication");
-      await signInWithRedirect(auth, provider);
-    }
-  } catch (error) {
-    console.error("Token refresh error:", error);
-    Utils.showErrorToUser('Session expired - please re-login');
-  }
-}
-
-// ====== Form Handlers ======
-function setupAuthForms() {
-  // Sign Up Handler
-  DOM.signupForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    isSignupInProgress = true;
-
-    const username = DOM.signupForm.querySelector("#signupEmail").value.trim();
-    const password = DOM.signupForm.querySelector("#signupPassword").value.trim();
-    const email = `${username}@petstudio.com`;
-
-    auth.createUserWithEmailAndPassword(email, password)
-      .then(() => auth.signOut())
-      .then(() => {
-        showAuthForm('login');
-        Utils.showErrorToUser("Account created! Please login", true);
-        document.getElementById("loginEmail").value = username;
-        document.getElementById("loginPassword").value = password;
-      })
-      .catch((error) => {
-        Utils.showErrorToUser(error.message);
-      })
-      .finally(() => {
-        isSignupInProgress = false;
-      });
-  });
-
-  // Login Handler
-  DOM.loginForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const username = DOM.loginForm.querySelector("#loginEmail")?.value.trim();
-    const password = DOM.loginForm.querySelector("#loginPassword")?.value.trim();
-    const email = `${username}@petstudio.com`;
-
-    if (!username || !password) {
-      alert("Please fill all fields");
-      return;
-    }
-
-    const submitBtn = DOM.loginForm.querySelector("button[type='submit']");
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Logging in...";
-
-    auth.signInWithEmailAndPassword(email, password)
-      .then(() => {
-        showDashboard();
-        renderProfiles();
-      })
-      .catch((error) => {
-        let msg = "Login failed: ";
-        if (error.code === "auth/wrong-password") msg += "Wrong password";
-        else if (error.code === "auth/user-not-found") msg += "User not found";
-        else msg += error.message;
-        alert(msg);
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Login";
-      });
-  });
-}
-
-// ====== Logout Handler ======
-function setupLogoutButton() {
-  DOM.logoutBtn?.addEventListener("click", async (e) => {
-    e.preventDefault();
-    try {
-      await auth.signOut();
-      delete window._tempAuth; // Clean up
-      window.location.href = '/PetStudio/';
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  });
-}
-
-// ====== Initialization ======
+// ====== Core Initialization ======
 async function initializeAuth() {
   try {
-    // 1. First load Firebase (since it's essential)
-    const { auth, provider } = await initializeFirebase();
+    // 1. Initialize Firebase Auth
+    auth = await initializeFirebase();
     
-    // 2. Set up auth listeners early
+    // 2. Set up auth state listener
     initAuthListeners(auth);
     
-    // 3. Load Google APIs in parallel
-    await new Promise((resolve) => {
-      loadGoogleAPIs(resolve);
-      setTimeout(resolve, 3000); // Fallback timeout
-    });
+    // 3. Set up Google Sign-In button (after DOM is ready)
+    if (document.getElementById("googleSignInBtn")) {
+      setupGoogleLoginButton();
+    } else {
+      console.error("Google Sign-In button container not found");
+    }
     
-    // 4. Set up UI
+    // 4. Set up other UI components
     showAuthForm('login');
-    setupGoogleLoginButton();
+    setupAuthForms();
+    setupLogoutButton();
     
-    return { auth, provider };
   } catch (error) {
-    console.error("Initialization failed:", error);
+    console.error("Auth initialization failed:", error);
     disableUI();
   }
-}
-
-// Add Loading States:
-function showLoading(state) {
-  document.getElementById('loadingIndicator').style.display = 
-    state ? 'block' : 'none';
 }
 
 // Start initialization when DOM is ready
