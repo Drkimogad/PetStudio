@@ -206,8 +206,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     renderProfiles();
   }
 });
+
 //🌟 Push Notifications 🌟
-const VAPID_PUBLIC_KEY = 'BAL7SL85Z3cAH-T6oDGvfxV0oJhElCpnc7F_TaF2RQogy0gnUChGa_YtmwKdifC4c4pZ0NhUd4T6BFHGRxT79Gk';
+const VAPID_PUBLIC_KEY = 'BAGIifN8xg_sHYG9Erz6mkP4MLLMXizBUR_TygNE51Jzl-o_ol_f69kzwUnIE74MO-91KYCJqCNl3noru0pf3ME	';
 const VERCEL_API = 'https://pet-studio.vercel.app/api/save-subscription';
 
 // Service worker registration
