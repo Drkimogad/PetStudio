@@ -61,7 +61,23 @@ const Utils = {
     `;
   }
 };
+// 🔶 Add this HELPER FUNCTION anywhere in your utilities section
+async function uploadToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
 
+  try {
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`,
+      { method: 'POST', body: formData }
+    );
+    return await response.json();
+  } catch (error) {
+    console.error('Cloudinary upload failed:', error);
+    return null;
+  }
+}
 // Main initialization function
 async function main() {
   return new Promise((resolve, reject) => {
