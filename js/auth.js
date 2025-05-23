@@ -1,7 +1,7 @@
 // GLOBAL DECLARATIONS- AUTH-INITIALIZATION
 // 🔶 Add this at the TOP of your global declarations (around line 3)
 const CLOUDINARY_CONFIG = {
-  cloudName: 'dguikjbys',  // ← Replace with yours from Cloudinary dashboard
+  cloudName: 'dgof0xixy',  // ← Replace with yours from Cloudinary dashboard
   uploadPreset: 'PetStudio'      // ← Create this in Cloudinary settings
 };
 // 🔶 GLOBAL DECLARATIONS🔶🔶🔶
