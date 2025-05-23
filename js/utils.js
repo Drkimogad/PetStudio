@@ -3,6 +3,18 @@
 // 🔶 Add this HELPER FUNCTION anywhere in your utilities section
 //🌟 Improve uploadToCloudinary()
 async function uploadToCloudinary(file) {
+    // 1. VALIDATE FILE TYPE (Client-side)
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error('Only JPG/PNG/WEBP images allowed!');
+  }
+
+  // 2. VALIDATE FILE SIZE (10MB)
+  const maxSizeMB = 10;
+  if (file.size > maxSizeMB * 1024 * 1024) {
+    throw new Error(`File too large! Max ${maxSizeMB}MB allowed`);
+  }    
+  // Proceed with upload if validations pass
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
