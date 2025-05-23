@@ -1,5 +1,5 @@
 // service-worker.js - Optimized Version
-const VERSION = '4.1.0';
+const VERSION = '4.2.0';
 const CACHE = {
   CORE: `PetStudio-core-v${VERSION}`,
   API: `PetStudio-api-v${VERSION}`,
@@ -15,11 +15,8 @@ const CORE_ASSETS = [
   '/PetStudio/index.html',
   '/PetStudio/styles.css',
   '/PetStudio/js/auth.js',
-  '/PetStudio/js/drive.js',
-  '/PetStudio/js/profiles.js',
-  '/PetStudio/js/qr.js',
-  '/PetStudio/js/notifications.js',
-  '/PetStudio/js/main.js',
+  '/PetStudio/js/utils.js',
+  '/PetStudio/js/dashboard.js',
   '/PetStudio/manifest.json',
   '/PetStudio/icons/icon-192x192.png',
   '/PetStudio/icons/icon-512x512.png',
