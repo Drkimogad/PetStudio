@@ -137,13 +137,13 @@ function setupGoogleLoginButton() {
 // ====== Firebase Integration ======
 async function initializeFirebase() {
 const firebaseConfig = {
-  apiKey: "AIzaSyCbJAQKCsD8CXqm3Q2CtD-qPncm_5MkZmk",
-  authDomain: "petstudio-4811d.firebaseapp.com",
-  projectId: "petstudio-4811d",
-  storageBucket: "petstudio-4811d.firebasestorage.app",
-  messagingSenderId: "712319738169",
-  appId: "1:712319738169:web:02bcc67f6684d1550c88e8",
-  measurementId: "G-LPLXKYKE3P"
+  apiKey: "AIzaSyAnGNXr6JZHgCcHp5xKtGuIsTGaMRqZ6oM",
+  authDomain: "petstudio-c3679.firebaseapp.com",
+  projectId: "petstudio-c3679",
+  storageBucket: "petstudio-c3679.firebasestorage.app",
+  messagingSenderId: "1031214975391",
+  appId: "1:1031214975391:web:35878cabdd540b6fc455aa",
+  measurementId: "G-0GK7ZCV5VS"
 };
 
   // Initialize Firebase if not already initialized
