@@ -3,7 +3,6 @@ const CLOUDINARY_CONFIG = {
   cloudName: 'dh7d6otgu',
   uploadPreset: 'PetStudio'
 };
-
 // 🔶 GLOBAL DECLARATIONS🔶🔶🔶
 let auth = null;
 let provider = null;
@@ -12,13 +11,11 @@ let currentQRProfile = null;
 let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 let isEditing = false;
 let currentEditIndex = null;
-
 // 🔶 State Management🔶🔶🔶
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
   'https://drkimogad.github.io/PetStudio'
 ];
-
 // Runtime origin check
 if (!VALID_ORIGINS.includes(window.location.origin)) {
   window.location.href = 'https://drkimogad.github.io/PetStudio';
@@ -32,7 +29,6 @@ function disableUI() {
     </h1>
   `;
 }
-
 // DOM Elements - Initialize as null first
 const DOM = {
   authContainer: null,
@@ -72,19 +68,16 @@ function showAuthForm(form) {
   if (!DOM.authContainer || !DOM.loginPage || !DOM.signupPage) {
     console.error("DOM elements not ready in showAuthForm");
     return;
-  }
-  
+  }  
   DOM.authContainer.classList.remove('hidden');
   DOM.loginPage.classList.toggle('hidden', form !== 'login');
   DOM.signupPage.classList.toggle('hidden', form !== 'signup');
 }
-
 function showDashboard() {
   if (!DOM.authContainer || !DOM.dashboard) {
     console.error("DOM elements not ready in showDashboard");
     return;
-  }
-  
+  }  
   DOM.authContainer.classList.add('hidden');
   DOM.dashboard.classList.remove('hidden');
   if (DOM.addPetProfileBtn) DOM.addPetProfileBtn.classList.remove('hidden');
@@ -96,7 +89,6 @@ function showDashboard() {
     renderProfiles();
   }
 }
-
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
   // Check if Google and Firebase are loaded
@@ -105,7 +97,6 @@ function setupGoogleLoginButton() {
     setTimeout(setupGoogleLoginButton, 300);
     return;
   }
-
   try {
     // Initialize Google Identity Services
     google.accounts.id.initialize({
@@ -127,8 +118,7 @@ function setupGoogleLoginButton() {
         }
       }
     });
-
-    // Render button if container exists
+  // Render button if container exists
     const googleButtonContainer = document.getElementById("googleSignInBtn");
     if (googleButtonContainer) {
       google.accounts.id.renderButton(googleButtonContainer, {
