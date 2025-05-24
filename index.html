@@ -8,17 +8,7 @@
     <meta property="og:type" content="website">
     
     <!-- Enhanced CSP with Nonce -->
-<meta http-equiv="Content-Security-Policy" 
-  content="default-src 'self';
-    script-src 'self'
-               https://www.gstatic.com
-               https://cdn.jsdelivr.net
-               https://cdnjs.cloudflare.com
-               https://apis.google.com
-               https://accounts.google.com
-               https://www.googleapis.com
-               'unsafe-eval'
-               'unsafe-inline';
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://apis.google.com https://accounts.google.com https://www.googleapis.com https://unpkg.com 'unsafe-eval' 'unsafe-inline'">
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     connect-src 'self'
                https://www.googleapis.com
