@@ -189,7 +189,10 @@ async function initializeAuth() {
       });
     }    
     // 3. Initialize Firebase Auth
-    auth = await initializeFirebase();    
+    auth = await initializeFirebase();
+    console.log("✅ Auth object received:", auth);
+    console.log("Type of onAuthStateChanged:", typeof auth.onAuthStateChanged);
+
     // 4. Set up auth state listener
     initAuthListeners(auth);  
     // 5. Set up Google Sign-In button (if exists)
