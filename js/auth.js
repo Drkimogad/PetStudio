@@ -136,13 +136,25 @@ async function initializeFirebase() {
     appId: "1:1031214975391:web:35878cabdd540b6fc455aa",
     measurementId: "G-0GK7ZCV5VS"
   };
-  // Initialize Firebase if not already initialized
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }  
-  // Return the auth instance using v9 compat syntax
-  return firebase.auth();
+
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    const authInstance = firebase.auth();
+
+    if (!authInstance || typeof authInstance.onAuthStateChanged !== 'function') {
+      throw new Error("authInstance is not valid or missing onAuthStateChanged");
+    }
+
+    return authInstance;
+  } catch (err) {
+    console.error("Firebase initialization failed:", err);
+    throw err;
+  }
 }
+
 // ====== Auth State Listener ======
 function initAuthListeners(authInstance) {
   // Using v9 compat syntax
