@@ -40,10 +40,6 @@ const DOM = {
   loginPage: null,
   dashboard: null,
   logoutBtn: null,
-  signupForm: null,
-  loginForm: null,
-  switchToLogin: null,
-  switchToSignup: null,
   addPetProfileBtn: null,
   profileSection: null,
   petList: null,
@@ -54,14 +50,8 @@ const DOM = {
 // Initialize DOM elements when page loads
 function initDOMReferences() {
   DOM.authContainer = document.getElementById("authContainer");
-  DOM.signupPage = document.getElementById("signupPage");
-  DOM.loginPage = document.getElementById("loginPage");
   DOM.dashboard = document.getElementById("dashboard");
   DOM.logoutBtn = document.getElementById("logoutBtn");
-  DOM.signupForm = document.getElementById("signupForm");
-  DOM.loginForm = document.getElementById("loginForm");
-  DOM.switchToLogin = document.getElementById("switchToLogin");
-  DOM.switchToSignup = document.getElementById("switchToSignup");
   DOM.addPetProfileBtn = document.getElementById("addPetProfileBtn");
   DOM.profileSection = document.getElementById("profileSection");
   DOM.petList = document.getElementById("petList");
