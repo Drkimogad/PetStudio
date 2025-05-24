@@ -107,31 +107,82 @@ function showDashboard() {
   }
 }
 
+// ====== Google Sign-In Initialization ======
+function setupGoogleLoginButton() {
+  // Check if Google and Firebase are loaded
+  if (typeof google === 'undefined' || !google.accounts || typeof firebase === 'undefined') {
+    console.log("Waiting for libraries to load...");
+    setTimeout(setupGoogleLoginButton, 300);
+    return;
+  }
+
+  try {
+    // Initialize Google Identity Services
+    google.accounts.id.initialize({
+      client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
+      callback: async (response) => {
+        try {
+          showLoading(true);
+          // Using v9 compat syntax
+          const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
+          await firebase.auth().signInWithCredential(credential);
+          showDashboard();
+        } catch (error) {
+          console.error("Google Sign-In failed:", error);
+          if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
+            Utils.showErrorToUser("Google Sign-In failed. Please try again.");
+          }
+        } finally {
+          showLoading(false);
+        }
+      }
+    });
+
+    // Render button if container exists
+    const googleButtonContainer = document.getElementById("googleSignInBtn");
+    if (googleButtonContainer) {
+      google.accounts.id.renderButton(googleButtonContainer, {
+        type: "standard",
+        theme: "filled_blue",
+        size: "large",
+        text: "continue_with",
+        shape: "rectangular",
+        width: 250
+      });
+      
+      // Optional: One Tap sign-in
+      google.accounts.id.prompt();
+    }
+  } catch (error) {
+    console.error("Google Sign-In setup failed:", error);
+  }
+}
 // ====== Firebase Integration ======
+// ====== Firebase Initialization ======
 async function initializeFirebase() {
   const firebaseConfig = {
     apiKey: "AIzaSyAnGNXr6JZHgCcHp5xKtGuIsTGaMRqZ6oM",
     authDomain: "petstudio-c3679.firebaseapp.com",
     projectId: "petstudio-c3679",
-    storageBucket: "petstudio-c3679.firebasestorage.app",
+    storageBucket: "petstudio-c3679.appspot.com",
     messagingSenderId: "1031214975391",
     appId: "1:1031214975391:web:35878cabdd540b6fc455aa",
     measurementId: "G-0GK7ZCV5VS"
   };
 
   // Initialize Firebase if not already initialized
-  if (!firebase.apps || firebase.apps.length === 0) {
+  if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
-
-  // Return auth instance - using v8 compatibility syntax
+  
+  // Return the auth instance using v9 compat syntax
   return firebase.auth();
 }
 
 // ====== Auth State Listener ======
 function initAuthListeners(authInstance) {
-  // Using firebase.auth().onAuthStateChanged for v8 syntax
-  authInstance.onAuthStateChanged(function(user) {
+  // Using v9 compat syntax
+  authInstance.onAuthStateChanged((user) => {
     if (user) {
       console.log("✅ User signed in:", user.email);
       showDashboard();
@@ -143,67 +194,6 @@ function initAuthListeners(authInstance) {
       showAuthForm('login');
     }
   });
-}
-// ====== Google Sign-In Initialization ======
-function setupGoogleLoginButton() {
-  // First check if Google library is loaded
-  if (typeof google === 'undefined' || !google.accounts) {
-    console.error("Google Identity Services library not loaded");
-    // You might want to retry after a delay
-    setTimeout(setupGoogleLoginButton, 500);
-    return;
-  }
-
-  try {
-    // Initialize Google Identity Services
-    google.accounts.id.initialize({
-      client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
-      callback: async (response) => {
-        // Handle Google Sign-In with Firebase
-        try {
-          showLoading(true);
-          const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
-          await auth.signInWithCredential(credential);
-          showDashboard();
-        } catch (error) {
-          console.error("Google Sign-In failed:", error);
-          Utils.showErrorToUser("Google Sign-In failed. Please try again.");
-        } finally {
-          showLoading(false);
-        }
-      }
-    });
-
-    // Only render button if the container exists
-    const googleButtonContainer = document.getElementById("googleSignInBtn");
-    if (googleButtonContainer) {
-      google.accounts.id.renderButton(
-        googleButtonContainer,
-        { 
-          type: "standard",
-          theme: "filled_blue",
-          size: "large",
-          text: "continue_with",
-          shape: "rectangular",
-          width: 250
-        }
-      );
-
-      // Optional: Add "One Tap" sign-in prompt
-      google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed()) {
-          console.log("One Tap prompt wasn't shown. Reason:", notification.getNotDisplayedReason());
-        }
-      });
-    } else {
-      console.warn("Google Sign-In button container not found");
-    }
-  } catch (error) {
-    console.error("Google Sign-In setup failed:", error);
-    if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
-      Utils.showErrorToUser("Google Sign-In is currently unavailable");
-    }
-  }
 }
 // ====== Core Initialization ======
 async function initializeAuth() {
