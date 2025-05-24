@@ -148,20 +148,23 @@ async function initializeFirebase() {
 
 
 // ====== Auth State Listener ======
-function initAuthListeners(authInstance) {
-  // Using v9 compat syntax
-  authInstance.onAuthStateChanged((user) => {
+function initAuthListeners() {
+  const auth = firebase.auth();
+
+  auth.onAuthStateChanged(user => {
     if (user) {
-      console.log("✅ User signed in:", user.email);
-      showDashboard();
-      if (typeof renderProfiles === 'function') {
-        renderProfiles();
-      }
+      console.log("✅ User is signed in:", user);
+      showUserInfo(user);
+      hideAuthUI();
     } else {
-      console.log("🚪 User signed out");
+      console.log("ℹ️ No user is signed in.");
+      showAuthUI();
     }
+  }, error => {
+    console.error("❌ Auth state error:", error);
   });
 }
+
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
