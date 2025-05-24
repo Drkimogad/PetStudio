@@ -137,23 +137,15 @@ async function initializeFirebase() {
     measurementId: "G-0GK7ZCV5VS"
   };
 
-  try {
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-
-    const authInstance = firebase.auth();
-
-    if (!authInstance || typeof authInstance.onAuthStateChanged !== 'function') {
-      throw new Error("authInstance is not valid or missing onAuthStateChanged");
-    }
-
-    return authInstance;
-  } catch (err) {
-    console.error("Firebase initialization failed:", err);
-    throw err;
+  // Initialize Firebase if not already done
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
   }
+
+  // ✅ Return the actual Firebase Auth instance
+  return firebase.auth(); 
 }
+
 
 // ====== Auth State Listener ======
 function initAuthListeners(authInstance) {
