@@ -20,7 +20,6 @@ const VALID_ORIGINS = [
 if (!VALID_ORIGINS.includes(window.location.origin)) {
   window.location.href = 'https://drkimogad.github.io/PetStudio';
 }
-
 // HELPER FUNCTION DISABLE UI    
 function disableUI() {
   document.body.innerHTML = `
@@ -42,7 +41,6 @@ const DOM = {
   fullPageBanner: null,
   profileForm: null
 };
-
 // Initialize DOM elements when page loads
 function initDOMReferences() {
   DOM.authContainer = document.getElementById("authContainer");
@@ -53,26 +51,16 @@ function initDOMReferences() {
   DOM.petList = document.getElementById("petList");
   DOM.fullPageBanner = document.getElementById("fullPageBanner");
   DOM.profileForm = document.getElementById("profileForm");
-  
-  // Verify critical elements exist
-  if (!DOM.authContainer || !DOM.loginPage || !DOM.signupPage) {
-    console.error("Critical auth elements missing!");
+
+  // Minimal check for critical elements still in use
+  if (!DOM.authContainer || !DOM.dashboard) {
+    console.error("Critical dashboard elements missing!");
     disableUI();
     return false;
   }
   return true;
 }
-
 // ====== Core Functions ======
-function showAuthForm(form) {
-  if (!DOM.authContainer || !DOM.loginPage || !DOM.signupPage) {
-    console.error("DOM elements not ready in showAuthForm");
-    return;
-  }  
-  DOM.authContainer.classList.remove('hidden');
-  DOM.loginPage.classList.toggle('hidden', form !== 'login');
-  DOM.signupPage.classList.toggle('hidden', form !== 'signup');
-}
 function showDashboard() {
   if (!DOM.authContainer || !DOM.dashboard) {
     console.error("DOM elements not ready in showDashboard");
@@ -128,9 +116,8 @@ function setupGoogleLoginButton() {
         text: "continue_with",
         shape: "rectangular",
         width: 250
-      });
-      
-      // Optional: One Tap sign-in
+      });  
+ // Optional: One Tap sign-in
       google.accounts.id.prompt();
     }
   } catch (error) {
@@ -149,16 +136,13 @@ async function initializeFirebase() {
     appId: "1:1031214975391:web:35878cabdd540b6fc455aa",
     measurementId: "G-0GK7ZCV5VS"
   };
-
   // Initialize Firebase if not already initialized
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
-  }
-  
+  }  
   // Return the auth instance using v9 compat syntax
   return firebase.auth();
 }
-
 // ====== Auth State Listener ======
 function initAuthListeners(authInstance) {
   // Using v9 compat syntax
@@ -171,7 +155,6 @@ function initAuthListeners(authInstance) {
       }
     } else {
       console.log("🚪 User signed out");
-      showAuthForm('login');
     }
   });
 }
@@ -181,8 +164,7 @@ async function initializeAuth() {
     // 1. First make sure DOM is ready
     if (!initDOMReferences()) {
       throw new Error("Critical DOM elements missing");
-    }
-    
+    }    
     // 2. Wait for Firebase to load
     if (typeof firebase === 'undefined') {
       await new Promise(resolve => {
@@ -193,28 +175,20 @@ async function initializeAuth() {
           }
         }, 100);
       });
-    }
-    
+    }    
     // 3. Initialize Firebase Auth
-    auth = await initializeFirebase();
-    
+    auth = await initializeFirebase();    
     // 4. Set up auth state listener
-    initAuthListeners(auth);
-    
+    initAuthListeners(auth);  
     // 5. Set up Google Sign-In button (if exists)
     if (document.getElementById("googleSignInBtn")) {
       setupGoogleLoginButton();
-    }
-    
-    // 6. Set initial view
-    showAuthForm('login');
-    
+    }    
   } catch (error) {
     console.error("Auth initialization failed:", error);
     disableUI();
   }
 }
-
 // Start initialization when everything is ready
 document.addEventListener('DOMContentLoaded', function() {
   // Additional check for Firebase
