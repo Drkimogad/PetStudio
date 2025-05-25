@@ -88,7 +88,7 @@ function setupGoogleLoginButton() {
   try {
     // Initialize Google Identity Services
     google.accounts.id.initialize({
-      client_id: "540185558422-64lqo0g7dlvms7cdkgq0go2tvm26er0u.apps.googleusercontent.com",
+      client_id: "480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com",
       callback: async (response) => {
         try {
           showLoading(true);
