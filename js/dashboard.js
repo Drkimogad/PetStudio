@@ -485,3 +485,20 @@ function formatFirestoreDate(dateString) {
   const date = new Date(dateString);
   return date.toISOString().split('T')[0];
 }
+
+// Add Pet Profile Button Listener recently added
+document.getElementById('addPetProfileBtn')?.addEventListener('click', () => {
+  toggleProfileForm(true); // show the form when the button is clicked
+});
+
+// Handle Logout recently added
+document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+  try {
+    await firebase.auth().signOut();
+    localStorage.removeItem('petProfiles');
+    window.location.reload(); // Reload to reset app state
+  } catch (error) {
+    console.error("Logout failed:", error);
+    Utils.showErrorToUser("Logout failed. Please try again.");
+  }
+});
