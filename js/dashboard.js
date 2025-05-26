@@ -1,4 +1,5 @@
 //🌟 Pet Profile Management 🌟
+const addPetProfileBtn = document.getElementById("addPetProfileBtn");
 
 // Render all pet profiles
 function renderProfiles() {
@@ -479,18 +480,17 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
     showLoading(false);
   }
 });
-
 // Helper function (keep this)
 function formatFirestoreDate(dateString) {
   const date = new Date(dateString);
   return date.toISOString().split('T')[0];
 }
-
 // Add Pet Profile Button Listener recently added
-document.getElementById('addPetProfileBtn')?.addEventListener('click', () => {
-  toggleProfileForm(true); // show the form when the button is clicked
+addPetProfileBtn?.addEventListener('click', () => {
+  console.log("🟡 Add Pet Profile clicked");
+  const profileSection = document.getElementById("profileSection");
+  if (profileSection) profileSection.classList.remove("hidden");
 });
-
 // Handle Logout recently added
 document.getElementById('logoutBtn')?.addEventListener('click', async () => {
   try {
