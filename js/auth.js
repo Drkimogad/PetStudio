@@ -49,6 +49,7 @@ const DOM = {
   profileForm: null
 };
 // Initialize DOM elements when page loads
+// ===== Initialize DOM Elements =====
 function initDOMReferences() {
   DOM.authContainer = document.getElementById("authContainer");
   DOM.dashboard = document.getElementById("dashboard");
@@ -59,14 +60,32 @@ function initDOMReferences() {
   DOM.fullPageBanner = document.getElementById("fullPageBanner");
   DOM.profileForm = document.getElementById("profileForm");
 
-  // Minimal check for critical elements still in use
+  // Ensure critical elements exist
   if (!DOM.authContainer || !DOM.dashboard) {
-    console.error("Critical dashboard elements missing!");
-    disableUI();
+    console.error("❌ Critical dashboard elements missing!");
+    if (typeof disableUI === "function") disableUI();
     return false;
   }
+  console.log("✅ DOM references initialized.");
   return true;
 }
+
+// ===== DOM Ready: Initialize Everything =====
+document.addEventListener("DOMContentLoaded", () => {
+  const domReady = initDOMReferences();
+  if (!domReady) return;
+
+  // Initialize login button and other startup logic
+  if (typeof setupGoogleLoginButton === "function") {
+    setupGoogleLoginButton();
+  } else {
+    console.warn("⚠️ setupGoogleLoginButton() not found.");
+  }
+
+  // If needed, add more initializations here
+});
+
+
 // ====== Core Functions ======
 function showDashboard() {
   if (!DOM.authContainer || !DOM.dashboard) {
