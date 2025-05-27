@@ -24,24 +24,6 @@ body {
   padding: 20px;
   background-color: #ffffff;
 }
-
-/* Show dashboard only when 'hidden' class is removed */
-#dashboard:not(.hidden) {
-  display: block;
-}
-
-/* Logout button: Only show in dashboard */
-#dashboard:not(.hidden) #logoutBtn {
-  display: block;
-  position: fixed;
-  bottom: 90px;
-  right: 20px;
-  z-index: 1000;
-}
-#logoutBtn:hover {
-    background-color: #cc3700;
-}
-
 .petCard {
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -141,8 +123,8 @@ body {
 
 .quote {
     position: absolute;
-    bottom: 5%; /* Responsive positioning */
-    right: 5%;
+    bottom: 20%; /* Responsive positioning */
+    right: 10%;
     background: rgba(0, 0, 0, 0.6);
     color: #f5f5dc;
     padding: 10px 15px;
@@ -207,17 +189,6 @@ body {
 #petList {
     margin-bottom: 80px; /* Space so print button isn't hidden */
 }
-
-/* === Updated Logout Button Positioning for Dashboard Only === */
-#logoutBtn.dashboard-visible {
-    position: fixed;
-    bottom: 90px; /* Just above footer */
-    right: 20px;
-    z-index: 1000;
-    margin: 0;
-    width: auto;
-}
-
 /* Hide logout button by default (e.g. on auth pages) */
 #logoutBtn {
   display: block;
