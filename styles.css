@@ -104,8 +104,8 @@ body {
 .banner-wrapper {
     position: relative;
     width: 100%;
-    height: 60vh; /* Full viewport height */
-    max-height: 60vh; /* Prevent exceeding viewport */
+    height: 70vh; /* Full viewport height */
+    max-height: 70vh; /* Prevent exceeding viewport */
     overflow: hidden;
     box-sizing: border-box;
     border-bottom: 3px solid #e1b12c;
@@ -123,12 +123,12 @@ body {
 
 .quote {
     position: absolute;
-    bottom: 20%; /* Responsive positioning */
+    bottom: 10%; /* Responsive positioning */
     right: 10%;
     background: rgba(0, 0, 0, 0.6);
     color: #f5f5dc;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: 20px 30px;
+    border-radius: 10px;
     font-style: italic;
     font-size: clamp(0.8rem, 2vw, 1.2rem); /* Responsive font size */
     max-width: 45%;
@@ -188,20 +188,6 @@ body {
 
 #petList {
     margin-bottom: 80px; /* Space so print button isn't hidden */
-}
-/* Hide logout button by default (e.g. on auth pages) */
-#logoutBtn {
-  display: block;
-  background-color: #e74c3c;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 6px;
-  position: absolute;
-  right: 20px;
-  bottom: 100px; /* Adjust this to always keep it above footer */
-  z-index: 10;
-  font-weight: bold;
-  margin-top: 20px;
 }
 
 footer {
@@ -350,6 +336,7 @@ h1, h2, h3, p {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative; /* 🔧 this is the key */
 }
 
 #addPetProfileBtn {
@@ -482,17 +469,12 @@ h1, h2, h3, p {
   color: white;
   padding: 10px 16px;
   border-radius: 6px;
-  position: fixed;
+  position: absolute;
+  bottom: 20px; /* Just above footer inside dashboard */
   right: 20px;
-  bottom: 80px;
-  z-index: 1000;
   font-weight: bold;
+  z-index: 10;
 }
-
-#logoutBtn:hover {
-  background-color: #c0392b;
-}
-
 /* ====================
    MEDIA QUERIES
 ==================== */
