@@ -429,6 +429,21 @@ h1, h2, h3, p {
   background-color: #d4a017;
   color: white;
 }
+/* Mood dropdown styling */
+#moodDropdown {
+  width: 100%;
+  padding: 10px;
+  font-size: 1.2rem;
+  border: 2px solid #6a1b9a;
+  border-radius: 6px;
+  background-color: #fff;
+  margin-top: 10px;
+  appearance: none; /* Clean appearance across browsers */
+  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 1rem;
+}
 
 /* ====================
    PET CARDS & ACTIONS
