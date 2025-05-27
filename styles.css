@@ -122,8 +122,8 @@ body {
 .banner-wrapper {
     position: relative;
     width: 100%;
-    height: 100vh; /* Full viewport height */
-    max-height: 100vh; /* Prevent exceeding viewport */
+    height: 60vh; /* Full viewport height */
+    max-height: 60vh; /* Prevent exceeding viewport */
     overflow: hidden;
     box-sizing: border-box;
     border-bottom: 3px solid #e1b12c;
@@ -220,7 +220,17 @@ body {
 
 /* Hide logout button by default (e.g. on auth pages) */
 #logoutBtn {
-    display: none;
+  display: block;
+  background-color: #e74c3c;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  position: absolute;
+  right: 20px;
+  bottom: 100px; /* Adjust this to always keep it above footer */
+  z-index: 10;
+  font-weight: bold;
+  margin-top: 20px;
 }
 
 footer {
@@ -429,20 +439,29 @@ h1, h2, h3, p {
   background-color: #d4a017;
   color: white;
 }
-/* Mood dropdown styling */
-#moodDropdown {
-  width: 100%;
-  padding: 10px;
-  font-size: 1.2rem;
-  border: 2px solid #6a1b9a;
-  border-radius: 6px;
-  background-color: #fff;
+/*mood buttons recently added*/
+.mood-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-top: 10px;
-  appearance: none; /* Clean appearance across browsers */
-  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 1rem;
+  justify-content: center;
+}
+
+.mood-btn {
+  font-size: 1.5rem;
+  padding: 8px 12px;
+  border: 2px solid transparent;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.mood-btn:hover,
+.mood-btn.active {
+  border-color: #6a1b9a;
+  background-color: #e9d5ff;
 }
 
 /* ====================
