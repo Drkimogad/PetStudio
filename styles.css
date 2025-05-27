@@ -274,6 +274,18 @@ h1, h2, h3, p {
   text-align: center;
 }
 
+.auth-header h1 {
+  font-size: 2.5rem;     /* Main title size */
+  color: #6a1b9a;       /* Your deep purple */
+  margin-top: 1rem;
+}
+
+.auth-header h2 {
+  font-size: 1.2rem;    /* Subtitle size */
+  color: #d4a017;       /* Mustard accent */
+  margin-bottom: 1rem;
+}
+
 .button {
   display: inline-block;
   background-color: #6a1b9a; /* deep purple */
