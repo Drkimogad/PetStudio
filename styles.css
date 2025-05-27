@@ -296,3 +296,238 @@ footer {
 .gallery-item img.loaded {
     opacity: 1;
 }
+/* newly added*/
+/* ====================
+   GENERAL LAYOUT
+==================== */
+body, html {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, p {
+  text-align: center;
+}
+
+.button {
+  display: inline-block;
+  background-color: #6a1b9a; /* deep purple */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.3s;
+}
+
+.button:hover {
+  background-color: #4a0c7a;
+}
+
+/* ====================
+   AUTH PAGE
+==================== */
+.auth-header h1 {
+  font-size: 2rem;
+  color: #6a1b9a;
+  margin-top: 1rem;
+}
+
+.auth-header h2 {
+  font-size: 1.2rem;
+  color: #d4a017;
+  margin-bottom: 1rem;
+}
+
+#googleSignInWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+#googleSignInBtn {
+  width: 250px;
+  height: auto;
+}
+
+.auth-message {
+  color: #333;
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+/* ====================
+   DASHBOARD PAGE
+==================== */
+#dashboard {
+  padding: 2rem 1rem;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#addPetProfileBtn {
+  background-color: #6a1b9a;
+  color: white;
+  font-size: 1.1rem;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+}
+
+#addPetProfileBtn::before {
+  content: '➕ ';
+}
+
+#petList {
+  width: 100%;
+  max-width: 800px;
+}
+
+/* ====================
+   PROFILE CREATION
+==================== */
+#profileSection {
+  background: #fff8e1;
+  border: 1px solid #e0c471;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  width: 100%;
+  max-width: 700px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+#profileSection h2 {
+  text-align: center;
+  color: #6a1b9a;
+}
+
+#profileForm label {
+  display: block;
+  margin-top: 12px;
+  font-weight: bold;
+  color: #444;
+}
+
+#profileForm input,
+#profileForm textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+#profileForm button[type="submit"] {
+  margin-top: 20px;
+  background-color: #d4a017;
+  color: white;
+}
+
+/* ====================
+   PET CARDS & ACTIONS
+==================== */
+.petCard {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background: #fff;
+  border-left: 5px solid #6a1b9a;
+}
+
+.petCard .actions {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  gap: 8px;
+}
+
+.petCard .actions button {
+  flex: 1 1 30%;
+  padding: 8px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+}
+
+.editBtn {
+  background-color: #9b59b6;
+  color: white;
+}
+
+.shareBtn {
+  background-color: #f39c12;
+  color: white;
+}
+
+.qrBtn {
+  background-color: #27ae60;
+  color: white;
+}
+
+/* ====================
+   LOGOUT BUTTON
+==================== */
+#logoutBtn {
+  background-color: #e74c3c;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  position: fixed;
+  right: 20px;
+  bottom: 80px;
+  z-index: 1000;
+  font-weight: bold;
+}
+
+#logoutBtn:hover {
+  background-color: #c0392b;
+}
+
+/* ====================
+   MEDIA QUERIES
+==================== */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+
+  .banner-wrapper {
+    height: 70vh;
+  }
+
+  .petCard {
+    flex-direction: column;
+  }
+
+  #logoutBtn {
+    bottom: 60px;
+    right: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .banner-wrapper {
+    height: 50vh;
+  }
+
+  #profileSection {
+    padding: 15px;
+  }
+
+  .petCard .actions {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .button,
+  #logoutBtn,
+  #addPetProfileBtn {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+}
