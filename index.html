@@ -179,9 +179,15 @@
                 <input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
                 <label for="petBirthday">Birthday Reminder:</label>
                 <input type="date" id="petBirthday" name="petBirthday">
-                <label for="moodHistoryInput">Mood Logs:</label>
-                <textarea id="moodHistoryInput" name="moodHistoryInput" rows="4"
-                    placeholder="2025-04-27:happy&#10;2025-05-01:sad"></textarea>
+                <label for="moodHistoryInput">Mood at Creation:</label>
+                <select id="moodHistoryInput" name="moodHistoryInput">
+                     <option value="">Select Mood</option>
+                     <option value="happy">😊 Happy</option>
+                     <option value="depressed">😔 Depressed</option>
+                     <option value="sad">😞 Sad</option>
+                     <option value="angry">😠 Angry</option>
+                     <option value="sick">🤒 Sick</option>
+                 </select>
                 <button type="submit" class="button">Save Profile</button>
             </form>
         </div>
