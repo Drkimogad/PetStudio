@@ -38,7 +38,7 @@ function renderProfiles() {
           <div class="mood-buttons">
             <span>Log Mood:</span>
             <button class="mood-btn" data-mood="happy">😊</button>
-            <button class="mood-btn" data-mood="depressed">😐</button>
+            <button class="mood-btn" data-mood="depressed">😔</button>
             <button class="mood-btn" data-mood="sad">😞</button>
             <button class="mood-btn" data-mood="angry">😠</button>
             <button class="mood-btn" data-mood="sick">🤒</button>
