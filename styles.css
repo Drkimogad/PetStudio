@@ -389,11 +389,15 @@ h1, h2, h3, p {
   border-radius: 4px;
   font-size: 1rem;
 }
-
 #profileForm button[type="submit"] {
   margin-top: 20px;
   background-color: #d4a017;
   color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  display: block;
+  width: 100%;
+  border-radius: 8px;
 }
 /*mood buttons recently added*/
 .mood-btn-group {
