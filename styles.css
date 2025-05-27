@@ -111,15 +111,14 @@ body {
   margin-bottom: 20px;
 }
 .banner-image {
-  width: 100%;
-  height: auto;               /* ✅ Let height grow naturally */
-  max-height: 100%;           /* ✅ Prevent overflow */
-  object-fit: contain;        /* ✅ Show full image with no cropping */
-  object-position: center;
-  display: block;
-  margin: 0 auto;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  display: block !important;
+  margin: 0 auto !important;
 }
-
 .quote {
     position: absolute;
     bottom: 10%; /* Responsive positioning */
