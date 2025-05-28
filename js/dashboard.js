@@ -393,7 +393,7 @@ function setCoverPhoto(profileIndex, imageIndex) {
 //🌟 Updated Profile Form Submission with Cloudinary 🌟
 DOM.profileForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  
+console.log("🛑 Prevented default form submission.");  
   // Show loading state
   const submitBtn = e.target.querySelector('button[type="submit"]');
   const originalBtnText = submitBtn.innerHTML;
@@ -449,6 +449,7 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
     // 5. Handle birthday reminders (unchanged Firebase Firestore code)
     if (newProfile.birthday) {
       const reminderData = {
+        console.log("👤 Current user at submit time:", auth?.currentUser);
         userId: auth.currentUser?.uid || "anonymous",
         petName: newProfile.name,
         date: formatFirestoreDate(newProfile.birthday),
@@ -465,10 +466,13 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
     }
 
     // 6. Update UI
-    DOM.profileSection.classList.add("hidden");
-    DOM.petList.classList.remove("hidden");
-    renderProfiles();
-    window.scrollTo(0, 0);
+   DOM.profileSection.classList.add("hidden");
+   DOM.petList.classList.remove("hidden");
+   renderProfiles();
+   window.scrollTo(0, 0);
+
+// ✅ Add this log right here
+   console.log("✅ Profile saved and UI updated");
 
   } catch (error) {
     console.error("Profile save failed:", error);
@@ -479,6 +483,7 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
     showLoading(false);
   }
 });
+
 // Helper function (keep this)
 function formatFirestoreDate(dateString) {
   const date = new Date(dateString);
