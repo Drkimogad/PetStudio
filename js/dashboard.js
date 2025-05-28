@@ -448,8 +448,8 @@ console.log("🛑 Prevented default form submission.");
 
     // 5. Handle birthday reminders (unchanged Firebase Firestore code)
     if (newProfile.birthday) {
+      console.log("👤 Current user at submit time:", auth?.currentUser);
       const reminderData = {
-        console.log("👤 Current user at submit time:", auth?.currentUser);
         userId: auth.currentUser?.uid || "anonymous",
         petName: newProfile.name,
         date: formatFirestoreDate(newProfile.birthday),
