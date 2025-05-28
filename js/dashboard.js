@@ -393,7 +393,7 @@ function setCoverPhoto(profileIndex, imageIndex) {
 //🌟 Updated Profile Form Submission with Cloudinary 🌟
 DOM.profileForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
-console.log("🛑 Prevented default form submission.");  
+  
   // Show loading state
   const submitBtn = e.target.querySelector('button[type="submit"]');
   const originalBtnText = submitBtn.innerHTML;
@@ -419,13 +419,16 @@ console.log("🛑 Prevented default form submission.");
         showLoading(false);
       }
     }
+
     // 2. Prepare mood history
-    const moodHistory = moodHistoryInput?.value
-  ? [{ 
-      date: new Date().toISOString().split("T")[0], 
-      mood: moodHistoryInput.value 
-    }]
-  : [];
+    const moodHistoryInput = document.getElementById("moodHistoryInput");
+    const moodHistory = moodHistoryInput?.value.trim() 
+      ? moodHistoryInput.value.trim().split("\n").map(line => {
+          const [date, mood] = line.split(":");
+          return { date: date.trim(), mood: mood.trim() };
+        })
+      : [];
+
     // 3. Create profile object
     const newProfile = {
       id: Date.now(),
@@ -448,7 +451,6 @@ console.log("🛑 Prevented default form submission.");
 
     // 5. Handle birthday reminders (unchanged Firebase Firestore code)
     if (newProfile.birthday) {
-      console.log("👤 Current user at submit time:", auth?.currentUser);
       const reminderData = {
         userId: auth.currentUser?.uid || "anonymous",
         petName: newProfile.name,
@@ -466,13 +468,10 @@ console.log("🛑 Prevented default form submission.");
     }
 
     // 6. Update UI
-   DOM.profileSection.classList.add("hidden");
-   DOM.petList.classList.remove("hidden");
-   renderProfiles();
-   window.scrollTo(0, 0);
-
-// ✅ Add this log right here
-   console.log("✅ Profile saved and UI updated");
+    DOM.profileSection.classList.add("hidden");
+    DOM.petList.classList.remove("hidden");
+    renderProfiles();
+    window.scrollTo(0, 0);
 
   } catch (error) {
     console.error("Profile save failed:", error);
@@ -483,7 +482,6 @@ console.log("🛑 Prevented default form submission.");
     showLoading(false);
   }
 });
-
 // Helper function (keep this)
 function formatFirestoreDate(dateString) {
   const date = new Date(dateString);
