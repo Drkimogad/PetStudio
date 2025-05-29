@@ -106,6 +106,15 @@ const Utils = {
   }
 };
 
+// added recently
+function showAuthForm() {
+  document.getElementById('auth-container').classList.remove('hidden');
+}
+
+function showUserInfo(user) {
+  document.getElementById('userEmail').textContent = user.email;
+}
+
 // Initialize app
 async function initApp() {
   document.body.classList.add('loading');
