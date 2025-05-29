@@ -1,11 +1,28 @@
 //🌟 Pet Profile Management 🌟
 const addPetProfileBtn = document.getElementById("addPetProfileBtn");
 let currentQRProfile = null; // Only new declaration needed
+// Fixed: Added missing global declarations
 let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 let isEditing = false;
-let currentEditIndex = null;
+let currentEditIndex = -1;
+const DOM = {
+  dashboard: null,
+  logoutBtn: null,
+  addPetProfileBtn: null,
+  profileSection: null,
+  petList: null,
+  fullPageBanner: null,
+  profileForm: null
+};
+// Fixed: Added missing DOM references
+const DOM = {
+  petList: document.getElementById('petList'),
+  profileSection: document.getElementById('profileSection'),
+  fullPageBanner: document.getElementById('fullPageBanner'),
+  profileForm: document.getElementById('profileForm')
+};
 
-// Render all pet profiles
+// RENDER ALL PROFILES FORM
 function renderProfiles() {
   DOM.petList.innerHTML = '';
   if(petProfiles.length === 0) {
