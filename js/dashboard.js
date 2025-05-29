@@ -1,5 +1,9 @@
 //🌟 Pet Profile Management 🌟
 const addPetProfileBtn = document.getElementById("addPetProfileBtn");
+let currentQRProfile = null; // Only new declaration needed
+let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+let isEditing = false;
+let currentEditIndex = null;
 
 // Render all pet profiles
 function renderProfiles() {
@@ -192,48 +196,44 @@ function printProfile(profile) {
 }
 
 // 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀  
-// 🔼 SHARE PET CARD FUNCTION 🌟🌟🌟
+// 🔼 OPTIMIZED SHARE PET CARD FUNCTION 🌟🌟🌟
 async function sharePetCard(profile) {
   const loader = document.getElementById('processing-loader');
-  let shareBtn, originalText; // 🚨 Moved to parent scope
+  let shareBtn, originalText;
 
   try {
-    // 🚦 SHOW LOADER
-    loader.classList.remove('hidden');
+    if (loader) loader.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 
-    // 🔄 CAPTURE BUTTON PROPERLY
-    shareBtn = event?.target || document.querySelector(`[onclick*="sharePetCard(${profile.id})"]`);
+    // More reliable button targeting
+    shareBtn = event?.target.closest('.shareBtn') || 
+               document.querySelector(`#pet-card-${profile.id} .shareBtn`);
+    
     if(shareBtn) {
       originalText = shareBtn.innerHTML;
       shareBtn.innerHTML = '🔄 Preparing...';
       shareBtn.disabled = true;
     }
 
-    // 1. Generate CORRECT Shareable Link
-    const shareUrl = `${window.location.origin}/PetStudio/?profile=${profile.id}`; // ✅ profile.id not pet.id
+    const shareUrl = `${window.location.origin}/PetStudio/?profile=${profile.id}`;
 
-    // 2. Try Web Share API 
     if(navigator.share) {
       try {
         await navigator.share({
-          title: `Meet ${profile.name}! 🐾`, // ✅ profile.name
+          title: `Meet ${profile.name}! 🐾`,
           text: `Check out ${profile.name}'s profile on PetStudio!`,
           url: shareUrl,
         });
         return;
       }
-      catch (error) { // ✅ Fixed err -> error
+      catch (error) {
         console.log("Share cancelled:", error);
-        return; // Exit early
       }
     }
 
-    // 3. Desktop/Image Fallback
     const cardElement = document.getElementById(`pet-card-${profile.id}`);
     if(!cardElement) throw new Error('Card element missing');
     
-    // 🖼️ ADD HTML2CANVAS CONFIG FROM PREVIOUS FIXES
     const canvas = await html2canvas(cardElement, {
       useCORS: true,
       scale: 2,
@@ -241,33 +241,28 @@ async function sharePetCard(profile) {
     });
     
     const imageUrl = canvas.toDataURL('image/png');
-    
-    // 4. Download Handling
     const downloadLink = document.createElement('a');
     downloadLink.href = imageUrl;
-    downloadLink.download = `${profile.name}-petstudio.png`.replace(/[^a-z0-9]/gi, '_'); // ✅ profile.name
+    downloadLink.download = `${profile.name}-petstudio.png`.replace(/[^a-z0-9]/gi, '_');
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
 
-    // 5. Clipboard Handling
     await navigator.clipboard.writeText(shareUrl);
-    showErrorToUser(`${profile.name}'s card saved! 🔗 Link copied.`); // ✅ Better than alert()
+    alert(`${profile.name}'s card saved! 🔗 Link copied.`);
 
   } catch (error) {
     console.error('Sharing failed:', error);
-    showErrorToUser('Sharing failed. Please try again.'); // ✅ User feedback
+    alert('Sharing failed. Please try again.');
   } finally {
-    // 🚦 CLEANUP
-    loader.classList.add('hidden');
+    if (loader) loader.classList.add('hidden');
     document.body.style.overflow = 'auto';
     if(shareBtn) {
       shareBtn.innerHTML = originalText;
       shareBtn.disabled = false;
     }
   }
-} // <-- THIS WAS MISSING (closing brace for sharePetCard)
-
+}
 //🌟 QR Code Management 🌟
 // Generate QR code
 function generateQRCode(profileIndex) {
@@ -338,22 +333,22 @@ async function shareQR() {
   }
 }
 
-// Initialize QR modal
+// Initialize QR modal (safe initialization)
 function initQRModal() {
+  const modal = document.getElementById('qr-modal');
+  if (!modal) return;
+  
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('#qr-modal')) return;
-    const modal = document.getElementById('qr-modal');
-    modal.style.display = 'block'; 
-    document.body.style.overflow = 'hidden';
-      
-    if(e.target.classList.contains('qr-print')) {
+    if (e.target.classList.contains('qr-print')) {
       printQR();
-    } else if(e.target.classList.contains('qr-download')) {
+    } else if (e.target.classList.contains('qr-download')) {
       downloadQR();
-    } else if(e.target.classList.contains('qr-share')) {
+    } else if (e.target.classList.contains('qr-share')) {
       shareQR();
-    } else if(e.target.classList.contains('qr-close')) {
+    } else if (e.target.classList.contains('qr-close') || 
+              (e.target === modal && e.target.classList.contains('modal'))) {
       modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
     }
   });
 }
@@ -389,7 +384,7 @@ function setCoverPhoto(profileIndex, imageIndex) {
   renderProfiles();
 }
 
-// Profile form submission
+// PROFILE FORM SUBMISSION
 //🌟 Updated Profile Form Submission with Cloudinary 🌟
 DOM.profileForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -449,10 +444,10 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
     }
     localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
 
-    // 5. Handle birthday reminders (unchanged Firebase Firestore code)
-    if (newProfile.birthday) {
+    // 5. SAFE Firebase handling
+    if (typeof firebase !== 'undefined' && newProfile.birthday) {
       const reminderData = {
-        userId: auth.currentUser?.uid || "anonymous",
+        userId: firebase.auth().currentUser?.uid || "anonymous",
         petName: newProfile.name,
         date: formatFirestoreDate(newProfile.birthday),
         message: `It's ${newProfile.name}'s birthday today! 🎉`,
@@ -463,7 +458,6 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
         await firebase.firestore().collection("reminders").add(reminderData);
       } catch (firestoreError) {
         console.error("Reminder save failed:", firestoreError);
-        // Non-blocking error
       }
     }
 
@@ -479,7 +473,6 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
   } finally {
     submitBtn.innerHTML = originalBtnText;
     submitBtn.disabled = false;
-    showLoading(false);
   }
 });
 // Helper function (keep this)
@@ -489,18 +482,45 @@ function formatFirestoreDate(dateString) {
 }
 // Add Pet Profile Button Listener recently added
 addPetProfileBtn?.addEventListener('click', () => {
-  console.log("🟡 Add Pet Profile clicked");
-  const profileSection = document.getElementById("profileSection");
-  if (profileSection) profileSection.classList.remove("hidden");
+  isEditing = false;
+  currentEditIndex = -1;
+  DOM.profileSection.classList.remove('hidden');
 });
-// Handle Logout recently added
-document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+
+//✅ FINAL INITIALIZATION RECENTLY ADDED ✅
+function initDashboard() {
+  // Initialize only if required elements exist
+  if (window.DOM?.petList) renderProfiles();
+  if (document.getElementById('qr-modal')) initQRModal();
+  
+    // Consolidated logout handler (replaces standalone version)
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', handleLogout);
+  }
+}
+
+// Single logout handler function
+async function handleLogout() {
   try {
-    await firebase.auth().signOut();
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      await firebase.auth().signOut();
+    }
     localStorage.removeItem('petProfiles');
-    window.location.reload(); // Reload to reset app state
+    window.location.reload();
   } catch (error) {
     console.error("Logout failed:", error);
-    Utils.showErrorToUser("Logout failed. Please try again.");
+    // Use existing error display method if available
+    if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
+      Utils.showErrorToUser("Logout failed. Please try again.");
+    } else {
+      alert("Logout failed. Please try again.");
+    }
   }
-});
+}
+// Start initialization based on document state
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  initDashboard();
+} else {
+  document.addEventListener('DOMContentLoaded', initDashboard);
+}
