@@ -162,16 +162,17 @@ function initAuthListeners() {
   auth.onAuthStateChanged(user => {
     if (user) {
       console.log("✅ User is signed in:", user);
-     // showUserInfo(user);
-      hideAuthUI();
+      showDashboard(); // 👈 Show dashboard directly
     } else {
       console.log("ℹ️ No user is signed in.");
-      showAuthUI();
+      if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
+      if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
     }
   }, error => {
     console.error("❌ Auth state error:", error);
   });
 }
+
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
