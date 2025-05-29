@@ -15,11 +15,14 @@ const DOM = {
   profileForm: null
 };
 // Fixed: Added missing DOM references
-const DOM = {
-  petList: document.getElementById('petList'),
-  profileSection: document.getElementById('profileSection'),
-  fullPageBanner: document.getElementById('fullPageBanner'),
-  profileForm: document.getElementById('profileForm')
+function initDOMReferences() {
+  DOM.dashboard = document.getElementById("dashboard");
+  DOM.addPetProfileBtn = document.getElementById("addPetProfileBtn");
+  DOM.profileSection = document.getElementById("profileSection");
+  DOM.petList = document.getElementById("petList");
+  DOM.fullPageBanner = document.getElementById("fullPageBanner");
+  DOM.profileForm = document.getElementById("profileForm");
+  DOM.logoutBtn = document.getElementById("logoutBtn"),
 };
 
 // RENDER ALL PROFILES FORM
