@@ -7,10 +7,7 @@ const CLOUDINARY_CONFIG = {
 let auth = null;
 let provider = null;
 let isSignupInProgress = false;
-let currentQRProfile = null;
-let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-let isEditing = false;
-let currentEditIndex = null;
+
 // 🔶 State Management🔶🔶🔶
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
