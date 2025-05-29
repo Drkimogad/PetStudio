@@ -1,31 +1,43 @@
 //🌟 Pet Profile Management 🌟
 const addPetProfileBtn = document.getElementById("addPetProfileBtn");
 let currentQRProfile = null; // Only new declaration needed
-// Fixed: Added missing global declarations
-let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-let isEditing = false;
-let currentEditIndex = -1;
-const DOM = {
-  dashboard: null,
-  logoutBtn: null,
-  addPetProfileBtn: null,
-  profileSection: null,
-  petList: null,
-  fullPageBanner: null,
-  profileForm: null
-};
-// Fixed: Added missing DOM references
-function initDOMReferences() {
-  DOM.dashboard = document.getElementById("dashboard");
-  DOM.addPetProfileBtn = document.getElementById("addPetProfileBtn");
-  DOM.profileSection = document.getElementById("profileSection");
-  DOM.petList = document.getElementById("petList");
-  DOM.fullPageBanner = document.getElementById("fullPageBanner");
-  DOM.profileForm = document.getElementById("profileForm");
-  DOM.logoutBtn = document.getElementById("logoutBtn"),
-};
 
-// RENDER ALL PROFILES FORM
+// SAFE GLOBAL INITIALIZATION (compatible with auth.js)
+if (typeof petProfiles === 'undefined') {
+    window.petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+}
+if (typeof isEditing === 'undefined') {
+    window.isEditing = false;
+}
+if (typeof currentEditIndex === 'undefined') {
+    window.currentEditIndex = -1;
+}
+
+// SAFE DOM REFERENCES (compatible with auth.js)
+function initDashboardDOM() {
+    // Only initialize missing references
+    if (!window.DOM) window.DOM = {};
+    
+    // Add dashboard-specific references
+    DOM.addPetProfileBtn = DOM.addPetProfileBtn || addPetProfileBtn;
+    DOM.profileSection = DOM.profileSection || document.getElementById("profileSection");
+    DOM.petList = DOM.petList || document.getElementById("petList");
+    DOM.fullPageBanner = DOM.fullPageBanner || document.getElementById("fullPageBanner");
+    DOM.profileForm = DOM.profileForm || document.getElementById("profileForm");
+    
+    // Ensure required elements exist
+    if (!DOM.petList) console.error("petList element missing");
+    if (!DOM.profileSection) console.error("profileSection element missing");
+}
+
+// Initialize DOM references when safe
+if (document.readyState === 'complete') {
+    initDashboardDOM();
+} else {
+    document.addEventListener('DOMContentLoaded', initDashboardDOM);
+}
+
+// RENDER ALL PROFILES FORM OLD 
 function renderProfiles() {
   DOM.petList.innerHTML = '';
   if(petProfiles.length === 0) {
