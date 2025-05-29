@@ -69,7 +69,6 @@ function initDOMReferences() {
   console.log("✅ DOM references initialized.");
   return true;
 }
-
 // ===== DOM Ready: Initialize Everything =====
 document.addEventListener("DOMContentLoaded", () => {
   const domReady = initDOMReferences();
@@ -84,8 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // If needed, add more initializations here
 });
-
-
 // ====== Core Functions ======
 function showDashboard() {
   if (!DOM.authContainer || !DOM.dashboard) {
@@ -166,17 +163,13 @@ async function initializeFirebase() {
     appId: "1:1031214975391:web:35878cabdd540b6fc455aa",
     measurementId: "G-0GK7ZCV5VS"
   };
-
   // Initialize Firebase if not already done
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
-
   // ✅ Return the actual Firebase Auth instance
   return firebase.auth(); 
 }
-
-
 // ====== Auth State Listener ======
 function initAuthListeners() {
   const auth = firebase.auth();
@@ -184,7 +177,7 @@ function initAuthListeners() {
   auth.onAuthStateChanged(user => {
     if (user) {
       console.log("✅ User is signed in:", user);
-      showUserInfo(user);
+     // showUserInfo(user);
       hideAuthUI();
     } else {
       console.log("ℹ️ No user is signed in.");
@@ -194,7 +187,6 @@ function initAuthListeners() {
     console.error("❌ Auth state error:", error);
   });
 }
-
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
@@ -217,7 +209,6 @@ async function initializeAuth() {
     auth = await initializeFirebase();
     console.log("✅ Auth object received:", auth);
     console.log("Type of onAuthStateChanged:", typeof auth.onAuthStateChanged);
-
     // 4. Set up auth state listener
     initAuthListeners(auth);  
     // 5. Set up Google Sign-In button (if exists)
