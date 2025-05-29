@@ -37,25 +37,13 @@ const DOM = {
   authContainer: null,
   signupPage: null,
   loginPage: null,
-  dashboard: null,
-  logoutBtn: null,
-  addPetProfileBtn: null,
-  profileSection: null,
-  petList: null,
-  fullPageBanner: null,
-  profileForm: null
+  dashboard: null
 };
 // Initialize DOM elements when page loads
 // ===== Initialize DOM Elements =====
 function initDOMReferences() {
   DOM.authContainer = document.getElementById("authContainer");
   DOM.dashboard = document.getElementById("dashboard");
-  DOM.logoutBtn = document.getElementById("logoutBtn");
-  DOM.addPetProfileBtn = document.getElementById("addPetProfileBtn");
-  DOM.profileSection = document.getElementById("profileSection");
-  DOM.petList = document.getElementById("petList");
-  DOM.fullPageBanner = document.getElementById("fullPageBanner");
-  DOM.profileForm = document.getElementById("profileForm");
 
   // Ensure critical elements exist
   if (!DOM.authContainer || !DOM.dashboard) {
