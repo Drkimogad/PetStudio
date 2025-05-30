@@ -7,7 +7,6 @@ const CLOUDINARY_CONFIG = {
 let auth = null;
 let provider = null;
 let isSignupInProgress = false;
-
 // 🔶 State Management🔶🔶🔶
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
@@ -47,7 +46,6 @@ function initDOMReferences() {
   console.log("✅ DOM references initialized.");
   return true;
 }
-
 // show loading function
 function showLoading(show) {
   const loader = document.getElementById("processing-loader");
@@ -68,14 +66,12 @@ function showLoading(show) {
 document.addEventListener("DOMContentLoaded", () => {
   const domReady = initDOMReferences();
   if (!domReady) return;
-
-  // Initialize login button and other startup logic
+// Initialize login button and other startup logic
   if (typeof setupGoogleLoginButton === "function") {
     setupGoogleLoginButton();
   } else {
     console.warn("⚠️ setupGoogleLoginButton() not found.");
   }
-
   // If needed, add more initializations here
 });
 // ====== Core Functions ======
@@ -89,7 +85,6 @@ function showDashboard() {
   if (DOM.addPetProfileBtn) DOM.addPetProfileBtn.classList.remove('hidden');
   if (DOM.fullPageBanner) DOM.fullPageBanner.classList.remove('hidden');
   if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
-  
   if (petProfiles.length > 0 && DOM.petList) {
     DOM.petList.classList.remove('hidden');
     renderProfiles();
@@ -102,16 +97,13 @@ function setupGoogleLoginButton() {
     console.log("Waiting for libraries to load...");
     setTimeout(setupGoogleLoginButton, 300);
     return;
-  }
-  
+  } 
   const CLIENT_ID = '480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com';
-
   try {
     // Initialize Google Identity Services
     google.accounts.id.initialize({
       client_id: CLIENT_ID,
       callback: async (response) => {
-
         try {
           showLoading(true);
           // Using v9 compat syntax
@@ -128,7 +120,7 @@ function setupGoogleLoginButton() {
         }
       }
     });
-  // Render button if container exists
+// Render button if container exists
     const googleButtonContainer = document.getElementById("googleSignInBtn");
     if (googleButtonContainer) {
       google.accounts.id.renderButton(googleButtonContainer, {
@@ -168,11 +160,10 @@ async function initializeFirebase() {
 // ====== Auth State Listener ======
 function initAuthListeners() {
   const auth = firebase.auth();
-
   auth.onAuthStateChanged(user => {
     if (user) {
       console.log("✅ User is signed in:", user);
-      showAuthFiorm('login'); // 👈 Show dashboard directly
+      showAuthFiorm('login'); 
     } else {
       console.log("ℹ️ No user is signed in.");
       if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
@@ -182,7 +173,6 @@ function initAuthListeners() {
     console.error("❌ Auth state error:", error);
   });
 }
-
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
