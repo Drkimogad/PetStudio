@@ -1,6 +1,5 @@
 //🌟 Main Application-Initialization-UTILs 🌟
 // ================= UTILITY FUNCTIONS =================
-// 🔶 Add this HELPER FUNCTION anywhere in your utilities section
 //🌟 Improve uploadToCloudinary()
 async function uploadToCloudinary(file) {
     // 1. VALIDATE FILE TYPE (Client-side)
@@ -8,7 +7,6 @@ async function uploadToCloudinary(file) {
   if (!allowedTypes.includes(file.type)) {
     throw new Error('Only JPG/PNG/WEBP images allowed!');
   }
-
   // 2. VALIDATE FILE SIZE (10MB)
   const maxSizeMB = 10;
   if (file.size > maxSizeMB * 1024 * 1024) {
@@ -112,29 +110,24 @@ function showAuthForm() {
 function showUserInfo(user) {
   document.getElementById('userEmail').textContent = user.email;
  }
-};
-
+}; // moved recently from the above function
 // Initialize app
 async function initApp() {
   document.body.classList.add('loading');
   try {
     await loadEssentialScripts();          // still loads GAPI
-    initQRModal();
-    
-    // Initialize Firebase and get auth instance
+    initQRModal();    
+ // Initialize Firebase and get auth instance
     const { auth } = await initializeFirebase();
-    window._tempAuth = auth;
-    
-    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    
-    // 🔄 Replace main() with refactored logic:
+    window._tempAuth = auth;   
+    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);    
+// 🔄 Replace main() with refactored logic:
     await new Promise((resolve) => {
       loadGoogleAPIs(() => {
         setupGoogleLoginButton(auth);      // Moved here ✅
         resolve();
       });
     });
-
     initAuthListeners(auth);
     setupAuthForms(auth);
     setupLogoutButton(auth);
@@ -148,7 +141,6 @@ async function initApp() {
     delete window._tempAuth;
   }
 }
-
 // Load essential scripts
 async function loadEssentialScripts() {
   await loadGAPI();    // Keep this to ensure gapi.client is available
@@ -162,7 +154,6 @@ async function loadEssentialScripts() {
     }, 100);
   });
 }
-
 // Load GAPI
 function loadGAPI() {
   return new Promise((resolve) => {
@@ -174,7 +165,6 @@ function loadGAPI() {
     script.onload = resolve;
     document.head.appendChild(script);
   });
-
 // Initialize Firebase
 async function initializeFirebase() {
   const firebaseConfig = {
@@ -186,50 +176,42 @@ async function initializeFirebase() {
     appId: "1:1031214975391:web:35878cabdd540b6fc455aa",
     measurementId: "G-0GK7ZCV5VS"
   };
-
   // Initialize only if not already initialized
-  const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
-  
+  const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);  
   return {
     auth: firebase.auth(app),
     provider: new firebase.auth.GoogleAuthProvider()
   };
 }
-
 // Initialize UI
 function initUI() {
   checkAuthState();
 }
-
 // Check auth state
 async function checkAuthState() {
   const user = await auth.currentUser;
   if (user) {
     window.location.href = '/main-app';
   }
-}
-  
+}  
 // ================= INITIALIZATION =================
 document.addEventListener('DOMContentLoaded', async function() {
   // Show initial UI state
   showAuthForm('login');
   DOM.dashboard.classList.add('hidden');
   DOM.fullPageBanner.classList.remove('hidden');
-  DOM.profileSection.classList.add('hidden');
-  
+  DOM.profileSection.classList.add('hidden');  
   // Initialize app
-  await initApp();
-  
+  await initApp();  
   // Optional: Load profiles after auth is ready
   if (window._tempAuth?.currentUser) {
     renderProfiles();
   }
 });
 
-//🌟 Push Notifications 🌟
+//🌟 Push Notifications 
 const VAPID_PUBLIC_KEY = 'BAGIifN8xg_sHYG9Erz6mkP4MLLMXizBUR_TygNE51Jzl-o_ol_f69kzwUnIE74MO-91KYCJqCNl3noru0pf3ME	';
 const VERCEL_API = 'https://pet-studio.vercel.app/api/save-subscription';
-
 // Service worker registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
