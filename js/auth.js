@@ -17,13 +17,6 @@ const VALID_ORIGINS = [
 if (!VALID_ORIGINS.includes(window.location.origin)) {
   window.location.href = 'https://drkimogad.github.io/PetStudio';
 }
-
-function showLoading(show) {
-  const loadingElement = document.getElementById("processing-loader");
-  if (loadingElement) {
-    loadingElement.style.display = show ? "block" : "none";
-  }
-}
 // HELPER FUNCTION DISABLE UI    
 function disableUI() {
   document.body.innerHTML = `
