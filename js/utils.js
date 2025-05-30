@@ -175,8 +175,22 @@ function loadGAPI() {
     script.onload = resolve;
     document.head.appendChild(script);
   });
-}
 
+// show loading
+function showLoading(show) {
+  const loader = document.getElementById("processing-loader");
+  if (!loader) {
+    console.warn("⛔ 'processing-loader' element not found.");
+    return;
+  }
+  if (show) {
+    loader.classList.remove("hidden");
+    loader.style.display = "block";
+  } else {
+    loader.classList.add("hidden");
+    loader.style.display = "none";
+  }
+}
 // Initialize Firebase
 async function initializeFirebase() {
   const firebaseConfig = {
