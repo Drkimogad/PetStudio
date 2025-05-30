@@ -162,7 +162,7 @@ function initAuthListeners() {
   auth.onAuthStateChanged(user => {
     if (user) {
       console.log("✅ User is signed in:", user);
-      showAuthForm('login'); // 👈 Show authentication form
+      showDashboard(); // 👈 Show dashboard directly
     } else {
       console.log("ℹ️ No user is signed in.");
       if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
