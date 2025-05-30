@@ -494,6 +494,7 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
     }
 
     // 6. Update UI
+    console.log("✅ All data prepared. About to update UI.");
     DOM.profileSection.classList.add("hidden");
     DOM.petList.classList.remove("hidden");
     renderProfiles();
