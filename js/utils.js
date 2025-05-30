@@ -76,8 +76,17 @@ const Utils = {
       return 'N/A';
     }
   },
+    
+// added recently
+function showAuthForm() {
+  document.getElementById('auth-container').classList.remove('hidden');
+},
 
-  showErrorToUser: function(message, isSuccess = false) {
+function showUserInfo(user) {
+  document.getElementById('userEmail').textContent = user.email;
+ },
+
+showErrorToUser: function(message, isSuccess = false) {
     try {
       const errorDiv = document.getElementById('error-message');
       if (!errorDiv) {
@@ -101,16 +110,9 @@ const Utils = {
         Critical Error: Failed to load application interface
       </h1>
     `;
-  },
-// added recently
-function showAuthForm() {
-  document.getElementById('auth-container').classList.remove('hidden');
-}
-
-function showUserInfo(user) {
-  document.getElementById('userEmail').textContent = user.email;
- }
-}; // moved recently from the above function
+  }
+ }; // moved recently from the above function
+     
 // Initialize app
 async function initApp() {
   document.body.classList.add('loading');
