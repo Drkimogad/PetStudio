@@ -47,6 +47,23 @@ function initDOMReferences() {
   console.log("✅ DOM references initialized.");
   return true;
 }
+
+// show loading function
+function showLoading(show) {
+  const loader = document.getElementById("processing-loader");
+  if (!loader) {
+    console.warn("⛔ 'processing-loader' element not found.");
+    return;
+  }
+  if (show) {
+    loader.classList.remove("hidden");
+    loader.style.display = "block";
+  } else {
+    loader.classList.add("hidden");
+    loader.style.display = "none";
+  }
+}
+
 // ===== DOM Ready: Initialize Everything =====
 document.addEventListener("DOMContentLoaded", () => {
   const domReady = initDOMReferences();
