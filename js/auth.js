@@ -31,6 +31,7 @@ const DOM = {
   loginPage: null,
   dashboard: null
 };
+
 // Initialize DOM elements when page loads
 // ===== Initialize DOM Elements =====
 function initDOMReferences() {
