@@ -19,7 +19,7 @@ if (!VALID_ORIGINS.includes(window.location.origin)) {
 }
 
 function showLoading(show) {
-  const loadingElement = document.getElementById("loadingIndicator");
+  const loadingElement = document.getElementById("processing-loader");
   if (loadingElement) {
     loadingElement.style.display = show ? "block" : "none";
   }
