@@ -76,16 +76,6 @@ const Utils = {
       return 'N/A';
     }
   },
-    
-// added recently
-function showAuthForm() {
-  document.getElementById('auth-container').classList.remove('hidden');
-},
-
-function showUserInfo(user) {
-  document.getElementById('userEmail').textContent = user.email;
- },
-
 showErrorToUser: function(message, isSuccess = false) {
     try {
       const errorDiv = document.getElementById('error-message');
@@ -111,8 +101,18 @@ showErrorToUser: function(message, isSuccess = false) {
       </h1>
     `;
   }
- }; // moved recently from the above function
-     
+};
+// added recently
+function showAuthForm() {
+  const container = document.getElementById('authContainer') || document.getElementById('auth-container');
+  if (container) container.classList.remove('hidden');
+}
+function showUserInfo(user) {
+  const emailEl = document.getElementById('userEmail');
+  if (emailEl && user?.email) {
+    emailEl.textContent = user.email;
+  }
+}
 // Initialize app
 async function initApp() {
   document.body.classList.add('loading');
