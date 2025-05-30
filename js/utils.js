@@ -193,7 +193,8 @@ function initUI() {
 async function checkAuthState() {
   const user = await auth.currentUser;
   if (user) {
-    window.location.href = '/main-app';
+  console.log("✅ Already signed in user:", user.email);
+// window.location.href = '/main-app'; for now
   }
 }  
 // ================= INITIALIZATION =================
