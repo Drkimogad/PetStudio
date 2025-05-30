@@ -214,6 +214,7 @@ async function checkAuthState() {
 // ================= INITIALIZATION =================
 document.addEventListener('DOMContentLoaded', async function() {
   // Show initial UI state
+  showAuthForm('login');
   DOM.dashboard.classList.add('hidden');
   DOM.fullPageBanner.classList.remove('hidden');
   DOM.profileSection.classList.add('hidden');
