@@ -159,11 +159,10 @@ async function initializeFirebase() {
 }
 // ====== Auth State Listener ======
 function initAuthListeners() {
-  const auth = firebase.auth();
   auth.onAuthStateChanged(user => {
     if (user) {
       console.log("✅ User is signed in:", user);
-      showAuthFiorm('login'); 
+      showDashboard();
     } else {
       console.log("ℹ️ No user is signed in.");
       if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
@@ -173,6 +172,7 @@ function initAuthListeners() {
     console.error("❌ Auth state error:", error);
   });
 }
+
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
