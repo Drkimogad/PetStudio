@@ -103,9 +103,7 @@ const Utils = {
         Critical Error: Failed to load application interface
       </h1>
     `;
-  }
-};
-
+  },
 // added recently
 function showAuthForm() {
   document.getElementById('auth-container').classList.remove('hidden');
@@ -113,7 +111,8 @@ function showAuthForm() {
 
 function showUserInfo(user) {
   document.getElementById('userEmail').textContent = user.email;
-}
+ }
+};
 
 // Initialize app
 async function initApp() {
