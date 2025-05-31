@@ -420,7 +420,7 @@ function setCoverPhoto(profileIndex, imageIndex) {
 //🌟 Updated Profile Form Submission with Cloudinary 🌟
 DOM.profileForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  
+  console.log("🧪 Auth before saving:", firebase.auth().currentUser); // added for logging only 
   // Show loading state
   const submitBtn = e.target.querySelector('button[type="submit"]');
   const originalBtnText = submitBtn.innerHTML;
@@ -475,6 +475,7 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
       petProfiles.push(newProfile);
     }
     localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+   // await firebase.firestore().collection("profiles").add(newProfile); when firestore implementation
 
     // 5. SAFE Firebase handling
     if (typeof firebase !== 'undefined' && newProfile.birthday) {
@@ -486,11 +487,11 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
         createdAt: new Date().toISOString()
       };
       
-      try {
-        await firebase.firestore().collection("reminders").add(reminderData);
-      } catch (firestoreError) {
-        console.error("Reminder save failed:", firestoreError);
-      }
+    //  try {
+       // await firebase.firestore().collection("reminders").add(reminderData);
+   //   } catch (firestoreError) {
+     //   console.error("Reminder save failed:", firestoreError);
+    //  }
     }
 
     // 6. Update UI
