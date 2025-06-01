@@ -189,14 +189,7 @@ async function initializeFirebase() {
 function initUI() {
   checkAuthState();
 }
-// Check auth state
-async function checkAuthState() {
-  const user = await auth.currentUser;
-  if (user) {
-  console.log("✅ Already signed in user:", user.email);
-// window.location.href = '/main-app'; for now
-  }
-}  
+// Check auth state function is removed
 // ================= INITIALIZATION =================
 document.addEventListener('DOMContentLoaded', async function() {
   // Show initial UI state
