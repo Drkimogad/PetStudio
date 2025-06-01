@@ -171,7 +171,7 @@ function initAuthListeners() {
       if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
     }
   }, error => {
-    console.error("❌ Auth state error:", error);
+    console.error("❌ User was signed out.);
   });
 }
 // ====== Core Initialization ======
