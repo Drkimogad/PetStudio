@@ -160,6 +160,7 @@ async function initializeFirebase() {
 }
 // ====== Auth State Listener ======
 function initAuthListeners() {
+  const auth = firebase.auth();
   auth.onAuthStateChanged(user => {
     if (user) {
       console.log("✅ User is signed in:", user);
@@ -173,7 +174,6 @@ function initAuthListeners() {
     console.error("❌ Auth state error:", error);
   });
 }
-
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
