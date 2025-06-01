@@ -167,13 +167,21 @@ function initAuthListeners() {
       showDashboard();
     } else {
       console.log("ℹ️ No user is signed in.");
+
+      // ✅ Always show auth container
       if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
       if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
+
+      // ✅ Re-render the Google button when auth page is visible
+      if (typeof setupGoogleLoginButton === 'function') {
+        setupGoogleLoginButton();
+      }
     }
   }, error => {
-    console.error("❌ User was signed out.);
+    console.error("❌ User was signed out.");
   });
 }
+
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
