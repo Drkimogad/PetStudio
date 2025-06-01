@@ -449,13 +449,13 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
 
     // 2. Prepare mood history
     const moodHistoryInput = document.getElementById("moodHistoryInput");
-    const moodHistory = moodHistoryInput?.value.trim() 
-      ? moodHistoryInput.value.trim().split("\n").map(line => {
-          const [date, mood] = line.split(":");
-          return { date: date.trim(), mood: mood.trim() };
-        })
-      : [];
-
+    const moodHistory = moodHistoryInput?.value
+      ? [{
+      date: new Date().toISOString().split("T")[0],
+      mood: moodHistoryInput.value
+       }]
+     : [];
+      
     // 3. Create profile object
     const newProfile = {
       id: Date.now(),
@@ -509,6 +509,7 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
     submitBtn.disabled = false;
   }
 });
+
 // Helper function (keep this)
 function formatFirestoreDate(dateString) {
   const date = new Date(dateString);
