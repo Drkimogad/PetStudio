@@ -167,6 +167,7 @@ function loadGAPI() {
     script.onload = resolve;
     document.head.appendChild(script);
   });
+} // ← THIS WAS MISSING  
 // Initialize Firebase
 async function initializeFirebase() {
   const firebaseConfig = {
