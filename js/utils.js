@@ -167,31 +167,9 @@ function loadGAPI() {
     script.onload = resolve;
     document.head.appendChild(script);
   });
-// Initialize Firebase
-async function initializeFirebase() {
-  const firebaseConfig = {
-    apiKey: "AIzaSyAnGNXr6JZHgCcHp5xKtGuIsTGaMRqZ6oM",
-    authDomain: "petstudio-c3679.firebaseapp.com",
-    projectId: "petstudio-c3679",
-    storageBucket: "petstudio-c3679.appspot.com",
-    messagingSenderId: "1031214975391",
-    appId: "1:1031214975391:web:35878cabdd540b6fc455aa",
-    measurementId: "G-0GK7ZCV5VS"
-  };
-  // Initialize only if not already initialized
-  const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);  
-  return {
-    auth: firebase.auth(app),
-    provider: new firebase.auth.GoogleAuthProvider()
-  };
-}
-// Initialize UI
-function initUI() {
-  checkAuthState();
-}
-// Check auth state function is removed
+
 // ================= INITIALIZATION =================
-document.addEventListener('DOMContentLoaded', async function() {
+doument.addEventListener('DOMContentLoaded', async function() {
   // Show initial UI state
  // showAuthForm('login');
   DOM.dashboard.classList.add('hidden');
