@@ -7,6 +7,7 @@ const CLOUDINARY_CONFIG = {
 let auth = null;
 let provider = null;
 let isSignupInProgress = false;
+let authListenerUnsubscribe = null;
 // 🔶 State Management🔶🔶🔶
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
@@ -158,6 +159,7 @@ async function initializeFirebase() {
   // ✅ Return the actual Firebase Auth instance
   return firebase.auth(); 
 }
+
 // ====== Auth State Listener ======
 function initAuthListeners(authInstance) { // Add parameter
   authInstance.onAuthStateChanged(user => { // Use provided instance
@@ -229,5 +231,10 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error("Firebase not loaded yet");
     // You might want to add retry logic here
   }
+  
+  function initAuthListeners(auth) {
+  if (authListenerUnsubscribe) authListenerUnsubscribe(); // Cleanup old
+  authListenerUnsubscribe = auth.onAuthStateChanged(/*...*/);
+}
   initializeAuth();
 });
