@@ -7,12 +7,6 @@ const CLOUDINARY_CONFIG = {
 let auth = null;
 let provider = null;
 let isSignupInProgress = false;
-let authListenerUnsubscribe = null;
-// clean up function
-function initAuthListeners(auth) {
-  if (authListenerUnsubscribe) authListenerUnsubscribe(); // Cleanup old
-  authListenerUnsubscribe = auth.onAuthStateChanged(/*...*/);
-}
 // 🔶 State Management🔶🔶🔶
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
@@ -164,32 +158,30 @@ async function initializeFirebase() {
   // ✅ Return the actual Firebase Auth instance
   return firebase.auth(); 
 }
-
 // ====== Auth State Listener ======
-function initAuthListeners(authInstance) { // Add parameter
-  authInstance.onAuthStateChanged(user => { // Use provided instance
+function initAuthListeners() {
+  const auth = firebase.auth();
+  auth.onAuthStateChanged(user => {
     if (user) {
       console.log("✅ User is signed in:", user);
       showDashboard();
     } else {
       console.log("ℹ️ No user is signed in.");
+
+      // ✅ Always show auth container
       if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
       if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
-      
-      // Add slight delay for DOM stability
-      setTimeout(() => {
-        if (typeof setupGoogleLoginButton === 'function') {
-          setupGoogleLoginButton();
-        }
-      }, 300);
+
+      // ✅ Re-render the Google button when auth page is visible
+      if (typeof setupGoogleLoginButton === 'function') {
+        setupGoogleLoginButton();
+      }
     }
   }, error => {
-    console.error("Auth state error:", error);
-    if (typeof Utils?.showErrorToUser === 'function') {
-      Utils.showErrorToUser("Session error. Please refresh.");
-    }
+    console.error("❌ User was signed out.");
   });
 }
+
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
@@ -197,7 +189,6 @@ async function initializeAuth() {
     if (!initDOMReferences()) {
       throw new Error("Critical DOM elements missing");
     }    
-    
     // 2. Wait for Firebase to load
     if (typeof firebase === 'undefined') {
       await new Promise(resolve => {
@@ -208,22 +199,17 @@ async function initializeAuth() {
           }
         }, 100);
       });
-    }
-    
+    }    
     // 3. Initialize Firebase Auth
     auth = await initializeFirebase();
     console.log("✅ Auth object received:", auth);
-    
-    // 4. Set up auth state listener - PASS THE AUTH INSTANCE
-    initAuthListeners(auth);  // ← Changed this line
-    
-    // 5. Set up Google Sign-In button (if exists) with slight delay
-    setTimeout(() => {
-      if (document.getElementById("googleSignInBtn")) {
-        setupGoogleLoginButton();
-      }
-    }, 200);
-    
+    console.log("Type of onAuthStateChanged:", typeof auth.onAuthStateChanged);
+    // 4. Set up auth state listener
+    initAuthListeners(auth);  
+    // 5. Set up Google Sign-In button (if exists)
+    if (document.getElementById("googleSignInBtn")) {
+      setupGoogleLoginButton();
+    }    
   } catch (error) {
     console.error("Auth initialization failed:", error);
     disableUI();
