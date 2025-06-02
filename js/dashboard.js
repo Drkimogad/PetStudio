@@ -456,21 +456,21 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
        }]
      : [];
       
-    // 3. Create profile object
-const profileDoc = {
-  userId: firebase.auth().currentUser?.uid,
-  name: document.getElementById("petName").value,
-  breed: document.getElementById("petBreed").value,
-  dob: document.getElementById("petDob").value,
-  birthday: document.getElementById("petBirthday").value,
-  gallery: [],  // Add Cloudinary URLs later
-  moodHistory: [],
+    // 3. Create profile object in Firestore 
+const firestore = firebase.firestore();
+
+await firestore.collection("profiles").add({
+  userId: firebase.auth().currentUser?.uid || "anonymous",
+  name: newProfile.name,
+  breed: newProfile.breed,
+  dob: newProfile.dob,
+  birthday: newProfile.birthday,
+  gallery: uploadedImageUrls, // 🔹 Include Cloudinary URLs
+  moodHistory: newProfile.moodHistory || [], // ✅ If available
   createdAt: new Date().toISOString()
-};
+});
 
-await firebase.firestore().collection("profiles").add(profileDoc);
-
-    // 4. Save to storage
+   // 4. Save to storage
     if (isEditing) {
       petProfiles[currentEditIndex] = newProfile;
     } else {
