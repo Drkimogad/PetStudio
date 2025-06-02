@@ -159,29 +159,30 @@ async function initializeFirebase() {
   return firebase.auth(); 
 }
 // ====== Auth State Listener ======
-function initAuthListeners() {
-  const auth = firebase.auth();
-  auth.onAuthStateChanged(user => {
+function initAuthListeners(authInstance) { // Add parameter
+  authInstance.onAuthStateChanged(user => { // Use provided instance
     if (user) {
       console.log("✅ User is signed in:", user);
       showDashboard();
     } else {
       console.log("ℹ️ No user is signed in.");
-
-      // ✅ Always show auth container
       if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
       if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
-
-      // ✅ Re-render the Google button when auth page is visible
-      if (typeof setupGoogleLoginButton === 'function') {
-        setupGoogleLoginButton();
-      }
+      
+      // Add slight delay for DOM stability
+      setTimeout(() => {
+        if (typeof setupGoogleLoginButton === 'function') {
+          setupGoogleLoginButton();
+        }
+      }, 300);
     }
   }, error => {
-    console.error("❌ User was signed out.");
+    console.error("Auth state error:", error);
+    if (typeof Utils?.showErrorToUser === 'function') {
+      Utils.showErrorToUser("Session error. Please refresh.");
+    }
   });
 }
-
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
@@ -189,6 +190,7 @@ async function initializeAuth() {
     if (!initDOMReferences()) {
       throw new Error("Critical DOM elements missing");
     }    
+    
     // 2. Wait for Firebase to load
     if (typeof firebase === 'undefined') {
       await new Promise(resolve => {
@@ -199,17 +201,22 @@ async function initializeAuth() {
           }
         }, 100);
       });
-    }    
+    }
+    
     // 3. Initialize Firebase Auth
     auth = await initializeFirebase();
     console.log("✅ Auth object received:", auth);
-    console.log("Type of onAuthStateChanged:", typeof auth.onAuthStateChanged);
-    // 4. Set up auth state listener
-    initAuthListeners(auth);  
-    // 5. Set up Google Sign-In button (if exists)
-    if (document.getElementById("googleSignInBtn")) {
-      setupGoogleLoginButton();
-    }    
+    
+    // 4. Set up auth state listener - PASS THE AUTH INSTANCE
+    initAuthListeners(auth);  // ← Changed this line
+    
+    // 5. Set up Google Sign-In button (if exists) with slight delay
+    setTimeout(() => {
+      if (document.getElementById("googleSignInBtn")) {
+        setupGoogleLoginButton();
+      }
+    }, 200);
+    
   } catch (error) {
     console.error("Auth initialization failed:", error);
     disableUI();
