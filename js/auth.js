@@ -92,6 +92,10 @@ function showDashboard() {
     renderProfiles();
   }
 }
+  function initAuthListeners(auth) {
+  if (authListenerUnsubscribe) authListenerUnsubscribe(); // Cleanup old
+  authListenerUnsubscribe = auth.onAuthStateChanged(/*...*/);
+}
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
   // Check if Google and Firebase are loaded
@@ -231,10 +235,5 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error("Firebase not loaded yet");
     // You might want to add retry logic here
   }
-  
-  function initAuthListeners(auth) {
-  if (authListenerUnsubscribe) authListenerUnsubscribe(); // Cleanup old
-  authListenerUnsubscribe = auth.onAuthStateChanged(/*...*/);
-}
   initializeAuth();
 });
