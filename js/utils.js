@@ -167,7 +167,6 @@ function loadGAPI() {
     script.onload = resolve;
     document.head.appendChild(script);
   });
-} // ← THIS WAS MISSING  
 // Initialize Firebase
 async function initializeFirebase() {
   const firebaseConfig = {
@@ -195,9 +194,9 @@ function initUI() {
 document.addEventListener('DOMContentLoaded', async function() {
   // Show initial UI state
  // showAuthForm('login');
-document.getElementById('dashboard')?.classList?.add('hidden');
-document.getElementById('fullPageBanner')?.classList?.remove('hidden');
-document.getElementById('profileSection')?.classList?.add('hidden');
+  DOM.dashboard.classList.add('hidden');
+  DOM.fullPageBanner.classList.remove('hidden');
+  DOM.profileSection.classList.add('hidden');  
   // Initialize app
   await initApp();  
   // Optional: Load profiles after auth is ready
