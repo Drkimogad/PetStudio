@@ -160,6 +160,8 @@ async function initializeFirebase() {
 }
 // ====== Auth State Listener ======
 function initAuthListeners() {
+  console.log("👤 Firebase current user:", firebase.auth().currentUser);
+  
   const auth = firebase.auth();
   auth.onAuthStateChanged(user => {
     if (user) {
