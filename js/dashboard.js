@@ -457,16 +457,18 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
      : [];
       
     // 3. Create profile object
-    const newProfile = {
-      id: Date.now(),
-      name: document.getElementById("petName").value,
-      breed: document.getElementById("petBreed").value,
-      dob: document.getElementById("petDob").value,
-      birthday: document.getElementById("petBirthday").value,
-      gallery: uploadedImageUrls, // Using Cloudinary URLs
-      moodHistory: moodHistory,
-      coverPhotoIndex: 0
-    };
+const profileDoc = {
+  userId: firebase.auth().currentUser?.uid,
+  name: document.getElementById("petName").value,
+  breed: document.getElementById("petBreed").value,
+  dob: document.getElementById("petDob").value,
+  birthday: document.getElementById("petBirthday").value,
+  gallery: [],  // Add Cloudinary URLs later
+  moodHistory: [],
+  createdAt: new Date().toISOString()
+};
+
+await firebase.firestore().collection("profiles").add(profileDoc);
 
     // 4. Save to storage
     if (isEditing) {
@@ -474,8 +476,11 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
     } else {
       petProfiles.push(newProfile);
     }
-    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-   // await firebase.firestore().collection("profiles").add(newProfile); when firestore implementation
+      // saving profiles to Firestore instead of localStorage 
+    await firebase.firestore().collection("profiles").add({
+  userId: firebase.auth().currentUser.uid,
+  ...newProfile
+  });
 
     // 5. SAFE Firebase handling
     if (typeof firebase !== 'undefined' && newProfile.birthday) {
@@ -487,11 +492,11 @@ DOM.profileForm?.addEventListener("submit", async (e) => {
         createdAt: new Date().toISOString()
       };
       
-    //  try {
-       // await firebase.firestore().collection("reminders").add(reminderData);
-   //   } catch (firestoreError) {
-     //   console.error("Reminder save failed:", firestoreError);
-    //  }
+      try {
+        await firebase.firestore().collection("reminders").add(reminderData);
+    } catch (firestoreError) {
+       console.error("Reminder save failed:", firestoreError);
+     }
     }
 
     // 6. Update UI
