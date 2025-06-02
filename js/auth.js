@@ -8,6 +8,11 @@ let auth = null;
 let provider = null;
 let isSignupInProgress = false;
 let authListenerUnsubscribe = null;
+// clean up function
+function initAuthListeners(auth) {
+  if (authListenerUnsubscribe) authListenerUnsubscribe(); // Cleanup old
+  authListenerUnsubscribe = auth.onAuthStateChanged(/*...*/);
+}
 // 🔶 State Management🔶🔶🔶
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
@@ -91,10 +96,6 @@ function showDashboard() {
     DOM.petList.classList.remove('hidden');
     renderProfiles();
   }
-}
-  function initAuthListeners(auth) {
-  if (authListenerUnsubscribe) authListenerUnsubscribe(); // Cleanup old
-  authListenerUnsubscribe = auth.onAuthStateChanged(/*...*/);
 }
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
