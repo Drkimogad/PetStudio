@@ -415,7 +415,7 @@ function setCoverPhoto(profileIndex, imageIndex) {
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
   renderProfiles();
 }
-//✅ FINAL INITIALIZATION RECENTLY ADDED ✅
+//✅ FINAL INITIALIZATION ✅
 function initDashboard() {
   // Initialize only if required elements exist
   if (window.DOM?.petList) renderProfiles();
@@ -523,7 +523,7 @@ function initDashboard() {
         showLoading(false);
       }
     });
-// are there any braces missing here?
+ }  // ← This closing brace was missing: it ends initDashboard()
 // Single logout handler function
 async function handleLogout() {
   try {
