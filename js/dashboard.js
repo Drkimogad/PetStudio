@@ -421,11 +421,21 @@ function initDashboard() {
   if (window.DOM?.petList) renderProfiles();
   if (document.getElementById('qr-modal')) initQRModal();
   
-    // Consolidated logout handler (replaces standalone version)
+// logout handler (replaces standalone version)
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', handleLogout);
   }
+// Add profiles handler    
+const addBtn = document.getElementById('addPetProfileBtn');
+if (addBtn) {
+  addBtn.addEventListener('click', () => {
+    isEditing = false;
+    currentEditIndex = -1;
+    DOM.profileSection.classList.remove('hidden');
+    DOM.petList.classList.add('hidden');
+  });
+}
 // MOVED FORM SUBMISSION HERE
     DOM.profileForm.addEventListener("submit", async (e) => {
       e.preventDefault();
