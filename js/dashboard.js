@@ -437,6 +437,7 @@ if (addBtn) {
   });
 }
 // MOVED FORM SUBMISSION HERE
+    console.log("📋 DOM.profileForm is:", DOM.profileForm);
     DOM.profileForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       console.log("🧪 Auth before saving:", firebase.auth().currentUser);
@@ -533,7 +534,7 @@ if (addBtn) {
         showLoading(false);
       }
     });
- }  // ← This closing brace was missing: it ends initDashboard()
+ }
 // Single logout handler function
 async function handleLogout() {
   try {
@@ -553,8 +554,7 @@ async function handleLogout() {
   }
 }
 // Start initialization based on document state
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-  initDashboard();
-} else {
-  document.addEventListener('DOMContentLoaded', initDashboard);
-}
+document.addEventListener('DOMContentLoaded', () => {
+  initDashboardDOM();      // 🧠 Make sure DOM references are set
+  initDashboard();         // ✅ Then run main logic
+});
