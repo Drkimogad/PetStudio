@@ -437,10 +437,11 @@ if (addBtn) {
   });
 }
 // MOVED FORM SUBMISSION HERE
-    console.log("📋 DOM.profileForm is:", DOM.profileForm);
+    console.log("✅ Form submission listener attached."); // <== ✅ Add this
     DOM.profileForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      console.log("🧪 Auth before saving:", firebase.auth().currentUser);
+    e.preventDefault();
+    console.log("📨 Submit triggered!");  // <== ✅ Added
+    console.log("🧪 Auth before saving:", firebase.auth().currentUser);
 
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const originalBtnText = submitBtn.innerHTML;
