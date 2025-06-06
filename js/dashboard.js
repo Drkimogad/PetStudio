@@ -153,8 +153,8 @@ function renderMoodHistory(profile) {
 function getMoodEmoji(mood) {
   return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
 }
-
-// Open edit form
+// CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
+// 🌀 EDIT PROFILE BUTTON FUNCTION
 function openEditForm(index) {
   isEditing = true;
   currentEditIndex = index;
@@ -175,8 +175,20 @@ function openEditForm(index) {
   DOM.profileSection.classList.remove("hidden"); 
   DOM.fullPageBanner.classList.add("hidden");
 }
+// 🌀 DELETE BUTTON FUNCTION WAS MISSING
+function deleteProfile(index) {
+  if (!confirm("Are you sure you want to delete this profile?")) return;
 
-// Print profile
+  const deleted = petProfiles.splice(index, 1);
+  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+
+  // Optionally delete from Firestore later
+  // You'd need to store document IDs for this
+
+  renderProfiles();
+  Utils.showErrorToUser(`${deleted[0].name}'s profile was deleted.`, true);
+}
+// 🌀 PRINT PROFILE BUTTON FUNCTION
 function printProfile(profile) {
   const printWindow = window.open('', '_blank');
   const printDocument = printWindow.document;
@@ -227,8 +239,7 @@ function printProfile(profile) {
   });
 }
 
-// 🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀🌀  
-// 🔼 OPTIMIZED SHARE PET CARD FUNCTION 🌟🌟🌟
+// 🌀 OPTIMIZED SHARE PET CARD FUNCTION 🌟🌟🌟
 async function sharePetCard(profile) {
   const loader = document.getElementById('processing-loader');
   let shareBtn, originalText;
@@ -295,7 +306,7 @@ async function sharePetCard(profile) {
     }
   }
 }
-//🌟 QR Code Management 🌟
+//🌀 QR Code Management 🌟
 // Generate QR code
 function generateQRCode(profileIndex) {
   const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
