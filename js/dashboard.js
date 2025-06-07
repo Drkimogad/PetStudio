@@ -122,7 +122,7 @@ function createNewProfile() {
     breed: document.getElementById('petBreed').value,
     dob: document.getElementById("petDob").value,
     birthday: document.getElementById("petBirthday").value,
-    gallery: [],
+    gallery: uploadedImageUrls,
     moodHistory: [],
     coverPhotoIndex: 0
   };
@@ -496,7 +496,7 @@ if (addBtn) {
           dob: document.getElementById("petDob").value,
           birthday: document.getElementById("petBirthday").value,
           gallery: uploadedImageUrls,
-          moodHistory: moodHistory,
+          moodHistory: [],
           coverPhotoIndex: 0
         };
 
