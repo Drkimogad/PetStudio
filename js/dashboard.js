@@ -444,7 +444,6 @@ if (addBtn) {
         // Handle image uploads
         const galleryFiles = Array.from(document.getElementById("petGallery").files);
         const uploadedImageUrls = [];
-        uploadedImageUrls.push("https://placekitten.com/400/300"); // TEMPORARY placeholder
 
         for (const file of galleryFiles) {
           try {
