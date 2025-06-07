@@ -112,25 +112,6 @@ function renderProfiles() {
   }
 }
 
-// Create new profile
-function createNewProfile() {
-  const timestamp = Date.now();
-  const newProfile = {
-    id: timestamp,
-    fileName: `pet_${timestamp}`,
-    name: document.getElementById('petName').value,
-    breed: document.getElementById('petBreed').value,
-    dob: document.getElementById("petDob").value,
-    birthday: document.getElementById("petBirthday").value,
-    gallery: uploadedImageUrls,
-    moodHistory: [],
-    coverPhotoIndex: 0
-  };
-  petProfiles.push(newProfile);
-  savePetProfile(newProfile);
-  renderProfiles();
-}
-
 // Calculate days until birthday
 function getCountdown(birthday) {
   const today = new Date();
@@ -496,7 +477,7 @@ if (addBtn) {
           dob: document.getElementById("petDob").value,
           birthday: document.getElementById("petBirthday").value,
           gallery: uploadedImageUrls,
-          moodHistory: [],
+           moodHistory: moodHistory,
           coverPhotoIndex: 0
         };
 
