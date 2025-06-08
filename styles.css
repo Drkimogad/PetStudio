@@ -448,6 +448,14 @@ h1, h2, h3, p {
   background-color: #e9d5ff;
 }
 
+/* add recently for moodlog printing */
+.print-moodlog {
+  margin-top: 20px;
+  padding: 10px;
+}
+.print-moodlog ul {
+  padding-left: 20px;
+}
 /* ====================
    PET CARDS & ACTIONS
 ==================== */
