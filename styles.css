@@ -34,7 +34,6 @@ body {
     position: relative;
     display: flex;
     flex-direction: column;
-    text-align: left !important;
 }
 
 .petCard h3 {
