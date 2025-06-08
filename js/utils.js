@@ -22,8 +22,9 @@ async function uploadToCloudinary(file, userId, petProfileId) {
   formData.append('file', file);
   formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
   formData.append('folder', folderPath);
-  formData.append('public_id', `img_${Date.now()}`); // Unique filename
-
+  //formData.append('public_id', `img_${Date.now()}`); // Unique filename
+  // No public_id specified = auto-generate
+  
   try {
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/upload`,
