@@ -131,9 +131,17 @@ function renderMoodHistory(profile) {
     .join('<br>');
 }
 
-function getMoodEmoji(mood) {
-  return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
+function getEmoji(mood) {
+  switch (mood) {
+    case 'happy': return '😊';
+    case 'sad': return '😞';
+    case 'angry': return '😠';
+    case 'sick': return '🤒';
+    case 'depressed': return '😔';
+    default: return '😐';
+  }
 }
+
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 // 🌀 EDIT PROFILE BUTTON FUNCTION
 function openEditForm(index) {
@@ -175,10 +183,7 @@ function printProfile(profile) {
   const printDocument = printWindow.document;
 
   printDocument.write(`
-  // INJECT SHARE PROFILE
-    <button onclick="navigator.share({ title: 'Check out ${profile.name}', url: '${shareUrl}' })">
-    📤 Share Profile
-  </button>
+  
     <html>
       <head>
         <title>${profile.name}'s Profile</title>
@@ -205,17 +210,25 @@ function printProfile(profile) {
             `<img src="${imgSrc}" alt="Pet photo" onload="this.style.opacity = '1'">`
           ).join('')}
         </div>
-        <h3>Mood Log</h3>
-       <div class="print-moodlog">
-       <ul>
-         ${profile.moodHistory.map(entry => `
-         <li>${entry.date}: ${Utils.getMoodEmoji(entry.mood)} ${entry.mood}</li>
-         `).join('')}
-       </ul>
-      </div>
-      <div class="print-share-note">
-      <p>You can also <a href="${window.location.origin}/PetStudio/?profile=${profile.id}" target="_blank">view this profile online</a>.</p>
-      </div>
+<h3>Mood Log</h3>
+<div class="print-moodlog">
+  <ul>
+    ${profile.moodHistory.map(entry => `
+      <li>${entry.date}: ${entry.mood === 'happy' ? '😊' :
+                          entry.mood === 'sad' ? '😞' :
+                          entry.mood === 'angry' ? '😠' :
+                          entry.mood === 'sick' ? '🤒' :
+                          entry.mood === 'depressed' ? '😔' : '😐'} ${entry.mood}</li>
+    `).join('')}
+  </ul>
+</div>
+
+<div class="print-share-note">
+  <p>You can also <a href="${window.location.origin}/PetStudio/?profile=${profile.id}" target="_blank">view this profile online</a>.</p>
+  <button onclick="navigator.share({ title: 'Check out ${profile.name}', url: '${window.location.origin}/PetStudio/?profile=${profile.id}' })">
+    📤 Share Profile
+  </button>
+</div>
       </body>
     </html>
   `);
