@@ -213,6 +213,9 @@ function printProfile(profile) {
          `).join('')}
        </ul>
       </div>
+      <div class="print-share-note">
+      <p>You can also <a href="${window.location.origin}/PetStudio/?profile=${profile.id}" target="_blank">view this profile online</a>.</p>
+      </div>
       </body>
     </html>
   `);
