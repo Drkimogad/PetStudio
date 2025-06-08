@@ -131,15 +131,8 @@ function renderMoodHistory(profile) {
     .join('<br>');
 }
 
-function getEmoji(mood) {
-  switch (mood) {
-    case 'happy': return '😊';
-    case 'sad': return '😞';
-    case 'angry': return '😠';
-    case 'sick': return '🤒';
-    case 'depressed': return '😔';
-    default: return '😐';
-  }
+function getMoodEmoji(mood) {
+  return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
 }
 
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
@@ -188,11 +181,44 @@ function printProfile(profile) {
       <head>
         <title>${profile.name}'s Profile</title>
         <style>
-          body { font-family: Arial; padding: 20px; -webkit-print-color-adjust: exact !important; }
-          .print-header { text-align: center; margin-bottom: 20px; }
-          .print-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 20px 0; }
-          .print-gallery img { width: 100%; height: auto; object-fit: cover; }
-        </style>
+        body { font-family: Arial; padding: 20px; }
+        .print-header { text-align: center; margin-bottom: 20px; }
+        .print-gallery {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 10px;
+          margin: 20px 0;
+        }
+        .print-gallery img {
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+        }
+        .print-moodlog ul {
+          list-style: none;
+          padding: 0;
+        }
+        .print-moodlog li {
+          font-size: 16px;
+          margin-bottom: 4px;
+        }
+        .print-share-note {
+          text-align: center;
+          margin-top: 20px;
+        }
+        .print-share-note button {
+          margin-top: 10px;
+          padding: 8px 16px;
+          background: #007bff;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        .print-share-note button:hover {
+          background-color: #0056b3;
+        }
+      </style>
       </head>
       <body>
         <div class="print-header">
@@ -210,15 +236,11 @@ function printProfile(profile) {
             `<img src="${imgSrc}" alt="Pet photo" onload="this.style.opacity = '1'">`
           ).join('')}
         </div>
-<h3>Mood Log</h3>
 <div class="print-moodlog">
+  <h3>Mood Log</h3>
   <ul>
     ${profile.moodHistory.map(entry => `
-      <li>${entry.date}: ${entry.mood === 'happy' ? '😊' :
-                          entry.mood === 'sad' ? '😞' :
-                          entry.mood === 'angry' ? '😠' :
-                          entry.mood === 'sick' ? '🤒' :
-                          entry.mood === 'depressed' ? '😔' : '😐'} ${entry.mood}</li>
+      <li>${entry.date}: ${Utils.getMoodEmoji(entry.mood)} ${entry.mood}</li>
     `).join('')}
   </ul>
 </div>
