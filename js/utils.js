@@ -24,6 +24,7 @@ async function uploadToCloudinary(file, userId, petProfileId) {
   formData.append('folder', folderPath);
   //formData.append('public_id', `img_${Date.now()}`); // Unique filename
   // No public_id specified = auto-generate
+  formData.append('moderation', 'manual'); // Or 'aws_rek'
   
   try {
     const response = await fetch(
