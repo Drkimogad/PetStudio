@@ -333,7 +333,14 @@ h1, h2, h3, p {
 .button:hover {
   background-color: #4a0c7a;
 }
-
+/* add recently for moodlog printing */
+.print-moodlog {
+  margin-top: 20px;
+  padding: 10px;
+}
+.print-moodlog ul {
+  padding-left: 20px;
+}
 /* ====================
    AUTH PAGE
 ==================== */
@@ -465,15 +472,6 @@ h1, h2, h3, p {
 .mood-btn.active {
   border-color: #6a1b9a;
   background-color: #e9d5ff;
-}
-
-/* add recently for moodlog printing */
-.print-moodlog {
-  margin-top: 20px;
-  padding: 10px;
-}
-.print-moodlog ul {
-  padding-left: 20px;
 }
 /* ====================
    PET CARDS & ACTIONS
