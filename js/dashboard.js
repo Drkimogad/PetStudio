@@ -175,6 +175,10 @@ function printProfile(profile) {
   const printDocument = printWindow.document;
 
   printDocument.write(`
+  // INJECT SHARE PROFILE
+    <button onclick="navigator.share({ title: 'Check out ${profile.name}', url: '${shareUrl}' })">
+    📤 Share Profile
+  </button>
     <html>
       <head>
         <title>${profile.name}'s Profile</title>
@@ -201,65 +205,14 @@ function printProfile(profile) {
             `<img src="${imgSrc}" alt="Pet photo" onload="this.style.opacity = '1'">`
           ).join('')}
         </div>
+        <h3>Mood Log</h3>
        <div class="print-moodlog">
-       <h3>Mood Log</h3>
        <ul>
          ${profile.moodHistory.map(entry => `
          <li>${entry.date}: ${Utils.getMoodEmoji(entry.mood)} ${entry.mood}</li>
          `).join('')}
        </ul>
       </div>
-      </body>
-    </html>
-  `);
-  
-  printDocument.close();
-  
-  const images = printDocument.querySelectorAll('img');
-  let loaded = 0;
-  const checkPrint = () => {
-    if (++loaded === images.length) {
-      printWindow.print();
-    }
-  };
-  images.forEach(img => {
-    if (img.complete) checkPrint();
-    else img.addEventListener('load', checkPrint);
-  });
-}
-
-// 🌀 PRINT PROFILE BUTTON FUNCTION
-function printProfile(profile) {
-  const printWindow = window.open('', '_blank');
-  const printDocument = printWindow.document;
-
-  printDocument.write(`
-    <html>
-      <head>
-        <title>${profile.name}'s Profile</title>
-        <style>
-          body { font-family: Arial; padding: 20px; -webkit-print-color-adjust: exact !important; }
-          .print-header { text-align: center; margin-bottom: 20px; }
-          .print-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 20px 0; }
-          .print-gallery img { width: 100%; height: auto; object-fit: cover; }
-        </style>
-      </head>
-      <body>
-        <div class="print-header">
-          <h1>${profile.name}'s Profile</h1>
-          <p>Generated on ${new Date().toLocaleDateString()}</p>
-        </div>
-        <div class="print-details">
-          <p><strong>Breed:</strong> ${profile.breed}</p>
-          <p><strong>Date of Birth:</strong> ${profile.dob}</p>
-          <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
-        </div>
-        <h3>Gallery</h3>
-        <div class="print-gallery">
-          ${profile.gallery.map(imgSrc => 
-            `<img src="${imgSrc}" alt="Pet photo" onload="this.style.opacity = '1'">`
-          ).join('')}
-        </div>
       </body>
     </html>
   `);
