@@ -201,6 +201,14 @@ function printProfile(profile) {
             `<img src="${imgSrc}" alt="Pet photo" onload="this.style.opacity = '1'">`
           ).join('')}
         </div>
+       <div class="print-moodlog">
+       <h3>Mood Log</h3>
+       <ul>
+         ${profile.moodHistory.map(entry => `
+         <li>${entry.date}: ${Utils.getMoodEmoji(entry.mood)} ${entry.mood}</li>
+         `).join('')}
+       </ul>
+      </div>
       </body>
     </html>
   `);
