@@ -280,6 +280,10 @@ function printProfile(profile) {
         .print-header {
           border-bottom: none;
         }
+         .mood-entry::before {
+          content: attr(data-emoji);
+          margin-right: 8px;
+          font-size: 1.2em;
       }
     </style>
   </head>
@@ -325,12 +329,16 @@ function printProfile(profile) {
           Save as HTML
         </button>
       </div>
+      <script>
+        // Force print dialog when fully loaded
+        window.onload = () => setTimeout(() => window.print(), 300);
+      </script>
       </body>
     </html>
   `);
   
-  printDocument.close();
-  
+  printWindow.document.close();
+    
   const images = printDocument.querySelectorAll('img');
   let loaded = 0;
   const checkPrint = () => {
@@ -345,52 +353,65 @@ function printProfile(profile) {
 }
 
 // 🌀 HYBRID OPTIMIZED SHARE PET CARD FUNCTION 🌟🌟🌟
-async function sharePetCard(profile) {
-  const shareBtn = event?.target.closest('.shareBtn');
-  const originalText = shareBtn?.innerHTML;
-  
+async function sharePetCard(profile, event) {  // Explicitly pass event
   try {
-    if (shareBtn) {
-      shareBtn.innerHTML = '🔄 Preparing...';
-      shareBtn.disabled = true;
-    }
-
-    // 1. Try sharing as image file
-    const cardElement = document.getElementById(`pet-card-${profile.id}`);
-    const canvas = await html2canvas(cardElement);
-    const imageBlob = await new Promise(resolve => 
-      canvas.toBlob(resolve, 'image/png')
-    );
-    
-    if (navigator.share && navigator.canShare?.({ files: [new File([imageBlob], 'petcard.png')] })) {
-      await navigator.share({
-        title: `${profile.name}'s Pet Card`,
-        files: [new File([imageBlob], 'petcard.png')],
-        url: `${window.location.origin}/PetStudio/?profile=${profile.id}`
-      });
-      return;
-    }
-
-    // 2. Fallback to download + link copy
+    // 1. Try Web Share API first (link only)
     const shareUrl = `${window.location.origin}/PetStudio/?profile=${profile.id}`;
-    const downloadLink = document.createElement('a');
-    downloadLink.href = URL.createObjectURL(imageBlob);
-    downloadLink.download = `${profile.name}-petstudio.png`.replace(/[^a-z0-9]/gi, '_');
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    setTimeout(() => URL.revokeObjectURL(downloadLink.href), 100);
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Meet ${profile.name}! 🐾`,
+          text: `Check out ${profile.name}'s profile`,
+          url: shareUrl
+        });
+        return;
+      } catch (shareError) {
+        console.log("Web Share cancelled, falling back");
+      }
+    }
 
-    await navigator.clipboard.writeText(shareUrl);
-    alert(`${profile.name}'s card saved! 🔗 Link copied.`);
+    // 2. Generate image fallback
+    const cardElement = document.getElementById(`pet-card-${profile.id}`);
+    if (!cardElement) throw new Error("Card element not found");
+    
+    // Ensure element is visible for html2canvas
+    cardElement.style.opacity = '1';
+    cardElement.style.position = 'static';
+    
+    const canvas = await html2canvas(cardElement, {
+      scale: 2,
+      logging: true,
+      useCORS: true,
+      allowTaint: true,
+      onclone: (clonedDoc) => {
+        // Ensure all styles are copied
+        clonedDoc.getElementById(`pet-card-${profile.id}`).style.visibility = 'visible';
+      }
+    });
 
+    // 3. Offer both download and copy options
+    canvas.toBlob(async (blob) => {
+      const item = new ClipboardItem({ 'image/png': blob });
+      await navigator.clipboard.write([item]);
+      
+      // Auto-download as fallback
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${profile.name}_profile.png`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+      
+      alert(`${profile.name}'s profile copied! You can paste the image anywhere.`);
+    }, 'image/png');
+    
   } catch (error) {
     console.error('Sharing failed:', error);
-    alert('Sharing failed. Please try again.');
-  } finally {
-    if (shareBtn) {
-      shareBtn.innerHTML = originalText;
-      shareBtn.disabled = false;
-    }
+    alert(`Sharing failed: ${error.message}`);
   }
 }
 
