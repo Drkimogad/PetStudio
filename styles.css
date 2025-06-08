@@ -194,50 +194,101 @@ h1, h2, h3, p {
 }
 
 /* ====================
-   PET CARD STYLES
+   PET CARD STYLES - UPDATED
 ==================== */
 .petCard {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto; /* Centered with automatic margins */
     background-color: #ffffff;
-    width: calc(100% - 20px);
+    width: 80%; /* Occupies 80% of page width */
     position: relative;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.petCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
 .petCard h3 {
-    margin: 0;
+    margin: 0 0 10px 0;
     color: #6a0dad;
+    text-align: left; /* Left-aligned title */
+    font-size: 1.5rem;
 }
 
 .petCard p {
-    margin: 5px 0;
+    margin: 8px 0;
+    text-align: left; /* Left-aligned content */
+    color: #555;
 }
-
-.petCard {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  background: #fff;
-  border-left: 5px solid #6a1b9a;
-}
-
+/* Action buttons container */
 .petCard .actions {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-top: 10px;
-  gap: 8px;
+    display: flex;
+    justify-content: flex-start; /* Left-aligned buttons */
+    flex-wrap: wrap;
+    margin-top: 20px;
+    gap: 10px;
 }
 
 .petCard .actions button {
-  flex: 1 1 30%;
-  padding: 8px;
-  font-size: 0.9rem;
-  border-radius: 5px;
+    flex: 0 1 auto; /* Don't force equal width */
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    min-width: 120px;
+}
+/* Pet info section - left aligned */
+.pet-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+/* Countdown days indicator */
+.countdown-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #6a0dad;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
 }
 
+/* Image container with cover button */
+.image-container {
+    position: relative;
+    margin: 15px 0;
+    width: 100%;
+}
+/* Cover image button */
+.cover-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(106, 27, 154, 0.8);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    z-index: 2;
+    transition: all 0.2s ease;
+}
+
+.cover-btn:hover {
+    background-color: rgba(106, 27, 154, 1);
+    transform: scale(1.05);
+}
 .editBtn {
   background-color: #9b59b6;
   color: white;
@@ -323,36 +374,31 @@ h1, h2, h3, p {
 /* ====================
    GALLERY STYLES
 ==================== */
+/* Gallery grid adjustments */
 .gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
 }
 
 .gallery-item {
-  max-width: 100%;
-  max-height: 220px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    position: relative;
+    max-width: 100%;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Prevent FOUC on image gallery load */
 .gallery-item img {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  width: 100%;
-  height: auto;
-  max-height: 200px; /* or any reasonable limit */
-  object-fit: contain;
-  display: block;
-  margin: 0 auto;
-  border-radius: 6px;
-}
-
-.gallery-item img.loaded {
-    opacity: 1;
+    width: 100%;
+    height: auto;
+    max-height: 300px; /* Increased max height */
+    object-fit: contain; /* Ensure full visibility */
+    display: block;
+    opacity: 1; /* Remove fade-in for immediate visibility */
+    border-radius: 6px;
 }
 
 /* ====================
