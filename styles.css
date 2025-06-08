@@ -159,8 +159,10 @@ body {
   align-items: center;
   justify-content: center;
 }
-
+/* Prevent FOUC on image gallery load */
 .gallery-item img {
+  opacity: 0;
+  transition: opacity 0.3s ease;
   width: 100%;
   height: auto;
   max-height: 200px; /* or any reasonable limit */
@@ -168,6 +170,10 @@ body {
   display: block;
   margin: 0 auto;
   border-radius: 6px;
+}
+
+.gallery-item img.loaded {
+    opacity: 1;
 }
 
 .deleteBtn {
@@ -264,15 +270,6 @@ footer {
     }
 }
 
-/* Prevent FOUC on image gallery load */
-.gallery-item img {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.gallery-item img.loaded {
-    opacity: 1;
-}
 /* newly added*/
 /* ====================
    GENERAL LAYOUT
