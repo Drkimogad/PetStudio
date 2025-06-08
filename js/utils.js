@@ -53,7 +53,14 @@ const Utils = {
   },
 
   getMoodEmoji: function(mood) {
-    return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
+  switch (mood) {
+    case 'happy': return '😊';
+    case 'sad': return '😞';
+    case 'angry': return '😠';
+    case 'sick': return '🤒';
+    case 'depressed': return '😔';
+    default: return '😐';
+  }
   },
 
   formatFirestoreDate: function(dateString) {
