@@ -263,6 +263,17 @@ footer {
         display: none;
     }
 }
+/* PRINT SHARE NOTE */
+.print-share-note {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+}
+.print-share-note a {
+  color: #0066cc;
+  text-decoration: underline;
+}
 
 /* Prevent FOUC on image gallery load */
 .gallery-item img {
