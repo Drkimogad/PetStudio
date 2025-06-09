@@ -1,6 +1,6 @@
 //🌟 Main Application-Initialization-UTILs 🌟
 // ================= UTILITY FUNCTIONS =================
-//🌟 Improve uploadToCloudinary()
+//🔄 Updated uploadToCloudinary()
 async function uploadToCloudinary(file, userId, petProfileId) {
   // 1. VALIDATE FILE TYPE
   const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
