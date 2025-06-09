@@ -590,7 +590,17 @@ if (addBtn) {
             showLoading(false);
           }
         }
-        // Create profile object
+          
+        // Mood history
+        const moodInput = document.getElementById("moodHistoryInput");
+        const moodHistory = moodInput?.value
+          ? [{
+              date: new Date().toISOString().split("T")[0],
+              mood: moodInput.value
+            }]
+          : [];
+          
+         // Create profile object
         const newProfile = {
           id: newProfileId, // 🔄 
           name: document.getElementById("petName").value,
@@ -601,15 +611,6 @@ if (addBtn) {
            moodHistory: moodHistory,
           coverPhotoIndex: 0
         };
-          
-        // Mood history
-        const moodInput = document.getElementById("moodHistoryInput");
-        const moodHistory = moodInput?.value
-          ? [{
-              date: new Date().toISOString().split("T")[0],
-              mood: moodInput.value
-            }]
-          : [];
           
         // Save to localStorage
         if (isEditing) {
