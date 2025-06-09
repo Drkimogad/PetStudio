@@ -1,55 +1,45 @@
 //🌟 Main Application-Initialization-UTILs 🌟
 // ================= UTILITY FUNCTIONS =================
 //🌟 Improve uploadToCloudinary()
-async function uploadToCloudinary(file, userId, petProfileId) {
-  // 1. VALIDATE FILE TYPE
+async function uploadToCloudinary(file) {
+    // 1. VALIDATE FILE TYPE (Client-side)
   const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
   if (!allowedTypes.includes(file.type)) {
     throw new Error('Only JPG/PNG/WEBP images allowed!');
   }
-
   // 2. VALIDATE FILE SIZE (10MB)
   const maxSizeMB = 10;
   if (file.size > maxSizeMB * 1024 * 1024) {
     throw new Error(`File too large! Max ${maxSizeMB}MB allowed`);
-  }
-
-  // 3. BUILD FOLDER PATH
-  const folderPath = `PetStudio/users/${userId}/${petProfileId}/gallery`;
-
-  // 4. PREPARE UPLOAD
+  }    
+  // Proceed with upload if validations pass
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
-  formData.append('folder', folderPath);
-  //formData.append('public_id', `img_${Date.now()}`); // Unique filename
-  // No public_id specified = auto-generate
-  formData.append('moderation', 'manual'); // Or 'aws_rek'
-  
+  formData.append('folder', 'pet-images'); // Add folder organization
+
   try {
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/upload`,
       { 
-        method: 'POST',
+        method: 'POST', 
         body: formData,
-        signal: AbortSignal.timeout(15000)
+        signal: AbortSignal.timeout(15000) // Add timeout
       }
     );
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     
-    const data = await response.json();
-    return {
-      url: data.secure_url,
-      path: data.public_id, // Full Cloudinary path
-      width: data.width,
-      height: data.height
-    };
-
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+    
   } catch (error) {
     console.error('Cloudinary upload failed:', error);
-    throw error;
+    throw error; // Re-throw for caller handling
   }
+}
+//🌟 Consider adding for Cloudinary
+function getOptimizedImageUrl(url, width = 500) {
+  if (!url.includes('cloudinary')) return url;
+  return url.replace('/upload/', `/upload/w_${width},q_auto/`);
 }
 // OLD SECTION
 const Utils = {
