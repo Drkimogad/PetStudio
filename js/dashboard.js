@@ -557,110 +557,105 @@ if (addBtn) {
   });
 }
 // MOVED FORM SUBMISSION HERE
-console.log("✅ Form submission listener attached."); // <== ✅ Add this
-DOM.profileForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  console.log("📨 Submit triggered!");
-  
-  const user = firebase.auth().currentUser;
-  if (!user) {
-    Utils.showErrorToUser("You must be logged in to save profiles");
-    return;
-  }
+    console.log("✅ Form submission listener attached."); // <== ✅ Add this
+    DOM.profileForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    console.log("📨 Submit triggered!");  // <== ✅ Added
+    console.log("🧪 Auth before saving:", firebase.auth().currentUser);
 
-  const submitBtn = e.target.querySelector('button[type="submit"]');
-  const originalBtnText = submitBtn.innerHTML;
-  submitBtn.innerHTML = '⏳ Saving...';
-  submitBtn.disabled = true;
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '⏳ Saving...';
+      submitBtn.disabled = true;
 
-  try {
-    // 1. Handle image uploads with new folder structure
-    const galleryFiles = Array.from(document.getElementById("petGallery").files);
-    const uploadedImageUrls = [];
-    const newProfileId = Date.now().toString(); // Generate ID early for folder
-
-    for (const file of galleryFiles) {
       try {
-        showLoading(true);
-        const result = await uploadToCloudinary(file, user.uid, newProfileId);
-        if (result?.url) {
-          uploadedImageUrls.push({
-            url: result.url,
-            path: result.path, // Store full Cloudinary path
-            width: result.width,
-            height: result.height
-          });
+        // Handle image uploads
+        const galleryFiles = Array.from(document.getElementById("petGallery").files);
+        const uploadedImageUrls = [];
+
+        for (const file of galleryFiles) {
+          try {
+            showLoading(true);
+            const result = await uploadToCloudinary(file);
+            if (result?.secure_url) {
+              uploadedImageUrls.push(result.secure_url);
+            }
+          } catch (uploadError) {
+            console.error('Failed to upload image:', uploadError);
+            Utils.showErrorToUser(`Failed to upload ${file.name}.`);
+          } finally {
+            showLoading(false);
+          }
         }
-      } catch (uploadError) {
-        console.error('Failed to upload image:', uploadError);
-        Utils.showErrorToUser(`Failed to upload ${file.name}. ${uploadError.message}`);
+
+        // Mood history
+        const moodInput = document.getElementById("moodHistoryInput");
+        const moodHistory = moodInput?.value
+          ? [{
+              date: new Date().toISOString().split("T")[0],
+              mood: moodInput.value
+            }]
+          : [];
+
+        // Create profile object
+        const newProfile = {
+          id: Date.now(),
+          name: document.getElementById("petName").value,
+          breed: document.getElementById("petBreed").value,
+          dob: document.getElementById("petDob").value,
+          birthday: document.getElementById("petBirthday").value,
+          gallery: uploadedImageUrls,
+           moodHistory: moodHistory,
+          coverPhotoIndex: 0
+        };
+
+        // Save to localStorage
+        if (isEditing) {
+          petProfiles[currentEditIndex] = newProfile;
+        } else {
+          petProfiles.push(newProfile);
+        }
+        localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+
+        // Save to Firestore
+        await firebase.firestore().collection("profiles").add({
+          userId: firebase.auth().currentUser?.uid || "anonymous",
+          ...newProfile
+        });
+
+        // Optionally add reminder
+        if (newProfile.birthday) {
+          const reminderData = {
+            userId: firebase.auth().currentUser?.uid || "anonymous",
+            petName: newProfile.name,
+            date: Utils.formatFirestoreDate(newProfile.birthday),
+            message: `It's ${newProfile.name}'s birthday today! 🎉`,
+            createdAt: new Date().toISOString()
+          };
+
+          try {
+            await firebase.firestore().collection("reminders").add(reminderData);
+          } catch (firestoreError) {
+            console.warn("Reminder not saved:", firestoreError.message);
+          }
+        }
+
+        // UI update
+        DOM.profileSection.classList.add("hidden");
+        DOM.petList.classList.remove("hidden");
+        renderProfiles();
+        window.scrollTo(0, 0);
+        console.log("✅ Profile saved and UI updated.");
+      } catch (err) {
+        console.error("Profile save failed:", err);
+        Utils.showErrorToUser("Error saving profile.");
       } finally {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
         showLoading(false);
       }
-    }
-
-    // 2. Prepare profile data
-    const moodInput = document.getElementById("moodHistoryInput");
-    const newProfile = {
-      id: newProfileId,
-      userId: user.uid, // Track owner
-      name: document.getElementById("petName").value.trim(),
-      breed: document.getElementById("petBreed").value.trim(),
-      dob: document.getElementById("petDob").value,
-      birthday: document.getElementById("petBirthday").value,
-      gallery: uploadedImageUrls,
-      moodHistory: moodInput?.value ? [{
-        date: new Date().toISOString().split("T")[0],
-        mood: moodInput.value
-      }] : [],
-      coverPhotoIndex: 0,
-      createdAt: new Date().toISOString()
-    };
-
-    // 3. Save to localStorage
-    if (isEditing) {
-      petProfiles[currentEditIndex] = newProfile;
-    } else {
-      petProfiles.push(newProfile);
-    }
-    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-
-    // 4. Save to Firestore
-    const docRef = await firebase.firestore().collection("profiles").add(newProfile);
-    console.log("🔥 Firestore document ID:", docRef.id);
-
-    // 5. Add birthday reminder if specified
-    if (newProfile.birthday) {
-      try {
-        await firebase.firestore().collection("reminders").add({
-          userId: user.uid,
-          profileId: docRef.id, // Link to main document
-          petName: newProfile.name,
-          date: Utils.formatFirestoreDate(newProfile.birthday),
-          message: `It's ${newProfile.name}'s birthday today! 🎉`,
-          createdAt: new Date().toISOString()
-        });
-      } catch (firestoreError) {
-        console.warn("Reminder not saved:", firestoreError.message);
-      }
-    }
-
-    // 6. Update UI
-    DOM.profileSection.classList.add("hidden");
-    DOM.petList.classList.remove("hidden");
-    renderProfiles();
-    window.scrollTo(0, 0);
-
-  } catch (err) {
-    console.error("Profile save failed:", err);
-    Utils.showErrorToUser(`Save failed: ${err.message}`);
-  } finally {
-    submitBtn.innerHTML = originalBtnText;
-    submitBtn.disabled = false;
-    showLoading(false);
-  }
-});
-    
+    });
+ }
 // Single logout handler function
 async function handleLogout() {
   try {
