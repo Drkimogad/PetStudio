@@ -569,7 +569,7 @@ if (addBtn) {
       submitBtn.disabled = true;
 
       try {
-// This lets us use userId and newProfileId in both the upload and profile object.ADDED RECENTLY
+     // 🔄 This lets us use userId and newProfileId in both the upload and profile object.ADDED RECENTLY
         const userId = firebase.auth().currentUser?.uid || "anonymous";
         const newProfileId = Date.now();
         // Handle image uploads
@@ -579,7 +579,7 @@ if (addBtn) {
         for (const file of galleryFiles) {
           try {
             showLoading(true);
-            const result = await uploadToCloudinary(file, userId, newProfileId); // MODIFIED TO MATCH FILE PATH
+            const result = await uploadToCloudinary(file, userId, newProfileId); // 🔄 MODIFIED TO MATCH FILE PATH
             if (result?.secure_url) {
               uploadedImageUrls.push(result.secure_url);
             }
@@ -592,7 +592,7 @@ if (addBtn) {
         }
         // Create profile object
         const newProfile = {
-          id: newProfileId,
+          id: newProfileId, // 🔄 
           name: document.getElementById("petName").value,
           breed: document.getElementById("petBreed").value,
           dob: document.getElementById("petDob").value,
