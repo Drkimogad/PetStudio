@@ -39,33 +39,18 @@ if (document.readyState === 'complete') {
 
 // RENDER ALL PROFILES FORM OLD 
 function renderProfiles() {
-  const user = firebase.auth().currentUser;
   DOM.petList.innerHTML = '';
-  
-  // Filter profiles by current user
-  const userProfiles = petProfiles.filter(profile => 
-    user && profile.userId === user.uid
-  );
-
-  if(userProfiles.length === 0) {
+  if(petProfiles.length === 0) {
     DOM.petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
   }
   else {
-    userProfiles.forEach((profile, index) => {
+    petProfiles.forEach((profile, index) => {
       const petCard = document.createElement("div");
       petCard.classList.add("petCard");
       petCard.id = `pet-card-${profile.id}`;
+      const coverPhotoUrl = profile.gallery[profile.coverPhotoIndex];
+      const profileHeaderStyle = coverPhotoUrl ? `style="background-image: url('${coverPhotoUrl}');"` : '';
       
-      // Handle both string and object image formats
-      const getImageUrl = (img) => {
-        if (!img) return null;
-        return typeof img === 'string' ? img : img.url;
-      };
-      
-      const coverPhotoUrl = getImageUrl(profile.gallery[profile.coverPhotoIndex]);
-      const profileHeaderStyle = coverPhotoUrl ? 
-        `style="background-image: url('${coverPhotoUrl}');"` : '';
-
       petCard.innerHTML = `
         <div class="profile-header" ${profileHeaderStyle}>
           <h3>${profile.name}</h3>
@@ -79,10 +64,7 @@ function renderProfiles() {
         <div class="gallery-grid">
           ${profile.gallery.map((img, imgIndex) => `
             <div class="gallery-item">
-              <img src="${getImageUrl(img)}" 
-                   alt="Pet Photo" 
-                   onload="this.classList.add('loaded')"
-                   data-path="${typeof img === 'object' ? img.path : ''}">
+              <img src="${img}" alt="Pet Photo" onload="this.classList.add('loaded')">
               <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
                       data-index="${imgIndex}">★</button>
             </div>
@@ -109,8 +91,8 @@ function renderProfiles() {
           <button class="qrBtn">🔲 QR Code</button>
         </div>
       `;
-
-      // Preserve all existing event listeners
+      
+      // Event listeners
       petCard.querySelector(".editBtn").addEventListener("click", () => openEditForm(index));
       petCard.querySelector(".deleteBtn").addEventListener("click", () => deleteProfile(index));
       petCard.querySelector(".printBtn").addEventListener("click", () => printProfile(profile));
