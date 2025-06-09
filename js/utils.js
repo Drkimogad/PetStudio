@@ -22,6 +22,7 @@ async function uploadToCloudinary(file, userId, petProfileId) {
   formData.append('file', file);
   formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
   formData.append('folder', folderPath);
+  console.log("📁 Upload folder:", folderPath);
   //formData.append('public_id', `img_${Date.now()}`); // Unique filename
   // No public_id specified = auto-generate
   formData.append('moderation', 'manual'); // Or 'aws_rek'
