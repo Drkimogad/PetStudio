@@ -575,6 +575,7 @@ if (addBtn) {
         // Handle image uploads
         const galleryFiles = Array.from(document.getElementById("petGallery").files);
         const uploadedImageUrls = [];
+        console.log("📂 Preparing to upload", galleryFiles.length, "files to:", folderPath); // Added to debug
 
         for (const file of galleryFiles) {
           try {
