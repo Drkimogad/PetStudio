@@ -569,6 +569,9 @@ if (addBtn) {
       submitBtn.disabled = true;
 
       try {
+// This lets us use userId and newProfileId in both the upload and profile object.ADDED RECENTLY
+        const userId = firebase.auth().currentUser?.uid || "anonymous";
+        const newProfileId = Date.now();
         // Handle image uploads
         const galleryFiles = Array.from(document.getElementById("petGallery").files);
         const uploadedImageUrls = [];
@@ -576,7 +579,7 @@ if (addBtn) {
         for (const file of galleryFiles) {
           try {
             showLoading(true);
-            const result = await uploadToCloudinary(file);
+            const result = await uploadToCloudinary(file, userId, newProfileId); // MODIFIED TO MATCH FILE PATH
             if (result?.secure_url) {
               uploadedImageUrls.push(result.secure_url);
             }
@@ -587,19 +590,9 @@ if (addBtn) {
             showLoading(false);
           }
         }
-
-        // Mood history
-        const moodInput = document.getElementById("moodHistoryInput");
-        const moodHistory = moodInput?.value
-          ? [{
-              date: new Date().toISOString().split("T")[0],
-              mood: moodInput.value
-            }]
-          : [];
-
         // Create profile object
         const newProfile = {
-          id: Date.now(),
+          id: newProfileId,
           name: document.getElementById("petName").value,
           breed: document.getElementById("petBreed").value,
           dob: document.getElementById("petDob").value,
@@ -608,7 +601,16 @@ if (addBtn) {
            moodHistory: moodHistory,
           coverPhotoIndex: 0
         };
-
+          
+        // Mood history
+        const moodInput = document.getElementById("moodHistoryInput");
+        const moodHistory = moodInput?.value
+          ? [{
+              date: new Date().toISOString().split("T")[0],
+              mood: moodInput.value
+            }]
+          : [];
+          
         // Save to localStorage
         if (isEditing) {
           petProfiles[currentEditIndex] = newProfile;
