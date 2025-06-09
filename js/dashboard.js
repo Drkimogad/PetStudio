@@ -581,8 +581,8 @@ if (addBtn) {
           try {
             showLoading(true);
             const result = await uploadToCloudinary(file, userId, newProfileId); // 🔄 MODIFIED TO MATCH FILE PATH
-            if (result?.secure_url) {
-              uploadedImageUrls.push(result.secure_url);
+            if (result?.url) {
+              uploadedImageUrls.push(result.url); // not .secure_url if you use renamed keys
             }
           } catch (uploadError) {
             console.error('Failed to upload image:', uploadError);
