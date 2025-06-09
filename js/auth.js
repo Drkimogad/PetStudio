@@ -1,10 +1,7 @@
 // GLOBAL DECLARATIONS - AUTH-INITIALIZATION
 const CLOUDINARY_CONFIG = {
   cloudName: 'dh7d6otgu',
-  uploadPreset: 'PetStudio',
-    // Add these new settings:
-  maxFileSize: 10 * 1024 * 1024, // 10MB
-  allowedFormats: ['image/jpeg', 'image/png', 'image/webp']
+  uploadPreset: 'PetStudio'
 };
 // 🔶 GLOBAL DECLARATIONS🔶🔶🔶
 let auth = null;
