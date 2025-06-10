@@ -25,8 +25,7 @@ async function uploadToCloudinary(file, userId, petProfileId) {
   console.log("📁 Upload folder:", folderPath);
   //formData.append('public_id', `img_${Date.now()}`); // Unique filename
   // No public_id specified = auto-generate
-  formData.append('moderation', 'manual'); // Or 'aws_rek'
-  
+  // manual moderation is not supported for unsigned upload! 
   try {
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/upload`,
@@ -52,6 +51,7 @@ async function uploadToCloudinary(file, userId, petProfileId) {
     throw error;
   }
 }
+
 // OLD SECTION
 const Utils = {
   getCountdown: function(birthday) {
