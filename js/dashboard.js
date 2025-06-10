@@ -314,21 +314,22 @@ function printProfile(profile) {
             `<img src="${imgSrc}" alt="Pet photo" onload="this.style.opacity = '1'">`
           ).join('')}
         </div>
-      <div class="print-moodlog">
-        <h3>Mood Log</h3>
-        <ul>
-          ${profile.moodHistory.map(entry => `
-            <li data-emoji="${
-              entry.mood === 'happy' ? '😊' : 
-              entry.mood === 'sad' ? '😞' : 
-              entry.mood === 'angry' ? '😠' : 
-              entry.mood === 'sick' ? '🤒' : '😐'
-            }">
-              ${entry.date}: ${entry.mood}
-            </li>
-          `).join('')}
-        </ul>
-      </div>
+        <div class="print-moodlog">
+  <h3>Mood Log</h3>
+  <ul>
+    ${profile.moodHistory.map(entry => `
+      <li>
+        ${entry.date}: ${entry.mood} ${
+          entry.mood === 'happy' ? '😊' : 
+          entry.mood === 'sad' ? '😞' : 
+          entry.mood === 'angry' ? '😠' : 
+          entry.mood === 'sick' ? '🤒' : '😐'
+        }
+      </li>
+    `).join('')}
+  </ul>
+</div>
+
       <div class="print-actions">
         <button onclick="window.close()">Close</button>
         <button onclick="
