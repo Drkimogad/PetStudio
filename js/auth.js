@@ -5,6 +5,7 @@ const CLOUDINARY_CONFIG = {
 };
 // 🔶 GLOBAL DECLARATIONS🔶🔶🔶
 let auth = null;
+let googleButtonInitialized = false; // added recently
 let provider = null;
 let isSignupInProgress = false;
 // 🔶 State Management🔶🔶🔶
@@ -93,13 +94,18 @@ function showDashboard() {
 }
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
+  if (googleButtonInitialized) return;  // Prevent multiple initializations
+  googleButtonInitialized = true;
+
   // Check if Google and Firebase are loaded
   if (typeof google === 'undefined' || !google.accounts || typeof firebase === 'undefined') {
     console.log("Waiting for libraries to load...");
     setTimeout(setupGoogleLoginButton, 300);
     return;
-  } 
+  }
+
   const CLIENT_ID = '480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com';
+
   try {
     // Initialize Google Identity Services
     google.accounts.id.initialize({
@@ -107,7 +113,6 @@ function setupGoogleLoginButton() {
       callback: async (response) => {
         try {
           showLoading(true);
-          // Using v9 compat syntax
           const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
           await firebase.auth().signInWithCredential(credential);
           showDashboard();
@@ -121,8 +126,9 @@ function setupGoogleLoginButton() {
         }
       }
     });
-// Render button if container exists
-    const googleButtonContainer = document.getElementById("googleSignInBtn");
+
+    // Render button if container exists
+    const googleButtonContainer = document.getElementById("googleSignInButton");  // Make sure your HTML has this exact id
     if (googleButtonContainer) {
       google.accounts.id.renderButton(googleButtonContainer, {
         type: "standard",
@@ -131,9 +137,11 @@ function setupGoogleLoginButton() {
         text: "continue_with",
         shape: "rectangular",
         width: 250
-      });  
- // Optional: One Tap sign-in
+      });
+      // Optional: One Tap sign-in
       google.accounts.id.prompt();
+    } else {
+      console.warn("Google Sign-In button container not found.");
     }
   } catch (error) {
     console.error("Google Sign-In setup failed:", error);
