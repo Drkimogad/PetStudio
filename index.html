@@ -59,7 +59,24 @@
 </script>
     
   <!-- Google Sign-In has been removed -->
-  <!-- it exists in setupGoogleLoginButton() -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+  window.onload = function () {
+    google.accounts.id.initialize({
+      client_id: "480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com",
+      callback: handleCredentialResponse,
+    });
+
+    google.accounts.id.renderButton(
+      document.getElementById("googleSignInButton"), // Make sure this exists in your HTML
+      { theme: "filled_blue", size: "large" }
+    );
+  };
+  function handleCredentialResponse(response) {
+    console.log("Google ID Token", response.credential);
+    // You can pass this to Firebase auth if using signInWithCredential
+  }
+</script>
 
   <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
