@@ -146,6 +146,17 @@ function openEditForm(index) {
   document.getElementById("petBreed").value = profile.breed;
   document.getElementById("petDob").value = profile.dob;
   document.getElementById("petBirthday").value = profile.birthday;
+      // ✅ PREVIEW EXISTING GALLERY
+  const galleryPreview = document.getElementById("editGalleryPreview");
+  if (galleryPreview && Array.isArray(profile.gallery)) {
+    galleryPreview.innerHTML = profile.gallery.map((img, imgIndex) => `
+      <div class="gallery-item">
+        <img src="${img}" alt="Pet Photo">
+        <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
+                data-index="${imgIndex}">★</button>
+      </div>
+    `).join("");
+  }
   
   const moodInput = document.getElementById("moodHistoryInput");
   if (moodInput) {
