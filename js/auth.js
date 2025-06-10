@@ -128,7 +128,7 @@ function setupGoogleLoginButton() {
     });
 
     // Render button if container exists
-    const googleButtonContainer = document.getElementById("googleSignInButton");  // Make sure your HTML has this exact id
+   const googleButtonContainer = document.getElementById("googleSignInBtn"); // matching HTML BUTTON ID
     if (googleButtonContainer) {
       google.accounts.id.renderButton(googleButtonContainer, {
         type: "standard",
