@@ -5,7 +5,6 @@ const CLOUDINARY_CONFIG = {
 };
 // 🔶 GLOBAL DECLARATIONS🔶🔶🔶
 let auth = null;
-let googleButtonInitialized = false; // added recently
 let provider = null;
 let isSignupInProgress = false;
 // 🔶 State Management🔶🔶🔶
