@@ -41,7 +41,7 @@ async function uploadToCloudinary(file, userId, petProfileId) {
     
     const data = await response.json();
     return {
-      url: data.secure_url,
+      url: data.url,
       path: data.public_id, // Full Cloudinary path
       width: data.width,
       height: data.height
