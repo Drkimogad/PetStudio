@@ -342,9 +342,9 @@ function printProfile(profile) {
         </div>
         <h3>Gallery</h3>
         <div class="print-gallery">
-          ${profile.gallery.map(imgSrc => 
-            `<img src="${imgSrc}" alt="Pet photo" onload="this.style.opacity = '1'">`
-          ).join('')}
+${profile.gallery.map(img => 
+  `<img src="${img.url}" alt="Pet photo" onload="this.style.opacity = '1'">`
+).join('')}
         </div>
         <div class="print-moodlog">
   <h3>Mood Log</h3>
@@ -656,7 +656,18 @@ const newProfile = {
   coverPhotoIndex: 0
   // ⛔️ DO NOT set gallery here
 };
-
+// ✅ Save to localStorage
+// 🛠️ Assign gallery ONLY after deciding if it's new or edited:
+if (isEditing) {
+  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
+  newProfile.gallery = [...oldGallery, ...uploadedImageUrls]; // Merge
+  petProfiles[currentEditIndex] = newProfile;
+} else {
+  newProfile.gallery = uploadedImageUrls; // ⬅️ This handles NEW profiles
+  petProfiles.push(newProfile);
+}
+localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+          
 // Save to Firestore first and get docId
 const docRef = await firebase.firestore().collection("profiles").add({
   userId,
@@ -681,17 +692,6 @@ if (newProfile.birthday) {
     console.warn("Reminder not saved:", firestoreError.message);
   }
 }
-
-// ✅ Save to localStorage
-if (isEditing) {
-  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
-  newProfile.gallery = [...oldGallery, ...uploadedImageUrls]; // ✅ Merge old + new
-  petProfiles[currentEditIndex] = newProfile;
-} else {
-  newProfile.gallery = uploadedImageUrls; // ✅ New gallery
-  petProfiles.push(newProfile);
-}
-localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
 
         // UI update
         DOM.profileSection.classList.add("hidden");
