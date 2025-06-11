@@ -652,9 +652,9 @@ const newProfile = {
   breed: document.getElementById("petBreed").value,
   dob: document.getElementById("petDob").value,
   birthday: document.getElementById("petBirthday").value,
-  gallery: uploadedImageUrls,
   moodHistory: moodHistory,
   coverPhotoIndex: 0
+  // ⛔️ DO NOT set gallery here
 };
 
 // Save to Firestore first and get docId
@@ -685,10 +685,10 @@ if (newProfile.birthday) {
 // ✅ Save to localStorage
 if (isEditing) {
   const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
-  newProfile.gallery = [...oldGallery, ...uploadedImageUrls];
+  newProfile.gallery = [...oldGallery, ...uploadedImageUrls]; // ✅ Merge old + new
   petProfiles[currentEditIndex] = newProfile;
 } else {
-  newProfile.gallery = uploadedImageUrls;
+  newProfile.gallery = uploadedImageUrls; // ✅ New gallery
   petProfiles.push(newProfile);
 }
 localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
