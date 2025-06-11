@@ -613,72 +613,61 @@ if (addBtn) {
       submitBtn.disabled = true;
 
       try {
-     // 🔄 This lets us use userId and newProfileId in both the upload and profile object.ADDED RECENTLY
-        const userId = firebase.auth().currentUser?.uid || "anonymous";
-        const newProfileId = Date.now();
-        // Handle image uploads
-        const galleryFiles = Array.from(document.getElementById("petGallery").files);
-        const uploadedImageUrls = [];
-          
-        for (const file of galleryFiles) {
-          try {
-            showLoading(true);
-            const result = await uploadToCloudinary(file, userId, newProfileId); // 🔄 MODIFIED TO MATCH FILE PATH
-            if (result?.url) {
-             uploadedImageUrls.push(result); // Stores full object: url, public_id, etc.
-            }
-          } catch (uploadError) {
-            console.error('Failed to upload image:', uploadError);
-            Utils.showErrorToUser(`Failed to upload ${file.name}.`);
-          } finally {
-            showLoading(false);
-          }
-        }
-          
-        // Mood history
-        const moodInput = document.getElementById("moodHistoryInput");
-        const moodHistory = moodInput?.value
-          ? [{
-              date: new Date().toISOString().split("T")[0],
-              mood: moodInput.value
-            }]
-          : [];
-          
-         // Create profile object
-        const newProfile = {
-          id: newProfileId, // 🔄 
-          name: document.getElementById("petName").value,
-          breed: document.getElementById("petBreed").value,
-          dob: document.getElementById("petDob").value,
-          birthday: document.getElementById("petBirthday").value,
-          gallery: uploadedImageUrls,
-           moodHistory: moodHistory,
-          coverPhotoIndex: 0
-        };
-          
-        // Save to localStorage modified recently
-        // Save the docId in the local profile
-newProfile.docId = docRef.id;
-// Update localStorage with the new docId
-if (isEditing) {
-  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
-  newProfile.gallery = [...oldGallery, ...uploadedImageUrls];
-} else {
-  newProfile.gallery = uploadedImageUrls;
+// 🔄 This lets us use userId and newProfileId in both the upload and profile object
+const userId = firebase.auth().currentUser?.uid || "anonymous";
+const newProfileId = Date.now();
+
+// Handle image uploads
+const galleryFiles = Array.from(document.getElementById("petGallery").files);
+const uploadedImageUrls = [];
+
+for (const file of galleryFiles) {
+  try {
+    showLoading(true);
+    const result = await uploadToCloudinary(file, userId, newProfileId); // 🔄 MODIFIED TO MATCH FILE PATH
+    if (result?.url) {
+      uploadedImageUrls.push(result); // Stores full object: url, public_id, etc.
+    }
+  } catch (uploadError) {
+    console.error('Failed to upload image:', uploadError);
+    Utils.showErrorToUser(`Failed to upload ${file.name}.`);
+  } finally {
+    showLoading(false);
+  }
 }
-localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
 
-        // Save to Firestore modified recently 
-        const docRef = await firebase.firestore().collection("profiles").add({
-        userId: firebase.auth().currentUser?.uid || "anonymous",
-        ...newProfile
-        });
-        newProfile.docId = docRef.id; // 🔥 Save it so we can delete later
+// Mood history (💡 LEAVE THIS AS-IS per your request)
+const moodInput = document.getElementById("moodHistoryInput");
+const moodHistory = moodInput?.value
+  ? [{
+      date: new Date().toISOString().split("T")[0],
+      mood: moodInput.value
+    }]
+  : [];
 
-        // Optionally add reminder
+// Create profile object (initial version without docId/reminderDocId)
+const newProfile = {
+  id: newProfileId,
+  name: document.getElementById("petName").value,
+  breed: document.getElementById("petBreed").value,
+  dob: document.getElementById("petDob").value,
+  birthday: document.getElementById("petBirthday").value,
+  gallery: uploadedImageUrls,
+  moodHistory: moodHistory,
+  coverPhotoIndex: 0
+};
+
+// Save to Firestore first and get docId
+const docRef = await firebase.firestore().collection("profiles").add({
+  userId,
+  ...newProfile
+});
+newProfile.docId = docRef.id; // 🔥 Save Firestore doc ID for future use
+
+// Optionally add reminder
 if (newProfile.birthday) {
   const reminderData = {
-    userId: firebase.auth().currentUser?.uid || "anonymous",
+    userId,
     petName: newProfile.name,
     date: Utils.formatFirestoreDate(newProfile.birthday),
     message: `It's ${newProfile.name}'s birthday today! 🎉`,
@@ -692,6 +681,17 @@ if (newProfile.birthday) {
     console.warn("Reminder not saved:", firestoreError.message);
   }
 }
+
+// ✅ Save to localStorage
+if (isEditing) {
+  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
+  newProfile.gallery = [...oldGallery, ...uploadedImageUrls];
+  petProfiles[currentEditIndex] = newProfile;
+} else {
+  newProfile.gallery = uploadedImageUrls;
+  petProfiles.push(newProfile);
+}
+localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
 
         // UI update
         DOM.profileSection.classList.add("hidden");
