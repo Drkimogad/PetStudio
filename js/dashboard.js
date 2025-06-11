@@ -168,18 +168,28 @@ function openEditForm(index) {
   DOM.profileSection.classList.remove("hidden"); 
   DOM.fullPageBanner.classList.add("hidden");
 }
+
 // 🌀 UPGRADED DELETE BUTTON FUNCTION WAS MISSING
 async function deleteProfile(index) {
   if (!confirm("Are you sure you want to delete this profile?")) return;
 
   const profile = petProfiles[index];
 
-  // Delete from Firestore
+  // Delete from Firestore profile
   if (profile.docId) {
     try {
       await firebase.firestore().collection("profiles").doc(profile.docId).delete();
     } catch (err) {
       console.warn("Failed to delete from Firestore:", err.message);
+    }
+  }
+
+  // Delete reminder from Firestore
+  if (profile.reminderDocId) {
+    try {
+      await firebase.firestore().collection("reminders").doc(profile.reminderDocId).delete();
+    } catch (err) {
+      console.warn("Failed to delete reminder from Firestore:", err.message);
     }
   }
 
@@ -196,7 +206,7 @@ async function deleteProfile(index) {
     }
   }
 
-  // Remove from local
+  // Remove from local storage and update UI
   const deleted = petProfiles.splice(index, 1);
   localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
   renderProfiles();
@@ -663,23 +673,25 @@ localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
         userId: firebase.auth().currentUser?.uid || "anonymous",
         ...newProfile
         });
+        newProfile.docId = docRef.id; // 🔥 Save it so we can delete later
 
         // Optionally add reminder
-        if (newProfile.birthday) {
-          const reminderData = {
-            userId: firebase.auth().currentUser?.uid || "anonymous",
-            petName: newProfile.name,
-            date: Utils.formatFirestoreDate(newProfile.birthday),
-            message: `It's ${newProfile.name}'s birthday today! 🎉`,
-            createdAt: new Date().toISOString()
-          };
+if (newProfile.birthday) {
+  const reminderData = {
+    userId: firebase.auth().currentUser?.uid || "anonymous",
+    petName: newProfile.name,
+    date: Utils.formatFirestoreDate(newProfile.birthday),
+    message: `It's ${newProfile.name}'s birthday today! 🎉`,
+    createdAt: new Date().toISOString()
+  };
 
-          try {
-            await firebase.firestore().collection("reminders").add(reminderData);
-          } catch (firestoreError) {
-            console.warn("Reminder not saved:", firestoreError.message);
-          }
-        }
+  try {
+    const reminderDoc = await firebase.firestore().collection("reminders").add(reminderData);
+    newProfile.reminderDocId = reminderDoc.id; // 🧠 Save this for future delete
+  } catch (firestoreError) {
+    console.warn("Reminder not saved:", firestoreError.message);
+  }
+}
 
         // UI update
         DOM.profileSection.classList.add("hidden");
