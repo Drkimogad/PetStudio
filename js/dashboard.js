@@ -168,19 +168,41 @@ function openEditForm(index) {
   DOM.profileSection.classList.remove("hidden"); 
   DOM.fullPageBanner.classList.add("hidden");
 }
-// 🌀 DELETE BUTTON FUNCTION WAS MISSING
-function deleteProfile(index) {
+// 🌀 UPGRADED DELETE BUTTON FUNCTION WAS MISSING
+async function deleteProfile(index) {
   if (!confirm("Are you sure you want to delete this profile?")) return;
 
+  const profile = petProfiles[index];
+
+  // Delete from Firestore
+  if (profile.docId) {
+    try {
+      await firebase.firestore().collection("profiles").doc(profile.docId).delete();
+    } catch (err) {
+      console.warn("Failed to delete from Firestore:", err.message);
+    }
+  }
+
+  // Delete Cloudinary images (if public_id exists)
+  if (Array.isArray(profile.gallery)) {
+    for (const image of profile.gallery) {
+      if (image.public_id) {
+        try {
+          await deleteImageFromCloudinary(image.public_id);
+        } catch (err) {
+          console.warn("Image not deleted from Cloudinary:", err.message);
+        }
+      }
+    }
+  }
+
+  // Remove from local
   const deleted = petProfiles.splice(index, 1);
-  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-
-  // Optionally delete from Firestore later
-  // You'd need to store document IDs for this
-
+  localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
   renderProfiles();
   Utils.showErrorToUser(`${deleted[0].name}'s profile was deleted.`, true);
 }
+
 // 🌀 PRINT PROFILE BUTTON FUNCTION
 function printProfile(profile) {
   const printWindow = window.open('', '_blank');
