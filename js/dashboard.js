@@ -624,18 +624,21 @@ if (addBtn) {
           coverPhotoIndex: 0
         };
           
-        // Save to localStorage
-        if (isEditing) {
-          petProfiles[currentEditIndex] = newProfile;
-        } else {
-          petProfiles.push(newProfile);
-        }
-        localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+        // Save to localStorage modified recently
+        // Save the docId in the local profile
+newProfile.docId = docRef.id;
+// Update localStorage with the new docId
+if (isEditing) {
+  petProfiles[currentEditIndex] = newProfile;
+} else {
+  petProfiles.push(newProfile);
+}
+localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
 
-        // Save to Firestore
-        await firebase.firestore().collection("profiles").add({
-          userId: firebase.auth().currentUser?.uid || "anonymous",
-          ...newProfile
+        // Save to Firestore modified recently 
+        const docRef = await firebase.firestore().collection("profiles").add({
+        userId: firebase.auth().currentUser?.uid || "anonymous",
+        ...newProfile
         });
 
         // Optionally add reminder
