@@ -615,7 +615,7 @@ if (addBtn) {
             showLoading(true);
             const result = await uploadToCloudinary(file, userId, newProfileId); // 🔄 MODIFIED TO MATCH FILE PATH
             if (result?.url) {
-              uploadedImageUrls.push(result.url); // not .secure_url if you use renamed keys
+             uploadedImageUrls.push(result); // Stores full object: url, public_id, etc.
             }
           } catch (uploadError) {
             console.error('Failed to upload image:', uploadError);
@@ -651,9 +651,10 @@ if (addBtn) {
 newProfile.docId = docRef.id;
 // Update localStorage with the new docId
 if (isEditing) {
-  petProfiles[currentEditIndex] = newProfile;
+  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
+  newProfile.gallery = [...oldGallery, ...uploadedImageUrls];
 } else {
-  petProfiles.push(newProfile);
+  newProfile.gallery = uploadedImageUrls;
 }
 localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
 
