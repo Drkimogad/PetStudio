@@ -150,6 +150,8 @@ function getMoodEmoji(mood) {
 function openEditForm(index) {
   isEditing = true;
   currentEditIndex = index;
+  uploadedImageUrls = []; // 🧼 Clear previous temporary uploads
+    
   const profile = petProfiles[index];
   
   document.getElementById("petName").value = profile.name;
@@ -159,8 +161,9 @@ function openEditForm(index) {
       // ✅ PREVIEW EXISTING GALLERY
   const galleryPreview = document.getElementById("editGalleryPreview");
 if (galleryPreview && Array.isArray(profile.gallery)) {
+  galleryPreview.innerHTML = ""; // 🧹 CLEAR before inserting new preview
   galleryPreview.innerHTML = profile.gallery.map((img, imgIndex) => {
-    const imgUrl = typeof img === "string" ? img : img.url; // ❤️ Support both formats
+    const imgUrl = typeof img === "string" ? img : img.url;
     return `
       <div class="gallery-item">
         <img src="${imgUrl}" alt="Pet Photo">
@@ -169,8 +172,7 @@ if (galleryPreview && Array.isArray(profile.gallery)) {
       </div>
     `;
   }).join("");
-}
-
+} // closes the if block
   
   const moodInput = document.getElementById("moodHistoryInput");
   if (moodInput) {
