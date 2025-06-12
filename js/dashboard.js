@@ -47,9 +47,16 @@ function renderProfiles() {
     petProfiles.forEach((profile, index) => {
       const petCard = document.createElement("div");
       petCard.classList.add("petCard");
-      petCard.id = `pet-card-${profile.id}`;
-      const coverPhotoUrl = profile.gallery[profile.coverPhotoIndex];
-      const profileHeaderStyle = coverPhotoUrl ? `style="background-image: url('${coverPhotoUrl}');"` : '';
+      petCard.id = `pet-card-${profile.id}`;    
+// ✅ Support both object-based and string-based gallery entries
+    const coverImageObj = profile.gallery?.[profile.coverPhotoIndex];
+    const coverPhotoUrl = typeof coverImageObj === "string"
+      ? coverImageObj
+      : coverImageObj?.url;
+
+    const profileHeaderStyle = coverPhotoUrl
+      ? `style="background-image: url('${coverPhotoUrl}');"`
+      : '';
       
       petCard.innerHTML = `
         <div class="profile-header" ${profileHeaderStyle}>
@@ -61,15 +68,18 @@ function renderProfiles() {
           <p><strong>DOB:</strong> ${profile.dob}</p>
           <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
         </div>
-        <div class="gallery-grid">
-          ${profile.gallery.map((img, imgIndex) => `
+      <div class="gallery-grid">
+        ${profile.gallery.map((img, imgIndex) => {
+          const imgUrl = typeof img === "string" ? img : img?.url;
+          return `
             <div class="gallery-item">
-              <img src="${img}" alt="Pet Photo" onload="this.classList.add('loaded')">
+              <img src="${imgUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
               <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
                       data-index="${imgIndex}">★</button>
             </div>
-          `).join('')}
-        </div>
+          `;
+        }).join('')}
+      </div>
         <div class="mood-tracker">
           <div class="mood-buttons">
             <span>Log Mood:</span>
