@@ -671,37 +671,40 @@ const newProfile = {
   dob: document.getElementById("petDob").value,
   birthday: document.getElementById("petBirthday").value,
   moodHistory: moodHistory,
-  coverPhotoIndex: 0
-  // ⛔️ DO NOT set gallery here
+  coverPhotoIndex: 0 // or preserve if editing
+  // ⛔ Do not assign gallery yet!
 };
-// ✅ Save to localStorage
+
 if (isEditing) {
   const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
-  
-  // Preserve original gallery and only add truly new images
-  newProfile.gallery = [...oldGallery]; // Keep original references
-  
-  // Add new images that aren't duplicates
-  for (const newImg of uploadedImageUrls) {
-    const isDuplicate = oldGallery.some(oldImg => {
-      if (typeof oldImg === 'string') {
-        return oldImg === newImg.url; // Compare string URLs
-      }
-      return oldImg.url === newImg.url; // Compare object URLs
-    });
-    
-    if (!isDuplicate) {
-      newProfile.gallery.push(newImg);
-    }
-  }
+
+  // 🔍 Combine new uploads with old, deduplicating by `url`
+  const combinedGallery = [...oldGallery, ...uploadedImageUrls];
+
+  const deduplicatedGallery = Array.from(
+    new Map(combinedGallery.map(img => {
+      const url = typeof img === "string" ? img : img?.url;
+      return [url, img]; // key by URL
+    })).values()
+  );
+
+  newProfile.gallery = deduplicatedGallery;
 
   petProfiles[currentEditIndex] = newProfile;
 } else {
-  // New profile → include the uploaded gallery directly
+  // 🆕 Fresh profile gets the new uploads only
   newProfile.gallery = uploadedImageUrls;
   petProfiles.push(newProfile);
 }
-         
+
+// ✅ Save to localStorage
+localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+
+// ✅ Reset after saving to prevent cross-contamination
+uploadedImageUrls.length = 0; // 👈 This clears the array safely
+// 🧼 Optional form reset if you want
+form.reset()
+          
 // Save to Firestore first and get docId
 const docRef = await firebase.firestore().collection("profiles").add({
   userId,
@@ -726,7 +729,6 @@ if (newProfile.birthday) {
     console.warn("Reminder not saved:", firestoreError.message);
   }
 }
-    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
           // UI update
         DOM.profileSection.classList.add("hidden");
         DOM.petList.classList.remove("hidden");
