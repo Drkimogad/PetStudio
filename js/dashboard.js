@@ -150,30 +150,33 @@ function getMoodEmoji(mood) {
 function openEditForm(index) {
   isEditing = true;
   currentEditIndex = index;
-  uploadedImageUrls = []; // 🧼 Clear previous temporary uploads
-    
+  uploadedImageUrls = []; // 🌱 Reset uploads during edit
+
+
   const profile = petProfiles[index];
-  
+
+  // Populate form fields
   document.getElementById("petName").value = profile.name;
   document.getElementById("petBreed").value = profile.breed;
   document.getElementById("petDob").value = profile.dob;
   document.getElementById("petBirthday").value = profile.birthday;
-      // ✅ PREVIEW EXISTING GALLERY
+
+  // ✅ PREVIEW EXISTING GALLERY
   const galleryPreview = document.getElementById("editGalleryPreview");
-if (galleryPreview && Array.isArray(profile.gallery)) {
-  galleryPreview.innerHTML = ""; // 🧹 CLEAR before inserting new preview
-  galleryPreview.innerHTML = profile.gallery.map((img, imgIndex) => {
-    const imgUrl = typeof img === "string" ? img : img.url;
-    return `
-      <div class="gallery-item">
-        <img src="${imgUrl}" alt="Pet Photo">
-        <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-                data-index="${imgIndex}">★</button>
-      </div>
-    `;
-  }).join("");
-} // closes the if block
-  
+  if (galleryPreview && Array.isArray(profile.gallery)) {
+    galleryPreview.innerHTML = profile.gallery.map((img, imgIndex) => {
+      const imgUrl = typeof img === "string" ? img : img.url;
+      return `
+        <div class="gallery-item">
+          <img src="${imgUrl}" alt="Pet Photo">
+          <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
+                  data-index="${imgIndex}">★</button>
+        </div>
+      `;
+    }).join("");
+  }
+
+ // Render Mood Log
   const moodInput = document.getElementById("moodHistoryInput");
   if (moodInput) {
     moodInput.value = profile.moodHistory
@@ -675,9 +678,12 @@ const newProfile = {
 // ✅ Save to localStorage
 if (isEditing) {
   const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
+
+  // 🛑 Only merge new uploads if any
   newProfile.gallery = uploadedImageUrls.length > 0
-    ? [...oldGallery, ...uploadedImageUrls] // Merge new uploads only
-    : [...oldGallery]; // No changes to gallery
+    ? [...oldGallery, ...uploadedImageUrls]
+    : [...oldGallery];
+
   petProfiles[currentEditIndex] = newProfile;
     
 } else {
