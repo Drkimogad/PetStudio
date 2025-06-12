@@ -673,12 +673,19 @@ const newProfile = {
 };
 
 if (isEditing) {
-  // 👁 Preserve existing gallery and merge only new images if present
   const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
-  newProfile.gallery = uploadedImageUrls.length > 0
-    ? [...oldGallery, ...uploadedImageUrls]
-    : [...oldGallery];
-  // 👣 Save the updated profile
+
+  // ✅ Combine and deduplicate using a Set of image URLs
+  const combinedGallery = [...oldGallery, ...uploadedImageUrls];
+
+  const deduplicatedGallery = Array.from(
+    new Map(combinedGallery.map(img => {
+      const url = typeof img === "string" ? img : img?.url;
+      return [url, img]; // key by URL
+    })).values()
+  );
+
+  newProfile.gallery = deduplicatedGallery;
   petProfiles[currentEditIndex] = newProfile;
 
 } else {
