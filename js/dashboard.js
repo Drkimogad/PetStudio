@@ -671,14 +671,13 @@ const newProfile = {
   // ⛔️ DO NOT set gallery here
 };
 // ✅ Save to localStorage
-// 🛠️ Assign gallery ONLY after deciding if it's new or edited:
 if (isEditing) {
-  const isNewUpload = uploadedImageUrls.length > 0;
-  newProfile.gallery = isNewUpload
-    ? [...(petProfiles[currentEditIndex]?.gallery || []), ...uploadedImageUrls]
-    : petProfiles[currentEditIndex]?.gallery || [];
-
+  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
+  newProfile.gallery = uploadedImageUrls.length > 0
+    ? [...oldGallery, ...uploadedImageUrls] // Merge new uploads only
+    : [...oldGallery]; // No changes to gallery
   petProfiles[currentEditIndex] = newProfile;
+}
 } else {
   newProfile.gallery = uploadedImageUrls;
   petProfiles.push(newProfile);
