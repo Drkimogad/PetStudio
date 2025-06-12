@@ -674,22 +674,27 @@ const newProfile = {
 
 if (isEditing) {
   const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
+  
+  // Preserve original gallery and only add truly new images
+  newProfile.gallery = [...oldGallery]; // Keep original references
+  
+  // Add new images that aren't duplicates
+  for (const newImg of uploadedImageUrls) {
+    const isDuplicate = oldGallery.some(oldImg => {
+      if (typeof oldImg === 'string') {
+        return oldImg === newImg.url; // Compare string URLs
+      }
+      return oldImg.url === newImg.url; // Compare object URLs
+    });
+    
+    if (!isDuplicate) {
+      newProfile.gallery.push(newImg);
+    }
+  }
 
-  // ✅ Combine and deduplicate using a Set of image URLs
-  const combinedGallery = [...oldGallery, ...uploadedImageUrls];
-
-  const deduplicatedGallery = Array.from(
-    new Map(combinedGallery.map(img => {
-      const url = typeof img === "string" ? img : img?.url;
-      return [url, img]; // key by URL
-    })).values()
-  );
-
-  newProfile.gallery = deduplicatedGallery;
   petProfiles[currentEditIndex] = newProfile;
-
 } else {
-  // 🆕 New profile → include the uploaded gallery directly
+  // New profile → include the uploaded gallery directly
   newProfile.gallery = uploadedImageUrls;
   petProfiles.push(newProfile);
 }
