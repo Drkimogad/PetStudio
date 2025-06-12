@@ -150,12 +150,8 @@ function getMoodEmoji(mood) {
 function openEditForm(index) {
   isEditing = true;
   currentEditIndex = index;
-  uploadedImageUrls = []; // 🌱 Reset uploads during edit
-
-
   const profile = petProfiles[index];
 
-  // Populate form fields
   document.getElementById("petName").value = profile.name;
   document.getElementById("petBreed").value = profile.breed;
   document.getElementById("petDob").value = profile.dob;
@@ -175,6 +171,10 @@ function openEditForm(index) {
       `;
     }).join("");
   }
+
+  // 🌱 Optional: reset previously uploaded images on fresh edit
+  uploadedImageUrls = []; // <— THIS is safe here
+}
 
  // Render Mood Log
   const moodInput = document.getElementById("moodHistoryInput");
@@ -672,25 +672,28 @@ const newProfile = {
   dob: document.getElementById("petDob").value,
   birthday: document.getElementById("petBirthday").value,
   moodHistory: moodHistory,
-  coverPhotoIndex: 0
-  // ⛔️ DO NOT set gallery here
+  coverPhotoIndex: 0 // Optional default
+  // ⛔ Do NOT set gallery yet
 };
-// ✅ Save to localStorage
-if (isEditing) {
-  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
 
-  // 🛑 Only merge new uploads if any
+if (isEditing) {
+  // 👁 Preserve existing gallery and merge only new images if present
+  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
   newProfile.gallery = uploadedImageUrls.length > 0
     ? [...oldGallery, ...uploadedImageUrls]
     : [...oldGallery];
 
+  // 👣 Save the updated profile
   petProfiles[currentEditIndex] = newProfile;
-    
+
 } else {
+  // 🆕 New profile → include the uploaded gallery directly
   newProfile.gallery = uploadedImageUrls;
   petProfiles.push(newProfile);
 }
 
+// ✨ Final optional reset to clean temp uploads
+uploadedImageUrls = [];
 localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
           
 // Save to Firestore first and get docId
