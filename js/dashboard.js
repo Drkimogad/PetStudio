@@ -677,7 +677,7 @@ if (isEditing) {
     ? [...oldGallery, ...uploadedImageUrls] // Merge new uploads only
     : [...oldGallery]; // No changes to gallery
   petProfiles[currentEditIndex] = newProfile;
-}
+    
 } else {
   newProfile.gallery = uploadedImageUrls;
   petProfiles.push(newProfile);
