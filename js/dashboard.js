@@ -270,7 +270,7 @@ function printProfile(profile) {
       }
       .print-gallery {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 15px;
         margin: 25px 0;
       }
