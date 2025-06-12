@@ -727,7 +727,6 @@ if (newProfile.birthday) {
         renderProfiles();
         window.scrollTo(0, 0);
         console.log("✅ Profile saved and UI updated.");
-        uploadedImageUrls = []; // 🧼 Reset temp uploads
 
       } catch (err) {
         console.error("Profile save failed:", err);
