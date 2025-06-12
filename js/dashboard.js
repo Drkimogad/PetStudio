@@ -234,116 +234,105 @@ function printProfile(profile) {
   const printDocument = printWindow.document;
 
   printDocument.write(`
-  
     <html>
       <head>
         <title>${profile.name}'s Profile</title>
-    <style>
-      body { 
-        font-family: Arial, sans-serif; 
-        padding: 25px;
-        color: #333;
-        line-height: 1.5;
-      }
-      .print-header { 
-        text-align: center; 
-        margin-bottom: 30px;
-        border-bottom: 2px solid #6a0dad;
-        padding-bottom: 15px;
-      }
-      .print-header h1 {
-        color: #6a0dad;
-        margin-bottom: 5px;
-      }
-      .print-details {
-        background: #f9f9f9;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-      }
-      .print-details p {
-        margin: 8px 0;
-      }
-      .print-gallery {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 15px;
-        margin: 25px 0;
-      }
-      .print-gallery img {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-        border-radius: 6px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        border: 1px solid #eee;
-      }
-      .print-moodlog {
-        background: #f5f5ff;
-        padding: 15px;
-        border-radius: 8px;
-        margin: 20px 0;
-      }
-      .print-moodlog h3 {
-        color: #6a0dad;
-        margin-top: 0;
-        border-bottom: 1px dashed #ccc;
-        padding-bottom: 8px;
-      }
-      .print-moodlog ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-      .print-moodlog li {
-        font-size: 16px;
-        margin-bottom: 8px;
-        padding-left: 25px;
-        position: relative;
-      }
-      .print-moodlog li::before {
-        content: attr(data-emoji);
-        position: absolute;
-        left: 0;
-        font-size: 18px;
-      }
-      .print-actions {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #eee;
-      }
-      .print-actions button {
-        padding: 10px 20px;
-        background: #6a0dad;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background 0.2s;
-      }
-      .print-actions button:hover {
-        background: #5a0b9a;
-      }
-      @media print {
-        .print-actions {
-          display: none;
-        }
-        body {
-          padding: 0;
-        }
-        .print-header {
-          border-bottom: none;
-        }
-         .mood-entry::before {
-          content: attr(data-emoji);
-          margin-right: 8px;
-          font-size: 1.2em;
-      }
-    </style>
+        <style>
+          body { 
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+          }
+          .print-header { 
+            text-align: center; 
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #6a0dad;
+          }
+          .print-header h1 {
+            color: #6a0dad;
+            margin: 0 0 5px 0;
+            font-size: 28px;
+          }
+          .print-header p {
+            color: #666;
+            margin: 0;
+          }
+          .print-details {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+          }
+          .print-details p {
+            margin: 8px 0;
+            font-size: 15px;
+          }
+          .print-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+          }
+          .print-gallery img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 6px;
+            border: 1px solid #eee;
+            background: #f5f5f5;
+            padding: 5px;
+            box-sizing: border-box;
+          }
+          .print-moodlog {
+            background: #f5f5ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+          }
+          .print-moodlog h3 {
+            color: #6a0dad;
+            margin-top: 0;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 8px;
+            font-size: 18px;
+          }
+          .print-moodlog ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0 0;
+          }
+          .print-moodlog li {
+            font-size: 15px;
+            margin-bottom: 8px;
+            padding-left: 25px;
+            position: relative;
+          }
+          .print-moodlog li::before {
+            content: attr(data-emoji);
+            position: absolute;
+            left: 0;
+            font-size: 18px;
+          }
+          .print-actions {
+            display: none;
+          }
+          @media print {
+            body {
+              padding: 0 10px;
+            }
+            .print-header {
+              margin-top: 10px;
+            }
+            .print-gallery {
+              page-break-inside: avoid;
+            }
+            .print-gallery img {
+              height: 180px;
+            }
+          }
+        </style>
   </head>
       <body>
         <div class="print-header">
