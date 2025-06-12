@@ -148,15 +148,19 @@ function openEditForm(index) {
   document.getElementById("petBirthday").value = profile.birthday;
       // ✅ PREVIEW EXISTING GALLERY
   const galleryPreview = document.getElementById("editGalleryPreview");
-  if (galleryPreview && Array.isArray(profile.gallery)) {
-    galleryPreview.innerHTML = profile.gallery.map((img, imgIndex) => `
+if (galleryPreview && Array.isArray(profile.gallery)) {
+  galleryPreview.innerHTML = profile.gallery.map((img, imgIndex) => {
+    const imgUrl = typeof img === "string" ? img : img.url; // ❤️ Support both formats
+    return `
       <div class="gallery-item">
-        <img src="${img}" alt="Pet Photo">
+        <img src="${imgUrl}" alt="Pet Photo">
         <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
                 data-index="${imgIndex}">★</button>
       </div>
-    `).join("");
-  }
+    `;
+  }).join("");
+}
+
   
   const moodInput = document.getElementById("moodHistoryInput");
   if (moodInput) {
@@ -659,13 +663,17 @@ const newProfile = {
 // ✅ Save to localStorage
 // 🛠️ Assign gallery ONLY after deciding if it's new or edited:
 if (isEditing) {
-  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
-  newProfile.gallery = [...oldGallery, ...uploadedImageUrls]; // Merge
+  const isNewUpload = uploadedImageUrls.length > 0;
+  newProfile.gallery = isNewUpload
+    ? [...(petProfiles[currentEditIndex]?.gallery || []), ...uploadedImageUrls]
+    : petProfiles[currentEditIndex]?.gallery || [];
+
   petProfiles[currentEditIndex] = newProfile;
 } else {
-  newProfile.gallery = uploadedImageUrls; // ⬅️ This handles NEW profiles
+  newProfile.gallery = uploadedImageUrls;
   petProfiles.push(newProfile);
 }
+
 localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
           
 // Save to Firestore first and get docId
