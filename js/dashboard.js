@@ -172,10 +172,6 @@ function openEditForm(index) {
     }).join("");
   }
 
-  // 🌱 Optional: reset previously uploaded images on fresh edit
-  uploadedImageUrls = []; // <— THIS is safe here
-}
-
  // Render Mood Log
   const moodInput = document.getElementById("moodHistoryInput");
   if (moodInput) {
@@ -682,7 +678,6 @@ if (isEditing) {
   newProfile.gallery = uploadedImageUrls.length > 0
     ? [...oldGallery, ...uploadedImageUrls]
     : [...oldGallery];
-
   // 👣 Save the updated profile
   petProfiles[currentEditIndex] = newProfile;
 
@@ -691,9 +686,6 @@ if (isEditing) {
   newProfile.gallery = uploadedImageUrls;
   petProfiles.push(newProfile);
 }
-
-// ✨ Final optional reset to clean temp uploads
-uploadedImageUrls = [];
 localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
           
 // Save to Firestore first and get docId
