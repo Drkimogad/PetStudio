@@ -172,7 +172,6 @@ function openEditForm(index) {
     }).join("");
   }
 
- // Render Mood Log
   const moodInput = document.getElementById("moodHistoryInput");
   if (moodInput) {
     moodInput.value = profile.moodHistory
@@ -189,43 +188,49 @@ async function deleteProfile(index) {
   if (!confirm("Are you sure you want to delete this profile?")) return;
 
   const profile = petProfiles[index];
-
-  // Delete from Firestore profile
-  if (profile.docId) {
-    try {
-      await firebase.firestore().collection("profiles").doc(profile.docId).delete();
-    } catch (err) {
-      console.warn("Failed to delete from Firestore:", err.message);
-    }
-  }
-
-  // Delete reminder from Firestore
-  if (profile.reminderDocId) {
-    try {
-      await firebase.firestore().collection("reminders").doc(profile.reminderDocId).delete();
-    } catch (err) {
-      console.warn("Failed to delete reminder from Firestore:", err.message);
-    }
-  }
-
-  // Delete Cloudinary images (if public_id exists)
-  if (Array.isArray(profile.gallery)) {
-    for (const image of profile.gallery) {
-      if (image.public_id) {
-        try {
-          await deleteImageFromCloudinary(image.public_id);
-        } catch (err) {
-          console.warn("Image not deleted from Cloudinary:", err.message);
+  
+  try {
+    // 1. Delete Cloudinary images first (if they exist)
+    if (Array.isArray(profile.gallery)) {
+      await Promise.all(profile.gallery.map(async (image) => {
+        if (image?.public_id) {
+          try {
+            await deleteImageFromCloudinary(image.public_id);
+          } catch (err) {
+            console.warn("Cloudinary delete failed:", err.message);
+          }
         }
-      }
+      }));
     }
-  }
 
-  // Remove from local storage and update UI
-  const deleted = petProfiles.splice(index, 1);
-  localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-  renderProfiles();
-  Utils.showErrorToUser(`${deleted[0].name}'s profile was deleted.`, true);
+    // 2. Delete Firestore documents (if they exist)
+    const deletePromises = [];
+    
+    if (profile.docId) {
+      deletePromises.push(
+        firebase.firestore().collection("profiles").doc(profile.docId).delete()
+      );
+    }
+    
+    if (profile.reminderDocId) {
+      deletePromises.push(
+        firebase.firestore().collection("reminders").doc(profile.reminderDocId).delete()
+      );
+    }
+
+    await Promise.all(deletePromises);
+
+    // 3. Delete from local storage
+    petProfiles.splice(index, 1);
+    localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+    renderProfiles();
+    
+    Utils.showErrorToUser(`${profile.name}'s profile was deleted.`, true);
+    
+  } catch (error) {
+    console.error("Delete failed:", error);
+    Utils.showErrorToUser("Failed to delete profile completely.");
+  }
 }
 
 // 🌀 PRINT PROFILE BUTTON FUNCTION
@@ -690,28 +695,80 @@ if (isEditing) {
 localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
           
 // Save to Firestore first and get docId
-const docRef = await firebase.firestore().collection("profiles").add({
-  userId,
-  ...newProfile
-});
-newProfile.docId = docRef.id; // 🔥 Save Firestore doc ID for future use
+// Enhanced Firestore Save with proper error handling and validation
+try {
+  // 1. Validate essential profile data before saving
+  if (!newProfile.name || !newProfile.breed) {
+    throw new Error("Pet name and breed are required");
+  }
 
-// Optionally add reminder
-if (newProfile.birthday) {
-  const reminderData = {
+  // 2. Save to Firestore with transaction support
+  const batch = firebase.firestore().batch();
+  const profileRef = firebase.firestore().collection("profiles").doc();
+  
+  // Prepare profile data (exclude temporary fields)
+  const profileData = {
     userId,
-    petName: newProfile.name,
-    date: Utils.formatFirestoreDate(newProfile.birthday),
-    message: `It's ${newProfile.name}'s birthday today! 🎉`,
-    createdAt: new Date().toISOString()
+    name: newProfile.name,
+    breed: newProfile.breed,
+    dob: newProfile.dob || null,
+    birthday: newProfile.birthday || null,
+    gallery: newProfile.gallery || [],
+    moodHistory: newProfile.moodHistory || [],
+    coverPhotoIndex: newProfile.coverPhotoIndex || 0,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  try {
-    const reminderDoc = await firebase.firestore().collection("reminders").add(reminderData);
-    newProfile.reminderDocId = reminderDoc.id; // 🧠 Save this for future delete
-  } catch (firestoreError) {
-    console.warn("Reminder not saved:", firestoreError.message);
+  batch.set(profileRef, profileData);
+
+  // 3. Handle birthday reminder if exists
+  if (newProfile.birthday) {
+    try {
+      const formattedDate = Utils.formatFirestoreDate(newProfile.birthday);
+      if (!formattedDate) throw new Error("Invalid birthday format");
+      
+      const reminderRef = firebase.firestore().collection("reminders").doc();
+      const reminderData = {
+        userId,
+        petName: newProfile.name,
+        date: formattedDate,
+        message: `It's ${newProfile.name}'s birthday today! 🎉`,
+        petProfileId: profileRef.id, // Reference to main profile
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        notifyDaysBefore: 3 // Optional: Add reminder before birthday
+      };
+
+      batch.set(reminderRef, reminderData);
+      newProfile.reminderDocId = reminderRef.id;
+    } catch (reminderError) {
+      console.error("Reminder preparation failed:", reminderError);
+      // Continue without failing the entire operation
+    }
   }
+
+  // 4. Commit the batch
+  await batch.commit();
+  newProfile.docId = profileRef.id;
+
+  // 5. Verify the write
+  const docSnapshot = await profileRef.get();
+  if (!docSnapshot.exists) {
+    throw new Error("Failed to verify Firestore creation");
+  }
+
+  // 6. Update local storage with complete profile data
+  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+
+} catch (error) {
+  console.error("Firestore save failed:", error);
+  // Revert local changes if Firestore save failed
+  if (isEditing) {
+    petProfiles[currentEditIndex] = originalProfile; // Keep reference to original
+  } else {
+    petProfiles.pop(); // Remove the newly added profile
+  }
+  throw error; // Re-throw for form handler to catch
 }
 
         // UI update
