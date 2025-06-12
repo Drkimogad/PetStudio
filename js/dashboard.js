@@ -147,11 +147,10 @@ function getMoodEmoji(mood) {
 
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 // 🌀 EDIT PROFILE BUTTON FUNCTION
-function openEditForm(index) {
+function openEditForm(profile, index) {
+uploadedImageUrls = []; // ✅ Reset before populating form to avoid duplication
   isEditing = true;
   currentEditIndex = index;
-  uploadedImageUrls = []; // 🌱 Reset uploads during edit
-
 
   const profile = petProfiles[index];
 
@@ -702,8 +701,7 @@ if (isEditing) {
   newProfile.gallery = uploadedImageUrls;
   petProfiles.push(newProfile);
 }
-localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-          
+         
 // Save to Firestore first and get docId
 const docRef = await firebase.firestore().collection("profiles").add({
   userId,
@@ -728,14 +726,14 @@ if (newProfile.birthday) {
     console.warn("Reminder not saved:", firestoreError.message);
   }
 }
-
-        // UI update
+    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+          // UI update
         DOM.profileSection.classList.add("hidden");
         DOM.petList.classList.remove("hidden");
         renderProfiles();
-        window.scrollTo(0, 0);
+        uploadedImageUrls = []; // ✅ Reset here
         console.log("✅ Profile saved and UI updated.");
-        uploadedImageUrls = []; // 🧼 Reset temp uploads
+        window.scrollTo(0, 0);
 
       } catch (err) {
         console.error("Profile save failed:", err);
