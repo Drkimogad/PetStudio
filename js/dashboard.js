@@ -186,7 +186,7 @@ galleryPreview.addEventListener("click", (e) => {
     e.target.classList.add("active");
       }
     });
-
+  }
  // Render Mood Log
   const moodInput = document.getElementById("moodHistoryInput");
   if (moodInput) {
