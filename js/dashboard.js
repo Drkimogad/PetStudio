@@ -699,18 +699,13 @@ if (isEditing) {
 
 // ✅ Save to localStorage
 localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-
-// ✅ Reset after saving to prevent cross-contamination
-uploadedImageUrls.length = 0; // 👈 This clears the array safely
-// 🧼 Optional form reset if you want
-form.reset()
           
 // Save to Firestore first and get docId
+newProfile.docId = docRef.id; // 🔥 Save Firestore doc ID for future use
 const docRef = await firebase.firestore().collection("profiles").add({
   userId,
   ...newProfile
 });
-newProfile.docId = docRef.id; // 🔥 Save Firestore doc ID for future use
 
 // Optionally add reminder
 if (newProfile.birthday) {
@@ -733,10 +728,8 @@ if (newProfile.birthday) {
         DOM.profileSection.classList.add("hidden");
         DOM.petList.classList.remove("hidden");
         renderProfiles();
-        uploadedImageUrls = []; // ✅ Reset here
-        console.log("✅ Profile saved and UI updated.");
         window.scrollTo(0, 0);
-
+        console.log("✅ Profile saved and UI updated.");
       } catch (err) {
         console.error("Profile save failed:", err);
         Utils.showErrorToUser("Error saving profile.");
@@ -747,6 +740,7 @@ if (newProfile.birthday) {
       }
     });
  }
+
 // Single logout handler function
 async function handleLogout() {
   try {
