@@ -152,7 +152,8 @@ uploadedImageUrls = []; // ✅ Reset before populating form to avoid duplication
   isEditing = true;
   currentEditIndex = index;
 
-  const profile = petProfiles[index];
+  const profile = petProfiles[index]; // ✅ MUST define this first
+  DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
   // Populate form fields
   document.getElementById("petName").value = profile.name;
@@ -173,8 +174,20 @@ uploadedImageUrls = []; // ✅ Reset before populating form to avoid duplication
         </div>
       `;
     }).join("");
-  }
+  
+// ⬇️ Add this listener to track cover selection during editing:
+galleryPreview.addEventListener("click", (e) => {
+  if (e.target.classList.contains("cover-btn")) {
+    const newIndex = parseInt(e.target.dataset.index, 10);
+    DOM.profileForm.dataset.coverIndex = newIndex;
 
+    // Update button active styles
+    [...galleryPreview.querySelectorAll(".cover-btn")].forEach(btn => btn.classList.remove("active"));
+    e.target.classList.add("active");
+      }
+    });
+  }
+}
  // Render Mood Log
   const moodInput = document.getElementById("moodHistoryInput");
   if (moodInput) {
@@ -671,30 +684,29 @@ const newProfile = {
   dob: document.getElementById("petDob").value,
   birthday: document.getElementById("petBirthday").value,
   moodHistory: moodHistory,
-  coverPhotoIndex: 0 // or preserve if editing
+  coverPhotoIndex: isEditing
+  ? parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0
+  : 0,
   // ⛔ Do not assign gallery yet!
 };
 
 if (isEditing) {
-  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
+  const oldProfile = petProfiles[currentEditIndex];
+  const oldGallery = oldProfile?.gallery || [];
 
-  // 🔍 Combine new uploads with old, deduplicating by `url`
-  const combinedGallery = [...oldGallery, ...uploadedImageUrls];
+  // 👇 Only add new images if any were uploaded
+  const finalGallery = uploadedImageUrls.length > 0
+    ? [...oldGallery, ...uploadedImageUrls]
+    : oldGallery;
 
-  const deduplicatedGallery = Array.from(
-    new Map(combinedGallery.map(img => {
+  newProfile.gallery = Array.from(
+    new Map(finalGallery.map(img => {
       const url = typeof img === "string" ? img : img?.url;
-      return [url, img]; // key by URL
+      return [url, img];
     })).values()
   );
 
-  newProfile.gallery = deduplicatedGallery;
-
   petProfiles[currentEditIndex] = newProfile;
-} else {
-  // 🆕 Fresh profile gets the new uploads only
-  newProfile.gallery = uploadedImageUrls;
-  petProfiles.push(newProfile);
 }
 
 // ✅ Save to localStorage
