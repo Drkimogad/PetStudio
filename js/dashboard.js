@@ -147,7 +147,7 @@ function getMoodEmoji(mood) {
 
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 // 🌀 EDIT PROFILE BUTTON FUNCTION
-function openEditForm(profile, index) {
+function openEditForm(index) {
 uploadedImageUrls = []; // ✅ Reset before populating form to avoid duplication
   isEditing = true;
   currentEditIndex = index;
