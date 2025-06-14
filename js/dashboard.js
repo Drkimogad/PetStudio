@@ -110,8 +110,9 @@ function renderProfiles() {
       petCard.querySelector(".qrBtn").addEventListener("click", () => generateQRCode(index));
       
       petCard.querySelectorAll(".mood-btn").forEach(btn => {
-        btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
+      btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
       });
+
       
       petCard.querySelectorAll(".cover-btn").forEach(btn => {
         btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
@@ -132,18 +133,6 @@ function getCountdown(birthday) {
   return `${diffDays} days until birthday! 🎉`;
 }
 
-// Render mood history updated
-function renderMoodHistory(profile) {
-  if (!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
-  return profile.moodHistory
-    .slice(-7)
-    .map(entry => `🗓 ${entry.date} — ${getMoodEmoji(entry.mood)} ${capitalizeMood(entry.mood)}`)
-    .join('<br>');
-}
-
-function capitalizeMood(mood) {
-  return mood.charAt(0).toUpperCase() + mood.slice(1).toLowerCase();
-}
 //get emoji updated 
 function getMoodEmoji(mood) {
   const emojiMap = {
@@ -158,6 +147,49 @@ function getMoodEmoji(mood) {
     bored: "🥱"
   };
   return emojiMap[mood.toLowerCase()] || "🐶";
+}
+// function logMood new
+function logMood(profileIndex, mood) {
+  const profile = petProfiles[profileIndex];
+  if (!profile) return;
+
+  // Create a new mood entry with today's date
+  const newMoodEntry = {
+    date: new Date().toISOString().split("T")[0],
+    mood: mood
+  };
+  // Append to moodHistory or create new
+  if (!Array.isArray(profile.moodHistory)) {
+    profile.moodHistory = [];
+  }
+  profile.moodHistory.push(newMoodEntry);
+
+  // Save updated profiles to localStorage
+  localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+
+  // Update UI (you may call your renderProfiles or a mood-specific re-render)
+  renderProfiles(); // or a more targeted update
+
+  console.log(`Mood "${mood}" logged for profile ${profile.name}`);
+}
+ // Render Mood Log updated
+// Pre-fill mood input with the most recent mood ONLY (optional UX)
+const moodInput = document.getElementById("moodHistoryInput");
+if (moodInput && profile.moodHistory?.length > 0) {
+const latestMood = profile.moodHistory[profile.moodHistory.length - 1];
+moodInput.value = '';
+}
+// Render mood history updated
+function renderMoodHistory(profile) {
+  if (!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
+  return profile.moodHistory
+    .slice(-7)
+    .map(entry => `🗓 ${entry.date} — ${getMoodEmoji(entry.mood)} ${capitalizeMood(entry.mood)}`)
+    .join('<br>');
+}
+
+function capitalizeMood(mood) {
+  return mood.charAt(0).toUpperCase() + mood.slice(1).toLowerCase();
 }
 
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
@@ -202,13 +234,6 @@ galleryPreview.addEventListener("click", (e) => {
       }
     });
   }
- // Render Mood Log updated
-// Pre-fill mood input with the most recent mood ONLY (optional UX)
-const moodInput = document.getElementById("moodHistoryInput");
-if (moodInput && profile.moodHistory?.length > 0) {
-const latestMood = profile.moodHistory[profile.moodHistory.length - 1];
-moodInput.value = '';
-}
 
   DOM.profileSection.classList.remove("hidden"); 
   DOM.fullPageBanner.classList.add("hidden");
