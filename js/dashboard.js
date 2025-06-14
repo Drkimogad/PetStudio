@@ -668,12 +668,28 @@ for (const file of galleryFiles) {
 
 // Mood history (💡 LEAVE THIS AS-IS per your request)
 const moodInput = document.getElementById("moodHistoryInput");
-const moodHistory = moodInput?.value
-  ? [{
-      date: new Date().toISOString().split("T")[0],
-      mood: moodInput.value
-    }]
-  : [];
+let moodHistory = [];
+
+if (isEditing) {
+  const existingHistory = petProfiles[currentEditIndex].moodHistory || [];
+  const newMoodEntry = moodInput?.value
+    ? {
+        date: new Date().toISOString().split("T")[0],
+        mood: moodInput.value.trim()
+      }
+    : null;
+
+  moodHistory = newMoodEntry
+    ? [...existingHistory, newMoodEntry]
+    : existingHistory;
+} else {
+  moodHistory = moodInput?.value
+    ? [{
+        date: new Date().toISOString().split("T")[0],
+        mood: moodInput.value.trim()
+      }]
+    : [];
+}
 
 // 🔄 Create profile object (initial version without docId/reminderDocId)
 const newProfile = {
@@ -688,7 +704,7 @@ const newProfile = {
 };
 
 if (isEditing) {
-  newProfile.gallery = [...petProfiles[currentEditIndex].gallery];
+  newProfile.gallery = [...(petProfiles[currentEditIndex].gallery || [])];
   if (uploadedImageUrls.length > 0) {
     newProfile.gallery = [...newProfile.gallery, ...uploadedImageUrls];
   }
@@ -709,7 +725,7 @@ try {
       .collection("profiles")
       .doc(petProfiles[currentEditIndex].docId);
       
-    await profileDocRef.update(newProfile);
+    await profileDocRef.set(newProfile, { merge: true });
     newProfile.docId = petProfiles[currentEditIndex].docId; // Preserve docId
   } else {
     // New profile - create document
