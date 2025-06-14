@@ -675,7 +675,7 @@ const moodHistory = moodInput?.value
     }]
   : [];
 
-// Create profile object (initial version without docId/reminderDocId)
+// 🔄 Create profile object (initial version without docId/reminderDocId)
 const newProfile = {
   id: newProfileId,
   name: document.getElementById("petName").value,
@@ -683,58 +683,79 @@ const newProfile = {
   dob: document.getElementById("petDob").value,
   birthday: document.getElementById("petBirthday").value,
   moodHistory: moodHistory,
-  coverPhotoIndex: isEditing
-  ? parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0
-  : 0,
+  coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
   // ⛔ Do not assign gallery yet!
-  reminderDocId: "" // Will store reminder document ID
 };
 
 if (isEditing) {
-  newProfile.gallery = [...petProfiles[currentEditIndex].gallery]; // Start with existing gallery
-  // Only append new images if uploaded
+  newProfile.gallery = [...petProfiles[currentEditIndex].gallery];
   if (uploadedImageUrls.length > 0) {
     newProfile.gallery = [...newProfile.gallery, ...uploadedImageUrls];
   }
-  // Update cover index only if changed
-  newProfile.coverPhotoIndex = parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0;
   petProfiles[currentEditIndex] = newProfile;
 } else {
   newProfile.gallery = uploadedImageUrls;
+  newProfile.coverPhotoIndex = 0; // Default for new profiles
   petProfiles.push(newProfile);
 }
 
-// ✅ Save to localStorage
-localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-          
-// Save to Firestore first and get docId
-const docRef = await firebase.firestore().collection("profiles").add({
-  userId,
-  ...newProfile
-});
-newProfile.docId = docRef.id; // 🔥 Save Firestore doc ID for future use
-
-// Optionally add reminder
-if (newProfile.birthday) {
-  const reminderData = {
-    userId,
-    petName: newProfile.name,
-    date: Utils.formatFirestoreDate(newProfile.birthday),
-    message: `It's ${newProfile.name}'s birthday today! 🎉`,
-    createdAt: new Date().toISOString(),
-    profileDocId: "" // Will store profile document ID
-  };
-
-  try {
-    const reminderDoc = await firebase.firestore().collection("reminders").add(reminderData);
-    newProfile.reminderDocId = reminderDoc.id; // 🧠 Save this for future delete
-  } catch (firestoreError) {
-    console.warn("Reminder not saved:", firestoreError.message);
+// 🔥 FIREBASE SAVE OPERATION
+try {
+  // A. Save/update profile in Firestore
+  let profileDocRef;
+  if (isEditing && petProfiles[currentEditIndex].docId) {
+    // Existing profile - update document
+    profileDocRef = firebase.firestore()
+      .collection("profiles")
+      .doc(petProfiles[currentEditIndex].docId);
+      
+    await profileDocRef.update(newProfile);
+    newProfile.docId = petProfiles[currentEditIndex].docId; // Preserve docId
+  } else {
+    // New profile - create document
+    profileDocRef = await firebase.firestore()
+      .collection("profiles")
+      .add({
+        userId,
+        ...newProfile
+      });
+      
+    newProfile.docId = profileDocRef.id; // Save new docId
+    await profileDocRef.update({ docId: profileDocRef.id }); // Add docId to document
   }
-}
-// In form submission after saving reminder:
-await docRef.update({ reminderDocId: reminderDoc.id });  // Add to profile
-await reminderDocRef.update({ profileDocId: docRef.id }); // Add to reminder
+
+  // B. Create reminder and link documents
+  if (newProfile.birthday) {
+    const reminderData = {
+      userId,
+      petName: newProfile.name,
+      date: Utils.formatFirestoreDate(newProfile.birthday),
+      message: `It's ${newProfile.name}'s birthday today! 🎉`,
+      createdAt: new Date().toISOString(),
+      profileDocId: newProfile.docId  // 🔗 Link to profile
+    };
+
+    const reminderDoc = await firebase.firestore()
+      .collection("reminders")
+      .add(reminderData);
+      
+    // C. Update profile with reminder ID
+    await profileDocRef.update({ 
+      reminderDocId: reminderDoc.id 
+    });
+    newProfile.reminderDocId = reminderDoc.id;
+    
+    // D. Update reminder with its own ID
+    await reminderDoc.update({ reminderId: reminderDoc.id });
+  }
+
+  // ✅ Update local storage with final linked data
+  if (isEditing) {
+    petProfiles[currentEditIndex] = newProfile;
+  } else {
+    petProfiles[petProfiles.length - 1] = newProfile;
+  }
+  localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
           
 // UI update
         DOM.profileSection.classList.add("hidden");
@@ -742,14 +763,16 @@ await reminderDocRef.update({ profileDocId: docRef.id }); // Add to reminder
         renderProfiles();
         window.scrollTo(0, 0);
         console.log("✅ Profile saved and UI updated.");
+    
       } catch (err) {
         console.error("Profile save failed:", err);
         Utils.showErrorToUser("Error saving profile.");
+    
       } finally {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
         showLoading(false);
-        // ✅ ADD THIS: Clear file input to prevent re-uploads
+     // ✅ ADD THIS: Clear file input to prevent re-uploads
   document.getElementById("petGallery").value = '';
       }
     });
