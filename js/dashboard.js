@@ -82,14 +82,18 @@ function renderProfiles() {
       </div>
         <div class="mood-tracker">
           <div class="mood-buttons">
-            <span>Log Mood:</span>
-            <button class="mood-btn" data-mood="happy">😊</button>
-            <button class="mood-btn" data-mood="depressed">😔</button>
-            <button class="mood-btn" data-mood="sad">😞</button>
-            <button class="mood-btn" data-mood="angry">😠</button>
-            <button class="mood-btn" data-mood="sick">🤒</button>
-          </div>
-          <div class="mood-history">
+  <span>Log Mood:</span>
+  <button class="mood-btn" data-mood="happy">😊</button>
+  <button class="mood-btn" data-mood="sad">😢</button>
+  <button class="mood-btn" data-mood="angry">😠</button>
+  <button class="mood-btn" data-mood="excited">😄</button>
+  <button class="mood-btn" data-mood="relaxed">😌</button>
+  <button class="mood-btn" data-mood="tired">😴</button>
+  <button class="mood-btn" data-mood="anxious">😰</button>
+  <button class="mood-btn" data-mood="playful">🐾</button>
+  <button class="mood-btn" data-mood="bored">🥱</button>
+</div>
+        <div class="mood-history">
             ${renderMoodHistory(profile)}
           </div>
         </div>
@@ -146,8 +150,9 @@ function getMoodEmoji(mood) {
     playful: "🐾",
     bored: "🥱"
   };
-  return emojiMap[mood.toLowerCase()] || "🐶";
+  return emojiMap[mood] || "😐"; // default emoji if mood not found
 }
+
 // function logMood new
 function logMood(profileIndex, mood) {
   const profile = petProfiles[profileIndex];
