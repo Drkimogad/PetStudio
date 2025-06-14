@@ -1,6 +1,8 @@
 //🌟 Pet Profile Management 🌟
 const addPetProfileBtn = document.getElementById("addPetProfileBtn");
 let currentQRProfile = null; // Only new declaration needed
+// Load from localStorage on app start
+let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
 
 // SAFE GLOBAL INITIALIZATION (compatible with auth.js)
 if (typeof petProfiles === 'undefined') {
