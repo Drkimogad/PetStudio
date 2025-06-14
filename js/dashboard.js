@@ -687,6 +687,7 @@ const newProfile = {
   ? parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0
   : 0,
   // ⛔ Do not assign gallery yet!
+  reminderDocId: "" // Will store reminder document ID
 };
 
 if (isEditing) {
@@ -720,7 +721,8 @@ if (newProfile.birthday) {
     petName: newProfile.name,
     date: Utils.formatFirestoreDate(newProfile.birthday),
     message: `It's ${newProfile.name}'s birthday today! 🎉`,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    profileDocId: "" // Will store profile document ID
   };
 
   try {
@@ -730,7 +732,11 @@ if (newProfile.birthday) {
     console.warn("Reminder not saved:", firestoreError.message);
   }
 }
-          // UI update
+// In form submission after saving reminder:
+await docRef.update({ reminderDocId: reminderDoc.id });  // Add to profile
+await reminderDocRef.update({ profileDocId: docRef.id }); // Add to reminder
+          
+// UI update
         DOM.profileSection.classList.add("hidden");
         DOM.petList.classList.remove("hidden");
         renderProfiles();
