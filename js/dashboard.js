@@ -132,17 +132,32 @@ function getCountdown(birthday) {
   return `${diffDays} days until birthday! 🎉`;
 }
 
-// Render mood history
+// Render mood history updated
 function renderMoodHistory(profile) {
-  if(!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
+  if (!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
   return profile.moodHistory
     .slice(-7)
-    .map(entry => `${entry.date}: ${getMoodEmoji(entry.mood)}`)
+    .map(entry => `🗓 ${entry.date} — ${getMoodEmoji(entry.mood)} ${capitalizeMood(entry.mood)}`)
     .join('<br>');
 }
 
+function capitalizeMood(mood) {
+  return mood.charAt(0).toUpperCase() + mood.slice(1).toLowerCase();
+}
+//get emoji updated 
 function getMoodEmoji(mood) {
-  return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
+  const emojiMap = {
+    happy: "😊",
+    sad: "😢",
+    angry: "😠",
+    excited: "😄",
+    relaxed: "😌",
+    tired: "😴",
+    anxious: "😰",
+    playful: "🐾",
+    bored: "🥱"
+  };
+  return emojiMap[mood.toLowerCase()] || "🐶";
 }
 
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
@@ -187,13 +202,13 @@ galleryPreview.addEventListener("click", (e) => {
       }
     });
   }
- // Render Mood Log
-  const moodInput = document.getElementById("moodHistoryInput");
-  if (moodInput) {
-    moodInput.value = profile.moodHistory
-      .map(entry => `${entry.date}:${entry.mood}`)
-      .join("\n");
-  }
+ // Render Mood Log updated
+// Pre-fill mood input with the most recent mood ONLY (optional UX)
+const moodInput = document.getElementById("moodHistoryInput");
+if (moodInput && profile.moodHistory?.length > 0) {
+const latestMood = profile.moodHistory[profile.moodHistory.length - 1];
+moodInput.value = '';
+}
 
   DOM.profileSection.classList.remove("hidden"); 
   DOM.fullPageBanner.classList.add("hidden");
@@ -666,29 +681,20 @@ for (const file of galleryFiles) {
   }
 }
 
-// Mood history (💡 LEAVE THIS AS-IS per your request)
+// Mood history (💡 updated)
 const moodInput = document.getElementById("moodHistoryInput");
 let moodHistory = [];
 
-if (isEditing) {
-  const existingHistory = petProfiles[currentEditIndex].moodHistory || [];
-  const newMoodEntry = moodInput?.value
-    ? {
-        date: new Date().toISOString().split("T")[0],
-        mood: moodInput.value.trim()
-      }
-    : null;
+if (isEditing && petProfiles[currentEditIndex]?.moodHistory) {
+  moodHistory = [...petProfiles[currentEditIndex].moodHistory];
+}
 
-  moodHistory = newMoodEntry
-    ? [...existingHistory, newMoodEntry]
-    : existingHistory;
-} else {
-  moodHistory = moodInput?.value
-    ? [{
-        date: new Date().toISOString().split("T")[0],
-        mood: moodInput.value.trim()
-      }]
-    : [];
+const newMoodText = moodInput?.value?.trim();
+if (newMoodText) {
+  moodHistory.push({
+    date: new Date().toISOString().split("T")[0],
+    mood: newMoodText
+  });
 }
 
 // 🔄 Create profile object (initial version without docId/reminderDocId)
