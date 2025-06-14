@@ -690,12 +690,13 @@ const newProfile = {
 };
 
 if (isEditing) {
-  const isNewUpload = uploadedImageUrls.length > 0;
-
-  newProfile.gallery = isNewUpload
-    ? [...petProfiles[currentEditIndex].gallery, ...uploadedImageUrls]
-    : [...petProfiles[currentEditIndex].gallery]; // don't re-add anything!
-
+  newProfile.gallery = [...petProfiles[currentEditIndex].gallery]; // Start with existing gallery
+  // Only append new images if uploaded
+  if (uploadedImageUrls.length > 0) {
+    newProfile.gallery = [...newProfile.gallery, ...uploadedImageUrls];
+  }
+  // Update cover index only if changed
+  newProfile.coverPhotoIndex = parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0;
   petProfiles[currentEditIndex] = newProfile;
 } else {
   newProfile.gallery = uploadedImageUrls;
@@ -742,6 +743,8 @@ if (newProfile.birthday) {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
         showLoading(false);
+        // ✅ ADD THIS: Clear file input to prevent re-uploads
+  document.getElementById("petGallery").value = '';
       }
     });
  }
