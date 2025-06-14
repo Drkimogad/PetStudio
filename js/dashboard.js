@@ -712,11 +712,11 @@ if (isEditing) {
 localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
           
 // Save to Firestore first and get docId
-newProfile.docId = docRef.id; // 🔥 Save Firestore doc ID for future use
 const docRef = await firebase.firestore().collection("profiles").add({
   userId,
   ...newProfile
 });
+newProfile.docId = docRef.id; // 🔥 Save Firestore doc ID for future use
 
 // Optionally add reminder
 if (newProfile.birthday) {
