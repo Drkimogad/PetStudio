@@ -690,20 +690,11 @@ const newProfile = {
 };
 
 if (isEditing) {
-  const oldProfile = petProfiles[currentEditIndex];
-  const oldGallery = oldProfile?.gallery || [];
+  const isNewUpload = uploadedImageUrls.length > 0;
 
-  // 👇 Only add new images if any were uploaded
-  const finalGallery = uploadedImageUrls.length > 0
-    ? [...oldGallery, ...uploadedImageUrls]
-    : oldGallery;
-
-  newProfile.gallery = Array.from(
-    new Map(finalGallery.map(img => {
-      const url = typeof img === "string" ? img : img?.url;
-      return [url, img];
-    })).values()
-  );
+  newProfile.gallery = isNewUpload
+    ? [...petProfiles[currentEditIndex].gallery, ...uploadedImageUrls]
+    : [...petProfiles[currentEditIndex].gallery]; // don't re-add anything!
 
   petProfiles[currentEditIndex] = newProfile;
 } else {
