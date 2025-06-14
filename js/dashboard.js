@@ -706,6 +706,9 @@ if (isEditing) {
   );
 
   petProfiles[currentEditIndex] = newProfile;
+} else {
+  newProfile.gallery = uploadedImageUrls;
+  petProfiles.push(newProfile);
 }
 
 // ✅ Save to localStorage
