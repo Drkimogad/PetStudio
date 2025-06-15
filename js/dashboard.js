@@ -839,7 +839,9 @@ try {
 } catch (err) {
   console.error("Profile save failed:", err);
   Utils.showErrorToUser("Error saving profile.");
-}
+ }
+}); // ✅ <-- ADD THIS LINE TO CLOSE THE .addEventListener BLOCK
+
 // Single logout handler function
 async function handleLogout() {
   try {
