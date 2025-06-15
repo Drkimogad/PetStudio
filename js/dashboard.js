@@ -828,19 +828,22 @@ try {
   }
   localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
-  // ✅ Final UI update
-  DOM.profileSection.classList.add("hidden");
-  DOM.petList.classList.remove("hidden");
-  renderProfiles();
-  window.scrollTo(0, 0);
-  console.log("✅ Profile saved and UI updated.");
-
-} catch (err) {
-  console.error("Profile save failed:", err);
-  Utils.showErrorToUser("Error saving profile.");
- }
-}); // ✅ <-- ADD THIS LINE TO CLOSE THE .addEventListener BLOCK
-}      // ❗ this closes initDashboard — must come AFTER all nested logic
+          // UI update
+        DOM.profileSection.classList.add("hidden");
+        DOM.petList.classList.remove("hidden");
+        renderProfiles();
+        window.scrollTo(0, 0);
+        console.log("✅ Profile saved and UI updated.");
+      } catch (err) {
+        console.error("Profile save failed:", err);
+        Utils.showErrorToUser("Error saving profile.");
+      } finally {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        showLoading(false);
+      }
+    });
+ }s initDashboard — must come AFTER all nested logic
 
 // Single logout handler function
 async function handleLogout() {
