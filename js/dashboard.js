@@ -841,6 +841,7 @@ try {
   Utils.showErrorToUser("Error saving profile.");
  }
 }); // ✅ <-- ADD THIS LINE TO CLOSE THE .addEventListener BLOCK
+}      // ❗ this closes initDashboard — must come AFTER all nested logic
 
 // Single logout handler function
 async function handleLogout() {
