@@ -164,30 +164,24 @@ function initAuthListeners() {
   console.log("👤 Firebase current user:", firebase.auth().currentUser);
   
   const auth = firebase.auth();
-
-  auth.onAuthStateChanged(async (user) => {
+  auth.onAuthStateChanged(user => {
     if (user) {
-      console.log("✅ Logged in as:", user.email);
-
-      // 🔁 Sync from Firestore
-      firebase.firestore()
-        .collection("profiles")
-        .where("userId", "==", user.uid)
-        .get()
-        .then(snapshot => {
-          petProfiles = snapshot.docs.map(doc => doc.data());
-          localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-          renderProfiles(); // 🔄 Update UI
-          console.log("📥 Synced profiles from Firestore.");
-        })
-        .catch(error => {
-          console.error("❌ Failed to sync profiles:", error);
-        });
-
+      console.log("✅ User is signed in:", user);
+      showDashboard();
     } else {
-      console.log("🚪 Logged out");
-      // Optional: clear UI or redirect
+      console.log("ℹ️ No user is signed in.");
+
+      // ✅ Always show auth container
+      if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
+      if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
+
+      // ✅ Re-render the Google button when auth page is visible
+      if (typeof setupGoogleLoginButton === 'function') {
+        setupGoogleLoginButton();
+      }
     }
+  }, error => {
+    console.error("❌ User was signed out.");
   });
 }
 
