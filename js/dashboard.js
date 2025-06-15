@@ -700,6 +700,7 @@ if (addBtn) {
     DOM.profileSection.classList.remove('hidden');
     DOM.petList.classList.add('hidden');
   });
+ }
 }
 // MOVED FORM SUBMISSION HERE
     console.log("✅ Form submission listener attached."); // <== ✅ Add this
