@@ -758,27 +758,25 @@ try {
   // A. Save/update profile in Firestore
   let profileDocRef;
   if (isEditing && petProfiles[currentEditIndex].docId) {
-    // Existing profile - update document
     profileDocRef = firebase.firestore()
       .collection("profiles")
       .doc(petProfiles[currentEditIndex].docId);
       
     await profileDocRef.set(newProfile, { merge: true });
-    newProfile.docId = petProfiles[currentEditIndex].docId; // Preserve docId
+    newProfile.docId = petProfiles[currentEditIndex].docId;
   } else {
-    // New profile - create document
     profileDocRef = await firebase.firestore()
       .collection("profiles")
       .add({
         userId,
         ...newProfile
       });
-      
-    newProfile.docId = profileDocRef.id; // Save new docId
-    await profileDocRef.update({ docId: profileDocRef.id }); // Add docId to document
+
+    newProfile.docId = profileDocRef.id;
+    await profileDocRef.update({ docId: profileDocRef.id });
   }
 
-  // B. Create reminder and link documents
+  // B. Reminder logic
   if (newProfile.birthday) {
     const reminderData = {
       userId,
@@ -786,52 +784,37 @@ try {
       date: Utils.formatFirestoreDate(newProfile.birthday),
       message: `It's ${newProfile.name}'s birthday today! 🎉`,
       createdAt: new Date().toISOString(),
-      profileDocId: newProfile.docId  // 🔗 Link to profile
+      profileDocId: newProfile.docId
     };
 
     const reminderDoc = await firebase.firestore()
       .collection("reminders")
       .add(reminderData);
-      
-    // C. Update profile with reminder ID
-    await profileDocRef.update({ 
-      reminderDocId: reminderDoc.id 
-    });
+
+    await profileDocRef.update({ reminderDocId: reminderDoc.id });
     newProfile.reminderDocId = reminderDoc.id;
-    
-    // D. Update reminder with its own ID
     await reminderDoc.update({ reminderId: reminderDoc.id });
   }
 
-  // ✅ Update local storage with final linked data
+  // ✅ Save to localStorage
   if (isEditing) {
     petProfiles[currentEditIndex] = newProfile;
   } else {
     petProfiles[petProfiles.length - 1] = newProfile;
   }
   localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-          
-// UI update
-        DOM.profileSection.classList.add("hidden");
-        DOM.petList.classList.remove("hidden");
-        renderProfiles();
-        window.scrollTo(0, 0);
-        console.log("✅ Profile saved and UI updated.");
-    
-      } catch (err) {
-        console.error("Profile save failed:", err);
-        Utils.showErrorToUser("Error saving profile.");
-    
-      } finally {
-        submitBtn.innerHTML = originalBtnText;
-        submitBtn.disabled = false;
-        showLoading(false);
-     // ✅ ADD THIS: Clear file input to prevent re-uploads
-  document.getElementById("petGallery").value = '';
-      }
-    });
- }
 
+  // ✅ Final UI update
+  DOM.profileSection.classList.add("hidden");
+  DOM.petList.classList.remove("hidden");
+  renderProfiles();
+  window.scrollTo(0, 0);
+  console.log("✅ Profile saved and UI updated.");
+
+} catch (err) {
+  console.error("Profile save failed:", err);
+  Utils.showErrorToUser("Error saving profile.");
+}
 // Single logout handler function
 async function handleLogout() {
   try {
