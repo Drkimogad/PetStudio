@@ -658,6 +658,30 @@ function setCoverPhoto(profileIndex, imageIndex) {
 }
 //✅ FINAL INITIALIZATION ✅
 function initDashboard() {
+  // ✅ Firestore Synconce dashboard starts
+  firebase.auth().onAuthStateChanged(async (user) => {
+    if (user) {
+      console.log("🔁 Syncing pet profiles from Firestore...");
+      try {
+        const snapshot = await firebase.firestore()
+          .collection("profiles")
+          .where("userId", "==", user.uid)
+          .get();
+
+        petProfiles = snapshot.docs.map(doc => doc.data());
+        window.petProfiles = petProfiles;
+        localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+
+        if (typeof renderProfiles === 'function') {
+          renderProfiles();
+        }
+        console.log("📥 Synced profiles from Firestore.");
+      } catch (error) {
+        console.error("❌ Failed to sync profiles:", error);
+        Utils.showErrorToUser("Couldn't load your pet profiles.");
+      }
+    }
+  });
   // Initialize only if required elements exist
   if (window.DOM?.petList) renderProfiles();
   if (document.getElementById('qr-modal')) initQRModal();
