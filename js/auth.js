@@ -7,7 +7,6 @@ const CLOUDINARY_CONFIG = {
 let auth = null;
 let provider = null;
 let isSignupInProgress = false;
-window.petProfiles = window.petProfiles || JSON.parse(localStorage.getItem("petProfiles")) || [];
 
 // 🔶 State Management🔶🔶🔶
 const VALID_ORIGINS = [
