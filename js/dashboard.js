@@ -19,12 +19,12 @@ function initDashboardDOM() {
     // Only initialize missing references
     if (!window.DOM) window.DOM = {};
     
-    // Add dashboard-specific references
-    DOM.addPetProfileBtn = DOM.addPetProfileBtn || addPetProfileBtn;
-    DOM.profileSection = DOM.profileSection || document.getElementById("profileSection");
-    DOM.petList = DOM.petList || document.getElementById("petList");
-    DOM.fullPageBanner = DOM.fullPageBanner || document.getElementById("fullPageBanner");
-    DOM.profileForm = DOM.profileForm || document.getElementById("profileForm");
+    // 🔥 UPDATE THESE LINES - Add explicit null checks:
+    DOM.profileForm = document.getElementById("profileForm") || null; // Explicitly capture (or set to null)
+    DOM.addPetProfileBtn = DOM.addPetProfileBtn || document.getElementById("addPetProfileBtn") || null;
+    DOM.profileSection = DOM.profileSection || document.getElementById("profileSection") || null;
+    DOM.petList = DOM.petList || document.getElementById("petList") || null;
+    DOM.fullPageBanner = DOM.fullPageBanner || document.getElementById("fullPageBanner") || null;
     
     // Ensure required elements exist
     if (!DOM.petList) console.error("petList element missing");
@@ -660,14 +660,17 @@ function setCoverPhoto(profileIndex, imageIndex) {
   renderProfiles();
 }
 //✅ FINAL INITIALIZATION ✅
-function initDashboard() {
-  // Ensure DOM references are ready
-  if (!DOM.profileForm) {
-    console.warn("❌ profileForm not found. Skipping form listener.");
-    return;
-  }
-  // ✅ Firestore Synconce dashboard starts
-  firebase.auth().onAuthStateChanged(async (user) => {
+    // 1. First check if critical elements exist
+    if (!DOM.profileForm || !DOM.petList) {
+        console.error("❌ Missing required elements - profileForm:", !!DOM.profileForm, "petList:", !!DOM.petList);
+        return;
+    }
+
+    // 2. Now safely attach handlers
+    DOM.profileForm.addEventListener("submit", handleFormSubmit); // 🔥 Use the extracted function
+    
+    // 3. Rest of your existing initDashboard code...
+    firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
       console.log("🔁 Syncing pet profiles from Firestore...");
       try {
@@ -711,18 +714,11 @@ if (addBtn) {
  }
 }
 // MOVED FORM SUBMISSION HERE
-    console.log("✅ Form submission listener attached."); // <== ✅ Add this
-    DOM.profileForm.addEventListener("submit", async (e) => {
+async function handleFormSubmit(e) {
     e.preventDefault();
-    console.log("📨 Submit triggered!");  // <== ✅ Added
-    console.log("🧪 Auth before saving:", firebase.auth().currentUser);
+    console.log("📨 Submit triggered!");
 
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      const originalBtnText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '⏳ Saving...';
-      submitBtn.disabled = true;
-
-      try {
+ try {
 // 🔄 This lets us use userId and newProfileId in both the upload and profile object
 const userId = firebase.auth().currentUser?.uid || "anonymous";
 const newProfileId = Date.now();
@@ -835,6 +831,7 @@ try {
   } else {
     petProfiles[petProfiles.length - 1] = newProfile;
   }
+    
     // UI update
       localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
       DOM.profileSection.classList.add("hidden");
@@ -842,6 +839,11 @@ try {
       renderProfiles();
       window.scrollTo(0, 0);
       console.log("✅ Profile saved and UI updated.");
+    
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '⏳ Saving...';
+    submitBtn.disabled = true;
 
     } catch (err) {
       console.error("Profile save failed:", err);
