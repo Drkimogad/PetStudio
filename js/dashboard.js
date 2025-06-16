@@ -826,26 +826,28 @@ try {
   } else {
     petProfiles[petProfiles.length - 1] = newProfile;
   }
-  localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+    // UI update
+      localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+      DOM.profileSection.classList.add("hidden");
+      DOM.petList.classList.remove("hidden");
+      renderProfiles();
+      window.scrollTo(0, 0);
+      console.log("✅ Profile saved and UI updated.");
 
-          // UI update
-        DOM.profileSection.classList.add("hidden");
-        DOM.petList.classList.remove("hidden");
-        renderProfiles();
-        window.scrollTo(0, 0);
-        console.log("✅ Profile saved and UI updated.");
+    } catch (err) {
+      console.error("Profile save failed:", err);
+      Utils.showErrorToUser("Error saving profile.");
+    }
+
   } catch (err) {
-    console.error("Profile save failed:", err);
-    Utils.showErrorToUser("Error saving profile.");
+    console.error("Form submission failed:", err);
+    Utils.showErrorToUser("Form submission failed.");
   } finally {
     submitBtn.innerHTML = originalBtnText;
     submitBtn.disabled = false;
     showLoading(false);
-    document.getElementById("petGallery").value = '';
   }
-}); // ✅ closes event listener
-
-} // ✅ closes initDashboard function
+});
 
 // Single logout handler function
 async function handleLogout() {
