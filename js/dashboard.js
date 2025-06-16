@@ -178,13 +178,6 @@ function logMood(profileIndex, mood) {
 
   console.log(`Mood "${mood}" logged for profile ${profile.name}`);
 }
- // Render Mood Log updated
-// Pre-fill mood input with the most recent mood ONLY (optional UX)
-const moodInput = document.getElementById("moodHistoryInput");
-if (moodInput && profile.moodHistory?.length > 0) {
-const latestMood = profile.moodHistory[profile.moodHistory.length - 1];
-moodInput.value = '';
-}
 // Render mood history updated
 function renderMoodHistory(profile) {
   if (!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
@@ -200,12 +193,13 @@ function capitalizeMood(mood) {
 
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 // 🌀 EDIT PROFILE BUTTON FUNCTION
+// 🌀 EDIT PROFILE BUTTON FUNCTION
 function openEditForm(index) {
-uploadedImageUrls = []; // ✅ Reset before populating form to avoid duplication
+  uploadedImageUrls = []; // ✅ Reset to avoid duplication
   isEditing = true;
   currentEditIndex = index;
 
-  const profile = petProfiles[index]; // ✅ MUST define this first
+  const profile = petProfiles[index]; // ✅ Use the selected profile
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
   // Populate form fields
@@ -227,21 +221,31 @@ uploadedImageUrls = []; // ✅ Reset before populating form to avoid duplication
         </div>
       `;
     }).join("");
-  
-// ⬇️ Add this listener to track cover selection during editing:
-galleryPreview.addEventListener("click", (e) => {
-  if (e.target.classList.contains("cover-btn")) {
-    const newIndex = parseInt(e.target.dataset.index, 10);
-    DOM.profileForm.dataset.coverIndex = newIndex;
 
-    // Update button active styles
-    [...galleryPreview.querySelectorAll(".cover-btn")].forEach(btn => btn.classList.remove("active"));
-    e.target.classList.add("active");
+    // 🟡 Track cover photo selection
+    galleryPreview.addEventListener("click", (e) => {
+      if (e.target.classList.contains("cover-btn")) {
+        const newIndex = parseInt(e.target.dataset.index, 10);
+        DOM.profileForm.dataset.coverIndex = newIndex;
+
+        // Toggle active class
+        [...galleryPreview.querySelectorAll(".cover-btn")].forEach(btn =>
+          btn.classList.remove("active")
+        );
+        e.target.classList.add("active");
       }
     });
   }
 
-  DOM.profileSection.classList.remove("hidden"); 
+  // ✅ FIXED: Move this here where `profile` is defined
+  const moodInput = document.getElementById("moodHistoryInput");
+  if (moodInput && profile.moodHistory?.length > 0) {
+    const latestMood = profile.moodHistory[profile.moodHistory.length - 1];
+    moodInput.value = ''; // Optional: latestMood.mood if you want to pre-fill
+  }
+
+  // ✅ Show form / hide list
+  DOM.profileSection.classList.remove("hidden");
   DOM.fullPageBanner.classList.add("hidden");
 }
 
