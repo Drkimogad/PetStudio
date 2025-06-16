@@ -843,7 +843,7 @@ try {
         showLoading(false);
       }
     });
- }s initDashboard — must come AFTER all nested logic
+ } // initDashboard — must come AFTER all nested logic
 
 // Single logout handler function
 async function handleLogout() {
