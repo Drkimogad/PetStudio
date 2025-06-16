@@ -834,16 +834,18 @@ try {
         renderProfiles();
         window.scrollTo(0, 0);
         console.log("✅ Profile saved and UI updated.");
-      } catch (err) {
-        console.error("Profile save failed:", err);
-        Utils.showErrorToUser("Error saving profile.");
-      } finally {
-        submitBtn.innerHTML = originalBtnText;
-        submitBtn.disabled = false;
-        showLoading(false);
-      }
-    });
- } // initDashboard — must come AFTER all nested logic
+  } catch (err) {
+    console.error("Profile save failed:", err);
+    Utils.showErrorToUser("Error saving profile.");
+  } finally {
+    submitBtn.innerHTML = originalBtnText;
+    submitBtn.disabled = false;
+    showLoading(false);
+    document.getElementById("petGallery").value = '';
+  }
+}); // ✅ closes event listener
+
+} // ✅ closes initDashboard function
 
 // Single logout handler function
 async function handleLogout() {
