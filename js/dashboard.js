@@ -661,6 +661,11 @@ function setCoverPhoto(profileIndex, imageIndex) {
 }
 //✅ FINAL INITIALIZATION ✅
 function initDashboard() {
+  // Ensure DOM references are ready
+  if (!DOM.profileForm) {
+    console.warn("❌ profileForm not found. Skipping form listener.");
+    return;
+  }
   // ✅ Firestore Synconce dashboard starts
   firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
