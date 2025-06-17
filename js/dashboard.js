@@ -85,6 +85,7 @@ function renderProfiles() {
 <div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
   ⚠️ Duplicate image detected. Please check your gallery!
 </div>
+<div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
 
         <div class="mood-tracker">
           <div class="mood-buttons">
