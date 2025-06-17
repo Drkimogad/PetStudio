@@ -702,37 +702,27 @@ const newProfile = {
 };
 // on editing 
 if (isEditing) {
-  newProfile.gallery = [...(petProfiles[currentEditIndex].gallery || [])];
+  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
 
-  if (uploadedImageUrls.length > 0) {
-    newProfile.gallery = [...newProfile.gallery, ...uploadedImageUrls];
+  // 👇 Combine & deduplicate using a Map by `url`
+  const combinedGallery = [...oldGallery, ...uploadedImageUrls];
+  const deduplicatedGallery = Array.from(
+    new Map(combinedGallery.map(img => {
+      const url = typeof img === "string" ? img : img.url;
+      return [url, img];
+    })).values()
+  );
+
+  // ✅ Show warning if duplicates were detected
+  if (combinedGallery.length !== deduplicatedGallery.length) {
+    Utils.showErrorToUser("⚠️ Some duplicate images were removed.");
   }
 
-  // ✅ Deduplicate by URL
-  const dedupedMap = new Map();
-  newProfile.gallery.forEach(img => {
-    const url = typeof img === "string" ? img : img?.url;
-    if (url && !dedupedMap.has(url)) {
-      dedupedMap.set(url, img); // Store original object or string
-    }
-  });
-
-  const dedupedGallery = Array.from(dedupedMap.values());
-  newProfile.gallery = dedupedGallery;
-
-  // 🛑 Optional visual warning (if deduping failed — edge case)
-  const hasDuplicate = dedupedGallery.length < (uploadedImageUrls.length + (petProfiles[currentEditIndex].gallery?.length || 0));
-  const warningEl = document.getElementById("galleryWarning");
-  if (hasDuplicate && warningEl) {
-    warningEl.classList.remove("hidden");
-  } else if (warningEl) {
-    warningEl.classList.add("hidden");
-  }
-
+  newProfile.gallery = deduplicatedGallery;
   petProfiles[currentEditIndex] = newProfile;
-    
 } else {
   newProfile.gallery = uploadedImageUrls;
+  newProfile.coverPhotoIndex = 0;
   petProfiles.push(newProfile);
 }
 
