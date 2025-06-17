@@ -1,7 +1,6 @@
 //🌟 Pet Profile Management 🌟
 const addPetProfileBtn = document.getElementById("addPetProfileBtn");
 let currentQRProfile = null; // Only new declaration needed
-// Load from localStorage on app start
 
 // SAFE GLOBAL INITIALIZATION (compatible with auth.js)
 if (typeof petProfiles === 'undefined') {
@@ -19,12 +18,12 @@ function initDashboardDOM() {
     // Only initialize missing references
     if (!window.DOM) window.DOM = {};
     
-    // 🔥 UPDATE THESE LINES - Add explicit null checks:
-    DOM.profileForm = document.getElementById("profileForm") || null; // Explicitly capture (or set to null)
-    DOM.addPetProfileBtn = DOM.addPetProfileBtn || document.getElementById("addPetProfileBtn") || null;
-    DOM.profileSection = DOM.profileSection || document.getElementById("profileSection") || null;
-    DOM.petList = DOM.petList || document.getElementById("petList") || null;
-    DOM.fullPageBanner = DOM.fullPageBanner || document.getElementById("fullPageBanner") || null;
+    // Add dashboard-specific references
+    DOM.addPetProfileBtn = DOM.addPetProfileBtn || addPetProfileBtn;
+    DOM.profileSection = DOM.profileSection || document.getElementById("profileSection");
+    DOM.petList = DOM.petList || document.getElementById("petList");
+    DOM.fullPageBanner = DOM.fullPageBanner || document.getElementById("fullPageBanner");
+    DOM.profileForm = DOM.profileForm || document.getElementById("profileForm");
     
     // Ensure required elements exist
     if (!DOM.petList) console.error("petList element missing");
@@ -83,18 +82,14 @@ function renderProfiles() {
       </div>
         <div class="mood-tracker">
           <div class="mood-buttons">
-  <span>Log Mood:</span>
-  <button class="mood-btn" data-mood="happy">😊</button>
-  <button class="mood-btn" data-mood="sad">😢</button>
-  <button class="mood-btn" data-mood="angry">😠</button>
-  <button class="mood-btn" data-mood="excited">😄</button>
-  <button class="mood-btn" data-mood="relaxed">😌</button>
-  <button class="mood-btn" data-mood="tired">😴</button>
-  <button class="mood-btn" data-mood="anxious">😰</button>
-  <button class="mood-btn" data-mood="playful">🐾</button>
-  <button class="mood-btn" data-mood="bored">🥱</button>
-</div>
-        <div class="mood-history">
+            <span>Log Mood:</span>
+            <button class="mood-btn" data-mood="happy">😊</button>
+            <button class="mood-btn" data-mood="depressed">😔</button>
+            <button class="mood-btn" data-mood="sad">😞</button>
+            <button class="mood-btn" data-mood="angry">😠</button>
+            <button class="mood-btn" data-mood="sick">🤒</button>
+          </div>
+          <div class="mood-history">
             ${renderMoodHistory(profile)}
           </div>
         </div>
@@ -115,9 +110,8 @@ function renderProfiles() {
       petCard.querySelector(".qrBtn").addEventListener("click", () => generateQRCode(index));
       
       petCard.querySelectorAll(".mood-btn").forEach(btn => {
-      btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
+        btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
       });
-
       
       petCard.querySelectorAll(".cover-btn").forEach(btn => {
         btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
@@ -138,68 +132,27 @@ function getCountdown(birthday) {
   return `${diffDays} days until birthday! 🎉`;
 }
 
-//get emoji updated 
-function getMoodEmoji(mood) {
-  const emojiMap = {
-    happy: "😊",
-    sad: "😢",
-    angry: "😠",
-    excited: "😄",
-    relaxed: "😌",
-    tired: "😴",
-    anxious: "😰",
-    playful: "🐾",
-    bored: "🥱"
-  };
-  return emojiMap[mood] || "😐"; // default emoji if mood not found
-}
-
-// function logMood new
-function logMood(profileIndex, mood) {
-  const profile = petProfiles[profileIndex];
-  if (!profile) return;
-
-  // Create a new mood entry with today's date
-  const newMoodEntry = {
-    date: new Date().toISOString().split("T")[0],
-    mood: mood
-  };
-  // Append to moodHistory or create new
-  if (!Array.isArray(profile.moodHistory)) {
-    profile.moodHistory = [];
-  }
-  profile.moodHistory.push(newMoodEntry);
-
-  // Save updated profiles to localStorage
-  localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-
-  // Update UI (you may call your renderProfiles or a mood-specific re-render)
-  renderProfiles(); // or a more targeted update
-
-  console.log(`Mood "${mood}" logged for profile ${profile.name}`);
-}
-// Render mood history updated
+// Render mood history
 function renderMoodHistory(profile) {
-  if (!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
+  if(!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
   return profile.moodHistory
     .slice(-7)
-    .map(entry => `🗓 ${entry.date} — ${getMoodEmoji(entry.mood)} ${capitalizeMood(entry.mood)}`)
+    .map(entry => `${entry.date}: ${getMoodEmoji(entry.mood)}`)
     .join('<br>');
 }
 
-function capitalizeMood(mood) {
-  return mood.charAt(0).toUpperCase() + mood.slice(1).toLowerCase();
+function getMoodEmoji(mood) {
+  return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
 }
 
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 // 🌀 EDIT PROFILE BUTTON FUNCTION
-// 🌀 EDIT PROFILE BUTTON FUNCTION
 function openEditForm(index) {
-  uploadedImageUrls = []; // ✅ Reset to avoid duplication
+uploadedImageUrls = []; // ✅ Reset before populating form to avoid duplication
   isEditing = true;
   currentEditIndex = index;
 
-  const profile = petProfiles[index]; // ✅ Use the selected profile
+  const profile = petProfiles[index]; // ✅ MUST define this first
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
   // Populate form fields
@@ -221,31 +174,28 @@ function openEditForm(index) {
         </div>
       `;
     }).join("");
+  
+// ⬇️ Add this listener to track cover selection during editing:
+galleryPreview.addEventListener("click", (e) => {
+  if (e.target.classList.contains("cover-btn")) {
+    const newIndex = parseInt(e.target.dataset.index, 10);
+    DOM.profileForm.dataset.coverIndex = newIndex;
 
-    // 🟡 Track cover photo selection
-    galleryPreview.addEventListener("click", (e) => {
-      if (e.target.classList.contains("cover-btn")) {
-        const newIndex = parseInt(e.target.dataset.index, 10);
-        DOM.profileForm.dataset.coverIndex = newIndex;
-
-        // Toggle active class
-        [...galleryPreview.querySelectorAll(".cover-btn")].forEach(btn =>
-          btn.classList.remove("active")
-        );
-        e.target.classList.add("active");
+    // Update button active styles
+    [...galleryPreview.querySelectorAll(".cover-btn")].forEach(btn => btn.classList.remove("active"));
+    e.target.classList.add("active");
       }
     });
   }
-
-  // ✅ FIXED: Move this here where `profile` is defined
+ // Render Mood Log
   const moodInput = document.getElementById("moodHistoryInput");
-  if (moodInput && profile.moodHistory?.length > 0) {
-    const latestMood = profile.moodHistory[profile.moodHistory.length - 1];
-    moodInput.value = ''; // Optional: latestMood.mood if you want to pre-fill
+  if (moodInput) {
+    moodInput.value = profile.moodHistory
+      .map(entry => `${entry.date}:${entry.mood}`)
+      .join("\n");
   }
 
-  // ✅ Show form / hide list
-  DOM.profileSection.classList.remove("hidden");
+  DOM.profileSection.classList.remove("hidden"); 
   DOM.fullPageBanner.classList.add("hidden");
 }
 
@@ -660,39 +610,7 @@ function setCoverPhoto(profileIndex, imageIndex) {
   renderProfiles();
 }
 //✅ FINAL INITIALIZATION ✅
-    // 1. First check if critical elements exist
-    if (!DOM.profileForm || !DOM.petList) {
-        console.error("❌ Missing required elements - profileForm:", !!DOM.profileForm, "petList:", !!DOM.petList);
-        return;
-    }
-
-    // 2. Now safely attach handlers
-    DOM.profileForm.addEventListener("submit", handleFormSubmit); // 🔥 Use the extracted function
-    
-    // 3. Rest of your existing initDashboard code...
-    firebase.auth().onAuthStateChanged(async (user) => {
-    if (user) {
-      console.log("🔁 Syncing pet profiles from Firestore...");
-      try {
-        const snapshot = await firebase.firestore()
-          .collection("profiles")
-          .where("userId", "==", user.uid)
-          .get();
-
-        petProfiles = snapshot.docs.map(doc => doc.data());
-        window.petProfiles = petProfiles;
-        localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-
-        if (typeof renderProfiles === 'function') {
-          renderProfiles();
-        }
-        console.log("📥 Synced profiles from Firestore.");
-      } catch (error) {
-        console.error("❌ Failed to sync profiles:", error);
-        Utils.showErrorToUser("Couldn't load your pet profiles.");
-      }
-    }
-  });
+function initDashboard() {
   // Initialize only if required elements exist
   if (window.DOM?.petList) renderProfiles();
   if (document.getElementById('qr-modal')) initQRModal();
@@ -711,14 +629,20 @@ if (addBtn) {
     DOM.profileSection.classList.remove('hidden');
     DOM.petList.classList.add('hidden');
   });
- }
 }
 // MOVED FORM SUBMISSION HERE
-async function handleFormSubmit(e) {
+    console.log("✅ Form submission listener attached."); // <== ✅ Add this
+    DOM.profileForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    console.log("📨 Submit triggered!");
+    console.log("📨 Submit triggered!");  // <== ✅ Added
+    console.log("🧪 Auth before saving:", firebase.auth().currentUser);
 
- try {
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '⏳ Saving...';
+      submitBtn.disabled = true;
+
+      try {
 // 🔄 This lets us use userId and newProfileId in both the upload and profile object
 const userId = firebase.auth().currentUser?.uid || "anonymous";
 const newProfileId = Date.now();
@@ -742,23 +666,16 @@ for (const file of galleryFiles) {
   }
 }
 
-// Mood history (💡 updated)
+// Mood history (💡 LEAVE THIS AS-IS per your request)
 const moodInput = document.getElementById("moodHistoryInput");
-let moodHistory = [];
+const moodHistory = moodInput?.value
+  ? [{
+      date: new Date().toISOString().split("T")[0],
+      mood: moodInput.value
+    }]
+  : [];
 
-if (isEditing && petProfiles[currentEditIndex]?.moodHistory) {
-  moodHistory = [...petProfiles[currentEditIndex].moodHistory];
-}
-
-const newMoodText = moodInput?.value?.trim();
-if (newMoodText) {
-  moodHistory.push({
-    date: new Date().toISOString().split("T")[0],
-    mood: newMoodText
-  });
-}
-
-// 🔄 Create profile object (initial version without docId/reminderDocId)
+// Create profile object (initial version without docId/reminderDocId)
 const newProfile = {
   id: newProfileId,
   name: document.getElementById("petName").value,
@@ -766,99 +683,77 @@ const newProfile = {
   dob: document.getElementById("petDob").value,
   birthday: document.getElementById("petBirthday").value,
   moodHistory: moodHistory,
-  coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
+  coverPhotoIndex: isEditing
+  ? parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0
+  : 0,
   // ⛔ Do not assign gallery yet!
 };
 
 if (isEditing) {
-  newProfile.gallery = [...(petProfiles[currentEditIndex].gallery || [])];
-  if (uploadedImageUrls.length > 0) {
-    newProfile.gallery = [...newProfile.gallery, ...uploadedImageUrls];
-  }
+  const oldProfile = petProfiles[currentEditIndex];
+  const oldGallery = oldProfile?.gallery || [];
+
+  // 👇 Only add new images if any were uploaded
+  const finalGallery = uploadedImageUrls.length > 0
+    ? [...oldGallery, ...uploadedImageUrls]
+    : oldGallery;
+
+  newProfile.gallery = Array.from(
+    new Map(finalGallery.map(img => {
+      const url = typeof img === "string" ? img : img?.url;
+      return [url, img];
+    })).values()
+  );
+
   petProfiles[currentEditIndex] = newProfile;
 } else {
   newProfile.gallery = uploadedImageUrls;
-  newProfile.coverPhotoIndex = 0; // Default for new profiles
   petProfiles.push(newProfile);
 }
 
-// 🔥 FIREBASE SAVE OPERATION
-try {
-  // A. Save/update profile in Firestore
-  let profileDocRef;
-  if (isEditing && petProfiles[currentEditIndex].docId) {
-    profileDocRef = firebase.firestore()
-      .collection("profiles")
-      .doc(petProfiles[currentEditIndex].docId);
-      
-    await profileDocRef.set(newProfile, { merge: true });
-    newProfile.docId = petProfiles[currentEditIndex].docId;
-  } else {
-    profileDocRef = await firebase.firestore()
-      .collection("profiles")
-      .add({
-        userId,
-        ...newProfile
-      });
-
-    newProfile.docId = profileDocRef.id;
-    await profileDocRef.update({ docId: profileDocRef.id });
-  }
-
-  // B. Reminder logic
-  if (newProfile.birthday) {
-    const reminderData = {
-      userId,
-      petName: newProfile.name,
-      date: Utils.formatFirestoreDate(newProfile.birthday),
-      message: `It's ${newProfile.name}'s birthday today! 🎉`,
-      createdAt: new Date().toISOString(),
-      profileDocId: newProfile.docId
-    };
-
-    const reminderDoc = await firebase.firestore()
-      .collection("reminders")
-      .add(reminderData);
-
-    await profileDocRef.update({ reminderDocId: reminderDoc.id });
-    newProfile.reminderDocId = reminderDoc.id;
-    await reminderDoc.update({ reminderId: reminderDoc.id });
-  }
-
-  // ✅ Save to localStorage
-  if (isEditing) {
-    petProfiles[currentEditIndex] = newProfile;
-  } else {
-    petProfiles[petProfiles.length - 1] = newProfile;
-  }
-    
-    // UI update
-      localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-      DOM.profileSection.classList.add("hidden");
-      DOM.petList.classList.remove("hidden");
-      renderProfiles();
-      window.scrollTo(0, 0);
-      console.log("✅ Profile saved and UI updated.");
-    
-    const submitBtn = e.target.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '⏳ Saving...';
-    submitBtn.disabled = true;
-
-    } catch (err) {
-      console.error("Profile save failed:", err);
-      Utils.showErrorToUser("Error saving profile.");
-    }
-
-  } catch (err) {
-    console.error("Form submission failed:", err);
-    Utils.showErrorToUser("Form submission failed.");
-  } finally {
-    submitBtn.innerHTML = originalBtnText;
-    submitBtn.disabled = false;
-    showLoading(false);
-  }
+// ✅ Save to localStorage
+localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+          
+// Save to Firestore first and get docId
+const docRef = await firebase.firestore().collection("profiles").add({
+  userId,
+  ...newProfile
 });
+newProfile.docId = docRef.id; // 🔥 Save Firestore doc ID for future use
+
+// Optionally add reminder
+if (newProfile.birthday) {
+  const reminderData = {
+    userId,
+    petName: newProfile.name,
+    date: Utils.formatFirestoreDate(newProfile.birthday),
+    message: `It's ${newProfile.name}'s birthday today! 🎉`,
+    createdAt: new Date().toISOString()
+  };
+
+  try {
+    const reminderDoc = await firebase.firestore().collection("reminders").add(reminderData);
+    newProfile.reminderDocId = reminderDoc.id; // 🧠 Save this for future delete
+  } catch (firestoreError) {
+    console.warn("Reminder not saved:", firestoreError.message);
+  }
+}
+          // UI update
+        DOM.profileSection.classList.add("hidden");
+        DOM.petList.classList.remove("hidden");
+        renderProfiles();
+        window.scrollTo(0, 0);
+        console.log("✅ Profile saved and UI updated.");
+      } catch (err) {
+        console.error("Profile save failed:", err);
+        Utils.showErrorToUser("Error saving profile.");
+      } finally {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        showLoading(false);
+      }
+    });
+ }
 
 // Single logout handler function
 async function handleLogout() {
