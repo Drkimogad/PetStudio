@@ -154,20 +154,30 @@ function getMoodEmoji(mood) {
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 // 🌀 EDIT PROFILE BUTTON FUNCTION
 function openEditForm(index) {
-uploadedImageUrls = []; // ✅ Reset before populating form to avoid duplication
+  // ✅ Always reset uploads on each open
+  uploadedImageUrls = [];
   isEditing = true;
   currentEditIndex = index;
 
-  const profile = petProfiles[index]; // ✅ MUST define this first
+  const profile = petProfiles[index];
+  if (!profile) return;
+
+  // ✅ Cover photo index setup
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
-  // Populate form fields
+  // ✅ Fill form fields
   document.getElementById("petName").value = profile.name;
   document.getElementById("petBreed").value = profile.breed;
   document.getElementById("petDob").value = profile.dob;
   document.getElementById("petBirthday").value = profile.birthday;
 
-  // ✅ PREVIEW EXISTING GALLERY
+  // ✅ Mood History as raw string (optional)
+  const moodInput = document.getElementById("moodHistoryInput");
+  if (moodInput && profile.moodHistory?.length > 0) {
+    moodInput.value = ""; // Let user log new mood only
+  }
+
+  // ✅ Preview current gallery
   const galleryPreview = document.getElementById("editGalleryPreview");
   if (galleryPreview && Array.isArray(profile.gallery)) {
     galleryPreview.innerHTML = profile.gallery.map((img, imgIndex) => {
@@ -180,28 +190,24 @@ uploadedImageUrls = []; // ✅ Reset before populating form to avoid duplication
         </div>
       `;
     }).join("");
-  
-// ⬇️ Add this listener to track cover selection during editing:
-galleryPreview.addEventListener("click", (e) => {
-  if (e.target.classList.contains("cover-btn")) {
-    const newIndex = parseInt(e.target.dataset.index, 10);
-    DOM.profileForm.dataset.coverIndex = newIndex;
 
-    // Update button active styles
-    [...galleryPreview.querySelectorAll(".cover-btn")].forEach(btn => btn.classList.remove("active"));
-    e.target.classList.add("active");
+    // Cover photo selection tracker
+    galleryPreview.addEventListener("click", (e) => {
+      if (e.target.classList.contains("cover-btn")) {
+        const newIndex = parseInt(e.target.dataset.index, 10);
+        DOM.profileForm.dataset.coverIndex = newIndex;
+
+        [...galleryPreview.querySelectorAll(".cover-btn")]
+          .forEach(btn => btn.classList.remove("active"));
+
+        e.target.classList.add("active");
       }
     });
   }
- // Render Mood Log
-  const moodInput = document.getElementById("moodHistoryInput");
-  if (moodInput) {
-    moodInput.value = profile.moodHistory
-      .map(entry => `${entry.date}:${entry.mood}`)
-      .join("\n");
-  }
 
-  DOM.profileSection.classList.remove("hidden"); 
+  // ✅ Reveal editor, hide list
+  DOM.profileSection.classList.remove("hidden");
+  DOM.petList.classList.add("hidden"); // Added now
   DOM.fullPageBanner.classList.add("hidden");
 }
 
