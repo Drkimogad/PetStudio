@@ -69,17 +69,23 @@ function renderProfiles() {
           <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
         </div>
       <div class="gallery-grid">
-        ${profile.gallery.map((img, imgIndex) => {
-          const imgUrl = typeof img === "string" ? img : img?.url;
-          return `
-            <div class="gallery-item">
-              <img src="${imgUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
-              <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-                      data-index="${imgIndex}">★</button>
-            </div>
-          `;
-        }).join('')}
+  ${profile.gallery.map((img, imgIndex) => {
+    const imgUrl = typeof img === "string" ? img : img?.url;
+    return `
+      <div class="gallery-item">
+        <img src="${imgUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
+        <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
+                data-index="${imgIndex}">★</button>
       </div>
+    `;
+  }).join('')}
+</div>
+
+<div id="editGalleryPreview"></div>
+<div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
+  ⚠️ Duplicate image detected. Please check your gallery!
+</div>
+
         <div class="mood-tracker">
           <div class="mood-buttons">
             <span>Log Mood:</span>
@@ -688,25 +694,27 @@ const newProfile = {
   : 0,
   // ⛔ Do not assign gallery yet!
 };
-
+// on editing 
 if (isEditing) {
-  const oldProfile = petProfiles[currentEditIndex];
-  const oldGallery = oldProfile?.gallery || [];
+  newProfile.gallery = [...(petProfiles[currentEditIndex].gallery || [])];
+  if (uploadedImageUrls.length > 0) {
+    newProfile.gallery = [...newProfile.gallery, ...uploadedImageUrls];
+  }
+  // ADD HERE ✅ check for duplicates by URL
+  const seen = new Set();
+  const hasDuplicate = newProfile.gallery.some(img => {
+    const url = typeof img === "string" ? img : img.url;
+    if (seen.has(url)) return true;
+    seen.add(url);
+    return false;
+  });
 
-// Normalize both old and new images to objects with url
-const normalizeImage = (img) =>
-  typeof img === "string" ? { url: img } : img;
-
-// Combine normalized galleries
-const combinedGallery = [
-  ...oldGallery.map(normalizeImage),
-  ...uploadedImageUrls.map(normalizeImage),
-];
-
-// Deduplicate by URL
-newProfile.gallery = Array.from(
-  new Map(combinedGallery.map(img => [img.url, img])).values()
-);
+  const warningEl = document.getElementById("galleryWarning");
+  if (hasDuplicate && warningEl) {
+    warningEl.classList.remove("hidden");
+  } else if (warningEl) {
+    warningEl.classList.add("hidden");
+  }
 
   petProfiles[currentEditIndex] = newProfile;
 } else {
