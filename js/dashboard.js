@@ -693,17 +693,20 @@ if (isEditing) {
   const oldProfile = petProfiles[currentEditIndex];
   const oldGallery = oldProfile?.gallery || [];
 
-  // 👇 Only add new images if any were uploaded
-  const finalGallery = uploadedImageUrls.length > 0
-    ? [...oldGallery, ...uploadedImageUrls]
-    : oldGallery;
+// Normalize both old and new images to objects with url
+const normalizeImage = (img) =>
+  typeof img === "string" ? { url: img } : img;
 
-  newProfile.gallery = Array.from(
-    new Map(finalGallery.map(img => {
-      const url = typeof img === "string" ? img : img?.url;
-      return [url, img];
-    })).values()
-  );
+// Combine normalized galleries
+const combinedGallery = [
+  ...oldGallery.map(normalizeImage),
+  ...uploadedImageUrls.map(normalizeImage),
+];
+
+// Deduplicate by URL
+newProfile.gallery = Array.from(
+  new Map(combinedGallery.map(img => [img.url, img])).values()
+);
 
   petProfiles[currentEditIndex] = newProfile;
 } else {
