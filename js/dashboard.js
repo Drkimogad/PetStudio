@@ -697,18 +697,25 @@ const newProfile = {
 // on editing 
 if (isEditing) {
   newProfile.gallery = [...(petProfiles[currentEditIndex].gallery || [])];
+
   if (uploadedImageUrls.length > 0) {
     newProfile.gallery = [...newProfile.gallery, ...uploadedImageUrls];
   }
-  // ADD HERE ✅ check for duplicates by URL
-  const seen = new Set();
-  const hasDuplicate = newProfile.gallery.some(img => {
-    const url = typeof img === "string" ? img : img.url;
-    if (seen.has(url)) return true;
-    seen.add(url);
-    return false;
+
+  // ✅ Deduplicate by URL
+  const dedupedMap = new Map();
+  newProfile.gallery.forEach(img => {
+    const url = typeof img === "string" ? img : img?.url;
+    if (url && !dedupedMap.has(url)) {
+      dedupedMap.set(url, img); // Store original object or string
+    }
   });
 
+  const dedupedGallery = Array.from(dedupedMap.values());
+  newProfile.gallery = dedupedGallery;
+
+  // 🛑 Optional visual warning (if deduping failed — edge case)
+  const hasDuplicate = dedupedGallery.length < (uploadedImageUrls.length + (petProfiles[currentEditIndex].gallery?.length || 0));
   const warningEl = document.getElementById("galleryWarning");
   if (hasDuplicate && warningEl) {
     warningEl.classList.remove("hidden");
@@ -717,6 +724,7 @@ if (isEditing) {
   }
 
   petProfiles[currentEditIndex] = newProfile;
+    
 } else {
   newProfile.gallery = uploadedImageUrls;
   petProfiles.push(newProfile);
