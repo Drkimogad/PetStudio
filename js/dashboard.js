@@ -625,25 +625,37 @@ function setCoverPhoto(profileIndex, imageIndex) {
 }
 //✅ FINAL INITIALIZATION ✅
 function initDashboard() {
-  // Initialize only if required elements exist
-  if (window.DOM?.petList) renderProfiles();
-  if (document.getElementById('qr-modal')) initQRModal();
-  
-// logout handler (replaces standalone version)
+  // 🔁 Restore from global in case Firestore updated petProfiles
+  petProfiles = window.petProfiles || [];
+
+  // ✅ Only render if we have profiles
+  if (petProfiles.length > 0 && DOM.petList) {
+    renderProfiles();
+  }
+
+  // 🎯 Optional: initialize QR modal (if exists)
+  if (document.getElementById('qr-modal')) {
+    initQRModal();
+  }
+
+  // 🔒 Attach logout button
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', handleLogout);
   }
-// Add profiles handler    
-const addBtn = document.getElementById('addPetProfileBtn');
-if (addBtn) {
-  addBtn.addEventListener('click', () => {
-    isEditing = false;
-    currentEditIndex = -1;
-    DOM.profileSection.classList.remove('hidden');
-    DOM.petList.classList.add('hidden');
-  });
+
+  // ➕ Add Pet Button
+  const addBtn = document.getElementById('addPetProfileBtn');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      isEditing = false;
+      currentEditIndex = -1;
+      DOM.profileSection.classList.remove('hidden');
+      DOM.petList.classList.add('hidden');
+    });
+  }
 }
+
 // MOVED FORM SUBMISSION HERE
 DOM.profileForm.addEventListener("submit", async (e) => {
   e.preventDefault();
