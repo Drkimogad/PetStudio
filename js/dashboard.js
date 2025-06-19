@@ -807,7 +807,6 @@ DOM.profileForm.addEventListener("submit", async (e) => {
     document.getElementById("petGallery").value = "";
   }
 });
-}
 
 // Single logout handler function
 async function handleLogout() {
