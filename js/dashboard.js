@@ -2,10 +2,11 @@
 const addPetProfileBtn = document.getElementById("addPetProfileBtn");
 let currentQRProfile = null; // Only new declaration needed
 
+// 🌍 Load from localStorage and expose globally
+let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+window.petProfiles = petProfiles;
+
 // SAFE GLOBAL INITIALIZATION (compatible with auth.js)
-if (typeof petProfiles === 'undefined') {
-    window.petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-}
 if (typeof isEditing === 'undefined') {
     window.isEditing = false;
 }
