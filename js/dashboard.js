@@ -644,132 +644,157 @@ if (addBtn) {
   });
 }
 // MOVED FORM SUBMISSION HERE
-    console.log("✅ Form submission listener attached."); // <== ✅ Add this
-    DOM.profileForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    console.log("📨 Submit triggered!");  // <== ✅ Added
-    console.log("🧪 Auth before saving:", firebase.auth().currentUser);
+DOM.profileForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  console.log("📨 Submit triggered!");
+  console.log("🧪 Auth before saving:", firebase.auth().currentUser);
 
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      const originalBtnText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '⏳ Saving...';
-      submitBtn.disabled = true;
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.innerHTML;
+  submitBtn.innerHTML = '⏳ Saving...';
+  submitBtn.disabled = true;
 
+  try {
+    const userId = firebase.auth().currentUser?.uid;
+    if (!userId) throw new Error("User not authenticated");
+
+    const newProfileId = Date.now();
+
+    // 📁 Upload gallery
+    const galleryFiles = Array.from(document.getElementById("petGallery").files);
+    const uploadedImageUrls = [];
+
+    for (const file of galleryFiles) {
       try {
-// 🔄 This lets us use userId and newProfileId in both the upload and profile object
-const userId = firebase.auth().currentUser?.uid || "anonymous";
-const newProfileId = Date.now();
-
-// Handle image uploads
-const galleryFiles = Array.from(document.getElementById("petGallery").files);
-const uploadedImageUrls = [];
-
-for (const file of galleryFiles) {
-  try {
-    showLoading(true);
-    const result = await uploadToCloudinary(file, userId, newProfileId); // 🔄 MODIFIED TO MATCH FILE PATH
-    if (result?.url) {
-      uploadedImageUrls.push(result); // Stores full object: url, public_id, etc.
-    }
-  } catch (uploadError) {
-    console.error('Failed to upload image:', uploadError);
-    Utils.showErrorToUser(`Failed to upload ${file.name}.`);
-  } finally {
-    showLoading(false);
-  }
-}
-
-// Mood history (💡 LEAVE THIS AS-IS per your request)
-const moodInput = document.getElementById("moodHistoryInput");
-const moodHistory = moodInput?.value
-  ? [{
-      date: new Date().toISOString().split("T")[0],
-      mood: moodInput.value
-    }]
-  : [];
-
-// Create profile object (initial version without docId/reminderDocId)
-const newProfile = {
-  id: newProfileId,
-  name: document.getElementById("petName").value,
-  breed: document.getElementById("petBreed").value,
-  dob: document.getElementById("petDob").value,
-  birthday: document.getElementById("petBirthday").value,
-  moodHistory: moodHistory,
-  coverPhotoIndex: isEditing
-  ? parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0
-  : 0,
-  // ⛔ Do not assign gallery yet!
-};
-// on editing 
-if (isEditing) {
-  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
-
-  // 👇 Combine & deduplicate using a Map by `url`
-  const combinedGallery = [...oldGallery, ...uploadedImageUrls];
-  const deduplicatedGallery = Array.from(
-    new Map(combinedGallery.map(img => {
-      const url = typeof img === "string" ? img : img.url;
-      return [url, img];
-    })).values()
-  );
-
-  // ✅ Show warning if duplicates were detected
-  if (combinedGallery.length !== deduplicatedGallery.length) {
-    Utils.showErrorToUser("⚠️ Some duplicate images were removed.");
-  }
-
-  newProfile.gallery = deduplicatedGallery;
-  petProfiles[currentEditIndex] = newProfile;
-} else {
-  newProfile.gallery = uploadedImageUrls;
-  newProfile.coverPhotoIndex = 0;
-  petProfiles.push(newProfile);
-}
-
-// ✅ Save to localStorage
-localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-          
-// Save to Firestore first and get docId
-const docRef = await firebase.firestore().collection("profiles").add({
-  userId,
-  ...newProfile
-});
-newProfile.docId = docRef.id; // 🔥 Save Firestore doc ID for future use
-
-// Optionally add reminder
-if (newProfile.birthday) {
-  const reminderData = {
-    userId,
-    petName: newProfile.name,
-    date: Utils.formatFirestoreDate(newProfile.birthday),
-    message: `It's ${newProfile.name}'s birthday today! 🎉`,
-    createdAt: new Date().toISOString()
-  };
-
-  try {
-    const reminderDoc = await firebase.firestore().collection("reminders").add(reminderData);
-    newProfile.reminderDocId = reminderDoc.id; // 🧠 Save this for future delete
-  } catch (firestoreError) {
-    console.warn("Reminder not saved:", firestoreError.message);
-  }
-}
-          // UI update
-        DOM.profileSection.classList.add("hidden");
-        DOM.petList.classList.remove("hidden");
-        renderProfiles();
-        window.scrollTo(0, 0);
-        console.log("✅ Profile saved and UI updated.");
-      } catch (err) {
-        console.error("Profile save failed:", err);
-        Utils.showErrorToUser("Error saving profile.");
+        showLoading(true);
+        const result = await uploadToCloudinary(file, userId, newProfileId);
+        if (result?.url) {
+          uploadedImageUrls.push(result);
+        }
+      } catch (uploadError) {
+        console.error('Failed to upload image:', uploadError);
+        Utils.showErrorToUser(`Failed to upload ${file.name}.`);
       } finally {
-        submitBtn.innerHTML = originalBtnText;
-        submitBtn.disabled = false;
         showLoading(false);
       }
-    });
- }
+    }
+
+    // 😺 Mood logic (preserve and append)
+    const moodInput = document.getElementById("moodHistoryInput");
+    let moodHistory = [];
+
+    if (isEditing && petProfiles[currentEditIndex]?.moodHistory) {
+      moodHistory = [...petProfiles[currentEditIndex].moodHistory];
+    }
+
+    const newMood = moodInput?.value?.trim();
+    if (newMood) {
+      moodHistory.push({
+        date: new Date().toISOString().split("T")[0],
+        mood: newMood
+      });
+    }
+
+    // 🧠 Construct newProfile object
+    const newProfile = {
+      id: newProfileId,
+      name: document.getElementById("petName").value,
+      breed: document.getElementById("petBreed").value,
+      dob: document.getElementById("petDob").value,
+      birthday: document.getElementById("petBirthday").value,
+      moodHistory,
+      coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
+      // gallery & docId added below
+    };
+
+    // 🧩 Merge gallery (EDIT vs CREATE)
+    if (isEditing) {
+      const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
+      const combinedGallery = [...oldGallery, ...uploadedImageUrls];
+
+      // ✅ De-duplicate based on `img.url`
+      const deduplicatedGallery = Array.from(
+        new Map(combinedGallery.map(img => {
+          const url = typeof img === "string" ? img : img.url;
+          return [url, img];
+        })).values()
+      );
+
+      if (combinedGallery.length !== deduplicatedGallery.length) {
+        Utils.showErrorToUser("⚠️ Duplicate images removed.");
+      }
+
+      newProfile.gallery = deduplicatedGallery;
+
+    } else {
+      newProfile.gallery = uploadedImageUrls;
+    }
+
+    // 🧨 Save to Firestore
+    let docRef;
+
+    if (isEditing && petProfiles[currentEditIndex]?.docId) {
+      // 🔁 Update existing
+      docRef = firebase.firestore().collection("profiles").doc(petProfiles[currentEditIndex].docId);
+      await docRef.set({ ...newProfile, userId }, { merge: true });
+      newProfile.docId = petProfiles[currentEditIndex].docId;
+    } else {
+      // 🆕 New profile
+      docRef = await firebase.firestore().collection("profiles").add({
+        userId,
+        ...newProfile
+      });
+      newProfile.docId = docRef.id;
+      await docRef.update({ docId: docRef.id }); // ⬅️ Add docId field to doc
+    }
+
+    // 🎉 Add birthday reminder if needed
+    if (newProfile.birthday) {
+      const reminderData = {
+        userId,
+        petName: newProfile.name,
+        date: Utils.formatFirestoreDate(newProfile.birthday),
+        message: `It's ${newProfile.name}'s birthday today! 🎉`,
+        createdAt: new Date().toISOString(),
+        profileDocId: newProfile.docId
+      };
+
+      try {
+        const reminderDoc = await firebase.firestore().collection("reminders").add(reminderData);
+        newProfile.reminderDocId = reminderDoc.id;
+        await reminderDoc.update({ reminderId: reminderDoc.id });
+      } catch (reminderErr) {
+        console.warn("Reminder not saved:", reminderErr.message);
+      }
+    }
+
+    // 🧠 Update local array & localStorage
+    if (isEditing) {
+      petProfiles[currentEditIndex] = newProfile;
+    } else {
+      petProfiles.push(newProfile);
+    }
+
+    localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+
+    // ✅ UI Update
+    DOM.profileSection.classList.add("hidden");
+    DOM.petList.classList.remove("hidden");
+    renderProfiles();
+    window.scrollTo(0, 0);
+    console.log("✅ Profile saved and UI updated.");
+
+  } catch (err) {
+    console.error("Profile save failed:", err);
+    Utils.showErrorToUser("❌ Failed to save profile.");
+  } finally {
+    submitBtn.innerHTML = originalBtnText;
+    submitBtn.disabled = false;
+    showLoading(false);
+    document.getElementById("petGallery").value = "";
+  }
+});
+}
 
 // Single logout handler function
 async function handleLogout() {
