@@ -799,6 +799,9 @@ console.log("✅ Form submission listener attached."); // You already had this �
     submitBtn.innerHTML = originalBtnText;
     submitBtn.disabled = false;
     showLoading(false);
+    
+  // ✅ Safely clear petGallery input
+  const galleryInput = document.getElementById("petGallery");
     document.getElementById("petGallery").value = "";
   }
 });
