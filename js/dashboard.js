@@ -31,13 +31,6 @@ function initDashboardDOM() {
     if (!DOM.profileSection) console.error("profileSection element missing");
 }
 
-// Initialize DOM references when safe
-if (document.readyState === 'complete') {
-    initDashboardDOM();
-} else {
-    document.addEventListener('DOMContentLoaded', initDashboardDOM);
-}
-
 // RENDER ALL PROFILES FORM OLD 
 function renderProfiles() {
   DOM.petList.innerHTML = '';
@@ -658,6 +651,8 @@ function initDashboard() {
 
 // MOVED FORM SUBMISSION HERE
 DOM.profileForm.addEventListener("submit", async (e) => {
+console.log("✅ Form submission listener attached."); // You already had this 👍
+    
   e.preventDefault();
   console.log("📨 Submit triggered!");
   console.log("🧪 Auth before saving:", firebase.auth().currentUser);
@@ -807,7 +802,9 @@ DOM.profileForm.addEventListener("submit", async (e) => {
     document.getElementById("petGallery").value = "";
   }
 });
-
+} else {
+  console.error("❌ Cannot attach form listener: DOM.profileForm is undefined");
+}
 // Single logout handler function
 async function handleLogout() {
   try {
