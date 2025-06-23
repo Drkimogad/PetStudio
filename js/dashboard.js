@@ -802,12 +802,13 @@ console.log("✅ Form submission listener attached."); // You already had this �
     
   // ✅ Safely clear petGallery input
   const galleryInput = document.getElementById("petGallery");
-    document.getElementById("petGallery").value = "";
-  }
-});
+      if (galleryInput) galleryInput.value = "";
+ } // ✅ closes finally
+}); // ✅ closes addEventListener
 } else {
   console.error("❌ Cannot attach form listener: DOM.profileForm is undefined");
-}
+} // ✅ closes if-else block
+
 // Single logout handler function
 async function handleLogout() {
   try {
