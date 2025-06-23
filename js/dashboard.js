@@ -39,6 +39,9 @@ function renderProfiles() {
   }
   else {
     petProfiles.forEach((profile, index) => {
+     // ✅ add this line first to skip broken profiles
+  if (!profile || typeof profile !== 'object') return; // added recently 
+        
       const petCard = document.createElement("div");
       petCard.classList.add("petCard");
       petCard.id = `pet-card-${profile.id}`;    
@@ -63,7 +66,7 @@ function renderProfiles() {
           <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
         </div>
       <div class="gallery-grid">
-  ${profile.gallery.map((img, imgIndex) => {
+  ${profile.gallery || []).map((img, imgIndex) => {
     const imgUrl = typeof img === "string" ? img : img?.url;
     return `
       <div class="gallery-item">
