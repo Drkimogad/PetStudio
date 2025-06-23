@@ -650,6 +650,8 @@ function initDashboard() {
 }
 
 // MOVED FORM SUBMISSION HERE
+// the whole form submission wrapped in an if block 
+if (DOM.profileForm) {
 DOM.profileForm.addEventListener("submit", async (e) => {
 console.log("✅ Form submission listener attached."); // You already had this 👍
     
