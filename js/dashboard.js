@@ -617,7 +617,7 @@ function setCoverPhoto(profileIndex, imageIndex) {
   renderProfiles();
 }
 //✅ FINAL INITIALIZATION ✅
-function initDashboard() {
+function finalizeDashboard() {
   // 🔁 Restore from global in case Firestore updated petProfiles
   petProfiles = window.petProfiles || [];
 
@@ -832,5 +832,5 @@ async function handleLogout() {
 // Start initialization based on document state
 document.addEventListener('DOMContentLoaded', () => {
   initDashboardDOM();      // 🧠 Make sure DOM references are set
-  initDashboard();         // ✅ Then run main logic
+  finalizeDashboard();     // ✅ Use the correct one
 });
