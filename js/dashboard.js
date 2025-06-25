@@ -651,20 +651,26 @@ if (addBtn) {
   });
  }
 }
+// added recently
+function attachFormListenerWhenReady() {
+  const form = document.getElementById("profileForm");
+
+  if (!form) {
+    console.warn("⏳ Waiting for form to be available...");
+    setTimeout(attachFormListenerWhenReady, 300); // Retry in 300ms
+    return;
+  }
+  console.log("✅ profileForm found. Attaching listener...");
 
 // MOVED FORM SUBMISSION HERE
-console.log("🚧 Attaching form listener check...");
-console.log("🔍 DOM.profileForm =", DOM.profileForm);
-console.log("🔍 document.getElementById('profileForm') =", document.getElementById('profileForm'));
-
 // the whole form submission wrapped in an if block 
-if (DOM.profileForm) {
+      // ✅ Only attach once
+if (!form.dataset.listenerAttached) {
     
-DOM.profileForm.addEventListener("submit", async (e) => {
-console.log("✅ Form submission listener attached."); // You already had this 👍    
-  e.preventDefault();
-    
-  console.log("📨 Submit triggered!");
+form.addEventListener("submit", async (e) => {
+console.log("✅ Form submission listener attached."); // You already had this 👍
+console.log("📨 Submit triggered!");
+  e.preventDefault();   
   console.log("🧪 Auth before saving:", firebase.auth().currentUser);
 
   const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -815,9 +821,9 @@ console.log("✅ Form submission listener attached."); // You already had this �
       if (galleryInput) galleryInput.value = "";
  } // ✅ closes finally
 }); // ✅ closes addEventListener
-} else {
-  console.error("❌ Cannot attach form listener: DOM.profileForm is undefined");
-} // ✅ closes if-else block
+form.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
+ } 
+}
 
 // Single logout handler function
 async function handleLogout() {
