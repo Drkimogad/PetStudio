@@ -638,24 +638,32 @@ function finalizeDashboard() {
   }
 
   // ➕ Add Pet Button
-  const addBtn = document.getElementById('addPetProfileBtn');
-  if (addBtn) {
-    addBtn.addEventListener('click', () => {
-      isEditing = false;
-      currentEditIndex = -1;
-      DOM.profileSection.classList.remove('hidden');
-      DOM.petList.classList.add('hidden');
-    });
-  }
+const addBtn = document.getElementById('addPetProfileBtn');
+if (addBtn) {
+  addBtn.addEventListener('click', () => {
+    isEditing = false;
+    currentEditIndex = -1;
+    DOM.profileSection.classList.remove('hidden');
+    DOM.petList.classList.add('hidden');
+
+    // ✅ After showing the form, attach the submit listener
+    attachFormListenerWhenReady();
+  });
+ }
 }
 
 // MOVED FORM SUBMISSION HERE
+console.log("🚧 Attaching form listener check...");
+console.log("🔍 DOM.profileForm =", DOM.profileForm);
+console.log("🔍 document.getElementById('profileForm') =", document.getElementById('profileForm'));
+
 // the whole form submission wrapped in an if block 
 if (DOM.profileForm) {
-DOM.profileForm.addEventListener("submit", async (e) => {
-console.log("✅ Form submission listener attached."); // You already had this 👍
     
+DOM.profileForm.addEventListener("submit", async (e) => {
+console.log("✅ Form submission listener attached."); // You already had this 👍    
   e.preventDefault();
+    
   console.log("📨 Submit triggered!");
   console.log("🧪 Auth before saving:", firebase.auth().currentUser);
 
