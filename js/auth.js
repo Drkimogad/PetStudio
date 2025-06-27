@@ -187,15 +187,12 @@ function initAuthListeners() {
 
         // 🔄 Sync from Firestore to global + localStorage
         const fetchedProfiles = snapshot.docs.map(doc => doc.data());
-        localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
         window.petProfiles = fetchedProfiles;
-        if (typeof renderProfiles === "function") {
-        renderProfiles(); // 🧠 force synced profile rendering
-   }
+        localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
         // 👁️ Log for debug
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
 
-        // 🔁 Continue with dashboard rendering
+       // 🔁 Continue with dashboard rendering (which includes renderProfiles)
         if (typeof showDashboard === "function") {
           showDashboard();
         } else {
