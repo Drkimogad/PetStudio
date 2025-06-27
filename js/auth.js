@@ -80,15 +80,26 @@ function showDashboard() {
   if (!DOM.authContainer || !DOM.dashboard) {
     console.error("DOM elements not ready in showDashboard");
     return;
-  }  
+  }
+
+  // ✅ Hide login screen, show dashboard
   DOM.authContainer.classList.add('hidden');
   DOM.dashboard.classList.remove('hidden');
   if (DOM.addPetProfileBtn) DOM.addPetProfileBtn.classList.remove('hidden');
   if (DOM.fullPageBanner) DOM.fullPageBanner.classList.remove('hidden');
   if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
-  if (petProfiles.length > 0 && DOM.petList) {
+
+  // ✅ Make sure petProfiles is restored
+  const localProfiles = JSON.parse(localStorage.getItem("petProfiles")) || [];
+  window.petProfiles = localProfiles;
+  console.log("🧠 Restored petProfiles in showDashboard:", localProfiles);
+
+  // ✅ Render if available
+  if (localProfiles.length > 0 && DOM.petList) {
     DOM.petList.classList.remove('hidden');
     renderProfiles();
+  } else {
+    console.log("ℹ️ No profiles to render in showDashboard");
   }
 }
 // ====== Google Sign-In Initialization ======
