@@ -151,7 +151,8 @@ function setupGoogleLoginButton() {
         shape: "rectangular",
         width: 250
       });  
- // Optional: One Tap sign-in
+  // ✅ Avoid popup if already signed in
+    if (!firebase.auth().currentUser) {
       google.accounts.id.prompt();
     }
   } catch (error) {
@@ -201,14 +202,9 @@ function initAuthListeners() {
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
 
        // 🔁 Continue with dashboard rendering (which includes renderProfiles)
-        setTimeout(() => {
         if (typeof showDashboard === "function") {
           showDashboard();
-        } else {
-          console.warn("⚠️ showDashboard is not defined yet.");
-        }
-      }, 200); // ⏳ Give DOM a moment
-
+ }
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
         Utils.showErrorToUser("Couldn't load your pet profiles.");
