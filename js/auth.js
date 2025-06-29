@@ -78,37 +78,38 @@ document.addEventListener("DOMContentLoaded", () => {
 // ====== Core Functions ======
 function showDashboard() {
   console.log("🚪 Entered showDashboard()");
-  const localProfiles = JSON.parse(localStorage.getItem("petProfiles")) || [];
+
+  // ✅ Use live memory if available, else fallback to localStorage
+  let localProfiles = window.petProfiles || JSON.parse(localStorage.getItem("petProfiles")) || [];
+
+  // ✅ Restore to window for consistency
   window.petProfiles = localProfiles;
+
+  // ✅ Log for debugging
+  console.log("🧠 Restored petProfiles in showDashboard:", localProfiles);
   console.log("🧠 petProfiles length:", localProfiles.length);
   console.log("📦 petProfiles:", localProfiles);
-  
-  if (!DOM.authContainer || !DOM.dashboard) {
-    console.error("DOM elements not ready in showDashboard");
-    return;
-  }
 
-  // ✅ Hide login screen, show dashboard
-  DOM.authContainer.classList.add('hidden');
-  DOM.dashboard.classList.remove('hidden');
-  if (DOM.addPetProfileBtn) DOM.addPetProfileBtn.classList.remove('hidden');
-  if (DOM.fullPageBanner) DOM.fullPageBanner.classList.remove('hidden');
-  if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
-
-// ✅ Only restore if window.petProfiles is not already set
-  if (!window.petProfiles || window.petProfiles.length === 0) { // ✅ Uses fast, live data
-  const localProfiles = JSON.parse(localStorage.getItem("petProfiles")) || [];
-  window.petProfiles = localProfiles;
- }
-  console.log("🧠 Restored petProfiles in showDashboard:", localProfiles);
-
-  // ✅ Render if available
-  if (window.petProfiles.length > 0 && DOM.petList) {
+  // ✅ Render pet cards if available
+  if (localProfiles.length > 0 && DOM.petList) {
     DOM.petList.classList.remove('hidden');
     renderProfiles();
   } else {
     console.log("ℹ️ No profiles to render in showDashboard");
   }
+
+  // ✅ Final UI toggles
+  if (!DOM.authContainer || !DOM.dashboard) {
+    console.error("DOM elements not ready in showDashboard");
+    return;
+  }
+
+  DOM.authContainer.classList.add('hidden');
+  DOM.dashboard.classList.remove('hidden');
+
+  if (DOM.addPetProfileBtn) DOM.addPetProfileBtn.classList.remove('hidden');
+  if (DOM.fullPageBanner) DOM.fullPageBanner.classList.remove('hidden');
+  if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
 }
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
@@ -201,11 +202,9 @@ function initAuthListeners() {
         localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles)); // 🟡 Persistent backup
         // 👁️ Log for debug
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
-
        // 🔁 Continue with dashboard rendering (which includes renderProfiles)
-        if (typeof showDashboard === "function") {
           showDashboard();
- }
+        
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
         Utils.showErrorToUser("Couldn't load your pet profiles.");
