@@ -95,7 +95,7 @@ function showDashboard() {
   if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
 
 // ✅ Only restore if window.petProfiles is not already set
-  if (!window.petProfiles || window.petProfiles.length === 0) {
+  if (!window.petProfiles || window.petProfiles.length === 0) { // ✅ Uses fast, live data
   const localProfiles = JSON.parse(localStorage.getItem("petProfiles")) || [];
   window.petProfiles = localProfiles;
  }
@@ -194,8 +194,8 @@ function initAuthListeners() {
 
         // 🔄 Sync from Firestore to global + localStorage
         const fetchedProfiles = snapshot.docs.map(doc => doc.data());
-        window.petProfiles = fetchedProfiles;
-        localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
+        window.petProfiles = fetchedProfiles; // 🔴 Live memory
+        localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles)); // 🟡 Persistent backup
         // 👁️ Log for debug
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
 
