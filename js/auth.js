@@ -77,6 +77,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 // ====== Core Functions ======
 function showDashboard() {
+  // To track exactly what it's receiving
+  console.log("🚪 Entered showDashboard()");
+  console.log("🧠 petProfiles length:", petProfiles.length);
+  console.log("📦 petProfiles:", petProfiles);
+  
   if (!DOM.authContainer || !DOM.dashboard) {
     console.error("DOM elements not ready in showDashboard");
     return;
@@ -193,11 +198,13 @@ function initAuthListeners() {
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
 
        // 🔁 Continue with dashboard rendering (which includes renderProfiles)
+        setTimeout(() => {
         if (typeof showDashboard === "function") {
           showDashboard();
         } else {
           console.warn("⚠️ showDashboard is not defined yet.");
         }
+      }, 200); // ⏳ Give DOM a moment
 
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
@@ -219,7 +226,15 @@ function initAuthListeners() {
     console.error("❌ Auth listener error:", error);
   });
 }
-
+// Set Firebase persistence before initializing listeners
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(() => {
+    console.log("🔐 Firebase auth persistence set to LOCAL");
+    initAuthListeners(); // Now it's safe to listen for auth changes
+  })
+  .catch((error) => {
+    console.error("❌ Failed to set auth persistence:", error);
+  });
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
