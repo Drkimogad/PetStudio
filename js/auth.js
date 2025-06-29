@@ -154,7 +154,8 @@ function setupGoogleLoginButton() {
   // ✅ Avoid popup if already signed in
     if (!firebase.auth().currentUser) {
       google.accounts.id.prompt();
-    }
+   } 
+  }
   } catch (error) {
     console.error("Google Sign-In setup failed:", error);
   }
