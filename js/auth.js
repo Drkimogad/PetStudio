@@ -94,13 +94,15 @@ function showDashboard() {
   if (DOM.fullPageBanner) DOM.fullPageBanner.classList.remove('hidden');
   if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
 
-  // ✅ Make sure petProfiles is restored
+// ✅ Only restore if window.petProfiles is not already set
+  if (!window.petProfiles || window.petProfiles.length === 0) {
   const localProfiles = JSON.parse(localStorage.getItem("petProfiles")) || [];
   window.petProfiles = localProfiles;
+ }
   console.log("🧠 Restored petProfiles in showDashboard:", localProfiles);
 
   // ✅ Render if available
-  if (localProfiles.length > 0 && DOM.petList) {
+  if (window.petProfiles.length > 0 && DOM.petList) {
     DOM.petList.classList.remove('hidden');
     renderProfiles();
   } else {
@@ -226,15 +228,6 @@ function initAuthListeners() {
     console.error("❌ Auth listener error:", error);
   });
 }
-// Set Firebase persistence before initializing listeners
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  .then(() => {
-    console.log("🔐 Firebase auth persistence set to LOCAL");
-    initAuthListeners(); // Now it's safe to listen for auth changes
-  })
-  .catch((error) => {
-    console.error("❌ Failed to set auth persistence:", error);
-  });
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
@@ -257,6 +250,11 @@ async function initializeAuth() {
     auth = await initializeFirebase();
     console.log("✅ Auth object received:", auth);
     console.log("Type of onAuthStateChanged:", typeof auth.onAuthStateChanged);
+
+    // ✅ Set persistence before attaching listener
+    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    console.log("🔐 Firebase auth persistence set to LOCAL");
+    
     // 4. Set up auth state listener
     initAuthListeners(auth);  
     // 5. Set up Google Sign-In button (if exists)
