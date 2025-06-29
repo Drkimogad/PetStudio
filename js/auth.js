@@ -77,10 +77,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 // ====== Core Functions ======
 function showDashboard() {
-  // To track exactly what it's receiving
   console.log("🚪 Entered showDashboard()");
-  console.log("🧠 petProfiles length:", petProfiles.length);
-  console.log("📦 petProfiles:", petProfiles);
+  const localProfiles = JSON.parse(localStorage.getItem("petProfiles")) || [];
+  window.petProfiles = localProfiles;
+  console.log("🧠 petProfiles length:", localProfiles.length);
+  console.log("📦 petProfiles:", localProfiles);
   
   if (!DOM.authContainer || !DOM.dashboard) {
     console.error("DOM elements not ready in showDashboard");
