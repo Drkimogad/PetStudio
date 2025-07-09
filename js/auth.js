@@ -106,32 +106,14 @@ function showDashboard() {
 
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
+  // Check if libraries are ready
   if (typeof google === 'undefined' || !google.accounts || typeof firebase === 'undefined') {
     console.log("⏳ Waiting for Google/Firebase libraries...");
     setTimeout(setupGoogleLoginButton, 300);
     return;
   }
 
-  const CLIENT_ID = '480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com';
-
-  google.accounts.id.initialize({
-    client_id: CLIENT_ID,
-    callback: async (response) => {
-      try {
-        showLoading(true);
-        const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
-        await firebase.auth().signInWithCredential(credential);
-        showDashboard();
-      } catch (error) {
-        console.error("Google Sign-In failed:", error);
-        Utils?.showErrorToUser?.("Google Sign-In failed. Please try again.");
-      } finally {
-        showLoading(false);
-      }
-    }
-  });
-
-  // ✅ Wait for button container to exist
+  // Check if the container is in the DOM yet
   const googleButtonContainer = document.getElementById("googleSignInBtn");
   if (!googleButtonContainer) {
     console.warn("❌ googleSignInBtn not found. Retrying...");
@@ -139,16 +121,43 @@ function setupGoogleLoginButton() {
     return;
   }
 
-  google.accounts.id.renderButton(googleButtonContainer, {
-    type: "standard",
-    theme: "filled_blue",
-    size: "large",
-    text: "continue_with",
-    shape: "rectangular",
-    width: 250
-  });
+  const CLIENT_ID = '480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com';
 
-  // ✅ Optional: Only trigger One Tap if user is not signed in
+  // Only initialize once
+  if (!setupGoogleLoginButton.initialized) {
+    google.accounts.id.initialize({
+      client_id: CLIENT_ID,
+      callback: async (response) => {
+        try {
+          showLoading(true);
+          const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
+          await firebase.auth().signInWithCredential(credential);
+          showDashboard();
+        } catch (error) {
+          console.error("Google Sign-In failed:", error);
+          Utils?.showErrorToUser?.("Google Sign-In failed. Please try again.");
+        } finally {
+          showLoading(false);
+        }
+      }
+    });
+    setupGoogleLoginButton.initialized = true;
+  }
+
+  // Render the button (only once)
+  if (!setupGoogleLoginButton.rendered) {
+    google.accounts.id.renderButton(googleButtonContainer, {
+      type: "standard",
+      theme: "filled_blue",
+      size: "large",
+      text: "continue_with",
+      shape: "rectangular",
+      width: 250
+    });
+    setupGoogleLoginButton.rendered = true;
+  }
+
+  // Optional One Tap (only if not signed in)
   if (!firebase.auth().currentUser) {
     google.accounts.id.prompt();
   }
@@ -259,11 +268,9 @@ async function initializeAuth() {
   }
 }
 // Start initialization when everything is ready
-document.addEventListener('DOMContentLoaded', function() {
-  // Additional check for Firebase
-  if (typeof firebase === 'undefined') {
-    console.error("Firebase not loaded yet");
-    // You might want to add retry logic here
-  }
-  initializeAuth();
+document.addEventListener("DOMContentLoaded", () => {
+  const domReady = initDOMReferences();
+  if (!domReady) return;
+
+  setupGoogleLoginButton(); // 👈 Make sure this is still here
 });
