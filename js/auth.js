@@ -272,5 +272,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const domReady = initDOMReferences();
   if (!domReady) return;
 
+  initializeAuth(); // ✅ Sets up Firebase & Auth listener
   setupGoogleLoginButton(); // 👈 Make sure this is still here
 });
