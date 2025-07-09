@@ -106,52 +106,51 @@ function showDashboard() {
 
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
-  // Check if Google and Firebase are loaded
   if (typeof google === 'undefined' || !google.accounts || typeof firebase === 'undefined') {
-    console.log("Waiting for libraries to load...");
+    console.log("⏳ Waiting for Google/Firebase libraries...");
     setTimeout(setupGoogleLoginButton, 300);
     return;
-  } 
-  const CLIENT_ID = '480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com';
-  try {
-    // Initialize Google Identity Services
-    google.accounts.id.initialize({
-      client_id: CLIENT_ID,
-      callback: async (response) => {
-        try {
-          showLoading(true);
-          // Using v9 compat syntax
-          const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
-          await firebase.auth().signInWithCredential(credential);
-          showDashboard();
-        } catch (error) {
-          console.error("Google Sign-In failed:", error);
-          if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
-            Utils.showErrorToUser("Google Sign-In failed. Please try again.");
-          }
-        } finally {
-          showLoading(false);
-        }
-      }
-    });
-// Render button if container exists
-    const googleButtonContainer = document.getElementById("googleSignInBtn");
-    if (googleButtonContainer) {
-      google.accounts.id.renderButton(googleButtonContainer, {
-        type: "standard",
-        theme: "filled_blue",
-        size: "large",
-        text: "continue_with",
-        shape: "rectangular",
-        width: 250
-      });  
-  // ✅ Avoid popup if already signed in
-    if (!firebase.auth().currentUser) {
-      google.accounts.id.prompt();
-   } 
   }
-  } catch (error) {
-    console.error("Google Sign-In setup failed:", error);
+
+  const CLIENT_ID = '480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com';
+
+  google.accounts.id.initialize({
+    client_id: CLIENT_ID,
+    callback: async (response) => {
+      try {
+        showLoading(true);
+        const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
+        await firebase.auth().signInWithCredential(credential);
+        showDashboard();
+      } catch (error) {
+        console.error("Google Sign-In failed:", error);
+        Utils?.showErrorToUser?.("Google Sign-In failed. Please try again.");
+      } finally {
+        showLoading(false);
+      }
+    }
+  });
+
+  // ✅ Wait for button container to exist
+  const googleButtonContainer = document.getElementById("googleSignInBtn");
+  if (!googleButtonContainer) {
+    console.warn("❌ googleSignInBtn not found. Retrying...");
+    setTimeout(setupGoogleLoginButton, 300);
+    return;
+  }
+
+  google.accounts.id.renderButton(googleButtonContainer, {
+    type: "standard",
+    theme: "filled_blue",
+    size: "large",
+    text: "continue_with",
+    shape: "rectangular",
+    width: 250
+  });
+
+  // ✅ Optional: Only trigger One Tap if user is not signed in
+  if (!firebase.auth().currentUser) {
+    google.accounts.id.prompt();
   }
 }
 
