@@ -78,39 +78,32 @@ document.addEventListener("DOMContentLoaded", () => {
 // ====== Core Functions ======
 function showDashboard() {
   console.log("🚪 Entered showDashboard()");
-
-  // ✅ Use live memory if available, else fallback to localStorage
-  let localProfiles = window.petProfiles || JSON.parse(localStorage.getItem("petProfiles")) || [];
-
-  // ✅ Restore to window for consistency
-  window.petProfiles = localProfiles;
-
-  // ✅ Log for debugging
-  console.log("🧠 Restored petProfiles in showDashboard:", localProfiles);
+  
+  const localProfiles = window.petProfiles || [];
   console.log("🧠 petProfiles length:", localProfiles.length);
   console.log("📦 petProfiles:", localProfiles);
 
-  // ✅ Render pet cards if available
-  if (localProfiles.length > 0 && DOM.petList) {
-    DOM.petList.classList.remove('hidden');
-    renderProfiles();
-  } else {
-    console.log("ℹ️ No profiles to render in showDashboard");
-  }
-
-  // ✅ Final UI toggles
   if (!DOM.authContainer || !DOM.dashboard) {
     console.error("DOM elements not ready in showDashboard");
     return;
   }
 
+  // ✅ Hide login screen, show dashboard
   DOM.authContainer.classList.add('hidden');
   DOM.dashboard.classList.remove('hidden');
 
   if (DOM.addPetProfileBtn) DOM.addPetProfileBtn.classList.remove('hidden');
   if (DOM.fullPageBanner) DOM.fullPageBanner.classList.remove('hidden');
   if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
+
+  if (localProfiles.length > 0 && DOM.petList) {
+    DOM.petList.classList.remove('hidden');
+    renderProfiles();  // You already have this
+  } else {
+    console.log("ℹ️ No profiles to render in showDashboard");
+  }
 }
+
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
   // Check if Google and Firebase are loaded
@@ -186,45 +179,48 @@ function initAuthListeners() {
   console.log("👤 Firebase current user:", firebase.auth().currentUser);
 
   const auth = firebase.auth();
+  
   auth.onAuthStateChanged(async (user) => {
-    if (user) {
-      console.log("✅ User is signed in:", user);
+  if (user) {
+    console.log("✅ User is signed in:", user);
 
-      try {
-        const snapshot = await firebase.firestore()
-          .collection("profiles")
-          .where("userId", "==", user.uid)
-          .get();
+    try {
+      const snapshot = await firebase.firestore()
+        .collection("profiles")
+        .where("userId", "==", user.uid)
+        .get();
 
-        // 🔄 Sync from Firestore to global + localStorage
-        const fetchedProfiles = snapshot.docs.map(doc => doc.data());
-        window.petProfiles = fetchedProfiles; // 🔴 Live memory
-        localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles)); // 🟡 Persistent backup
-        // 👁️ Log for debug
-        console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
-       // 🔁 Continue with dashboard rendering (which includes renderProfiles)
-          showDashboard();
-        
-      } catch (error) {
-        console.error("❌ Failed to fetch profiles:", error);
-        Utils.showErrorToUser("Couldn't load your pet profiles.");
-      }
+      const fetchedProfiles = snapshot.docs.map(doc => doc.data());
 
-    } else {
-      console.log("ℹ️ No user is signed in.");
+      window.petProfiles = fetchedProfiles;
+      localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
 
-      // ✅ Show login screen
-      if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
-      if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
+      console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
 
-      if (typeof setupGoogleLoginButton === 'function') {
-        setupGoogleLoginButton();
+      // ✅ Now show the dashboard
+      showDashboard();
+
+    } catch (error) {
+      console.error("❌ Failed to fetch profiles:", error);
+      Utils?.showErrorToUser("Couldn't load your pet profiles.");
+
+      // 🔁 Fallback from localStorage if fetch failed
+      const fallbackProfiles = JSON.parse(localStorage.getItem("petProfiles")) || [];
+      if (fallbackProfiles.length > 0) {
+        console.log("🪂 Falling back to localStorage profiles");
+        window.petProfiles = fallbackProfiles;
+        showDashboard();  // show what we have
       }
     }
-  }, error => {
-    console.error("❌ Auth listener error:", error);
-  });
-}
+
+  } else {
+    console.log("ℹ️ No user is signed in.");
+    if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
+    if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
+    setupGoogleLoginButton?.();
+  }
+});
+
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
