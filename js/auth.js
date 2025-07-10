@@ -78,88 +78,87 @@ document.addEventListener("DOMContentLoaded", () => {
 // ====== Core Functions ======
 function showDashboard() {
   console.log("🚪 Entered showDashboard()");
-  
-  const localProfiles = window.petProfiles || [];
+
+  // ✅ Use live memory if available, else fallback to localStorage
+  let localProfiles = window.petProfiles || JSON.parse(localStorage.getItem("petProfiles")) || [];
+
+  // ✅ Restore to window for consistency
+  window.petProfiles = localProfiles;
+
+  // ✅ Log for debugging
+  console.log("🧠 Restored petProfiles in showDashboard:", localProfiles);
   console.log("🧠 petProfiles length:", localProfiles.length);
   console.log("📦 petProfiles:", localProfiles);
 
+  // ✅ Render pet cards if available
+  if (localProfiles.length > 0 && DOM.petList) {
+    DOM.petList.classList.remove('hidden');
+    renderProfiles();
+  } else {
+    console.log("ℹ️ No profiles to render in showDashboard");
+  }
+
+  // ✅ Final UI toggles
   if (!DOM.authContainer || !DOM.dashboard) {
     console.error("DOM elements not ready in showDashboard");
     return;
   }
 
-  // ✅ Hide login screen, show dashboard
   DOM.authContainer.classList.add('hidden');
   DOM.dashboard.classList.remove('hidden');
 
   if (DOM.addPetProfileBtn) DOM.addPetProfileBtn.classList.remove('hidden');
   if (DOM.fullPageBanner) DOM.fullPageBanner.classList.remove('hidden');
   if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
-
-  if (localProfiles.length > 0 && DOM.petList) {
-    DOM.petList.classList.remove('hidden');
-    renderProfiles();  // You already have this
-  } else {
-    console.log("ℹ️ No profiles to render in showDashboard");
-  }
 }
-
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
-  // Check if libraries are ready
+  // Check if Google and Firebase are loaded
   if (typeof google === 'undefined' || !google.accounts || typeof firebase === 'undefined') {
-    console.log("⏳ Waiting for Google/Firebase libraries...");
+    console.log("Waiting for libraries to load...");
     setTimeout(setupGoogleLoginButton, 300);
     return;
-  }
-
-  // Check if the container is in the DOM yet
-  const googleButtonContainer = document.getElementById("googleSignInBtn");
-  if (!googleButtonContainer) {
-    console.warn("❌ googleSignInBtn not found. Retrying...");
-    setTimeout(setupGoogleLoginButton, 300);
-    return;
-  }
-
+  } 
   const CLIENT_ID = '480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com';
-
-  // Only initialize once
-  if (!setupGoogleLoginButton.initialized) {
+  try {
+    // Initialize Google Identity Services
     google.accounts.id.initialize({
       client_id: CLIENT_ID,
       callback: async (response) => {
         try {
           showLoading(true);
+          // Using v9 compat syntax
           const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
           await firebase.auth().signInWithCredential(credential);
           showDashboard();
         } catch (error) {
           console.error("Google Sign-In failed:", error);
-          Utils?.showErrorToUser?.("Google Sign-In failed. Please try again.");
+          if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
+            Utils.showErrorToUser("Google Sign-In failed. Please try again.");
+          }
         } finally {
           showLoading(false);
         }
       }
     });
-    setupGoogleLoginButton.initialized = true;
+// Render button if container exists
+    const googleButtonContainer = document.getElementById("googleSignInBtn");
+    if (googleButtonContainer) {
+      google.accounts.id.renderButton(googleButtonContainer, {
+        type: "standard",
+        theme: "filled_blue",
+        size: "large",
+        text: "continue_with",
+        shape: "rectangular",
+        width: 250
+      });  
+  // ✅ Avoid popup if already signed in
+    if (!firebase.auth().currentUser) {
+      google.accounts.id.prompt();
+   } 
   }
-
-  // Render the button (only once)
-  if (!setupGoogleLoginButton.rendered) {
-    google.accounts.id.renderButton(googleButtonContainer, {
-      type: "standard",
-      theme: "filled_blue",
-      size: "large",
-      text: "continue_with",
-      shape: "rectangular",
-      width: 250
-    });
-    setupGoogleLoginButton.rendered = true;
-  }
-
-  // Optional One Tap (only if not signed in)
-  if (!firebase.auth().currentUser) {
-    google.accounts.id.prompt();
+  } catch (error) {
+    console.error("Google Sign-In setup failed:", error);
   }
 }
 
@@ -187,48 +186,45 @@ function initAuthListeners() {
   console.log("👤 Firebase current user:", firebase.auth().currentUser);
 
   const auth = firebase.auth();
-  
   auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    console.log("✅ User is signed in:", user);
+    if (user) {
+      console.log("✅ User is signed in:", user);
 
-    try {
-      const snapshot = await firebase.firestore()
-        .collection("profiles")
-        .where("userId", "==", user.uid)
-        .get();
+      try {
+        const snapshot = await firebase.firestore()
+          .collection("profiles")
+          .where("userId", "==", user.uid)
+          .get();
 
-      const fetchedProfiles = snapshot.docs.map(doc => doc.data());
+        // 🔄 Sync from Firestore to global + localStorage
+        const fetchedProfiles = snapshot.docs.map(doc => doc.data());
+        window.petProfiles = fetchedProfiles; // 🔴 Live memory
+        localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles)); // 🟡 Persistent backup
+        // 👁️ Log for debug
+        console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
+       // 🔁 Continue with dashboard rendering (which includes renderProfiles)
+          showDashboard();
+        
+      } catch (error) {
+        console.error("❌ Failed to fetch profiles:", error);
+        Utils.showErrorToUser("Couldn't load your pet profiles.");
+      }
 
-      window.petProfiles = fetchedProfiles;
-      localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
+    } else {
+      console.log("ℹ️ No user is signed in.");
 
-      console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
+      // ✅ Show login screen
+      if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
+      if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
 
-      // ✅ Now show the dashboard
-      showDashboard();
-
-    } catch (error) {
-      console.error("❌ Failed to fetch profiles:", error);
-      Utils?.showErrorToUser("Couldn't load your pet profiles.");
-
-      // 🔁 Fallback from localStorage if fetch failed
-      const fallbackProfiles = JSON.parse(localStorage.getItem("petProfiles")) || [];
-      if (fallbackProfiles.length > 0) {
-        console.log("🪂 Falling back to localStorage profiles");
-        window.petProfiles = fallbackProfiles;
-        showDashboard();  // show what we have
+      if (typeof setupGoogleLoginButton === 'function') {
+        setupGoogleLoginButton();
       }
     }
-
-  } else {
-    console.log("ℹ️ No user is signed in.");
-    if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
-    if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
-    setupGoogleLoginButton?.();
-  }
-});
-
+  }, error => {
+    console.error("❌ Auth listener error:", error);
+  });
+}
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
@@ -268,10 +264,11 @@ async function initializeAuth() {
   }
 }
 // Start initialization when everything is ready
-document.addEventListener("DOMContentLoaded", () => {
-  const domReady = initDOMReferences();
-  if (!domReady) return;
-
-  initializeAuth(); // ✅ Sets up Firebase & Auth listener
-  setupGoogleLoginButton(); // 👈 Make sure this is still here
+document.addEventListener('DOMContentLoaded', function() {
+  // Additional check for Firebase
+  if (typeof firebase === 'undefined') {
+    console.error("Firebase not loaded yet");
+    // You might want to add retry logic here
+  }
+  initializeAuth();
 });
