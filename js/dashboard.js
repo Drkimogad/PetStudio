@@ -76,14 +76,13 @@ function renderProfiles() {
         </div>
         
       <div class="gallery-grid">
-      ${profile.gallery.map((img, imgIndex) => {
-          
-      const rawUrl = typeof img === "string" ? img : img?.url;
-      const imgUrl = rawUrl?.replace(/^http:/, 'https:');
-          
+      ${profile.gallery.map((img, imgIndex) => {   
+      const imgUrl = typeof img === "string" ? img : img?.url;
+      const secureUrl = imgUrl?.replace(/^http:/, 'https:'); // 🧪 force HTTPS          
       return `
+      
       <div class="gallery-item">
-        <img src="${imgUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
+        <img src="${secureUrl}" referrerpolicy="no-referrer" alt="Pet Photo" onload="this.classList.add('loaded')">
         <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
         data-index="${imgIndex}">★</button>
       </div>
