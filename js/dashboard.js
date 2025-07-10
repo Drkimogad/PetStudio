@@ -82,7 +82,7 @@ function renderProfiles() {
       return `
       
       <div class="gallery-item">
-        <img src="${secureUrl}" referrerpolicy="no-referrer" alt="Pet Photo" onload="this.classList.add('loaded')">
+        <img src="${secureUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
         <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
         data-index="${imgIndex}">★</button>
       </div>
@@ -819,8 +819,7 @@ console.log("📨 Submit triggered!");
     // ✅ UI Update
     DOM.profileSection.classList.add("hidden");
     DOM.petList.classList.remove("hidden");
-    showDashboard();
-    renderProfiles();
+    showDashboard(); // this shows dashboard which renders profiles inside it
     window.scrollTo(0, 0);
     console.log("✅ Profile saved and UI updated.");
 
