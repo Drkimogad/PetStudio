@@ -188,15 +188,16 @@ function initAuthListeners() {
           .where("userId", "==", user.uid)
           .get();
 
-        // 🔄 Sync from Firestore to global + localStorage
         const fetchedProfiles = snapshot.docs.map(doc => doc.data());
-        window.petProfiles = fetchedProfiles; // 🔴 Live memory
-        localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles)); // 🟡 Persistent backup
-        // 👁️ Log for debug
+
+        // ✅ Store to live and persistent storage
+        window.petProfiles = fetchedProfiles;
+        localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
+
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
-       // 🔁 Continue with dashboard rendering (which includes renderProfiles)
-           showDashboard(); // ✅ first: ensures DOM visibility
-        // Now rendering should happen safely inside it
+
+        // ✅ Now that data is ready, render dashboard
+        showDashboard(); // this will use the now-fetched window.petProfiles
 
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
@@ -205,11 +206,8 @@ function initAuthListeners() {
 
     } else {
       console.log("ℹ️ No user is signed in.");
-
-      // ✅ Show login screen
       if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
       if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
-
       if (typeof setupGoogleLoginButton === 'function') {
         setupGoogleLoginButton();
       }
@@ -218,6 +216,7 @@ function initAuthListeners() {
     console.error("❌ Auth listener error:", error);
   });
 }
+
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
