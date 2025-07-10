@@ -808,6 +808,7 @@ console.log("📨 Submit triggered!");
     DOM.profileSection.classList.add("hidden");
     DOM.petList.classList.remove("hidden");
     renderProfiles();
+    showDashboard();
     window.scrollTo(0, 0);
     console.log("✅ Profile saved and UI updated.");
 
