@@ -181,6 +181,7 @@ async function initializeFirebase() {
   // ✅ Return the actual Firebase Auth instance
   return firebase.auth(); 
 }
+
 // ====== Auth State Listener ======
 function initAuthListeners() {
   console.log("👤 Firebase current user:", firebase.auth().currentUser);
@@ -189,49 +190,35 @@ function initAuthListeners() {
 // Modify your auth state listener to explicitly trigger rendering after sync
 auth.onAuthStateChanged(async (user) => {
   if (user) {
-    console.log("✅ User is signed in:", user);
-
     try {
+      // Get data from Firestore
       const snapshot = await firebase.firestore()
         .collection("profiles")
         .where("userId", "==", user.uid)
         .get();
 
-      const fetchedProfiles = snapshot.docs.map(doc => doc.data());
-      window.petProfiles = fetchedProfiles;
-      localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
+      // Save the data
+      window.petProfiles = snapshot.docs.map(doc => doc.data());
       
-      console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
-      
-      // Explicitly call renderProfiles after sync
-      if (typeof renderProfiles === 'function') {
-        renderProfiles();
-        } catch (error) {
-     console.error("Refresh failed:", error);
+      // ➡️ ONLY show dashboard if we're not on login page
+      if (!document.getElementById("googleSignInBtn").classList.contains("hidden")) {
+        showDashboard(); // 👈 This shows dashboard AND renders profiles
+      } else {
+        renderProfiles(); // 👈 Just update profiles if already on dashboard
       }
-      
-      showDashboard();
-    
+
     } catch (error) {
-      console.error("❌ Failed to fetch profiles:", error);
-      Utils.showErrorToUser("Couldn't load your pet profiles.");
+      console.error("Error loading profiles:", error);
     }
-
-    } else {
-      console.log("ℹ️ No user is signed in.");
-
-      // ✅ Show login screen
-      if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
-      if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
-
-      if (typeof setupGoogleLoginButton === 'function') {
-        setupGoogleLoginButton();
-      }
-    }
-  }, error => {
-    console.error("❌ Auth listener error:", error);
-  });
-}
+  } else {
+    // ➡️ Make sure login UI stays visible
+    if (DOM.authContainer) DOM.authContainer.classList.remove("hidden");
+    if (DOM.dashboard) DOM.dashboard.classList.add("hidden");
+    
+    // ➡️ Re-setup Google button if needed
+    setupGoogleLoginButton();
+  }
+});
 
 // ====== Core Initialization ======
 async function initializeAuth() {
