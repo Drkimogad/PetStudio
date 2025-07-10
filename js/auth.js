@@ -78,38 +78,30 @@ document.addEventListener("DOMContentLoaded", () => {
 // ====== Core Functions ======
 function showDashboard() {
   console.log("🚪 Entered showDashboard()");
+  const profiles = window.petProfiles || [];
 
-  // ✅ Use live memory if available, else fallback to localStorage
-  let localProfiles = window.petProfiles || JSON.parse(localStorage.getItem("petProfiles")) || [];
-
-  // ✅ Restore to window for consistency
-  window.petProfiles = localProfiles;
-
-  // ✅ Log for debugging
-  console.log("🧠 Restored petProfiles in showDashboard:", localProfiles);
-  console.log("🧠 petProfiles length:", localProfiles.length);
-  console.log("📦 petProfiles:", localProfiles);
-
-  // ✅ Render pet cards if available
-  if (localProfiles.length > 0 && DOM.petList) {
-    DOM.petList.classList.remove('hidden');
-    renderProfiles();
-  } else {
-    console.log("ℹ️ No profiles to render in showDashboard");
-  }
-
-  // ✅ Final UI toggles
+  console.log("🧠 petProfiles length:", profiles.length);
+  console.log("📦 petProfiles:", profiles);
+  
+  // ✅   // Show/hide relevant sections
   if (!DOM.authContainer || !DOM.dashboard) {
     console.error("DOM elements not ready in showDashboard");
     return;
   }
-
   DOM.authContainer.classList.add('hidden');
   DOM.dashboard.classList.remove('hidden');
 
   if (DOM.addPetProfileBtn) DOM.addPetProfileBtn.classList.remove('hidden');
   if (DOM.fullPageBanner) DOM.fullPageBanner.classList.remove('hidden');
   if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
+
+  // ✅ Render pet cards if available
+  if (Profiles.length > 0 && DOM.petList) {
+    DOM.petList.classList.remove('hidden');
+    renderProfiles();
+  } else {
+    console.log("ℹ️ No profiles to render in showDashboard");
+  }
 }
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
