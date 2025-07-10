@@ -181,45 +181,51 @@ async function initializeFirebase() {
   // ✅ Return the actual Firebase Auth instance
   return firebase.auth(); 
 }
-
 // ====== Auth State Listener ======
 function initAuthListeners() {
   console.log("👤 Firebase current user:", firebase.auth().currentUser);
 
   const auth = firebase.auth();
-// Modify your auth state listener to explicitly trigger rendering after sync
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    try {
-      // Get data from Firestore
-      const snapshot = await firebase.firestore()
-        .collection("profiles")
-        .where("userId", "==", user.uid)
-        .get();
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      console.log("✅ User is signed in:", user);
 
-      // Save the data
-      window.petProfiles = snapshot.docs.map(doc => doc.data());
-      
-      // ➡️ ONLY show dashboard if we're not on login page
-      if (!document.getElementById("googleSignInBtn").classList.contains("hidden")) {
-        showDashboard(); // 👈 This shows dashboard AND renders profiles
-      } else {
-        renderProfiles(); // 👈 Just update profiles if already on dashboard
+      try {
+        const snapshot = await firebase.firestore()
+          .collection("profiles")
+          .where("userId", "==", user.uid)
+          .get();
+
+        // 🔄 Sync from Firestore to global + localStorage
+        const fetchedProfiles = snapshot.docs.map(doc => doc.data());
+        window.petProfiles = fetchedProfiles; // 🔴 Live memory
+        localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles)); // 🟡 Persistent backup
+        // 👁️ Log for debug
+        console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
+       // 🔁 Continue with dashboard rendering (which includes renderProfiles)
+          showDashboard();
+          renderProfiles();    
+        
+      } catch (error) {
+        console.error("❌ Failed to fetch profiles:", error);
+        Utils.showErrorToUser("Couldn't load your pet profiles.");
       }
 
-    } catch (error) {
-      console.error("Error loading profiles:", error);
-    }
-  } else {
-    // ➡️ Make sure login UI stays visible
-    if (DOM.authContainer) DOM.authContainer.classList.remove("hidden");
-    if (DOM.dashboard) DOM.dashboard.classList.add("hidden");
-    
-    // ➡️ Re-setup Google button if needed
-    setupGoogleLoginButton();
-  }
-});
+    } else {
+      console.log("ℹ️ No user is signed in.");
 
+      // ✅ Show login screen
+      if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
+      if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
+
+      if (typeof setupGoogleLoginButton === 'function') {
+        setupGoogleLoginButton();
+      }
+    }
+  }, error => {
+    console.error("❌ Auth listener error:", error);
+  });
+}
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
@@ -258,17 +264,12 @@ async function initializeAuth() {
     disableUI();
   }
 }
-
-// Consolidate your initialization into a single DOMContentLoaded listener
-document.addEventListener("DOMContentLoaded", async () => {
-  const domReady = initDOMReferences();
-  if (!domReady) return;
-  
-  try {
-    await initializeAuth();
-    setupGoogleLoginButton();
-  } catch (error) {
-    console.error("Initialization failed:", error);
-    disableUI();
+// Start initialization when everything is ready
+document.addEventListener('DOMContentLoaded', function() {
+  // Additional check for Firebase
+  if (typeof firebase === 'undefined') {
+    console.error("Firebase not loaded yet");
+    // You might want to add retry logic here
   }
+  initializeAuth();
 });
