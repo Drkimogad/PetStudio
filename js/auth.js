@@ -196,7 +196,6 @@ function initAuthListeners() {
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
        // 🔁 Continue with dashboard rendering (which includes renderProfiles)
           showDashboard();
-          renderProfiles();    
         
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
