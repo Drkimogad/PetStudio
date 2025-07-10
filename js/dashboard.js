@@ -77,8 +77,10 @@ function renderProfiles() {
         
       <div class="gallery-grid">
       ${profile.gallery.map((img, imgIndex) => {
+          
       const rawUrl = typeof img === "string" ? img : img?.url;
       const imgUrl = rawUrl?.replace(/^http:/, 'https:');
+          
       return `
       <div class="gallery-item">
         <img src="${imgUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
@@ -818,8 +820,8 @@ console.log("📨 Submit triggered!");
     // ✅ UI Update
     DOM.profileSection.classList.add("hidden");
     DOM.petList.classList.remove("hidden");
-    renderProfiles();
     showDashboard();
+    renderProfiles();
     window.scrollTo(0, 0);
     console.log("✅ Profile saved and UI updated.");
 
