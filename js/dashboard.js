@@ -33,6 +33,9 @@ function initDashboardDOM() {
 
 // RENDER ALL PROFILES FORM OLD 
 function renderProfiles() {
+  // ➡️ ADD THIS LINE to use the correct data:
+  const petProfiles = window.petProfiles || []; // 👈 Always check window.petProfiles
+    
   DOM.petList.innerHTML = '';
   if(petProfiles.length === 0) {
     DOM.petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
