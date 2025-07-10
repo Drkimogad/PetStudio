@@ -96,11 +96,11 @@ function showDashboard() {
   if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
 
   // ✅ Render pet cards if available
-  if (Profiles.length > 0 && DOM.petList) {
+  if (petProfiles.length > 0 && DOM.petList) {
     DOM.petList.classList.remove('hidden');
-    renderProfiles();
+    renderProfiles(); //once in showdashboard renderprofiles while in authlistener showdashboard
   } else {
-    console.log("ℹ️ No profiles to render in showDashboard");
+    console.log("ℹ️ No petProfiles to render in showDashboard");
   }
 }
 // ====== Google Sign-In Initialization ======
@@ -195,8 +195,9 @@ function initAuthListeners() {
         // 👁️ Log for debug
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
        // 🔁 Continue with dashboard rendering (which includes renderProfiles)
-          showDashboard();
-        
+           showDashboard(); // ✅ first: ensures DOM visibility
+        // Now rendering should happen safely inside it
+
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
         Utils.showErrorToUser("Couldn't load your pet profiles.");
