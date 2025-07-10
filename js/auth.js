@@ -206,10 +206,12 @@ auth.onAuthStateChanged(async (user) => {
       // Explicitly call renderProfiles after sync
       if (typeof renderProfiles === 'function') {
         renderProfiles();
+        } catch (error) {
+     console.error("Refresh failed:", error);
       }
       
       showDashboard();
-      
+    
     } catch (error) {
       console.error("❌ Failed to fetch profiles:", error);
       Utils.showErrorToUser("Couldn't load your pet profiles.");
@@ -230,26 +232,7 @@ auth.onAuthStateChanged(async (user) => {
     console.error("❌ Auth listener error:", error);
   });
 }
-// force refreshing function
-async function refreshProfiles() {
-  const user = firebase.auth().currentUser;
-  if (!user) return;
-  
-  try {
-    const snapshot = await firebase.firestore()
-      .collection("profiles")
-      .where("userId", "==", user.uid)
-      .get();
 
-    const fetchedProfiles = snapshot.docs.map(doc => doc.data());
-    window.petProfiles = fetchedProfiles;
-    localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
-    
-    renderProfiles();
-  } catch (error) {
-    console.error("Refresh failed:", error);
-  }
-}
 // ====== Core Initialization ======
 async function initializeAuth() {
   try {
