@@ -98,7 +98,11 @@ function showDashboard() {
   // ✅ Render pet cards if available
   if (petProfiles.length > 0 && DOM.petList) {
     DOM.petList.classList.remove('hidden');
-    renderProfiles(); //once in showdashboard renderprofiles while in authlistener showdashboard
+    //once in showdashboard renderprofiles while in authlistener showdashboard
+    setTimeout(() => {
+    renderProfiles();
+    }, 200);
+    
   } else {
     console.log("ℹ️ No petProfiles to render in showDashboard");
   }
@@ -122,8 +126,6 @@ function setupGoogleLoginButton() {
           // Using v9 compat syntax
           const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
           await firebase.auth().signInWithCredential(credential);
-          // let's try this
-          renderProfiles();
          // showDashboard();  // old ✅ No need to manually call showDashboard here!
         } catch (error) {
           console.error("Google Sign-In failed:", error);
@@ -199,9 +201,8 @@ function initAuthListeners() {
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
 
         // ✅ Now that data is ready, render dashboard
-        setTimeout(() => {
+        
         showDashboard(); // this will use the now-fetched window.petProfiles
-        }, 200); // 100ms delay to let DOM/UI settle
 
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
