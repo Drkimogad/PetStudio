@@ -102,6 +102,7 @@ if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
 
   DOM.authContainer.classList.add('hidden');
   DOM.dashboard.classList.remove('hidden');
+  console.log("DOM.petList exists?", !!DOM.petList, "Classes:", DOM.petList?.classList?.value);
 
   if (DOM.addPetProfileBtn) DOM.addPetProfileBtn.classList.remove('hidden');
   if (DOM.fullPageBanner) DOM.fullPageBanner.classList.remove('hidden');
