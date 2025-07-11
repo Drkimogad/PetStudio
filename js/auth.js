@@ -99,9 +99,7 @@ function showDashboard() {
   if (petProfiles.length > 0 && DOM.petList) {
     DOM.petList.classList.remove('hidden');
     //once in showdashboard renderprofiles while in authlistener showdashboard
-    setTimeout(() => {
     renderProfiles();
-    }, 200);
     
   } else {
     console.log("ℹ️ No petProfiles to render in showDashboard");
@@ -201,9 +199,10 @@ function initAuthListeners() {
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
 
         // ✅ Now that data is ready, render dashboard
-        
+        setTimeout(() => {
         showDashboard(); // this will use the now-fetched window.petProfiles
-
+       }, 300);
+        
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
         Utils.showErrorToUser("Couldn't load your pet profiles.");
