@@ -201,7 +201,7 @@ function initAuthListeners() {
         // ✅ Now that data is ready, render dashboard
         setTimeout(() => {
         showDashboard(); // this will use the now-fetched window.petProfiles
-        }, 100); // 100ms delay to let DOM/UI settle
+        }, 200); // 100ms delay to let DOM/UI settle
 
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
