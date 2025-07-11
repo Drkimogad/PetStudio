@@ -33,12 +33,19 @@ function initDashboardDOM() {
 
 // RENDER ALL PROFILES FORM OLD 
 function renderProfiles() {
-  // ➡️ ADD THIS LINE to use the correct data:
+  // ➡️ ADD THIS LINE to use the correct data and trace actual rendering
   const petProfiles = window.petProfiles || []; // 👈 Always check window.petProfiles
+  console.log("✅ Rendering profiles count:", petProfiles.length);
+
+  if (!DOM.petList) {
+    console.error("❌ petList not found");
+    return;
+  }
     
   DOM.petList.innerHTML = '';
   if(petProfiles.length === 0) {
     DOM.petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
+    return;
   }
   else {
     petProfiles.forEach((profile, index) => {
@@ -816,8 +823,9 @@ console.log("📨 Submit triggered!");
 
     localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
-    // ✅ UI Update — let showDashboard handle visibility/rendering
+    // ✅ UI Update
     showDashboard();
+    renderProfiles();
     window.scrollTo(0, 0);
     console.log("✅ Profile saved and UI updated.");
 
