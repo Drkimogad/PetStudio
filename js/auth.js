@@ -122,7 +122,9 @@ function setupGoogleLoginButton() {
           // Using v9 compat syntax
           const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
           await firebase.auth().signInWithCredential(credential);
-         // showDashboard();  // ✅ No need to manually call showDashboard here!
+          // let's try this
+          renderProfiles();
+         // showDashboard();  // old ✅ No need to manually call showDashboard here!
         } catch (error) {
           console.error("Google Sign-In failed:", error);
           if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
