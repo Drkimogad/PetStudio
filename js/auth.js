@@ -135,24 +135,25 @@ if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
 
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
-  // Check if Google and Firebase are loaded
-  if (typeof google === 'undefined' || !google.accounts || typeof firebase === 'undefined') {
-    console.log("Waiting for libraries to load...");
-    setTimeout(setupGoogleLoginButton, 300);
+  // ✅ Prevent duplicate setup
+  if (window._googleButtonInitialized) {
+    console.log("⏭️ Google button already initialized");
     return;
-  } 
+  }
+  window._googleButtonInitialized = true;
+
   const CLIENT_ID = '480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com';
+
   try {
-    // Initialize Google Identity Services
+    // ✅ Initialize Google Identity Services
     google.accounts.id.initialize({
       client_id: CLIENT_ID,
       callback: async (response) => {
         try {
           showLoading(true);
-          // Using v9 compat syntax
           const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
           await firebase.auth().signInWithCredential(credential);
-         // showDashboard();  // old ✅ No need to manually call showDashboard here!
+          // No need to manually call showDashboard()
         } catch (error) {
           console.error("Google Sign-In failed:", error);
           if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
@@ -163,7 +164,8 @@ function setupGoogleLoginButton() {
         }
       }
     });
-// Render button if container exists
+
+    // ✅ Render Google Sign-In button
     const googleButtonContainer = document.getElementById("googleSignInBtn");
     if (googleButtonContainer) {
       google.accounts.id.renderButton(googleButtonContainer, {
@@ -173,12 +175,18 @@ function setupGoogleLoginButton() {
         text: "continue_with",
         shape: "rectangular",
         width: 250
-      });  
-  // ✅ Avoid popup if already signed in
-    if (!firebase.auth().currentUser) {
-      google.accounts.id.prompt();
-   } 
-  }
+      });
+
+      // ✅ Prompt only if user is not signed in (after Firebase is ready)
+      firebase.auth().onAuthStateChanged((user) => {
+        if (!user) {
+          console.log("📣 Prompting Google Sign-In (no user)");
+          google.accounts.id.prompt();
+        } else {
+          console.log("🔒 User already signed in, skipping prompt");
+        }
+      });
+    }
   } catch (error) {
     console.error("Google Sign-In setup failed:", error);
   }
