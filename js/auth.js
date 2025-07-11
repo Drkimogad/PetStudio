@@ -29,7 +29,12 @@ const DOM = {
   authContainer: null,
   signupPage: null,
   loginPage: null,
-  dashboard: null
+  dashboard: null,
+  addPetProfileBtn: null,
+  fullPageBanner: null,
+  profileSection: null,
+  profileForm: null,
+  petList: null  // ✅ Add this
 };
 
 // Initialize DOM elements when page loads
@@ -37,6 +42,12 @@ const DOM = {
 function initDOMReferences() {
   DOM.authContainer = document.getElementById("authContainer");
   DOM.dashboard = document.getElementById("dashboard");
+  DOM.addPetProfileBtn = document.getElementById("addPetProfileBtn");
+  DOM.fullPageBanner = document.getElementById("fullPageBanner");
+  DOM.profileSection = document.getElementById("profileSection");
+  DOM.profileForm = document.getElementById("profileForm");
+
+  DOM.petList = document.getElementById("petList"); // ✅ Critical for rendering profiles
 
   // Ensure critical elements exist
   if (!DOM.authContainer || !DOM.dashboard) {
@@ -84,10 +95,11 @@ function showDashboard() {
   console.log("📦 petProfiles:", profiles);
   
   // ✅   // Show/hide relevant sections
-  if (!DOM.authContainer || !DOM.dashboard) {
-    console.error("DOM elements not ready in showDashboard");
-    return;
-  }
+if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
+  console.error("❌ Critical DOM elements not ready in showDashboard");
+  return;
+}
+
   DOM.authContainer.classList.add('hidden');
   DOM.dashboard.classList.remove('hidden');
 
@@ -98,8 +110,12 @@ function showDashboard() {
   // ✅ Render pet cards if available
   if (petProfiles.length > 0 && DOM.petList) {
     DOM.petList.classList.remove('hidden');
+    
+  // ✅ Diagnostic check for DOM
+  console.log("DOM.petList exists?", !!DOM.petList);
+  console.log("Calling renderProfiles() with:", petProfiles);
     //once in showdashboard renderprofiles while in authlistener showdashboard
-    renderProfiles();
+  renderProfiles();
     
   } else {
     console.log("ℹ️ No petProfiles to render in showDashboard");
