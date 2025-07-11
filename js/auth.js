@@ -153,7 +153,8 @@ function setupGoogleLoginButton() {
           showLoading(true);
           const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
           await firebase.auth().signInWithCredential(credential);
-          // No need to manually call showDashboard()
+         console.log("✅ Sign-in complete. Waiting for auth state listener to handle dashboard rendering.");
+          
         } catch (error) {
           console.error("Google Sign-In failed:", error);
           if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
@@ -234,10 +235,13 @@ function initAuthListeners() {
 
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
 
-        // ✅ Now that data is ready, render dashboard
-        showDashboard();
-        renderProfiles();
-        
+        // ✅ Now render profiles from storage
+       if (typeof renderProfiles === 'function') {
+       await renderProfile(); // wait until data is rendered
+        }
+       if (typeof showDashboard === 'function') {
+        showDashboard(); // now dashboard sees data
+       }      
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
         Utils.showErrorToUser("Couldn't load your pet profiles.");
