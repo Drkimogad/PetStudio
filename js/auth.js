@@ -107,21 +107,13 @@ if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
   if (DOM.addPetProfileBtn) DOM.addPetProfileBtn.classList.remove('hidden');
   if (DOM.fullPageBanner) DOM.fullPageBanner.classList.remove('hidden');
   if (DOM.profileSection) DOM.profileSection.classList.add('hidden');
-
-  // ✅ Render pet cards if available
-  if (petProfiles.length > 0 && DOM.petList) {
-    DOM.petList.classList.remove('hidden');
-    
+  if (DOM.petList) DOM.petList.classList.remove('hidden');
+  console.log("📦 Dashboard ready. Profiles count:", profiles.length);
+  
   // ✅ Diagnostic check for DOM
   console.log("DOM.petList exists?", !!DOM.petList);
-  console.log("Calling renderProfiles() with:", petProfiles);
-    //once in showdashboard renderprofiles while in authlistener showdashboard
-  renderProfiles();
-    
-  } else {
-    console.log("ℹ️ No petProfiles to render in showDashboard");
-  }
 }
+
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
   // Check if Google and Firebase are loaded
@@ -216,9 +208,8 @@ function initAuthListeners() {
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
 
         // ✅ Now that data is ready, render dashboard
-        setTimeout(() => {
-        showDashboard(); // this will use the now-fetched window.petProfiles
-       }, 300);
+        showDashboard();
+        renderProfiles();
         
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
