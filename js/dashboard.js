@@ -819,7 +819,7 @@ console.log("📨 Submit triggered!");
     // ✅ UI Update
     DOM.profileSection.classList.add("hidden");
     DOM.petList.classList.remove("hidden");
-    showDashboard(); // this shows dashboard which renders profiles inside it
+    renderProfiles();
     window.scrollTo(0, 0);
     console.log("✅ Profile saved and UI updated.");
 
