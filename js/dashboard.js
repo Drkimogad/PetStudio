@@ -816,9 +816,7 @@ console.log("📨 Submit triggered!");
 
     localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
-    // ✅ UI Update
-    DOM.profileSection.classList.add("hidden");
-    DOM.petList.classList.remove("hidden");
+    // ✅ UI Update — let showDashboard handle visibility/rendering
     showDashboard();
     window.scrollTo(0, 0);
     console.log("✅ Profile saved and UI updated.");
