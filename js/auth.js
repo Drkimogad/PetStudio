@@ -24,7 +24,32 @@ function disableUI() {
     </h1>
   `;
 }
+//================================================================
+// 🔄Utility function Fixes race conditions where Firebase is slow to initialize
+//============================================================
+function waitForFirebaseAndGoogle(retries = 20, interval = 200) {
+  return new Promise((resolve, reject) => {
+    const check = () => {
+      const ready = typeof firebase !== 'undefined'
+        && typeof firebase.auth === 'function'
+        && typeof google !== 'undefined'
+        && google.accounts?.id;
+
+      if (ready) {
+        resolve();
+      } else if (retries === 0) {
+        reject(new Error("Timed out waiting for Firebase and Google Sign-In"));
+      } else {
+        retries--;
+        setTimeout(check, interval);
+      }
+    };
+    check();
+  });
+}
+//======================================
 // DOM Elements - Initialize as null first
+//========================================
 const DOM = {
   authContainer: null,
   signupPage: null,
@@ -36,7 +61,7 @@ const DOM = {
   profileForm: null,
   petList: null  // ✅ Add this
 };
-
+//=======================================
 // Initialize DOM elements when page loads
 // ===== Initialize DOM Elements =====
 function initDOMReferences() {
@@ -76,16 +101,10 @@ function showLoading(show) {
 
 // ===== DOM Ready: Initialize Everything =====
 document.addEventListener("DOMContentLoaded", () => {
-  const domReady = initDOMReferences();
-  if (!domReady) return;
-// Initialize login button and other startup logic
-  if (typeof setupGoogleLoginButton === "function") {
-    setupGoogleLoginButton();
-  } else {
-    console.warn("⚠️ setupGoogleLoginButton() not found.");
-  }
-  // If needed, add more initializations here
+  if (!initDOMReferences()) return;
+  initializeAuth(); // ✅ Let the main flow handle Firebase & Sign-In button
 });
+
 // ====== Core Functions ======
 function showDashboard() {
   console.log("🚪 Entered showDashboard()");
@@ -259,9 +278,9 @@ async function initializeAuth() {
     // 4. Set up auth state listener
     initAuthListeners(auth);  
     // 5. Set up Google Sign-In button (if exists)
-    if (document.getElementById("googleSignInBtn")) {
-      setupGoogleLoginButton();
-    }    
+   try {
+    await waitForFirebaseAndGoogle();
+    setupGoogleLoginButton(); // ✅ Now safe to call  
   } catch (error) {
     console.error("Auth initialization failed:", error);
     disableUI();
