@@ -60,13 +60,8 @@ function renderProfiles() {
     const coverPhotoUrl = typeof coverImageObj === "string"
       ? coverImageObj
       : coverImageObj?.url;
-    // added recently
-    let secureCoverPhotoUrl = coverPhotoUrl;
-    if (secureCoverPhotoUrl?.startsWith("http:")) {
-    secureCoverPhotoUrl = secureCoverPhotoUrl.replace(/^http:/, "https:");
-    }
-        
-     const profileHeaderStyle = secureCoverPhotoUrl
+
+    const profileHeaderStyle = coverPhotoUrl
       ? `style="background-image: url('${coverPhotoUrl}');"`
       : '';
       
@@ -89,10 +84,8 @@ function renderProfiles() {
         
       <div class="gallery-grid">
       ${profile.gallery.map((img, imgIndex) => {   
-      let imgUrl = typeof img === "string" ? img : img?.url;
-      if (imgUrl?.startsWith("http:")) {
-      imgUrl = imgUrl.replace(/^http:/, "https:");
-       }     
+      const imgUrl = typeof img === "string" ? img : img?.url;
+      const secureUrl = imgUrl?.replace(/^http:/, 'https:'); // 🧪 force HTTPS          
       return `
       
       <div class="gallery-item">
