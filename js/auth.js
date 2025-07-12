@@ -24,32 +24,7 @@ function disableUI() {
     </h1>
   `;
 }
-//================================================================
-// 🔄Utility function Fixes race conditions where Firebase is slow to initialize
-//============================================================
-function waitForFirebaseAndGoogle(retries = 20, interval = 200) {
-  return new Promise((resolve, reject) => {
-    const check = () => {
-      const ready = typeof firebase !== 'undefined'
-        && typeof firebase.auth === 'function'
-        && typeof google !== 'undefined'
-        && google.accounts?.id;
-
-      if (ready) {
-        resolve();
-      } else if (retries === 0) {
-        reject(new Error("Timed out waiting for Firebase and Google Sign-In"));
-      } else {
-        retries--;
-        setTimeout(check, interval);
-      }
-    };
-    check();
-  });
-}
-//======================================
 // DOM Elements - Initialize as null first
-//========================================
 const DOM = {
   authContainer: null,
   signupPage: null,
@@ -61,7 +36,7 @@ const DOM = {
   profileForm: null,
   petList: null  // ✅ Add this
 };
-//=======================================
+
 // Initialize DOM elements when page loads
 // ===== Initialize DOM Elements =====
 function initDOMReferences() {
@@ -101,10 +76,16 @@ function showLoading(show) {
 
 // ===== DOM Ready: Initialize Everything =====
 document.addEventListener("DOMContentLoaded", () => {
-  if (!initDOMReferences()) return;
-  initializeAuth(); // ✅ Let the main flow handle Firebase & Sign-In button
+  const domReady = initDOMReferences();
+  if (!domReady) return;
+// Initialize login button and other startup logic
+  if (typeof setupGoogleLoginButton === "function") {
+    setupGoogleLoginButton();
+  } else {
+    console.warn("⚠️ setupGoogleLoginButton() not found.");
+  }
+  // If needed, add more initializations here
 });
-
 // ====== Core Functions ======
 function showDashboard() {
   console.log("🚪 Entered showDashboard()");
@@ -135,26 +116,24 @@ if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
 
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
-  // ✅ Prevent duplicate setup
-  if (window._googleButtonInitialized) {
-    console.log("⏭️ Google button already initialized");
+  // Check if Google and Firebase are loaded
+  if (typeof google === 'undefined' || !google.accounts || typeof firebase === 'undefined') {
+    console.log("Waiting for libraries to load...");
+    setTimeout(setupGoogleLoginButton, 300);
     return;
-  }
-  window._googleButtonInitialized = true;
-
+  } 
   const CLIENT_ID = '480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com';
-
   try {
-    // ✅ Initialize Google Identity Services
+    // Initialize Google Identity Services
     google.accounts.id.initialize({
       client_id: CLIENT_ID,
       callback: async (response) => {
         try {
           showLoading(true);
+          // Using v9 compat syntax
           const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
           await firebase.auth().signInWithCredential(credential);
-         console.log("✅ Sign-in complete. Waiting for auth state listener to handle dashboard rendering.");
-          
+         // showDashboard();  // old ✅ No need to manually call showDashboard here!
         } catch (error) {
           console.error("Google Sign-In failed:", error);
           if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
@@ -165,8 +144,7 @@ function setupGoogleLoginButton() {
         }
       }
     });
-
-    // ✅ Render Google Sign-In button
+// Render button if container exists
     const googleButtonContainer = document.getElementById("googleSignInBtn");
     if (googleButtonContainer) {
       google.accounts.id.renderButton(googleButtonContainer, {
@@ -176,18 +154,12 @@ function setupGoogleLoginButton() {
         text: "continue_with",
         shape: "rectangular",
         width: 250
-      });
-
-      // ✅ Prompt only if user is not signed in (after Firebase is ready)
-      firebase.auth().onAuthStateChanged((user) => {
-        if (!user) {
-          console.log("📣 Prompting Google Sign-In (no user)");
-          google.accounts.id.prompt();
-        } else {
-          console.log("🔒 User already signed in, skipping prompt");
-        }
-      });
-    }
+      });  
+  // ✅ Avoid popup if already signed in
+    if (!firebase.auth().currentUser) {
+      google.accounts.id.prompt();
+   } 
+  }
   } catch (error) {
     console.error("Google Sign-In setup failed:", error);
   }
@@ -235,13 +207,10 @@ function initAuthListeners() {
 
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
 
-        // ✅ Now render profiles from storage
-       if (typeof renderProfiles === 'function') {
-       await renderProfile(); // wait until data is rendered
-        }
-       if (typeof showDashboard === 'function') {
-        showDashboard(); // now dashboard sees data
-       }      
+        // ✅ Now that data is ready, render dashboard
+        showDashboard();
+        renderProfiles();
+        
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
         Utils.showErrorToUser("Couldn't load your pet profiles.");
@@ -290,9 +259,9 @@ async function initializeAuth() {
     // 4. Set up auth state listener
     initAuthListeners(auth);  
     // 5. Set up Google Sign-In button (if exists)
-   try {
-    await waitForFirebaseAndGoogle();
-    setupGoogleLoginButton(); // ✅ Now safe to call  
+    if (document.getElementById("googleSignInBtn")) {
+      setupGoogleLoginButton();
+    }    
   } catch (error) {
     console.error("Auth initialization failed:", error);
     disableUI();
