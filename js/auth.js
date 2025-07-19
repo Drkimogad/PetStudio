@@ -112,6 +112,7 @@ if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
   
   // ✅ Diagnostic check for DOM
   console.log("DOM.petList exists?", !!DOM.petList);
+  renderProfiles(); // ✅ Move here only
 }
 
 // ====== Google Sign-In Initialization ======
@@ -209,7 +210,6 @@ function initAuthListeners() {
 
         // ✅ Now that data is ready, render dashboard
         showDashboard();
-        renderProfiles();
         
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
