@@ -309,6 +309,18 @@ h1, h2, h3, p {
   background-color: #9b59b6;
   color: white;
 }
+/* added recently */
+.cancel-edit-btn {
+  background-color: #dc2626;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+.cancel-edit-btn:hover {
+  background-color: #b91c1c;
+}
 
 .shareBtn {
   background-color: #f39c12;
