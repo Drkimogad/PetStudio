@@ -113,6 +113,10 @@ if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
   // ✅ Diagnostic check for DOM
   console.log("DOM.petList exists?", !!DOM.petList);
   renderProfiles(); // ✅ Move here only
+// 🔁 Always re-bind buttons after rendering
+  if (typeof finalizeDashboard === "function") {
+    finalizeDashboard();  
+}
 }
 
 // ====== Google Sign-In Initialization ======
@@ -157,10 +161,14 @@ function setupGoogleLoginButton() {
         width: 250
       });  
   // ✅ Avoid popup if already signed in
-    if (!firebase.auth().currentUser) {
-      google.accounts.id.prompt();
-   } 
-  }
+if (!firebase.auth().currentUser && !window.googleOneTapDismissed) {
+  google.accounts.id.prompt((notification) => {
+    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+      window.googleOneTapDismissed = true;
+    }
+  });
+}
+
   } catch (error) {
     console.error("Google Sign-In setup failed:", error);
   }
@@ -220,6 +228,10 @@ function initAuthListeners() {
       console.log("ℹ️ No user is signed in.");
       if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
       if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
+
+      window.petProfiles = [];
+      if (DOM.petList) DOM.petList.innerHTML = "";
+      
       if (typeof setupGoogleLoginButton === 'function') {
         setupGoogleLoginButton();
       }
