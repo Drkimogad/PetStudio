@@ -808,7 +808,7 @@ console.log("📨 Submit triggered!");
       await docRef.update({ docId: docRef.id }); // ⬅️ Add docId field to doc
     }
 
-    // 🎉 Add birthday reminder if needed
+    // 🎉 Add birthday reminder if needed inapp
     if (newProfile.birthday) {
       const reminderData = {
         userId,
@@ -839,7 +839,8 @@ console.log("📨 Submit triggered!");
 
     // ✅ UI Update
     showDashboard();
-    renderProfiles();
+      // Removed renderProfiles calling
+      
     window.scrollTo(0, 0);
     console.log("✅ Profile saved and UI updated.");
 
