@@ -240,6 +240,7 @@ function cancelEdit() {
   // Optionally reset form values (clean state)
   document.getElementById("profileForm").reset();
 }
+
 //==========≈==============
 // 🌀 UPGRADED DELETE BUTTON FUNCTION WAS MISSING
 //=========================
