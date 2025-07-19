@@ -171,64 +171,78 @@ function getMoodEmoji(mood) {
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 // 🌀 EDIT PROFILE BUTTON FUNCTION
 function openEditForm(index) {
-  // ✅ Always reset uploads on each open
   uploadedImageUrls = [];
   isEditing = true;
   currentEditIndex = index;
 
   const profile = petProfiles[index];
-  if (!profile) return;
+  if (!profile) {
+    console.error("❌ No profile found at index", index);
+    return;
+  }
 
-  // ✅ Cover photo index setup
+  // Fill form fields
+  const nameField = document.getElementById("petName");
+  const breedField = document.getElementById("petBreed");
+  const dobField = document.getElementById("petDob");
+  const bdayField = document.getElementById("petBirthday");
+  const moodInput = document.getElementById("moodHistoryInput");
+
+  if (nameField) nameField.value = profile.name || "";
+  if (breedField) breedField.value = profile.breed || "";
+  if (dobField) dobField.value = profile.dob || "";
+  if (bdayField) bdayField.value = profile.birthday || "";
+  if (moodInput && profile.moodHistory?.length > 0) moodInput.value = "";
+
+  // Setup cover photo index on form (used on save)
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
-  // ✅ Fill form fields
-  document.getElementById("petName").value = profile.name;
-  document.getElementById("petBreed").value = profile.breed;
-  document.getElementById("petDob").value = profile.dob;
-  document.getElementById("petBirthday").value = profile.birthday;
+  // Preview gallery (already handled)
 
-  // ✅ Mood History as raw string (optional)
-  const moodInput = document.getElementById("moodHistoryInput");
-  if (moodInput && profile.moodHistory?.length > 0) {
-    moodInput.value = ""; // Let user log new mood only
+  // ✅ Insert Cancel button if not already added
+  const form = document.getElementById("profileForm");
+  if (form && !document.getElementById("cancelEditBtn")) {
+    const cancelBtn = document.createElement("button");
+    cancelBtn.id = "cancelEditBtn";
+    cancelBtn.type = "button";
+    cancelBtn.className = "button cancel-edit-btn";
+    cancelBtn.textContent = "❌ Cancel Edit";
+    cancelBtn.style.marginLeft = "1rem";
+    cancelBtn.addEventListener("click", cancelEdit);
+
+    // Insert after submit button
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.after(cancelBtn);
   }
 
-  // ✅ Preview current gallery
-  const galleryPreview = document.getElementById("editGalleryPreview");
-  if (galleryPreview && Array.isArray(profile.gallery)) {
-    galleryPreview.innerHTML = profile.gallery.map((img, imgIndex) => {
-      const imgUrl = typeof img === "string" ? img : img.url;
-      return `
-        <div class="gallery-item">
-          <img src="${imgUrl}" alt="Pet Photo">
-          <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-                  data-index="${imgIndex}">★</button>
-        </div>
-      `;
-    }).join("");
-
-    // Cover photo selection tracker
-    galleryPreview.addEventListener("click", (e) => {
-      if (e.target.classList.contains("cover-btn")) {
-        const newIndex = parseInt(e.target.dataset.index, 10);
-        DOM.profileForm.dataset.coverIndex = newIndex;
-
-        [...galleryPreview.querySelectorAll(".cover-btn")]
-          .forEach(btn => btn.classList.remove("active"));
-
-        e.target.classList.add("active");
-      }
-    });
-  }
-
-  // ✅ Reveal editor, hide list
+  // Reveal editor
   DOM.profileSection.classList.remove("hidden");
-  DOM.petList.classList.add("hidden"); // Added now
+  DOM.petList.classList.add("hidden");
   DOM.fullPageBanner.classList.add("hidden");
 }
 
+
+// function cancel edit recently added
+function cancelEdit() {
+  console.log("🛑 Cancel Edit triggered.");
+  isEditing = false;
+  currentEditIndex = -1;
+
+  // Hide form, show dashboard again
+  DOM.profileSection.classList.add("hidden");
+  DOM.petList.classList.remove("hidden");
+  DOM.fullPageBanner.classList.remove("hidden");
+
+  // Remove cancel button
+  const cancelBtn = document.getElementById("cancelEditBtn");
+  if (cancelBtn) cancelBtn.remove();
+
+  // Optionally reset form values (clean state)
+  document.getElementById("profileForm").reset();
+}
+//==========≈==============
 // 🌀 UPGRADED DELETE BUTTON FUNCTION WAS MISSING
+//=========================
 async function deleteProfile(index) {
   if (!confirm("Are you sure you want to delete this profile?")) return;
 
