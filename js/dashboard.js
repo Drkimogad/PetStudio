@@ -2,9 +2,11 @@
 const addPetProfileBtn = document.getElementById("addPetProfileBtn");
 let currentQRProfile = null; // Only new declaration needed
 
-// 🌍 Load from localStorage and expose globally
-let petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-window.petProfiles = petProfiles;
+// 🌍 Load from localStorage only on initial boot
+if (!window.petProfiles || !Array.isArray(window.petProfiles) || window.petProfiles.length === 0) {
+  let savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+  window.petProfiles = savedProfiles;
+}
 
 // SAFE GLOBAL INITIALIZATION (compatible with auth.js)
 if (typeof isEditing === 'undefined') {
@@ -35,6 +37,7 @@ function initDashboardDOM() {
 function renderProfiles() {
   // ➡️ ADD THIS LINE to use the correct data and trace actual rendering
   const petProfiles = window.petProfiles || []; // 👈 Always check window.petProfiles
+
   console.log("✅ Rendering profiles count:", petProfiles.length);
 
   if (!DOM.petList) {
