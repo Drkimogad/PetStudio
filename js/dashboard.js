@@ -120,13 +120,15 @@ function renderProfiles() {
             ${renderMoodHistory(profile)}
           </div>
         </div>
+        <div class="pet-card" data-doc-id="${profile.docId}">
         <div class="action-buttons">
         <button class="edit-profile" data-index="${index}">✏️ Edit</button>
         <button class="delete-profile" data-index="${index}">🗑️ Delete</button>
         <button class="print-profile" data-index="${index}">🖨️ Print</button>
         <button class="share-profile" data-index="${index}">📤 Share</button>
         <button class="generate-qr" data-index="${index}">🔲 QR Code</button>
-       </div>
+        </div>
+      </div>  
       `;
       
       // Event listeners
