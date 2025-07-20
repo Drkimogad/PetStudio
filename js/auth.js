@@ -200,15 +200,12 @@ function initAuthListeners() {
           .collection("profiles")
           .where("userId", "==", user.uid)
           .get();
-
         const fetchedProfiles = snapshot.docs.map(doc => doc.data());
 
-        // ✅ Store to live and persistent storage
+        // ✅ Store fetched firestore data to live and persistent storage
         window.petProfiles = fetchedProfiles;
         localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
-
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
-
         // ✅ Now that data is ready, render dashboard
         showDashboard();
         
