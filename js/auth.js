@@ -161,14 +161,10 @@ function setupGoogleLoginButton() {
         width: 250
       });  
   // ✅ Avoid popup if already signed in
-if (!firebase.auth().currentUser && !window.googleOneTapDismissed) {
-  google.accounts.id.prompt((notification) => {
-    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-      window.googleOneTapDismissed = true;
-    }
-  });
-}
-
+    if (!firebase.auth().currentUser) {
+      google.accounts.id.prompt();
+   } 
+  }
   } catch (error) {
     console.error("Google Sign-In setup failed:", error);
   }
