@@ -160,6 +160,7 @@ function setupGoogleLoginButton() {
         shape: "rectangular",
         width: 250
       });  
+      
   // ✅ Avoid popup if already signed in
     if (!firebase.auth().currentUser) {
       google.accounts.id.prompt();
