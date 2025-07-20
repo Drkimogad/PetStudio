@@ -113,7 +113,6 @@ if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
   // ✅ Diagnostic check for DOM
   console.log("DOM.petList exists?", !!DOM.petList);
   renderProfiles(); // ✅ Move here only  
- }
 }
 
 // ====== Google Sign-In Initialization ======
