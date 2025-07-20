@@ -174,6 +174,9 @@ function openEditForm(index) {
   uploadedImageUrls = [];
   isEditing = true;
   currentEditIndex = index;
+//added to debug
+ console.log("petProfiles:", window.petProfiles);
+ console.log("Requested index:", index);
 
   const profile = petProfiles[index];
   if (!profile) {
