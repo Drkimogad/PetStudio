@@ -1,6 +1,7 @@
 //🌟 Pet Profile Management 🌟
 const addPetProfileBtn = document.getElementById("addPetProfileBtn");
 let currentQRProfile = null; // Only new declaration needed
+setupPetProfileDelegation();
 
 // 🌍 Load from localStorage only on initial boot
 if (!window.petProfiles || !Array.isArray(window.petProfiles) || window.petProfiles.length === 0) {
@@ -120,29 +121,27 @@ function renderProfiles() {
           </div>
         </div>
         <div class="action-buttons">
-          <button class="editBtn">✏️ Edit</button>
-          <button class="deleteBtn">🗑️ Delete</button>
-          <button class="printBtn">🖨️ Print</button>
-          <button class="shareBtn">📤 Share</button>
-          <button class="qrBtn">🔲 QR Code</button>
-        </div>
+        <button class="edit-profile" data-index="${index}">✏️ Edit</button>
+        <button class="delete-profile" data-index="${index}">🗑️ Delete</button>
+        <button class="print-profile" data-index="${index}">🖨️ Print</button>
+        <button class="share-profile" data-index="${index}">📤 Share</button>
+        <button class="generate-qr" data-index="${index}">🔲 QR Code</button>
+       </div>
       `;
       
       // Event listeners
-      petCard.querySelector(".editBtn").addEventListener("click", () => openEditForm(index));
-      petCard.querySelector(".deleteBtn").addEventListener("click", () => deleteProfile(index));
-      petCard.querySelector(".printBtn").addEventListener("click", () => printProfile(profile));
-      petCard.querySelector(".shareBtn").addEventListener("click", () => sharePetCard(profile));
-      petCard.querySelector(".qrBtn").addEventListener("click", () => generateQRCode(index));
+      <button class="edit-profile" data-index="${index}">Edit</button>
+      <button class="delete-profile" data-index="${index}">Delete</button>
+      <button class="print-profile" data-index="${index}">Print</button>
+      <button class="share-profile" data-index="${index}">Share</button>
+      <button class="generate-qr" data-index="${index}">QR</button>
       
-      petCard.querySelectorAll(".mood-btn").forEach(btn => {
-        btn.addEventListener("click", () => logMood(index, btn.dataset.mood));
-      });
-      
-      petCard.querySelectorAll(".cover-btn").forEach(btn => {
-        btn.addEventListener("click", () => setCoverPhoto(index, parseInt(btn.dataset.index)));
-      });
-      
+      <!-- Mood Button -->
+     <button class="mood-btn" data-index="${index}" data-mood="${mood}">${emoji}</button>
+
+     <!-- Cover Photo Button -->
+    <button class="cover-btn" data-index="${index}" data-photo-index="${photoIndex}">Make Cover</button>
+   
       DOM.petList.appendChild(petCard);
     });
   }
@@ -172,7 +171,9 @@ function getMoodEmoji(mood) {
 }
 
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
+//======================================
 // 🌀 EDIT PROFILE BUTTON FUNCTION
+//======================================
 function openEditForm(index) {
   uploadedImageUrls = [];
   isEditing = true;
@@ -659,52 +660,77 @@ function setCoverPhoto(profileIndex, imageIndex) {
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
   renderProfiles();
 }
+//==========================================
+//===New function setupPetProfileDelegation
+//=======================================
+function setupPetProfileDelegation() {
+  if (!DOM.petList) return;
 
+  DOM.petList.addEventListener("click", (e) => {
+    const target = e.target;
+    const index = parseInt(target.dataset.index, 10);
+
+    if (target.classList.contains("edit-profile")) {
+      openEditForm(index);
+    } else if (target.classList.contains("delete-profile")) {
+      deleteProfile(index);
+    } else if (target.classList.contains("print-profile")) {
+      printProfile(window.petProfiles?.[index]);
+    } else if (target.classList.contains("share-profile")) {
+      sharePetCard(window.petProfiles?.[index]);
+    } else if (target.classList.contains("generate-qr")) {
+      generateQRCode(index);
+    }
+
+    // ✅ Mood button
+    else if (target.classList.contains("mood-btn")) {
+      const mood = target.dataset.mood;
+      logMood(index, mood);
+    }
+
+    // ✅ Cover button
+    else if (target.classList.contains("cover-btn")) {
+      const photoIndex = parseInt(target.dataset.photoIndex, 10);
+      setCoverPhoto(index, photoIndex);
+    }
+  });
+}
+
+//=============================
 //✅ FINAL INITIALIZATION ✅
+//================================
 function initializeDashboard() {
-  // 🔁 Restore from global in case Firestore updated petProfiles
   petProfiles = window.petProfiles || [];
 
-  // ✅ Only render if we have profiles
+  // Only render if we have profiles
   if (petProfiles.length > 0 && DOM.petList) {
     renderProfiles();
   }
 
-  // 🎯 Optional: initialize QR modal (if exists)
+  setupPetProfileDelegation(); // ✅ Handles all buttons
+  attachFormListenerWhenReady(); // ✅ Handles form submission
+
   if (document.getElementById('qr-modal')) {
     initQRModal();
   }
 
-  // 🔒 Attach logout button
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', handleLogout);
   }
 
-  // ➕ Add Pet Button
-const addBtn = document.getElementById('addPetProfileBtn');
-if (addBtn) {
-  addBtn.addEventListener('click', () => {
-    isEditing = false;
-    currentEditIndex = -1;
-    DOM.profileSection.classList.remove('hidden');
-    DOM.petList.classList.add('hidden');
-
-    // ✅ After showing the form, attach the submit listener
-    attachFormListenerWhenReady();
-  });
- }
-}
-// added recently
-function attachFormListenerWhenReady() {
-  const form = document.getElementById("profileForm");
-
-  if (!form) {
-    console.warn("⏳ Waiting for form to be available...");
-    setTimeout(attachFormListenerWhenReady, 300); // Retry in 300ms
-    return;
+  const addBtn = document.getElementById('addPetProfileBtn');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      isEditing = false;
+      currentEditIndex = -1;
+      DOM.profileSection.classList.remove('hidden');
+      DOM.petList.classList.add('hidden');
+      attachFormListenerWhenReady();
+    });
   }
-  console.log("✅ profileForm found. Attaching listener...");
+}
+
 
 // MOVED FORM SUBMISSION HERE
 // the whole form submission wrapped in an if block 
