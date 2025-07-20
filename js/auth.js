@@ -112,10 +112,7 @@ if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
   
   // ✅ Diagnostic check for DOM
   console.log("DOM.petList exists?", !!DOM.petList);
-  renderProfiles(); // ✅ Move here only
-// 🔁 Always re-bind buttons after rendering
-  if (typeof finalizeDashboard === "function") {
-  initializeDashboard();  
+  renderProfiles(); // ✅ Move here only  
  }
 }
 
