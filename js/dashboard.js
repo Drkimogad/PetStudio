@@ -875,7 +875,7 @@ console.log("📨 Submit triggered!");
 
     // ✅ UI Update
     showDashboard();
-      // Removed renderProfiles calling
+    renderProfiles(); 
       
     window.scrollTo(0, 0);
     console.log("✅ Profile saved and UI updated.");
