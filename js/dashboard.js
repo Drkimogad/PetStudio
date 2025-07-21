@@ -122,27 +122,14 @@ function renderProfiles() {
         </div>
         <div class="pet-card" data-doc-id="${profile.docId}">
         <div class="action-buttons">
-        <button class="edit-profile" data-index="${index}">✏️ Edit</button>
-        <button class="delete-profile" data-index="${index}">🗑️ Delete</button>
-        <button class="print-profile" data-index="${index}">🖨️ Print</button>
-        <button class="share-profile" data-index="${index}">📤 Share</button>
-        <button class="generate-qr" data-index="${index}">🔲 QR Code</button>
+        <button class="edit-profile" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit</button>
+        <button class="delete-profile" data-index="${index}" data-doc-id="${profile.docId}">🗑️ Delete</button>
+        <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print</button>
+        <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share</button>
+        <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 QR Code</button>
         </div>
       </div>  
       `;
-      
-      // Event listeners
-      <button class="edit-profile" data-index="${index}">Edit</button>
-      <button class="delete-profile" data-index="${index}">Delete</button>
-      <button class="print-profile" data-index="${index}">Print</button>
-      <button class="share-profile" data-index="${index}">Share</button>
-      <button class="generate-qr" data-index="${index}">QR</button>
-      
-      <!-- Mood Button -->
-     <button class="mood-btn" data-index="${index}" data-mood="${mood}">${emoji}</button>
-
-     <!-- Cover Photo Button -->
-    <button class="cover-btn" data-index="${index}" data-photo-index="${photoIndex}">Make Cover</button>
    
       DOM.petList.appendChild(petCard);
     });
@@ -662,20 +649,30 @@ function setCoverPhoto(profileIndex, imageIndex) {
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
   renderProfiles();
 }
+  
 //==========================================
-//===New function setupPetProfileDelegation
-//=======================================
+// ✅ FINALIZED - setupPetProfileDelegation
+// Handles all profile card actions centrally
+//==========================================
 function setupPetProfileDelegation() {
   if (!DOM.petList) return;
 
   DOM.petList.addEventListener("click", (e) => {
     const target = e.target;
     const index = parseInt(target.dataset.index, 10);
+    const docId = target.dataset.docId || null;
 
+    // ✅ Safety check for index
+    if (isNaN(index)) {
+      console.warn("⚠️ Ignored click: Invalid or missing data-index", target);
+      return;
+    }
+
+    // === Action buttons ===
     if (target.classList.contains("edit-profile")) {
-      openEditForm(index);
+      openEditForm(index, docId);
     } else if (target.classList.contains("delete-profile")) {
-      deleteProfile(index);
+      deleteProfile(index, docId);
     } else if (target.classList.contains("print-profile")) {
       printProfile(window.petProfiles?.[index]);
     } else if (target.classList.contains("share-profile")) {
@@ -684,16 +681,18 @@ function setupPetProfileDelegation() {
       generateQRCode(index);
     }
 
-    // ✅ Mood button
+    // === Mood button ===
     else if (target.classList.contains("mood-btn")) {
       const mood = target.dataset.mood;
-      logMood(index, mood);
+      if (mood) logMood(index, mood);
     }
 
-    // ✅ Cover button
+    // === Cover Photo button ===
     else if (target.classList.contains("cover-btn")) {
       const photoIndex = parseInt(target.dataset.photoIndex, 10);
-      setCoverPhoto(index, photoIndex);
+      if (!isNaN(photoIndex)) {
+        setCoverPhoto(index, photoIndex);
+      }
     }
   });
 }
