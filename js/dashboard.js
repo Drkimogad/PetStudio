@@ -889,11 +889,10 @@ console.log("📨 Submit triggered!");
     
   // ✅ Safely clear petGallery input
   const galleryInput = document.getElementById("petGallery");
-      if (galleryInput) galleryInput.value = "";
+    form.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
+      if (galleryInput) galleryInput.value = "";    
  } // ✅ closes finally
 }); // ✅ closes addEventListener
-form.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
- } 
 }
 
 // Single logout handler function
