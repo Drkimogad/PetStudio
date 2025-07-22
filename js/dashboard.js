@@ -892,8 +892,7 @@ console.log("📨 Submit triggered!");
  } // ✅ closes finally
 }); // ✅ closes addEventListener
 form.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
- }
-}
+ 
 // Single logout handler function
 async function handleLogout() {
   try {
