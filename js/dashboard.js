@@ -874,7 +874,6 @@ console.log("📨 Submit triggered!");
 
     // ✅ UI Update
     showDashboard();
-    renderProfiles(); 
       
     window.scrollTo(0, 0);
     console.log("✅ Profile saved and UI updated.");
@@ -889,12 +888,12 @@ console.log("📨 Submit triggered!");
     
   // ✅ Safely clear petGallery input
   const galleryInput = document.getElementById("petGallery");
-    form.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
       if (galleryInput) galleryInput.value = "";    
  } // ✅ closes finally
 }); // ✅ closes addEventListener
+form.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
+ }
 }
-
 // Single logout handler function
 async function handleLogout() {
   try {
