@@ -893,24 +893,6 @@ console.log("📨 Submit triggered!");
 }); // ✅ closes addEventListener
 form.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
  
-// Single logout handler function
-async function handleLogout() {
-  try {
-    if (typeof firebase !== 'undefined' && firebase.auth) {
-      await firebase.auth().signOut();
-    }
-    localStorage.removeItem('petProfiles');
-    window.location.reload();
-  } catch (error) {
-    console.error("Logout failed:", error);
-    // Use existing error display method if available
-    if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
-      Utils.showErrorToUser("Logout failed. Please try again.");
-    } else {
-      alert("Logout failed. Please try again.");
-    }
-  }
-}
 // Start initialization based on document state
 document.addEventListener('DOMContentLoaded', () => {
   initDashboardDOM();      // 🧠 Make sure DOM references are set
