@@ -37,17 +37,14 @@ function initDashboardDOM() {
 function loadSavedProfiles() {
   // ➡️ ADD THIS LINE to use the correct data and trace actual rendering
   const petProfiles = window.petProfiles || []; // 👈 Always check window.petProfiles
-  
+
   console.log("✅ Rendering profiles count:", petProfiles.length);
-  if (!window.petProfiles || !Array.isArray(window.petProfiles)) {
-    console.error("Invalid profiles data");
-    return;
-  }
+
   if (!DOM.petList) {
     console.error("❌ petList not found");
     return;
   }
- 
+    
   DOM.petList.innerHTML = '';
   if(petProfiles.length === 0) {
     DOM.petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
@@ -702,19 +699,21 @@ function setupPetProfileDelegation() {
 //=============================
 //✅ FINAL INITIALIZATION ✅
 //================================
-// Replace initializeDashboard() with this:
 function initializeDashboard() {
-  // Listen for when Firestore data is ready
-  document.addEventListener('firebaseDataReady', (e) => {
-    petProfiles = e.detail.profiles;
-    if (petProfiles.length > 0 && DOM.petList) {
-      loadSavedProfiles();
-    }
-  });
+  petProfiles = window.petProfiles || [];
 
-  setupPetProfileDelegation();
-  if (document.getElementById('qr-modal')) initQRModal();
-  
+  // Only render if we have profiles
+  if (petProfiles.length > 0 && DOM.petList) {
+    loadSavedProfiles();
+  }
+
+  setupPetProfileDelegation(); // ✅ Handles all buttons
+  attachFormListenerWhenReady(); // ✅ Handles form submission
+
+  if (document.getElementById('qr-modal')) {
+    initQRModal();
+  }  
+
   const addBtn = document.getElementById('addPetProfileBtn');
   if (addBtn) {
     addBtn.addEventListener('click', () => {
@@ -722,12 +721,13 @@ function initializeDashboard() {
       currentEditIndex = -1;
       DOM.profileSection.classList.remove('hidden');
       DOM.petList.classList.add('hidden');
+      attachFormListenerWhenReady();
     });
   }
 }
-//=============================
+
+
 // MOVED FORM SUBMISSION HERE
-//============================
 function attachFormListenerWhenReady() {
 // the whole form submission wrapped in an if block 
       // ✅ Only attach once
