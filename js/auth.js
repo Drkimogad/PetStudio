@@ -89,7 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
 // ====== Core Functions ======
 function showDashboard() {
   console.log("🚪 Entered showDashboard()");
-  const profiles = window.petProfiles || [];
+let profiles = window.petProfiles || JSON.parse(localStorage.getItem('petProfiles')) || [];
+window.petProfiles = profiles;
 
   console.log("🧠 petProfiles length:", profiles.length);
   console.log("📦 petProfiles:", profiles);
@@ -112,11 +113,12 @@ if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
   
   // ✅ Diagnostic check for DOM
   console.log("DOM.petList exists?", !!DOM.petList);
-if (window.petProfiles?.length > 0) {
-    renderProfiles();
-  } else {
-    console.log("ℹ️ No profiles to render yet.");
-  }
+  // Wrap renderprofiles() in a guard
+if (typeof renderProfiles === "function" && window.petProfiles?.length > 0) {
+  renderProfiles();
+} else {
+  console.log("ℹ️ No renderProfiles available or no profiles to show.");
+}
 }
 
 // ====== Google Sign-In Initialization ======
@@ -195,6 +197,7 @@ function initAuthListeners() {
   console.log("👤 Firebase current user:", firebase.auth().currentUser);
 
   const auth = firebase.auth();
+
   auth.onAuthStateChanged(async (user) => {
     if (user) {
       console.log("✅ User is signed in:", user);
@@ -204,28 +207,45 @@ function initAuthListeners() {
           .collection("profiles")
           .where("userId", "==", user.uid)
           .get();
+
         const fetchedProfiles = snapshot.docs.map(doc => doc.data());
 
-        // ✅ Store fetched firestore data to live and persistent storage
+        // ✅ Store to global and localStorage
         window.petProfiles = fetchedProfiles;
         localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
-        // ✅ Now that data is ready, render dashboard
-        showDashboard();
+
+        // ✅ Wait for dashboard to be defined before calling
+        if (typeof showDashboard === 'function') {
+          console.log("📺 Calling showDashboard()");
+          showDashboard();
+        
+      // ✅ Show logout button safely right after dashboard is shown
+     const logoutBtn = document.getElementById("logoutBtn");
+     if (logoutBtn) logoutBtn.style.display = "block";
+      } else {
+          console.warn("⚠️ showDashboard is not yet defined. Skipping call.");
+        }  
         
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
-        Utils.showErrorToUser("Couldn't load your pet profiles.");
+        if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
+          Utils.showErrorToUser("Couldn't load your pet profiles.");
+        }
       }
 
     } else {
       console.log("ℹ️ No user is signed in.");
+
       if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
       if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
 
+      // Clear profile cache and UI
       window.petProfiles = [];
+      localStorage.removeItem('petProfiles');
       if (DOM.petList) DOM.petList.innerHTML = "";
-      
+
+      // Re-render sign-in button if needed
       if (typeof setupGoogleLoginButton === 'function') {
         setupGoogleLoginButton();
       }
@@ -233,6 +253,26 @@ function initAuthListeners() {
   }, error => {
     console.error("❌ Auth listener error:", error);
   });
+}
+//===============================
+// Single logout handler function
+//================================
+async function handleLogout() {
+  try {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      await firebase.auth().signOut();
+    }
+    localStorage.removeItem('petProfiles');
+    window.location.reload();
+  } catch (error) {
+    console.error("Logout failed:", error);
+    // Use existing error display method if available
+    if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
+      Utils.showErrorToUser("Logout failed. Please try again.");
+    } else {
+      alert("Logout failed. Please try again.");
+    }
+  }
 }
 
 // ====== Core Initialization ======
