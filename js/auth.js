@@ -217,16 +217,6 @@ function initAuthListeners() {
         window.petProfiles = fetchedProfiles;
         localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
-     
-        // ✅ Dispatch custom event when data is ready
-      const event = new CustomEvent('firebaseDataReady', {
-        detail: { profiles: fetchedProfiles }
-      });
-      document.dispatchEvent(event);
-      
-      } catch (error) {
-      console.error("Fetch error:", error);
-      }
         
         // ✅ Wait for dashboard to be defined before calling
         if (typeof showDashboard === 'function') {
