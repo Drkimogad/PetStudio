@@ -1,5 +1,4 @@
 //🌟 Pet Profile Management 🌟
-//const addPetProfileBtn = document.getElementById("addPetProfileBtn");
 let currentQRProfile = null; // Only new declaration needed
 setupPetProfileDelegation();
 
