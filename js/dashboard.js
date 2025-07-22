@@ -37,7 +37,6 @@ function initDashboardDOM() {
 function loadSavedProfiles() {
   // ➡️ ADD THIS LINE to use the correct data and trace actual rendering
   const petProfiles = window.petProfiles || []; // 👈 Always check window.petProfiles
-
   console.log("✅ Rendering profiles count:", petProfiles.length);
 
   if (!DOM.petList) {
