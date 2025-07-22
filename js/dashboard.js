@@ -1,5 +1,5 @@
 //🌟 Pet Profile Management 🌟
-const addPetProfileBtn = document.getElementById("addPetProfileBtn");
+//const addPetProfileBtn = document.getElementById("addPetProfileBtn");
 let currentQRProfile = null; // Only new declaration needed
 setupPetProfileDelegation();
 
@@ -35,7 +35,7 @@ function initDashboardDOM() {
 }
 
 // RENDER ALL PROFILES FORM OLD 
-function renderProfiles() {
+function loadSavedProfiles() {
   // ➡️ ADD THIS LINE to use the correct data and trace actual rendering
   const petProfiles = window.petProfiles || []; // 👈 Always check window.petProfiles
 
@@ -279,7 +279,7 @@ async function deleteProfile(index) {
   // Remove from local storage and update UI
   const deleted = petProfiles.splice(index, 1);
   localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-  renderProfiles();
+  loadSavedProfiles();
   Utils.showErrorToUser(`${deleted[0].name}'s profile was deleted.`, true);
 }
 
@@ -640,14 +640,14 @@ function logMood(profileIndex, mood) {
     mood: mood
   });
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  renderProfiles();
+  loadSavedProfiles();
 }
 
 // Set cover photo
 function setCoverPhoto(profileIndex, imageIndex) {
   petProfiles[profileIndex].coverPhotoIndex = imageIndex;
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  renderProfiles();
+  loadSavedProfiles();
 }
   
 //==========================================
@@ -696,7 +696,7 @@ function setupPetProfileDelegation() {
     }
   });
 }
-
+// renderProfiles(0 was abstracted to loadSavedProfiles()
 //=============================
 //✅ FINAL INITIALIZATION ✅
 //================================
@@ -705,7 +705,7 @@ function initializeDashboard() {
 
   // Only render if we have profiles
   if (petProfiles.length > 0 && DOM.petList) {
-    renderProfiles();
+    loadSavedProfiles();
   }
 
   setupPetProfileDelegation(); // ✅ Handles all buttons
@@ -713,12 +713,7 @@ function initializeDashboard() {
 
   if (document.getElementById('qr-modal')) {
     initQRModal();
-  }
-
-  const logoutBtn = document.getElementById('logoutBtn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', handleLogout);
-  }
+  }  
 
   const addBtn = document.getElementById('addPetProfileBtn');
   if (addBtn) {
@@ -891,7 +886,7 @@ console.log("📨 Submit triggered!");
       if (galleryInput) galleryInput.value = "";    
  } // ✅ closes finally
 }); // ✅ closes addEventListener
-form.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
+  form.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
  
 // Start initialization based on document state
 document.addEventListener('DOMContentLoaded', () => {
