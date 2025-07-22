@@ -730,12 +730,13 @@ function initializeDashboard() {
 // MOVED FORM SUBMISSION HERE
 // the whole form submission wrapped in an if block 
       // ✅ Only attach once
-if (!form.dataset.listenerAttached) {
+if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) {
     
-form.addEventListener("submit", async (e) => {
+DOM.profileForm.addEventListener("submit", async (e) => {
 console.log("✅ Form submission listener attached."); // You already had this 👍
 console.log("📨 Submit triggered!");
-  e.preventDefault();   
+  e.preventDefault(); 
+  
   console.log("🧪 Auth before saving:", firebase.auth().currentUser);
 
   const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -885,7 +886,8 @@ console.log("📨 Submit triggered!");
       if (galleryInput) galleryInput.value = "";    
  } // ✅ closes finally
 }); // ✅ closes addEventListener
-  form.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
+  
+DOM.profileForm.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
 } // closes the if (!form.dataset.listenerAttached)
 
 // Start initialization based on document state
