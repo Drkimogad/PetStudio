@@ -892,18 +892,8 @@ DOM.profileForm.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
 } // closes the function
 
 // Start initialization based on document state
-//document.addEventListener('DOMContentLoaded', () => {
-//  initDashboardDOM();      // 🧠 Make sure DOM references are set
-//  initializeDashboard();     // ✅ Use the correct one
-//});
-
-// Start initialization based on document state
-document.addEventListener('DOMContentLoaded', async () => {
-  try {
-    initDashboardDOM();      // 🧠 Make sure DOM references are set
-    await initializeAuth();  // 🔐 Wait for auth to be ready
-    initializeDashboard();   // ✅ Initialize dashboard
-  } catch (error) {
-    console.error("Initialization failed:", error);
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  initDashboardDOM();      // 🧠 Make sure DOM references are set
+  initializeDashboard();     // ✅ Use the correct one
 });
+
