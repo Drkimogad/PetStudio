@@ -112,6 +112,11 @@ if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
   
   // ✅ Diagnostic check for DOM
   console.log("DOM.petList exists?", !!DOM.petList);
+if (window.petProfiles?.length > 0) {
+    renderProfiles();
+  } else {
+    console.log("ℹ️ No profiles to render yet.");
+  }
 }
 
 // ====== Google Sign-In Initialization ======
