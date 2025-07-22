@@ -728,6 +728,7 @@ function initializeDashboard() {
 
 
 // MOVED FORM SUBMISSION HERE
+function attachFormListenerWhenReady() {
 // the whole form submission wrapped in an if block 
       // ✅ Only attach once
 if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) {
@@ -888,10 +889,22 @@ console.log("📨 Submit triggered!");
  }); // ✅ closes addEventListener
   
 DOM.profileForm.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
- } // closes the if (!form.dataset.listenerAttached)
+ } // closes the if (!Dom.profileForm.dataset.listenerAttached)
+} // closes the function
 
 // Start initialization based on document state
-document.addEventListener('DOMContentLoaded', () => {
-  initDashboardDOM();      // 🧠 Make sure DOM references are set
-  initializeDashboard();     // ✅ Use the correct one
+//document.addEventListener('DOMContentLoaded', () => {
+//  initDashboardDOM();      // 🧠 Make sure DOM references are set
+//  initializeDashboard();     // ✅ Use the correct one
+//});
+
+// Start initialization based on document state
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    initDashboardDOM();      // 🧠 Make sure DOM references are set
+    await initializeAuth();  // 🔐 Wait for auth to be ready
+    initializeDashboard();   // ✅ Initialize dashboard
+  } catch (error) {
+    console.error("Initialization failed:", error);
+  }
 });
