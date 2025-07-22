@@ -889,7 +889,6 @@ console.log("📨 Submit triggered!");
   
 DOM.profileForm.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
  } // closes the if (!form.dataset.listenerAttached)
-} // closes initialize dashboard?
 
 // Start initialization based on document state
 document.addEventListener('DOMContentLoaded', () => {
