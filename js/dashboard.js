@@ -887,7 +887,7 @@ console.log("📨 Submit triggered!");
  } // ✅ closes finally
 }); // ✅ closes addEventListener
   form.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
- 
+} 
 // Start initialization based on document state
 document.addEventListener('DOMContentLoaded', () => {
   initDashboardDOM();      // 🧠 Make sure DOM references are set
