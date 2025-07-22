@@ -115,7 +115,7 @@ if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
   console.log("DOM.petList exists?", !!DOM.petList);
   // Wrap renderprofiles() in a guard
 if (typeof renderProfiles === "function" && window.petProfiles?.length > 0) {
-  renderProfiles();
+  loadSavedProfiles();
 } else {
   console.log("ℹ️ No renderProfiles available or no profiles to show.");
 }
@@ -221,8 +221,11 @@ function initAuthListeners() {
           showDashboard();
         
       // ✅ Show logout button safely right after dashboard is shown
-     const logoutBtn = document.getElementById("logoutBtn");
-     if (logoutBtn) logoutBtn.style.display = "block";
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+      logoutBtn.addEventListener('click', handleLogout);
+      }
+      if (logoutBtn) logoutBtn.style.display = "block";
       } else {
           console.warn("⚠️ showDashboard is not yet defined. Skipping call.");
         }  
