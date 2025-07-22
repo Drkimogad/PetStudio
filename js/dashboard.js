@@ -885,10 +885,11 @@ console.log("📨 Submit triggered!");
   const galleryInput = document.getElementById("petGallery");
       if (galleryInput) galleryInput.value = "";    
  } // ✅ closes finally
-}); // ✅ closes addEventListener
+ }); // ✅ closes addEventListener
   
 DOM.profileForm.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
-} // closes the if (!form.dataset.listenerAttached)
+ } // closes the if (!form.dataset.listenerAttached)
+} // closes initialize dashboard?
 
 // Start initialization based on document state
 document.addEventListener('DOMContentLoaded', () => {
