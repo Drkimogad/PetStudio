@@ -114,7 +114,7 @@ if (!DOM.authContainer || !DOM.dashboard || !DOM.petList) {
   // ✅ Diagnostic check for DOM
   console.log("DOM.petList exists?", !!DOM.petList);
   // Wrap renderprofiles() in a guard
-if (typeof renderProfiles === "function" && window.petProfiles?.length > 0) {
+if (typeof loadSavedProfiles === "function" && window.petProfiles?.length > 0) {
   loadSavedProfiles();
 } else {
   console.log("ℹ️ No renderProfiles available or no profiles to show.");
