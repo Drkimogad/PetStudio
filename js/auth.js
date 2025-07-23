@@ -268,8 +268,12 @@ async function handleLogout() {
     if (typeof firebase !== 'undefined' && firebase.auth) {
       await firebase.auth().signOut();
     }
+   if (window.google && google.accounts && google.accounts.id) {
+  google.accounts.id.disableAutoSelect(); // ✅ Clear previous Google session
+  } 
     localStorage.removeItem('petProfiles');
     window.location.reload();
+    
   } catch (error) {
     console.error("Logout failed:", error);
     // Use existing error display method if available
