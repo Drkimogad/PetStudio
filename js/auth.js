@@ -129,6 +129,12 @@ function setupGoogleLoginButton() {
     setTimeout(setupGoogleLoginButton, 300);
     return;
   } 
+  if (!firebase.apps.length) {
+  console.warn("⏳ Firebase not initialized yet. Retrying...");
+  setTimeout(setupGoogleLoginButton, 300);
+  return;
+}
+
   const CLIENT_ID = '480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com';
   try {
     // Initialize Google Identity Services
