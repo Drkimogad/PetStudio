@@ -93,7 +93,7 @@ function loadSavedProfiles() {
       <div class="gallery-item">
         <img src="${secureUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
         <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-        data-index="${index}" data-photo-index="${imgIndex}">★</button>
+        data-index="${imgIndex}">★</button>
       </div>
     `;
   }).join('')}
@@ -190,8 +190,10 @@ function openEditForm(index) {
 
   // Setup cover photo index on form (used on save)
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
-//image preview was here
-// ✅ Insert Cancel button if not already added
+
+  // Preview gallery (already handled)
+
+  // ✅ Insert Cancel button if not already added
   const form = document.getElementById("profileForm");
   if (form && !document.getElementById("cancelEditBtn")) {
     const cancelBtn = document.createElement("button");
@@ -463,28 +465,15 @@ ${profile.moodHistory.map(entry => `
 }
 
 // 🌀 HYBRID OPTIMIZED SHARE PET CARD FUNCTION 🌟🌟🌟
-async function sharePetCard(profile, event) {
+async function sharePetCard(profile, event) {  // Explicitly pass event
   try {
-    // 🔗 Build invite message
+    // 1. Try Web Share API first (link only)
     const shareUrl = `${window.location.origin}/PetStudio/?profile=${profile.id}`;
-    const inviteMessage = `Meet ${profile.name || 'my pet'}! 🐾
-
-I'm using PetStudio to manage:
-📋 Pet Profiles & Milestones  
-🎂 Birthday Reminders  
-📸 Photo Gallery  
-😊 Mood Tracking  
-🔲 QR Code Sharing  
-
-Check out ${profile.name ? profile.name + "'s" : "my pet's"} profile:
-${shareUrl}`;
-
-    // 1️⃣ Try native Web Share API
     if (navigator.share) {
       try {
         await navigator.share({
           title: `Meet ${profile.name}! 🐾`,
-          text: inviteMessage,
+          text: `Check out ${profile.name}'s profile`,
           url: shareUrl
         });
         return;
@@ -493,28 +482,31 @@ ${shareUrl}`;
       }
     }
 
-    // 2️⃣ Fallback: generate image of the card
+    // 2. Generate image fallback
     const cardElement = document.getElementById(`pet-card-${profile.id}`);
     if (!cardElement) throw new Error("Card element not found");
-
+    
+    // Ensure element is visible for html2canvas
     cardElement.style.opacity = '1';
     cardElement.style.position = 'static';
-
+    
     const canvas = await html2canvas(cardElement, {
       scale: 2,
       logging: true,
       useCORS: true,
       allowTaint: true,
       onclone: (clonedDoc) => {
+        // Ensure all styles are copied
         clonedDoc.getElementById(`pet-card-${profile.id}`).style.visibility = 'visible';
       }
     });
 
+    // 3. Offer both download and copy options
     canvas.toBlob(async (blob) => {
       const item = new ClipboardItem({ 'image/png': blob });
       await navigator.clipboard.write([item]);
-
-      // Fallback download
+      
+      // Auto-download as fallback
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -525,10 +517,10 @@ ${shareUrl}`;
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }, 100);
-
-      alert(`${profile.name}'s profile image copied! Paste anywhere or share manually.`);
+      
+      alert(`${profile.name}'s profile copied! You can paste the image anywhere.`);
     }, 'image/png');
-
+    
   } catch (error) {
     console.error('Sharing failed:', error);
     alert(`Sharing failed: ${error.message}`);
