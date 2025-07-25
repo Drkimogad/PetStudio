@@ -190,27 +190,7 @@ function openEditForm(index) {
 
   // Setup cover photo index on form (used on save)
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
-
-// ✅ Render current gallery preview in edit mode ADDED RECENTLY
-const previewContainer = document.getElementById("editGalleryPreview");
-previewContainer.innerHTML = ''; // clear old content
-
-const profile = window.petProfiles[index];
-if (profile?.gallery?.length) {
-  profile.gallery.forEach((img, imgIndex) => {
-    const imgUrl = typeof img === "string" ? img : img.url;
-    const isCover = imgIndex === profile.coverPhotoIndex;
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "edit-preview-item";
-    wrapper.innerHTML = `
-      <img src="${imgUrl}" class="preview-img" alt="Preview Image" />
-      ${isCover ? '<span class="cover-badge">★ Cover</span>' : ''}
-    `;
-    previewContainer.appendChild(wrapper);
-  });
-}
-
+//image preview was here
 // ✅ Insert Cancel button if not already added
   const form = document.getElementById("profileForm");
   if (form && !document.getElementById("cancelEditBtn")) {
