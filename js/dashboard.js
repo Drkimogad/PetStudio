@@ -93,7 +93,7 @@ function loadSavedProfiles() {
       <div class="gallery-item">
         <img src="${secureUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
         <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-        data-index="${imgIndex}">★</button>
+        data-index="${index}" data-photo-index="${imgIndex}">★</button>
       </div>
     `;
   }).join('')}
@@ -191,9 +191,27 @@ function openEditForm(index) {
   // Setup cover photo index on form (used on save)
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
-  // Preview gallery (already handled)
+// ✅ Render current gallery preview in edit mode ADDED RECENTLY
+const previewContainer = document.getElementById("editGalleryPreview");
+previewContainer.innerHTML = ''; // clear old content
 
-  // ✅ Insert Cancel button if not already added
+const profile = window.petProfiles[index];
+if (profile?.gallery?.length) {
+  profile.gallery.forEach((img, imgIndex) => {
+    const imgUrl = typeof img === "string" ? img : img.url;
+    const isCover = imgIndex === profile.coverPhotoIndex;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "edit-preview-item";
+    wrapper.innerHTML = `
+      <img src="${imgUrl}" class="preview-img" alt="Preview Image" />
+      ${isCover ? '<span class="cover-badge">★ Cover</span>' : ''}
+    `;
+    previewContainer.appendChild(wrapper);
+  });
+}
+
+// ✅ Insert Cancel button if not already added
   const form = document.getElementById("profileForm");
   if (form && !document.getElementById("cancelEditBtn")) {
     const cancelBtn = document.createElement("button");
