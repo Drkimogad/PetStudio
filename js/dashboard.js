@@ -84,11 +84,41 @@ function loadSavedProfiles() {
            <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${profile.birthday} 🎉</p>
         </div>
         
-      <div class="gallery-grid">
-      ${profile.gallery.map((img, imgIndex) => {   
-      const imgUrl = typeof img === "string" ? img : img?.url;
-      const secureUrl = imgUrl?.replace(/^http:/, 'https:'); // 🧪 force HTTPS          
-      return `
+      // In the loadSavedProfiles() function, replace the gallery-grid section with this:
+const galleryGrid = document.createElement("div");
+galleryGrid.classList.add("gallery-grid");
+profile.gallery.forEach((img, imgIndex) => {   
+  const imgUrl = typeof img === "string" ? img : img?.url;
+  const secureUrl = imgUrl?.replace(/^http:/, 'https:');
+  
+  const galleryItem = document.createElement("div");
+  galleryItem.classList.add("gallery-item");
+  
+  const imgElement = document.createElement("img");
+  imgElement.src = secureUrl;
+  imgElement.alt = "Pet Photo";
+  imgElement.addEventListener('load', () => {
+    imgElement.classList.add('loaded');
+  });
+  
+  const coverBtn = document.createElement("button");
+  coverBtn.classList.add("cover-btn");
+  if (imgIndex === profile.coverPhotoIndex) {
+    coverBtn.classList.add("active");
+  }
+  coverBtn.dataset.index = imgIndex;
+  coverBtn.textContent = "★";
+  coverBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setCoverPhoto(index, imgIndex);
+  });
+  
+  galleryItem.appendChild(imgElement);
+  galleryItem.appendChild(coverBtn);
+  galleryGrid.appendChild(galleryItem);
+});
+
+petCard.appendChild(galleryGrid);
       
       <div class="gallery-item">
         <img src="${secureUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
@@ -191,7 +221,45 @@ function openEditForm(index) {
   // Setup cover photo index on form (used on save)
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
-  // Preview gallery (already handled)
+  // Enhanced Gallery Preview
+  const editGalleryPreview = document.getElementById("editGalleryPreview");
+  if (editGalleryPreview) {
+    editGalleryPreview.innerHTML = '';
+    
+    if (profile.gallery?.length > 0) {
+      const previewTitle = document.createElement("h4");
+      previewTitle.textContent = "Current Gallery:";
+      previewTitle.style.margin = "10px 0";
+      editGalleryPreview.appendChild(previewTitle);
+      
+      const previewGrid = document.createElement("div");
+      previewGrid.style.display = "grid";
+      previewGrid.style.gridTemplateColumns = "repeat(auto-fill, minmax(100px, 1fr))";
+      previewGrid.style.gap = "10px";
+      previewGrid.style.marginBottom = "20px";
+      
+      profile.gallery.forEach((img, imgIndex) => {
+        const imgUrl = typeof img === "string" ? img : img?.url;
+        const previewItem = document.createElement("div");
+        previewItem.style.position = "relative";
+        
+        const imgElement = document.createElement("img");
+        imgElement.src = imgUrl;
+        imgElement.style.width = "100%";
+        imgElement.style.height = "100px";
+        imgElement.style.objectFit = "cover";
+        imgElement.style.borderRadius = "4px";
+        imgElement.style.border = imgIndex === profile.coverPhotoIndex 
+          ? "3px solid #6a0dad" 
+          : "1px solid #ddd";
+        
+        previewItem.appendChild(imgElement);
+        previewGrid.appendChild(previewItem);
+      });
+      
+      editGalleryPreview.appendChild(previewGrid);
+    }
+  }
 
   // ✅ Insert Cancel button if not already added
   const form = document.getElementById("profileForm");
@@ -725,13 +793,68 @@ function initializeDashboard() {
   }
 }
 
-
+//=================================
 // MOVED FORM SUBMISSION HERE
+//================================
 function attachFormListenerWhenReady() {
 // the whole form submission wrapped in an if block 
-      // ✅ Only attach once
+// ✅ Only attach once
 if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) {
+
+// ✅ Enhanced Image Preview on File Selection (added recently)
+const galleryInput = document.getElementById("petGallery");
+if (galleryInput && !galleryInput.dataset.previewEnabled) {
+  galleryInput.addEventListener("change", function(e) {
+    const files = e.target.files;
+    const previewContainer = document.getElementById("editGalleryPreview");
     
+    if (!previewContainer) return;
+    
+    // Clear existing previews (but keep existing gallery images)
+    const existingPreviews = previewContainer.querySelectorAll(".temp-preview");
+    existingPreviews.forEach(el => el.remove());
+    
+    if (files.length > 0) {
+      const previewTitle = document.createElement("h4");
+      previewTitle.textContent = "New Images to Upload:";
+      previewTitle.style.margin = "10px 0 5px";
+      previewContainer.appendChild(previewTitle);
+      
+      const previewGrid = document.createElement("div");
+      previewGrid.style.display = "grid";
+      previewGrid.style.gridTemplateColumns = "repeat(auto-fill, minmax(100px, 1fr))";
+      previewGrid.style.gap = "10px";
+      
+      Array.from(files).forEach(file => {
+        if (!file.type.startsWith("image/")) return;
+        
+        const reader = new FileReader();
+        const previewItem = document.createElement("div");
+        previewItem.classList.add("temp-preview");
+        previewItem.style.position = "relative";
+        
+        reader.onload = (e) => {
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          img.style.width = "100%";
+          img.style.height = "100px";
+          img.style.objectFit = "cover";
+          img.style.borderRadius = "4px";
+          img.style.border = "1px solid #ddd";
+          previewItem.appendChild(img);
+        };
+        
+        reader.readAsDataURL(file);
+        previewGrid.appendChild(previewItem);
+      });
+      
+      previewContainer.appendChild(previewGrid);
+    }
+  });
+  
+  galleryInput.dataset.previewEnabled = "true"; // Prevent duplicate listeners
+}
+  
 DOM.profileForm.addEventListener("submit", async (e) => {
 console.log("✅ Form submission listener attached."); // You already had this 👍
 console.log("📨 Submit triggered!");
