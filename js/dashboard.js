@@ -35,7 +35,8 @@ function initDashboardDOM() {
 
 // RENDER ALL PROFILES FORM OLD 
 function loadSavedProfiles() {
-  const petProfiles = window.petProfiles || [];
+  // ➡️ ADD THIS LINE to use the correct data and trace actual rendering
+  const petProfiles = window.petProfiles || []; // 👈 Always check window.petProfiles
   console.log("✅ Rendering profiles count:", petProfiles.length);
 
   if (!DOM.petList) {
@@ -44,17 +45,19 @@ function loadSavedProfiles() {
   }
     
   DOM.petList.innerHTML = '';
-  if (petProfiles.length === 0) {
+  if(petProfiles.length === 0) {
     DOM.petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
     return;
   }
-
-  petProfiles.forEach((profile, index) => {
-    const petCard = document.createElement("div");
-    petCard.classList.add("petCard");
-    petCard.style.marginBottom = "2rem";
-    petCard.id = `pet-card-${profile.id}`;
-      
+  else {
+    petProfiles.forEach((profile, index) => {
+        
+      const petCard = document.createElement("div");
+      petCard.classList.add("petCard");
+      petCard.style.marginBottom = "2rem";
+      petCard.id = `pet-card-${profile.id}`;
+        
+// ✅ Support both object-based and string-based gallery entries
     const coverImageObj = profile.gallery?.[profile.coverPhotoIndex];
     const coverPhotoUrl = typeof coverImageObj === "string"
       ? coverImageObj
@@ -64,69 +67,71 @@ function loadSavedProfiles() {
       ? `style="background-image: url('${coverPhotoUrl}');"`
       : '';
       
-    petCard.innerHTML = `
-      <div class="profile-header" ${profileHeaderStyle}>
-        <h3>${profile.name}</h3>
-        <p class="countdown">${getCountdown(profile.birthday)}</p>
-      </div>
+      petCard.innerHTML = `
       
-      <div class="profile-details">
-        <p><strong>Breed:</strong> ${profile.breed}</p>
-        <p><strong>DOB:</strong> ${profile.dob}</p>
-        <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
-      </div>
-      
-      <div class="profile-reminder">
-        <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${profile.birthday} 🎉</p>
-      </div>
-      
+        <div class="profile-header" ${profileHeaderStyle}>
+          <h3>${profile.name}</h3>
+          <p class="countdown">${getCountdown(profile.birthday)}</p>
+        </div>
+        
+        <div class="profile-details">
+          <p><strong>Breed:</strong> ${profile.breed}</p>
+          <p><strong>DOB:</strong> ${profile.dob}</p>
+          <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+        </div>
+        
+        <div class="profile-reminder">
+           <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${profile.birthday} 🎉</p>
+        </div>
+        
       <div class="gallery-grid">
-        ${profile.gallery.map((img, imgIndex) => {   
-          const imgUrl = typeof img === "string" ? img : img?.url;
-          const secureUrl = imgUrl?.replace(/^http:/, 'https:');          
-          return `
-            <div class="gallery-item">
-              <img src="${secureUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
-              <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-                data-index="${imgIndex}">★</button>
-            </div>
-          `;
-        }).join('')}
-      </div>
-
-      <div id="editGalleryPreview"></div>
-      <div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
-        ⚠️ Duplicate image detected. Please check your gallery!
-      </div>
-      <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
-
-      <div class="mood-tracker">
-        <div class="mood-buttons">
-          <span>Log Mood:</span>
-          <button class="mood-btn" data-mood="happy">😊</button>
-          <button class="mood-btn" data-mood="depressed">😔</button>
-          <button class="mood-btn" data-mood="sad">😞</button>
-          <button class="mood-btn" data-mood="angry">😠</button>
-          <button class="mood-btn" data-mood="sick">🤒</button>
-        </div>
-        <div class="mood-history">
-          ${renderMoodHistory(profile)}
-        </div>
-      </div>
+      ${profile.gallery.map((img, imgIndex) => {   
+      const imgUrl = typeof img === "string" ? img : img?.url;
+      const secureUrl = imgUrl?.replace(/^http:/, 'https:'); // 🧪 force HTTPS          
+      return `
       
-      <div class="pet-card" data-doc-id="${profile.docId}">
+      <div class="gallery-item">
+        <img src="${secureUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
+        <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
+        data-index="${imgIndex}">★</button>
+      </div>
+    `;
+  }).join('')}
+</div>
+
+<div id="editGalleryPreview"></div>
+<div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
+  ⚠️ Duplicate image detected. Please check your gallery!
+</div>
+<div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
+
+        <div class="mood-tracker">
+          <div class="mood-buttons">
+            <span>Log Mood:</span>
+            <button class="mood-btn" data-mood="happy">😊</button>
+            <button class="mood-btn" data-mood="depressed">😔</button>
+            <button class="mood-btn" data-mood="sad">😞</button>
+            <button class="mood-btn" data-mood="angry">😠</button>
+            <button class="mood-btn" data-mood="sick">🤒</button>
+          </div>
+          <div class="mood-history">
+            ${renderMoodHistory(profile)}
+          </div>
+        </div>
+        <div class="pet-card" data-doc-id="${profile.docId}">
         <div class="action-buttons">
-          <button class="edit-profile" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit</button>
-          <button class="delete-profile" data-index="${index}" data-doc-id="${profile.docId}">🗑️ Delete</button>
-          <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print</button>
-          <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share</button>
-          <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 QR Code</button>
+        <button class="edit-profile" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit</button>
+        <button class="delete-profile" data-index="${index}" data-doc-id="${profile.docId}">🗑️ Delete</button>
+        <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print</button>
+        <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share</button>
+        <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 QR Code</button>
         </div>
       </div>  
-    `;
+      `;
    
-    DOM.petList.appendChild(petCard);
-  });
+      DOM.petList.appendChild(petCard);
+    });
+  }
 }
 
 // Calculate days until birthday
@@ -186,45 +191,7 @@ function openEditForm(index) {
   // Setup cover photo index on form (used on save)
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
-  // Enhanced Gallery Preview
-  const editGalleryPreview = document.getElementById("editGalleryPreview");
-  if (editGalleryPreview) {
-    editGalleryPreview.innerHTML = '';
-    
-    if (profile.gallery?.length > 0) {
-      const previewTitle = document.createElement("h4");
-      previewTitle.textContent = "Current Gallery:";
-      previewTitle.style.margin = "10px 0";
-      editGalleryPreview.appendChild(previewTitle);
-      
-      const previewGrid = document.createElement("div");
-      previewGrid.style.display = "grid";
-      previewGrid.style.gridTemplateColumns = "repeat(auto-fill, minmax(100px, 1fr))";
-      previewGrid.style.gap = "10px";
-      previewGrid.style.marginBottom = "20px";
-      
-      profile.gallery.forEach((img, imgIndex) => {
-        const imgUrl = typeof img === "string" ? img : img?.url;
-        const previewItem = document.createElement("div");
-        previewItem.style.position = "relative";
-        
-        const imgElement = document.createElement("img");
-        imgElement.src = imgUrl;
-        imgElement.style.width = "100%";
-        imgElement.style.height = "100px";
-        imgElement.style.objectFit = "cover";
-        imgElement.style.borderRadius = "4px";
-        imgElement.style.border = imgIndex === profile.coverPhotoIndex 
-          ? "3px solid #6a0dad" 
-          : "1px solid #ddd";
-        
-        previewItem.appendChild(imgElement);
-        previewGrid.appendChild(previewItem);
-      });
-      
-      editGalleryPreview.appendChild(previewGrid);
-    }
-  }
+  // Preview gallery (already handled)
 
   // ✅ Insert Cancel button if not already added
   const form = document.getElementById("profileForm");
@@ -758,68 +725,13 @@ function initializeDashboard() {
   }
 }
 
-//=================================
+
 // MOVED FORM SUBMISSION HERE
-//================================
 function attachFormListenerWhenReady() {
 // the whole form submission wrapped in an if block 
-// ✅ Only attach once
+      // ✅ Only attach once
 if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) {
-
-// ✅ Enhanced Image Preview on File Selection (added recently)
-const galleryInput = document.getElementById("petGallery");
-if (galleryInput && !galleryInput.dataset.previewEnabled) {
-  galleryInput.addEventListener("change", function(e) {
-    const files = e.target.files;
-    const previewContainer = document.getElementById("editGalleryPreview");
     
-    if (!previewContainer) return;
-    
-    // Clear existing previews (but keep existing gallery images)
-    const existingPreviews = previewContainer.querySelectorAll(".temp-preview");
-    existingPreviews.forEach(el => el.remove());
-    
-    if (files.length > 0) {
-      const previewTitle = document.createElement("h4");
-      previewTitle.textContent = "New Images to Upload:";
-      previewTitle.style.margin = "10px 0 5px";
-      previewContainer.appendChild(previewTitle);
-      
-      const previewGrid = document.createElement("div");
-      previewGrid.style.display = "grid";
-      previewGrid.style.gridTemplateColumns = "repeat(auto-fill, minmax(100px, 1fr))";
-      previewGrid.style.gap = "10px";
-      
-      Array.from(files).forEach(file => {
-        if (!file.type.startsWith("image/")) return;
-        
-        const reader = new FileReader();
-        const previewItem = document.createElement("div");
-        previewItem.classList.add("temp-preview");
-        previewItem.style.position = "relative";
-        
-        reader.onload = (e) => {
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          img.style.width = "100%";
-          img.style.height = "100px";
-          img.style.objectFit = "cover";
-          img.style.borderRadius = "4px";
-          img.style.border = "1px solid #ddd";
-          previewItem.appendChild(img);
-        };
-        
-        reader.readAsDataURL(file);
-        previewGrid.appendChild(previewItem);
-      });
-      
-      previewContainer.appendChild(previewGrid);
-    }
-  });
-  
-  galleryInput.dataset.previewEnabled = "true"; // Prevent duplicate listeners
-}
-  
 DOM.profileForm.addEventListener("submit", async (e) => {
 console.log("✅ Form submission listener attached."); // You already had this 👍
 console.log("📨 Submit triggered!");
