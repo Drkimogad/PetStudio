@@ -35,8 +35,7 @@ function initDashboardDOM() {
 
 // RENDER ALL PROFILES FORM OLD 
 function loadSavedProfiles() {
-  // ➡️ ADD THIS LINE to use the correct data and trace actual rendering
-  const petProfiles = window.petProfiles || []; // 👈 Always check window.petProfiles
+  const petProfiles = window.petProfiles || [];
   console.log("✅ Rendering profiles count:", petProfiles.length);
 
   if (!DOM.petList) {
@@ -45,19 +44,17 @@ function loadSavedProfiles() {
   }
     
   DOM.petList.innerHTML = '';
-  if(petProfiles.length === 0) {
+  if (petProfiles.length === 0) {
     DOM.petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
     return;
   }
-  else {
-    petProfiles.forEach((profile, index) => {
-        
-      const petCard = document.createElement("div");
-      petCard.classList.add("petCard");
-      petCard.style.marginBottom = "2rem";
-      petCard.id = `pet-card-${profile.id}`;
-        
-// ✅ Support both object-based and string-based gallery entries
+
+  petProfiles.forEach((profile, index) => {
+    const petCard = document.createElement("div");
+    petCard.classList.add("petCard");
+    petCard.style.marginBottom = "2rem";
+    petCard.id = `pet-card-${profile.id}`;
+      
     const coverImageObj = profile.gallery?.[profile.coverPhotoIndex];
     const coverPhotoUrl = typeof coverImageObj === "string"
       ? coverImageObj
@@ -67,101 +64,69 @@ function loadSavedProfiles() {
       ? `style="background-image: url('${coverPhotoUrl}');"`
       : '';
       
-      petCard.innerHTML = `
-      
-        <div class="profile-header" ${profileHeaderStyle}>
-          <h3>${profile.name}</h3>
-          <p class="countdown">${getCountdown(profile.birthday)}</p>
-        </div>
-        
-        <div class="profile-details">
-          <p><strong>Breed:</strong> ${profile.breed}</p>
-          <p><strong>DOB:</strong> ${profile.dob}</p>
-          <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
-        </div>
-        
-        <div class="profile-reminder">
-           <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${profile.birthday} 🎉</p>
-        </div>
-        
-      // In the loadSavedProfiles() function, replace the gallery-grid section with this:
-const galleryGrid = document.createElement("div");
-galleryGrid.classList.add("gallery-grid");
-profile.gallery.forEach((img, imgIndex) => {   
-  const imgUrl = typeof img === "string" ? img : img?.url;
-  const secureUrl = imgUrl?.replace(/^http:/, 'https:');
-  
-  const galleryItem = document.createElement("div");
-  galleryItem.classList.add("gallery-item");
-  
-  const imgElement = document.createElement("img");
-  imgElement.src = secureUrl;
-  imgElement.alt = "Pet Photo";
-  imgElement.addEventListener('load', () => {
-    imgElement.classList.add('loaded');
-  });
-  
-  const coverBtn = document.createElement("button");
-  coverBtn.classList.add("cover-btn");
-  if (imgIndex === profile.coverPhotoIndex) {
-    coverBtn.classList.add("active");
-  }
-  coverBtn.dataset.index = imgIndex;
-  coverBtn.textContent = "★";
-  coverBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    setCoverPhoto(index, imgIndex);
-  });
-  
-  galleryItem.appendChild(imgElement);
-  galleryItem.appendChild(coverBtn);
-  galleryGrid.appendChild(galleryItem);
-});
-
-petCard.appendChild(galleryGrid);
-      
-      <div class="gallery-item">
-        <img src="${secureUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
-        <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-        data-index="${imgIndex}">★</button>
+    petCard.innerHTML = `
+      <div class="profile-header" ${profileHeaderStyle}>
+        <h3>${profile.name}</h3>
+        <p class="countdown">${getCountdown(profile.birthday)}</p>
       </div>
-    `;
-  }).join('')}
-</div>
+      
+      <div class="profile-details">
+        <p><strong>Breed:</strong> ${profile.breed}</p>
+        <p><strong>DOB:</strong> ${profile.dob}</p>
+        <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+      </div>
+      
+      <div class="profile-reminder">
+        <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${profile.birthday} 🎉</p>
+      </div>
+      
+      <div class="gallery-grid">
+        ${profile.gallery.map((img, imgIndex) => {   
+          const imgUrl = typeof img === "string" ? img : img?.url;
+          const secureUrl = imgUrl?.replace(/^http:/, 'https:');          
+          return `
+            <div class="gallery-item">
+              <img src="${secureUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
+              <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
+                data-index="${imgIndex}">★</button>
+            </div>
+          `;
+        }).join('')}
+      </div>
 
-<div id="editGalleryPreview"></div>
-<div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
-  ⚠️ Duplicate image detected. Please check your gallery!
-</div>
-<div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
+      <div id="editGalleryPreview"></div>
+      <div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
+        ⚠️ Duplicate image detected. Please check your gallery!
+      </div>
+      <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
 
-        <div class="mood-tracker">
-          <div class="mood-buttons">
-            <span>Log Mood:</span>
-            <button class="mood-btn" data-mood="happy">😊</button>
-            <button class="mood-btn" data-mood="depressed">😔</button>
-            <button class="mood-btn" data-mood="sad">😞</button>
-            <button class="mood-btn" data-mood="angry">😠</button>
-            <button class="mood-btn" data-mood="sick">🤒</button>
-          </div>
-          <div class="mood-history">
-            ${renderMoodHistory(profile)}
-          </div>
+      <div class="mood-tracker">
+        <div class="mood-buttons">
+          <span>Log Mood:</span>
+          <button class="mood-btn" data-mood="happy">😊</button>
+          <button class="mood-btn" data-mood="depressed">😔</button>
+          <button class="mood-btn" data-mood="sad">😞</button>
+          <button class="mood-btn" data-mood="angry">😠</button>
+          <button class="mood-btn" data-mood="sick">🤒</button>
         </div>
-        <div class="pet-card" data-doc-id="${profile.docId}">
+        <div class="mood-history">
+          ${renderMoodHistory(profile)}
+        </div>
+      </div>
+      
+      <div class="pet-card" data-doc-id="${profile.docId}">
         <div class="action-buttons">
-        <button class="edit-profile" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit</button>
-        <button class="delete-profile" data-index="${index}" data-doc-id="${profile.docId}">🗑️ Delete</button>
-        <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print</button>
-        <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share</button>
-        <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 QR Code</button>
+          <button class="edit-profile" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit</button>
+          <button class="delete-profile" data-index="${index}" data-doc-id="${profile.docId}">🗑️ Delete</button>
+          <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print</button>
+          <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share</button>
+          <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 QR Code</button>
         </div>
       </div>  
-      `;
+    `;
    
-      DOM.petList.appendChild(petCard);
-    });
-  }
+    DOM.petList.appendChild(petCard);
+  });
 }
 
 // Calculate days until birthday
