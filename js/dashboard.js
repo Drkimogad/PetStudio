@@ -465,15 +465,28 @@ ${profile.moodHistory.map(entry => `
 }
 
 // 🌀 HYBRID OPTIMIZED SHARE PET CARD FUNCTION 🌟🌟🌟
-async function sharePetCard(profile, event) {  // Explicitly pass event
+async function sharePetCard(profile, event) {
   try {
-    // 1. Try Web Share API first (link only)
+    // 🔗 Build invite message
     const shareUrl = `${window.location.origin}/PetStudio/?profile=${profile.id}`;
+    const inviteMessage = `Meet ${profile.name || 'my pet'}! 🐾
+
+I'm using PetStudio to manage:
+📋 Pet Profiles & Milestones  
+🎂 Birthday Reminders  
+📸 Photo Gallery  
+😊 Mood Tracking  
+🔲 QR Code Sharing  
+
+Check out ${profile.name ? profile.name + "'s" : "my pet's"} profile:
+${shareUrl}`;
+
+    // 1️⃣ Try native Web Share API
     if (navigator.share) {
       try {
         await navigator.share({
           title: `Meet ${profile.name}! 🐾`,
-          text: `Check out ${profile.name}'s profile`,
+          text: inviteMessage,
           url: shareUrl
         });
         return;
@@ -482,31 +495,28 @@ async function sharePetCard(profile, event) {  // Explicitly pass event
       }
     }
 
-    // 2. Generate image fallback
+    // 2️⃣ Fallback: generate image of the card
     const cardElement = document.getElementById(`pet-card-${profile.id}`);
     if (!cardElement) throw new Error("Card element not found");
-    
-    // Ensure element is visible for html2canvas
+
     cardElement.style.opacity = '1';
     cardElement.style.position = 'static';
-    
+
     const canvas = await html2canvas(cardElement, {
       scale: 2,
       logging: true,
       useCORS: true,
       allowTaint: true,
       onclone: (clonedDoc) => {
-        // Ensure all styles are copied
         clonedDoc.getElementById(`pet-card-${profile.id}`).style.visibility = 'visible';
       }
     });
 
-    // 3. Offer both download and copy options
     canvas.toBlob(async (blob) => {
       const item = new ClipboardItem({ 'image/png': blob });
       await navigator.clipboard.write([item]);
-      
-      // Auto-download as fallback
+
+      // Fallback download
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -517,10 +527,10 @@ async function sharePetCard(profile, event) {  // Explicitly pass event
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }, 100);
-      
-      alert(`${profile.name}'s profile copied! You can paste the image anywhere.`);
+
+      alert(`${profile.name}'s profile image copied! Paste anywhere or share manually.`);
     }, 'image/png');
-    
+
   } catch (error) {
     console.error('Sharing failed:', error);
     alert(`Sharing failed: ${error.message}`);
