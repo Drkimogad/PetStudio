@@ -183,9 +183,9 @@ function setupGoogleLoginButton() {
 // ====== Firebase Initialization ======
 async function initializeFirebase() {
   const firebaseConfig = {
-    apiKey: "AIzaSyAnGNXr6JZHgCcHp5xKtGuIsTGaMRqZ6oM",
+    apiKey: "AIzaSyAnGNXr6JZHgCcHp5xKtGuIsTGaMRqZ6oM", // for firebase services auth/firestore safe if restricted
     authDomain: "petstudio-c3679.firebaseapp.com",
-    projectId: "petstudio-c3679",
+    projectId: "petstudio-c3679",  // for firestore database
     storageBucket: "petstudio-c3679.appspot.com",
     messagingSenderId: "1031214975391",
     appId: "1:1031214975391:web:35878cabdd540b6fc455aa",
