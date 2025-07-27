@@ -221,6 +221,7 @@ if (galleryPreview && profile.gallery?.length) {
   DOM.profileSection.classList.remove("hidden");
   DOM.petList.classList.add("hidden");
   DOM.fullPageBanner.classList.add("hidden");
+  window.scrollTo(0, 0); // scroll top
 }
 
 
@@ -244,6 +245,7 @@ function cancelEdit() {
 
   // Optionally reset form values (clean state)
   document.getElementById("profileForm").reset();
+  window.scrollTo(0, 0); // scroll top
 }
 
 //==========≈==============
