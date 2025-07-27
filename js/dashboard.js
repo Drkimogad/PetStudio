@@ -587,6 +587,7 @@ function generateQRCode(profileIndex) {
 
 // 2.Print QR code
 function printQR() {
+  if (!document.querySelector('#qr-modal .printable-area')) return; //Null check before printing
   const printContent = document.querySelector('#qr-modal .printable-area').cloneNode(true);
   const printWindow = window.open('', '_blank');
   printWindow.document.write('<html><head><title>Print QR Code</title></head><body>');
@@ -600,6 +601,7 @@ function printQR() {
 
 //3. Download QR code
 function downloadQR() {
+  if (!currentQRProfile) return; // Null check
   const canvas = document.querySelector('#qrcode-container canvas');
   if(canvas) {
     const link = document.createElement('a');
@@ -621,7 +623,9 @@ async function shareQR() {
     if(navigator.share) {
       await navigator.share(shareData);
     } else {
-      await navigator.clipboard.writeText(shareData.url);
+      await navigator.clipboard.writeText(
+  `🐾 Meet ${currentQRProfile.name}!\nBreed: ${currentQRProfile.breed}\nBirthday: ${currentQRProfile.birthday}\n\nView more on PetStudio: https://drkimogad.github.io/PetStudio/\n\nSign up to explore more pet features! ✨`
+);
       showQRStatus('Link copied to clipboard!', true);
     }
   } catch (err) {
@@ -636,6 +640,7 @@ function initQRModal() {
   if (!modal) return;
   
   document.addEventListener('click', (e) => {
+    console.log('Button clicked:', e.target.className); // for clicking handling
     if (e.target.classList.contains('qr-print')) {
       printQR();
     } else if (e.target.classList.contains('qr-download')) {
