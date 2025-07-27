@@ -555,6 +555,9 @@ async function sharePetCard(profile, event) {
 //===========================
 //1. Generate QR code
 function generateQRCode(profileIndex) {
+  if (generatingQR) return;
+  generatingQR = true;
+ 
   const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   currentQRProfile = savedProfiles[profileIndex];
 
@@ -587,6 +590,9 @@ function generateQRCode(profileIndex) {
     alert('Profile data too large for QR. Showing compact version instead.');
     // Fallback to just the link if compression fails
     container.innerHTML = `<p>View profile: <a href="https://drkimogad.github.io/PetStudio/">PetStudio</a></p>`;
+  }
+    finally {
+    generatingQR = false;
   }
 }
 
