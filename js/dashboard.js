@@ -93,7 +93,7 @@ function loadSavedProfiles() {
       <div class="gallery-item">
         <img src="${secureUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
         <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-        data-index="${imgIndex}">★</button>
+        data-index="${index}" data-photo-index="${imgIndex}">★</button>
       </div>
     `;
   }).join('')}
@@ -106,18 +106,18 @@ function loadSavedProfiles() {
 <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
 
         <div class="mood-tracker">
-          <div class="mood-buttons">
-            <span>Log Mood:</span>
-            <button class="mood-btn" data-mood="happy">😊</button>
-            <button class="mood-btn" data-mood="depressed">😔</button>
-            <button class="mood-btn" data-mood="sad">😞</button>
-            <button class="mood-btn" data-mood="angry">😠</button>
-            <button class="mood-btn" data-mood="sick">🤒</button>
-          </div>
-          <div class="mood-history">
+        <div class="mood-buttons">
+       <span>Log Mood:</span>
+       <button class="mood-btn" data-mood="happy" data-index="${index}">😊</button>
+       <button class="mood-btn" data-mood="depressed" data-index="${index}">😔</button>
+       <button class="mood-btn" data-mood="sad" data-index="${index}">😞</button>
+       <button class="mood-btn" data-mood="angry" data-index="${index}">😠</button>
+       <button class="mood-btn" data-mood="sick" data-index="${index}">🤒</button>
+       </div>
+       <div class="mood-history">
             ${renderMoodHistory(profile)}
-          </div>
-        </div>
+       </div>
+      </div>
         <div class="pet-card" data-doc-id="${profile.docId}">
         <div class="action-buttons">
         <button class="edit-profile" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit</button>
