@@ -889,9 +889,18 @@ console.log("📨 Submit triggered!");
     submitBtn.disabled = false;
     showLoading(false);
     
-  // ✅ Safely clear petGallery input
-  const galleryInput = document.getElementById("petGallery");
-      if (galleryInput) galleryInput.value = "";    
+   // ✅ Safely clear petGallery input
+   const galleryInput = document.getElementById("petGallery");
+      if (galleryInput) galleryInput.value = ""; 
+    // ✅ Refresh gallery preview after submission
+  const galleryPreview = document.getElementById("editGalleryPreview");
+  if (galleryPreview && newProfile.gallery?.length) {
+  galleryPreview.innerHTML = newProfile.gallery.map(img => {
+    const imgUrl = typeof img === "string" ? img : img?.url;
+    const safeUrl = imgUrl?.replace(/^http:/, 'https:');
+    return `<img src="${safeUrl}" class="preview-thumb" style="max-height:60px; margin-right:5px;" />`;
+  }).join('');
+}
  } // ✅ closes finally
  }); // ✅ closes addEventListener
   
