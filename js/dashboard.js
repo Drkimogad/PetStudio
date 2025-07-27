@@ -191,8 +191,16 @@ function openEditForm(index) {
   // Setup cover photo index on form (used on save)
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
-  // Preview gallery (already handled)
-
+// ✅ Show gallery preview when editing
+const galleryPreview = document.getElementById("editGalleryPreview");
+if (galleryPreview && profile.gallery?.length) {
+  galleryPreview.innerHTML = profile.gallery.map(img => {
+    const imgUrl = typeof img === "string" ? img : img?.url;
+    const safeUrl = imgUrl?.replace(/^http:/, 'https:');
+    return `<img src="${safeUrl}" class="preview-thumb" style="max-height:60px; margin-right:5px;" />`;
+  }).join('');
+}
+  
   // ✅ Insert Cancel button if not already added
   const form = document.getElementById("profileForm");
   if (form && !document.getElementById("cancelEditBtn")) {
