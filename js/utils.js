@@ -17,8 +17,7 @@ async function uploadToCloudinary(file, userId, petProfileId) {
   // 3. BUILD FOLDER PATH
 //  const folderPath = `PetStudio/users/${userId}/${petProfileId}/gallery`;
 
-  const folderPath = `petStudio/users/${encodeURIComponent(userId)}/${encodeURIComponent(petProfileId)}/gallery/`;
-//                                 ^^^^^^^^^^^^^^^^^^           ^^^^^^^^^^^^^^^^^^
+  const folderPath = `petstudio_auto_folder/users/${encodeURIComponent(userId)}/${encodeURIComponent(petProfileId)}/gallery/`;
   
   // 4. PREPARE UPLOAD
   const formData = new FormData();
