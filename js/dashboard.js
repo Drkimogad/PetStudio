@@ -485,18 +485,18 @@ ${profile.moodHistory.map(entry => `
     else img.addEventListener('load', checkPrint);
   });
 }
-
+//====================================================
 // 🌀 HYBRID OPTIMIZED SHARE PET CARD FUNCTION 🌟🌟🌟
-async function sharePetCard(profile, event) {  // Explicitly pass event
+//=======================================================
+async function sharePetCard(profile, event) {
   try {
     // 1. Try Web Share API first (link only)
-    const shareUrl = `${window.location.origin}/PetStudio/?profile=${profile.id}`;
+    const petStudioLink = "https://drkimogad.github.io/PetStudio/"; // Static URL
     if (navigator.share) {
       try {
         await navigator.share({
           title: `Meet ${profile.name}! 🐾`,
-          text: `Check out ${profile.name}'s profile`,
-          url: shareUrl
+          text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.birthday}\n\nView more on PetStudio: ${petStudioLink}\n\nSign up to explore more pet features! ✨`,
         });
         return;
       } catch (shareError) {
@@ -504,31 +504,33 @@ async function sharePetCard(profile, event) {  // Explicitly pass event
       }
     }
 
-    // 2. Generate image fallback
+    // 2. Generate image fallback (PNG)
     const cardElement = document.getElementById(`pet-card-${profile.id}`);
     if (!cardElement) throw new Error("Card element not found");
     
-    // Ensure element is visible for html2canvas
-    cardElement.style.opacity = '1';
-    cardElement.style.position = 'static';
-    
+    // Ensure the static link is visible in the card (if needed)
+    const linkElement = document.createElement('div');
+    linkElement.textContent = `View more: ${petStudioLink}`;
+    linkElement.style.marginTop = '10px';
+    cardElement.appendChild(linkElement);
+
+    // Capture the card as PNG
     const canvas = await html2canvas(cardElement, {
       scale: 2,
       logging: true,
       useCORS: true,
       allowTaint: true,
       onclone: (clonedDoc) => {
-        // Ensure all styles are copied
         clonedDoc.getElementById(`pet-card-${profile.id}`).style.visibility = 'visible';
       }
     });
 
-    // 3. Offer both download and copy options
+    // 3. Copy PNG to clipboard + auto-download
     canvas.toBlob(async (blob) => {
       const item = new ClipboardItem({ 'image/png': blob });
       await navigator.clipboard.write([item]);
       
-      // Auto-download as fallback
+      // Auto-download
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
