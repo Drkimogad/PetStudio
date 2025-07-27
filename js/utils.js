@@ -15,31 +15,23 @@ async function uploadToCloudinary(file, userId, petProfileId) {
   }
 
   // 3. BUILD FOLDER PATH
-//  const folderPath = `PetStudio/users/${userId}/${petProfileId}/gallery`;
-
-  const folderPath = `petstudio_auto_folder/users/${encodeURIComponent(userId)}/${encodeURIComponent(petProfileId)}/gallery/`;
+  const folderPath = `PetStudio/users/${encodeURIComponent(userId)}/${encodeURIComponent(petProfileId)}/gallery/`;
   
   // 4. PREPARE UPLOAD
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', petstudio_auto_folder);
+  formData.append('upload_preset', 'petstudio_auto_folder'); // As string!
   formData.append('folder', folderPath);
-  // ▼▼▼ Add these 2 lines ▼▼▼
-  formData.append('quality', 'auto');      // Enables q_auto
-  formData.append('fetch_format', 'auto'); // Enables f_auto
-  formData.append('secure', 'true'); // Forces HTTPS URLs
-  // ▲▲▲ That's it! ▲▲▲
-  // Add these required parameters to FormData
-  formData.append('api_key', 956144941869967); // ← Add this
-  formData.append('timestamp', Date.now()); // ← Add this
-  
-  // Verify your upload preset exists
-  console.log("Using preset:", petstudio_auto_folder);
+  formData.append('quality', 'auto');
+  formData.append('fetch_format', 'auto');
+  formData.append('secure', 'true');
+
+  console.log("Using preset:", 'petstudio_auto_folder');
   console.log("📁 Upload folder:", folderPath);
   
   try {
     const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${dh7d6otgu}/upload`,
+      `https://api.cloudinary.com/v1_1/dh7d6otgu/upload`, // Cloud name as string!
       { 
         method: 'POST',
         body: formData,
@@ -51,8 +43,8 @@ async function uploadToCloudinary(file, userId, petProfileId) {
     
     const data = await response.json();
     return {
-      url: data.url.replace(/^http:\/\//, 'https://'), // 🔒 Force HTTPS
-      path: data.public_id, // Full Cloudinary path
+      url: data.secure_url, // Already HTTPS, no need to replace
+      path: data.public_id,
       width: data.width,
       height: data.height
     };
