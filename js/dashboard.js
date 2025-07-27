@@ -1,3 +1,6 @@
+// image preview in new creation and open edit form to be fixed
+// QR code to be finalized.
+
 //🌟 Pet Profile Management 🌟
 let currentQRProfile = null; // Only new declaration needed
 setupPetProfileDelegation();
@@ -120,11 +123,11 @@ function loadSavedProfiles() {
       </div>
         <div class="pet-card" data-doc-id="${profile.docId}">
         <div class="action-buttons">
-        <button class="edit-profile" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit</button>
-        <button class="delete-profile" data-index="${index}" data-doc-id="${profile.docId}">🗑️ Delete</button>
-        <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print</button>
-        <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share</button>
-        <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 QR Code</button>
+        <button class="edit-profile" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit Petcard</button>
+        <button class="delete-profile" data-index="${index}" data-doc-id="${profile.docId}">🗑️ Delete Petcard</button>
+        <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print Petcard</button>
+        <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
+        <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
         </div>
       </div>  
       `;
@@ -134,7 +137,9 @@ function loadSavedProfiles() {
   }
 }
 
+//==============================
 // Calculate days until birthday
+//=================================
 function getCountdown(birthday) {
   const today = new Date();
   const nextBirthday = new Date(birthday);
@@ -143,8 +148,9 @@ function getCountdown(birthday) {
   const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
   return `${diffDays} days until birthday! 🎉`;
 }
-
+//=============================
 // Render mood history
+//==========================
 function renderMoodHistory(profile) {
   if(!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
   return profile.moodHistory
@@ -159,7 +165,7 @@ function getMoodEmoji(mood) {
 
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 //======================================
-// 🌀 EDIT PROFILE BUTTON FUNCTION
+// 🌀 EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
 //======================================
 function openEditForm(index) {
   uploadedImageUrls = [];
@@ -249,7 +255,8 @@ function cancelEdit() {
 }
 
 //==========≈==============
-// 🌀 UPGRADED DELETE BUTTON FUNCTION WAS MISSING
+// 🌀 UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
+// DELET CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER
 //=========================
 async function deleteProfile(index) {
   if (!confirm("Are you sure you want to delete this profile?")) return;
@@ -293,8 +300,10 @@ async function deleteProfile(index) {
   loadSavedProfiles();
   Utils.showErrorToUser(`${deleted[0].name}'s profile was deleted.`, true);
 }
-
+//===========================================
 // 🌀 PRINT PROFILE BUTTON FUNCTION
+// WORKS ON DESKTOP, TO VERIFY ON TABLETS
+//================================================
 function printProfile(profile) {
   const printWindow = window.open('', '_blank');
   const printDocument = printWindow.document;
@@ -539,9 +548,10 @@ async function sharePetCard(profile, event) {  // Explicitly pass event
     alert(`Sharing failed: ${error.message}`);
   }
 }
-
+//===============================
 //🌀 QR Code Management 🌟
-// Generate QR code
+//===========================
+//1. Generate QR code
 function generateQRCode(profileIndex) {
   const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   currentQRProfile = savedProfiles[profileIndex];
@@ -573,7 +583,7 @@ function generateQRCode(profileIndex) {
   }
 }
 
-// Print QR code
+// 2.Print QR code
 function printQR() {
   const printContent = document.querySelector('#qr-modal .printable-area').cloneNode(true);
   const printWindow = window.open('', '_blank');
@@ -586,7 +596,7 @@ function printQR() {
   printWindow.close();
 }
 
-// Download QR code
+//3. Download QR code
 function downloadQR() {
   const canvas = document.querySelector('#qrcode-container canvas');
   if(canvas) {
@@ -597,7 +607,7 @@ function downloadQR() {
   }
 }
 
-// Share QR code
+//4. Share QR code
 async function shareQR() {
   try {
     if(!currentQRProfile) return;
@@ -616,8 +626,9 @@ async function shareQR() {
     showQRStatus('Sharing failed. Please copy manually.', false);
   }
 }
-
+//=============================================
 // Initialize QR modal (safe initialization)
+//=============================================
 function initQRModal() {
   const modal = document.getElementById('qr-modal');
   if (!modal) return;
@@ -636,8 +647,9 @@ function initQRModal() {
     }
   });
 }
-
+//==========================
 // Show QR status message
+//==========================
 function showQRStatus(message, isSuccess) {
   const statusEl = document.getElementById('qr-status');
   if(!statusEl) return;
@@ -648,8 +660,9 @@ function showQRStatus(message, isSuccess) {
     statusEl.style.color = '';
   }, 3000);
 }
-  
+//==============  
 // Log mood
+//================
 function logMood(profileIndex, mood) {
   const today = new Date().toISOString().split('T')[0];
   if(!petProfiles[profileIndex].moodHistory) petProfiles[profileIndex].moodHistory = [];
@@ -660,8 +673,9 @@ function logMood(profileIndex, mood) {
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
   loadSavedProfiles();
 }
-
+//=================
 // Set cover photo
+//====================
 function setCoverPhoto(profileIndex, imageIndex) {
   petProfiles[profileIndex].coverPhotoIndex = imageIndex;
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
@@ -745,11 +759,13 @@ function initializeDashboard() {
   }
 }
 
-
-// MOVED FORM SUBMISSION HERE
+//==================================================
+// MOVED FORM SUBMISSION INSIDE INITIALIZEDASHBOARD
+//====================================================
 function attachFormListenerWhenReady() {
+  
 // the whole form submission wrapped in an if block 
-      // ✅ Only attach once
+// ✅ Only attach once
 if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) {
 
 // Enable live preview when user selects images ADDED RECENTLY
@@ -768,7 +784,7 @@ document.getElementById("petGallery").addEventListener("change", function () {
   });
 });
   
-// OLD     
+// OLD SECTION     
 DOM.profileForm.addEventListener("submit", async (e) => {
 console.log("✅ Form submission listener attached."); // You already had this 👍
 console.log("📨 Submit triggered!");
@@ -804,9 +820,9 @@ console.log("📨 Submit triggered!");
         Utils.showErrorToUser(`Failed to upload ${file.name}.`);
       } finally {
         showLoading(false);
-      }
-    }
-  } // for the added if
+      } //closes finally
+    }// closes 2nf if
+  } // closes 1st if
     
   // 😺 Mood logic (preserve and append)
     const moodInput = document.getElementById("moodHistoryInput");
@@ -942,7 +958,9 @@ DOM.profileForm.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
  } // closes the if (!Dom.profileForm.dataset.listenerAttached)
 } // closes the function
 
+//==============================================
 // Start initialization based on document state
+//=================================================
 document.addEventListener('DOMContentLoaded', () => {
   initDashboardDOM();      // 🧠 Make sure DOM references are set
   initializeDashboard();     // ✅ Use the correct one
