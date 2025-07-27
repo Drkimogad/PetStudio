@@ -229,6 +229,9 @@ function cancelEdit() {
   console.log("🛑 Cancel Edit triggered.");
   isEditing = false;
   currentEditIndex = -1;
+  
+ const preview = document.getElementById("editGalleryPreview");
+ if (preview) preview.innerHTML = "";
 
   // Hide form, show dashboard again
   DOM.profileSection.classList.add("hidden");
@@ -738,8 +741,25 @@ function initializeDashboard() {
 function attachFormListenerWhenReady() {
 // the whole form submission wrapped in an if block 
       // ✅ Only attach once
-if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) {
-    
+if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) 
+
+// Enable live preview when user selects images ADDED RECENTLY
+document.getElementById("petGallery").addEventListener("change", function () {
+  const preview = document.getElementById("editGalleryPreview");
+  const files = Array.from(this.files);
+  if (!preview) return;
+
+  preview.innerHTML = ""; // clear before showing new previews
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      preview.innerHTML += `<img src="${e.target.result}" class="preview-thumb" style="max-height:60px; margin-right:5px;" />`;
+    };
+    reader.readAsDataURL(file);
+  });
+});
+  
+// OLD     
 DOM.profileForm.addEventListener("submit", async (e) => {
 console.log("✅ Form submission listener attached."); // You already had this 👍
 console.log("📨 Submit triggered!");
@@ -762,6 +782,7 @@ console.log("📨 Submit triggered!");
     const galleryFiles = Array.from(document.getElementById("petGallery").files);
     const uploadedImageUrls = [];
 
+    if (galleryFiles.length > 0) { // added
     for (const file of galleryFiles) {
       try {
         showLoading(true);
@@ -776,8 +797,9 @@ console.log("📨 Submit triggered!");
         showLoading(false);
       }
     }
-
-    // 😺 Mood logic (preserve and append)
+  } // for the added if
+    
+  // 😺 Mood logic (preserve and append)
     const moodInput = document.getElementById("moodHistoryInput");
     let moodHistory = [];
 
