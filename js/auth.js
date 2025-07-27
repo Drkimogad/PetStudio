@@ -123,12 +123,6 @@ if (typeof loadSavedProfiles === "function" && window.petProfiles?.length > 0) {
 
 // ====== Google Sign-In Initialization ======
 function setupGoogleLoginButton() {
-    // Add this at the VERY TOP of the function
-  window.onGoogleLibraryLoad = () => {
-    console.log('🔌 Google Identity Services fully loaded');
-    setupGoogleLoginButton(); // Self-invocation
-  };
-
   // Check if Google and Firebase are loaded
   if (typeof google === 'undefined' || !google.accounts || typeof firebase === 'undefined') {
     console.log("Waiting for libraries to load...");
