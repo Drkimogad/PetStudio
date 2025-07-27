@@ -25,10 +25,14 @@ async function uploadToCloudinary(file, userId, petProfileId) {
   formData.append('file', file);
   formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
   formData.append('folder', folderPath);
+  // ▼▼▼ Add these 2 lines ▼▼▼
+  formData.append('quality', 'auto');      // Enables q_auto
+  formData.append('fetch_format', 'auto'); // Enables f_auto
+  formData.append('secure', 'true'); // Forces HTTPS URLs
+  // ▲▲▲ That's it! ▲▲▲
+  
   console.log("📁 Upload folder:", folderPath);
-  //formData.append('public_id', `img_${Date.now()}`); // Unique filename
-  // No public_id specified = auto-generate
-  // manual moderation is not supported for unsigned upload! 
+  
   try {
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/upload`,
