@@ -23,7 +23,7 @@ async function uploadToCloudinary(file, userId, petProfileId) {
   // 4. PREPARE UPLOAD
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+  formData.append('upload_preset', petstudio_auto_folder);
   formData.append('folder', folderPath);
   // ▼▼▼ Add these 2 lines ▼▼▼
   formData.append('quality', 'auto');      // Enables q_auto
