@@ -741,7 +741,7 @@ function initializeDashboard() {
 function attachFormListenerWhenReady() {
 // the whole form submission wrapped in an if block 
       // ✅ Only attach once
-if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) 
+if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) {
 
 // Enable live preview when user selects images ADDED RECENTLY
 document.getElementById("petGallery").addEventListener("change", function () {
