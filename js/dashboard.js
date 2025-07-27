@@ -570,7 +570,7 @@ function generateQRCode(profileIndex) {
 
      View more on PetStudio: https://drkimogad.github.io/PetStudio/
 
-    Sign up to explore more pet features! ✨`
+    Sign up to explore more pet features! ✨`,
 
       width: 256,
       height: 256,
