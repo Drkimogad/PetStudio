@@ -552,7 +552,14 @@ function generateQRCode(profileIndex) {
   
   try {
     new QRCode(container, {
-      text: `${window.location.origin}/?profile=${currentQRProfile.id}`,
+      text: `🐾 Meet ${currentQRProfile.name}!
+      Breed: ${currentQRProfile.breed}
+      Birthday: ${currentQRProfile.birthday}
+
+     View more on PetStudio: https://drkimogad.github.io/PetStudio/
+
+    Sign up to explore more pet features! ✨`
+
       width: 256,
       height: 256,
       colorDark: "#000000",
@@ -597,7 +604,7 @@ async function shareQR() {
     const shareData = {
       title: `${currentQRProfile.name}'s Pet Profile`,
       text: `Check out ${currentQRProfile.name}'s details!`,
-      url: window.location.href
+      url: 'https://drkimogad.github.io/PetStudio/' 
     };
     if(navigator.share) {
       await navigator.share(shareData);
