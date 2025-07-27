@@ -557,6 +557,15 @@ async function sharePetCard(profile, event) {
 function generateQRCode(profileIndex) {
   const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   currentQRProfile = savedProfiles[profileIndex];
+
+  // Compress the data to fit QR limits
+  const qrContent = JSON.stringify({
+    n: currentQRProfile.name,  // Shortened keys
+    b: currentQRProfile.breed,
+    d: currentQRProfile.birthday,
+    l: "https://drkimogad.github.io/PetStudio/" // Static link
+  });
+  
   const modal = document.getElementById('qr-modal');
   const container = document.getElementById('qrcode-container');
   
@@ -564,24 +573,20 @@ function generateQRCode(profileIndex) {
   
   try {
     new QRCode(container, {
-      text: `🐾 Meet ${currentQRProfile.name}!
-      Breed: ${currentQRProfile.breed}
-      Birthday: ${currentQRProfile.birthday}
-
-     View more on PetStudio: https://drkimogad.github.io/PetStudio/
-
-    Sign up to explore more pet features! ✨`,
-
+      text: qrContent,  // Use compressed data instead of full text
       width: 256,
       height: 256,
       colorDark: "#000000",
       colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
+      correctLevel: QRCode.CorrectLevel.M // Changed from H to M for more capacity
     });
+    
     modal.style.display = 'block';
   } catch (error) {
     console.error('QR Generation Error:', error);
-    alert('QR code generation failed. Profile data might be too large.');
+    alert('Profile data too large for QR. Showing compact version instead.');
+    // Fallback to just the link if compression fails
+    container.innerHTML = `<p>View profile: <a href="https://drkimogad.github.io/PetStudio/">PetStudio</a></p>`;
   }
 }
 
