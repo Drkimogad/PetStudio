@@ -17,7 +17,7 @@ async function uploadToCloudinary(file, userId, petProfileId) {
   // 3. BUILD FOLDER PATH
 //  const folderPath = `PetStudio/users/${userId}/${petProfileId}/gallery`;
 
-  const folderPath = `PetStudio/users/${encodeURIComponent(userId)}/${encodeURIComponent(petProfileId)}/gallery/`;
+  const folderPath = `petStudio/users/${encodeURIComponent(userId)}/${encodeURIComponent(petProfileId)}/gallery/`;
 //                                 ^^^^^^^^^^^^^^^^^^           ^^^^^^^^^^^^^^^^^^
   
   // 4. PREPARE UPLOAD
@@ -31,16 +31,16 @@ async function uploadToCloudinary(file, userId, petProfileId) {
   formData.append('secure', 'true'); // Forces HTTPS URLs
   // ▲▲▲ That's it! ▲▲▲
   // Add these required parameters to FormData
-  formData.append('api_key', CLOUDINARY_CONFIG.apiKey); // ← Add this
+  formData.append('api_key', 956144941869967); // ← Add this
   formData.append('timestamp', Date.now()); // ← Add this
   
   // Verify your upload preset exists
-  console.log("Using preset:", CLOUDINARY_CONFIG.uploadPreset);
+  console.log("Using preset:", petstudio_auto_folder);
   console.log("📁 Upload folder:", folderPath);
   
   try {
     const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/upload`,
+      `https://api.cloudinary.com/v1_1/${dh7d6otgu}/upload`,
       { 
         method: 'POST',
         body: formData,
