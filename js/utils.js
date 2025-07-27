@@ -30,7 +30,13 @@ async function uploadToCloudinary(file, userId, petProfileId) {
   formData.append('fetch_format', 'auto'); // Enables f_auto
   formData.append('secure', 'true'); // Forces HTTPS URLs
   // ▲▲▲ That's it! ▲▲▲
+  // Add these required parameters to FormData
+  formData.append('api_key', CLOUDINARY_CONFIG.apiKey); // ← Add this
+  formData.append('timestamp', Date.now()); // ← Add this
+  formData.append('signature', generateSignature()); // ← If using signed uploads
   
+  // Verify your upload preset exists
+  console.log("Using preset:", CLOUDINARY_CONFIG.uploadPreset);
   console.log("📁 Upload folder:", folderPath);
   
   try {
