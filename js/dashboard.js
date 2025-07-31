@@ -200,6 +200,20 @@ function renderMoodHistory(profile) {
 function getMoodEmoji(mood) {
   return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
 }
+//==========================================
+// Helper functions for theme togling
+//==========================================
+// Toggle celebrate button when date is selected
+function toggleCelebrateButton(input) {
+  const btn = input.closest('.reminder-controls').querySelector('.celebrate-btn');
+  btn.classList.toggle('hidden', !input.value);
+}
+
+// Theme preview handler (add real implementation later)
+function previewTheme(theme) {
+  console.log('Selected theme:', theme); 
+  // You'll implement live preview here
+}
 
 //====================================
 // CREATE COLLAGE HELPER FUNCTION
