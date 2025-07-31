@@ -1,8 +1,9 @@
 // image preview in new creation and open edit form to be fixed
 // QR code to be finalized.
 
-//🌟 Pet Profile Management 🌟
+//🌟 Global declarations 🌟
 let currentQRProfile = null; // Only new declaration needed
+let generatingQR = false; // <== global scope
 setupPetProfileDelegation();
 
 // 🌍 Load from localStorage only on initial boot
