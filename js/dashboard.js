@@ -164,7 +164,7 @@ function loadSavedProfiles() {
         <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
         <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
         <button class="collage-btn" data-index="${index}" data-doc-id="${profile.docId}">🖼️ Create Collage</button>
-        <button class="celebrate-btn" data-index="${index}" data-doc-id="${profile.docId}"onclick="generateBirthdayCard('${profile.id}')">🎉 Celebrate</button>
+        <button class="celebrate-btn" data-index="${index}" data-doc-id="${profile.docId}"onclick="generateBirthdayCard('${profile.id}', ${index})">🎉 Celebrate</button>
         </div>
       </div>  
       `;
@@ -934,48 +934,56 @@ function setupPetProfileDelegation() {
   if (!DOM.petList) return;
 
   DOM.petList.addEventListener("click", (e) => {
-    const target = e.target;
-    const index = parseInt(target.dataset.index, 10);
-    const docId = target.dataset.docId || null;
+    const target = e.target.closest('button');
+    if (!target) return; // Exit if not a button click
 
-    // ✅ Safety check for index
-    if (isNaN(index)) {
-      console.warn("⚠️ Ignored click: Invalid or missing data-index", target);
+    const index = parseInt(target.dataset.index, 10);
+    const petId = target.dataset.id; // New: Always get petId
+    const docId = target.dataset.docId; // Existing docId
+
+    // ✅ Enhanced safety check
+    if (isNaN(index) || !petId) {
+      console.warn("⚠️ Invalid click target:", { 
+        target, 
+        index, 
+        petId,
+        docId 
+      });
       return;
     }
 
     // === Action buttons ===
     if (target.classList.contains("edit-profile")) {
       openEditForm(index, docId);
-    } else if (target.classList.contains("delete-profile")) {
+    } 
+    else if (target.classList.contains("delete-profile")) {
       deleteProfile(index, docId);
-    } else if (target.classList.contains("print-profile")) {
-      printProfile(window.petProfiles?.[index]);
-    } else if (target.classList.contains("share-profile")) {
-      sharePetCard(window.petProfiles?.[index]);
-    } else if (target.classList.contains("generate-qr")) {
-      generateQRCode(index);
+    } 
+    else if (target.classList.contains("print-profile")) {
+      printProfile(window.petProfiles[index] || 
+                 window.petProfiles.find(p => p.id === petId));
+    } 
+    else if (target.classList.contains("share-profile")) {
+      sharePetCard(window.petProfiles[index] || 
+                 window.petProfiles.find(p => p.id === petId));
+    } 
+    else if (target.classList.contains("generate-qr")) {
+      generateQRCode(index, petId); // Update function to accept both
     }
-      else if (target.classList.contains("collage-btn")) {
-     createPetCollage(index);
+    else if (target.classList.contains("collage-btn")) {
+      createPetCollage(index, petId); // Now takes both params
     }
-        
-      // === NEW CELEBRATE BUTTON ===
     else if (target.classList.contains("celebrate-btn")) {
-      generateBirthdayCard(window.petProfiles?.[index]?.id); // Pass pet ID
+      generateBirthdayCard(petId, index);
     }
-
-    // === Mood button ===
     else if (target.classList.contains("mood-btn")) {
       const mood = target.dataset.mood;
-      if (mood) logMood(index, mood);
+      if (mood) logMood(index, petId, mood); // Update mood logger
     }
-
-    // === Cover Photo button ===
     else if (target.classList.contains("cover-btn")) {
       const photoIndex = parseInt(target.dataset.photoIndex, 10);
       if (!isNaN(photoIndex)) {
-        setCoverPhoto(index, photoIndex);
+        setCoverPhoto(index, petId, photoIndex); // Update to take petId
       }
     }
   });
