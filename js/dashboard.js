@@ -135,78 +135,16 @@ function loadSavedProfiles() {
     <p><strong>Microchip:</strong> ${profile.microchipNumber || 'Not registered'}</p>
   </div>
        
-           <!-- === ADD HERE === -->
+           <!-- === ADD HERE CELEBRATE BUTTON CLICKING WILL TRIGGERE THE TEMPLATES! === -->
     <div class="birthday-reminder">
       ${profile.birthday ? `
         <span>${getCountdown(profile.birthday)}</span>
         <button onclick="generateBirthdayCard('${profile.id}')">🎉 Celebrate</button>
       ` : ''}
     </div>
-    
-  <div id="collage-modal" class="modal hidden">
-   <div class="modal-content">
-    <h3>Create Collage</h3>
-    <div class="image-grid" id="collage-image-grid"></div>
-    <div class="layout-options">
-      <button data-layout="2x2">2×2</button>
-      <button data-layout="3x3">3×3</button>
-      <button data-layout="1x3">1×3</button>
-    </div>
-    <button id="generate-collage" disabled>Generate Collage</button>
-  </div>
-</div>
 
-<div id="birthday-card-templates" class="hidden">
-<!-- 1. Balloons (Default) -->
-<div class="card-template balloons" data-theme="balloons">
-  <div class="banner">🎉 Happy Birthday! 🎉</div>
-  <div class="pet-name">{{name}}</div>
-  <div class="age">{{ageText}}</div>
-  <div class="countdown">{{countdown}}</div>
-  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
-  <div class="footer">Made with ❤️ on PetStudio</div>
-</div>
 
-<!-- 2. Paw Prints -->
-<div class="card-template paws" data-theme="paws">
-  <div class="banner">🐾 Birthday Paws 🐾</div>
-  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
-  <div class="pet-name">{{name}}</div>
-  <div class="age">{{ageText}}</div>
-  <div class="countdown">{{countdown}}</div>
-  <div class="paw-decoration">🐾 🐾 🐾</div>
-</div>
-
-<!-- 3. Minimalist -->
-<div class="card-template minimal" data-theme="minimal">
-  <div class="pet-name">{{name}}</div>
-  <div class="age">{{ageText}}</div>
-  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
-  <div class="countdown">{{countdown}}</div>
-</div>
-
-<!-- 4. Party Theme -->
-<div class="card-template party" data-theme="party">
-  <div class="confetti"></div>
-  <div class="banner">🎊 PARTY TIME! 🎊</div>
-  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
-  <div class="pet-name">{{name}}</div>
-  <div class="age">{{ageText}}</div>
-  <div class="countdown">{{countdown}}</div>
-</div>
-
-<!-- 5. Elegant -->
-<div class="card-template elegant" data-theme="elegant">
-  <div class="banner">Happy Birthday</div>
-  <div class="pet-name">{{name}}</div>
-  <div class="age">{{ageText}}</div>
-  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
-  <div class="countdown">{{countdown}}</div>
-  <div class="signature">From PetStudio</div>
-</div>
-</div>
-
-      <!-- Add this after other details but before buttons -->
+      <!-- Add this after other details but before buttons for tags -->
       ${profile.tags?.length ? `
        <div class="tags-container">
         ${profile.tags.map(tag => `
