@@ -386,31 +386,22 @@ ${profile.moodHistory.map(entry => `
 //=======================================================
 async function sharePetCard(profile, event) {
   try {
-    // 1. Try Web Share API first (link only)
-    const petStudioLink = "https://drkimogad.github.io/PetStudio/"; // Static URL
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Meet ${profile.name}! 🐾`,
-          text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.birthday}\n\nView more on PetStudio: ${petStudioLink}\n\nSign up to explore more pet features! ✨`,
-        });
-        return;
-      } catch (shareError) {
-        console.log("Web Share cancelled, falling back");
-      }
-    }
+    const petStudioLink = "https://drkimogad.github.io/PetStudio/";
 
-    // 2. Generate image fallback (PNG)
+    // ==== CHANGE 1: REORDERED LOGIC - TRY PNG SHARING FIRST FOR MOBILE ====
+    // Generate the card as PNG (mobile/tablets prefer images)
     const cardElement = document.getElementById(`pet-card-${profile.id}`);
     if (!cardElement) throw new Error("Card element not found");
-    
-    // Ensure the static link is visible in the card (if needed)
+
+    // ==== CHANGE 2: ADDED URL VISIBLY EMBEDDED IN THE CARD ====
     const linkElement = document.createElement('div');
     linkElement.textContent = `View more: ${petStudioLink}`;
     linkElement.style.marginTop = '10px';
+    linkElement.style.fontWeight = 'bold';  // Highlight URL
+    linkElement.style.color = '#0066cc';    // Make URL stand out
     cardElement.appendChild(linkElement);
 
-    // Capture the card as PNG
+    // Capture as PNG (higher quality for sharing)
     const canvas = await html2canvas(cardElement, {
       scale: 2,
       logging: true,
@@ -421,12 +412,34 @@ async function sharePetCard(profile, event) {
       }
     });
 
-    // 3. Copy PNG to clipboard + auto-download
+    // ==== CHANGE 3: PRIORITIZE NATIVE SHARE WITH PNG (MOBILE/TABLETS) ====
+    if (navigator.share && navigator.canShare) {
+      canvas.toBlob(async (blob) => {
+        const file = new File([blob], `${profile.name}_profile.png`, { type: 'image/png' });
+        try {
+          await navigator.share({
+            title: `Meet ${profile.name}! 🐾`,
+            text: `Check out ${profile.name}'s profile!`, // Optional text
+            files: [file],
+          });
+          return; // Exit if PNG share succeeds
+        } catch (shareError) {
+          console.log("Image share failed, falling back to text/URL");
+        }
+      });
+    }
+
+    // ==== CHANGE 4: FALLBACK TO CLIPBOARD + DOWNLOAD (DESKTOP/MOBILE) ====
     canvas.toBlob(async (blob) => {
-      const item = new ClipboardItem({ 'image/png': blob });
-      await navigator.clipboard.write([item]);
-      
-      // Auto-download
+      try {
+        // Copy PNG to clipboard
+        const item = new ClipboardItem({ 'image/png': blob });
+        await navigator.clipboard.write([item]);
+      } catch (clipboardError) {
+        console.log("Clipboard copy failed, falling back to download");
+      }
+
+      // Auto-download as fallback
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -437,15 +450,26 @@ async function sharePetCard(profile, event) {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }, 100);
-      
-      alert(`${profile.name}'s profile copied! You can paste the image anywhere.`);
+
+      // ==== CHANGE 5: DESKTOP-FRIENDLY ALERT WITH LINK ====
+      alert(`${profile.name}'s profile saved as PNG! Download it or paste the image.\n\nOr share this link: ${petStudioLink}`);
     }, 'image/png');
-    
+
   } catch (error) {
     console.error('Sharing failed:', error);
-    alert(`Sharing failed: ${error.message}`);
+    // ==== CHANGE 6: FALLBACK TO TEXT SHARING IF ALL ELSE FAILS ====
+    if (navigator.share) {
+      await navigator.share({
+        title: `Meet ${profile.name}! 🐾`,
+        text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.birthday}\n\nView more: ${petStudioLink}`,
+      });
+    } else {
+      alert(`Share this link manually: ${petStudioLink}`);
+    }
   }
 }
+
+
 //===============================
 //🌀 QR Code Management 🌟
 //===========================
@@ -453,57 +477,78 @@ async function sharePetCard(profile, event) {
 function generateQRCode(profileIndex) {
   if (generatingQR) return;
   generatingQR = true;
- 
+  
   const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   currentQRProfile = savedProfiles[profileIndex];
 
-  // Compress the data to fit QR limits
   const qrContent = JSON.stringify({
-    n: currentQRProfile.name,  // Shortened keys
+    n: currentQRProfile.name,
     b: currentQRProfile.breed,
     d: currentQRProfile.birthday,
-    l: "https://drkimogad.github.io/PetStudio/" // Static link
+    l: "https://drkimogad.github.io/PetStudio/"
   });
-  
-  const modal = document.getElementById('qr-modal');
+
   const container = document.getElementById('qrcode-container');
-  
   container.innerHTML = '';
-  
+
   try {
     new QRCode(container, {
-      text: qrContent,  // Use compressed data instead of full text
+      text: qrContent,
       width: 256,
       height: 256,
       colorDark: "#000000",
       colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.M // Changed from H to M for more capacity
+      correctLevel: QRCode.CorrectLevel.M
     });
-    
-    modal.style.display = 'block';
+    document.getElementById('qr-modal').style.display = 'block';
   } catch (error) {
     console.error('QR Generation Error:', error);
-    alert('Profile data too large for QR. Showing compact version instead.');
-    // Fallback to just the link if compression fails
     container.innerHTML = `<p>View profile: <a href="https://drkimogad.github.io/PetStudio/">PetStudio</a></p>`;
-  }
-    finally {
+  } finally {
     generatingQR = false;
   }
 }
 
 // 2.Print QR code
 function printQR() {
-  if (!document.querySelector('#qr-modal .printable-area')) return; //Null check before printing
-  const printContent = document.querySelector('#qr-modal .printable-area').cloneNode(true);
+  const printableArea = document.querySelector('#qr-modal .printable-area');
+  if (!printableArea) {
+    showQRStatus('QR code not ready for printing.', false);
+    return;
+  }
+
   const printWindow = window.open('', '_blank');
-  printWindow.document.write('<html><head><title>Print QR Code</title></head><body>');
-  printWindow.document.write(printContent.innerHTML);
-  printWindow.document.write('</body></html>');
+  if (!printWindow) {
+    // Fallback for popup-blocked tablets
+    showQRStatus('Allow popups to print. Printing current view...', true);
+    setTimeout(() => window.print(), 500); // Delay for rendering
+    return;
+  }
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>${currentQRProfile?.name || 'Pet'} QR Code</title>
+        <link rel="stylesheet" href="styles.css">
+        <style>
+          body { 
+            display: flex !important; 
+            justify-content: center !important; 
+            align-items: center !important; 
+            height: 100vh !important; 
+            margin: 0 !important; 
+          }
+          #qr-controls { display: none !important; }
+        </style>
+      </head>
+      <body>${printableArea.innerHTML}</body>
+    </html>
+  `);
   printWindow.document.close();
-  printWindow.focus();
-  printWindow.print();
-  printWindow.close();
+  setTimeout(() => {
+    printWindow.print();
+    printWindow.close();
+  }, 500); // Critical for tablets
 }
 
 //3. Download QR code
@@ -520,23 +565,38 @@ function downloadQR() {
 
 //4. Share QR code
 async function shareQR() {
+  if (!currentQRProfile) return;
+
   try {
-    if(!currentQRProfile) return;
-    const shareData = {
-      title: `${currentQRProfile.name}'s Pet Profile`,
-      text: `Check out ${currentQRProfile.name}'s details!`,
-      url: 'https://drkimogad.github.io/PetStudio/' 
-    };
-    if(navigator.share) {
-      await navigator.share(shareData);
-    } else {
-      await navigator.clipboard.writeText(
-  `🐾 Meet ${currentQRProfile.name}!\nBreed: ${currentQRProfile.breed}\nBirthday: ${currentQRProfile.birthday}\n\nView more on PetStudio: https://drkimogad.github.io/PetStudio/\n\nSign up to explore more pet features! ✨`
-);
-      showQRStatus('Link copied to clipboard!', true);
+    const canvas = document.querySelector('#qrcode-container canvas');
+    const text = `Check out ${currentQRProfile.name}'s profile!\n\nBreed: ${currentQRProfile.breed}\nBirthday: ${currentQRProfile.birthday}\n\nView more: https://drkimogad.github.io/PetStudio/`;
+
+    // Priority: Share QR as PNG (mobile/tablets)
+    if (canvas && navigator.share && navigator.canShare) {
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      const file = new File([blob], `${currentQRProfile.name}_qr.png`, { type: 'image/png' });
+      
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: `${currentQRProfile.name}'s QR Code`,
+          files: [file],
+          text: text // Optional companion text
+        });
+        return;
+      }
+    }
+
+    // Fallback 1: Share text via Web Share API
+    if (navigator.share) {
+      await navigator.share({ title: 'Pet Profile', text });
+    } 
+    // Fallback 2: Copy text to clipboard
+    else {
+      await navigator.clipboard.writeText(text);
+      showQRStatus('Link copied!', true);
     }
   } catch (err) {
-    showQRStatus('Sharing failed. Please copy manually.', false);
+    showQRStatus('Sharing failed. Copy manually.', false);
   }
 }
 //=============================================
