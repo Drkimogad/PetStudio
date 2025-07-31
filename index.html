@@ -242,6 +242,17 @@
                     <label><input type="radio" name="theme" value="balloons" checked> Balloons</label>
                     <label><input type="radio" name="theme" value="paws"> Paw Prints</label>
                 </fieldset>
+
+                <!-- After other fields, before submit button -->
+               <label for="petTags">Tags (Select multiple):</label>
+               <select id="petTags" name="petTags" multiple>
+               <option value="Adventure">Adventure</option>
+               <option value="Cuddly">Cuddly</option>
+               <option value="Playful">Playful</option>
+               <option value="Foodie">Foodie</option>
+               <option value="Athletic">Athletic</option>
+               </select>
+               <small>Hold Ctrl/Cmd to select multiple</small>
                 
                 <button type="submit" class="button">Save Profile</button>
             </form>
