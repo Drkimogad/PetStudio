@@ -945,23 +945,22 @@ function setCoverPhoto(profileIndex, imageIndex) {
 // Handles all profile card actions centrally
 //==========================================
 function setupPetProfileDelegation() {
-  if (!DOM.petList) return;
 
-  DOM.petList.addEventListener("click", (e) => {
-    const target = e.target.closest('button');
-    if (!target) return; // Exit if not a button click
+  DOM.petList?.addEventListener("click", (e) => {
+    const button = e.target.closest('button');
+    if (!button) return;
 
-    const index = parseInt(target.dataset.index, 10);
-    const petId = target.dataset.id; // New: Always get petId
-    const docId = target.dataset.docId; // Existing docId
+    // Safely get all attributes
+    const index = parseInt(button.dataset.index || '');
+    const petId = button.dataset.id;
+    const docId = button.dataset.docId;
 
-    // ✅ Enhanced safety check
     if (isNaN(index) || !petId) {
-      console.warn("⚠️ Invalid click target:", { 
-        target, 
-        index, 
+      console.warn("Invalid button attributes:", {
+        class: button.className,
+        index,
         petId,
-        docId 
+        docId
       });
       return;
     }
