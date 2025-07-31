@@ -143,8 +143,8 @@ function loadSavedProfiles() {
 
       <div class="pet-notes">
         <strong>Notes:</strong> 
-        <p>${profile.notes.replace(/\n/g, '<br>')}</p> <!-- Preserves line breaks -->
-      </div>
+       <p>${profile.notes?.replace(/\n/g, '<br>') || ''}</p>
+       </div>
        
       <!-- Add this after other details but before buttons for tags -->
       ${profile.tags?.length ? `
