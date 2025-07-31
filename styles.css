@@ -185,16 +185,7 @@ h1, h2, h3, p {
     background-color: #0056b3;
 }
 
-/* QR Button Styles */
-.qrBtn {
-    background: #27ae60 !important;
-    transition: transform 0.2s;
-}
-
-.qrBtn:hover {
-    transform: scale(1.1);
-    background: #219a52 !important;
-}
+/* QR Button Styles in QR SECTION */
 
 /* LOGOUT BUTTON */
 #logoutBtn {
@@ -551,6 +542,60 @@ footer {
     footer {
         display: none;
     }
+}
+
+/*=== SHARE RULES ===*/
+
+
+
+/* ======= QR CODE RULES ========== */
+#qr-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  overflow: auto;
+}
+
+#qr-modal .printable-area {
+  background: white;
+  margin: 5% auto;
+  padding: 20px;
+  max-width: 300px;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.25);
+}
+
+#qrcode-container canvas {
+  width: 100%;
+  max-width: 256px;
+  height: auto;
+}
+
+#qr-controls {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+#qr-controls button {
+  flex: 1 1 45%;
+  padding: 10px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  background-color: #3498db;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#qr-controls button:hover {
+  background-color: #2980b9;
 }
 
 /* ====================
