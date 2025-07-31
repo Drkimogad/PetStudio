@@ -132,6 +132,18 @@ function loadSavedProfiles() {
         <button onclick="generateBirthdayCard('${profile.id}')">🎉 Celebrate</button>
       ` : ''}
     </div>
+    <div id="collage-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Create Collage</h3>
+    <div class="image-grid" id="collage-image-grid"></div>
+    <div class="layout-options">
+      <button data-layout="2x2">2×2</button>
+      <button data-layout="3x3">3×3</button>
+      <button data-layout="1x3">1×3</button>
+    </div>
+    <button id="generate-collage" disabled>Generate Collage</button>
+  </div>
+</div>
        
       </div>
         <div class="pet-card" data-doc-id="${profile.docId}">
@@ -185,6 +197,24 @@ function getMoodEmoji(mood) {
   return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
 }
 
+//==== collage making helper function 
+let selectedImages = [];
+let selectedLayout = '2x2';
+
+function toggleImageSelection(e) {
+  const img = e.target;
+  img.classList.toggle('selected');
+  const index = parseInt(img.dataset.index);
+
+  if (img.classList.contains('selected')) {
+    selectedImages.push(index);
+  } else {
+    selectedImages = selectedImages.filter(i => i !== index);
+  }
+
+  // Enable/disable generate button
+  document.getElementById('generate-collage').disabled = selectedImages.length < 2;
+}
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 //======================================
 // 🌀 EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
@@ -711,17 +741,97 @@ function showQRStatus(message, isSuccess) {
     statusEl.style.color = '';
   }, 3000);
 }
+
+//== png generation function
+async function generateCollagePNG(profile) {
+  if (selectedImages.length < 2) return;
+
+  // Create collage container
+  const collage = document.createElement('div');
+  collage.className = `collage-layout-${selectedLayout}`;
+
+  // Add selected images
+  selectedImages.forEach(i => {
+    const img = document.createElement('img');
+    img.src = typeof profile.gallery[i] === 'string' ? profile.gallery[i] : profile.gallery[i].url;
+    collage.appendChild(img);
+  });
+
+  // Apply layout-specific CSS
+  const layoutStyles = {
+    '2x2': 'grid-template-columns: repeat(2, 1fr);',
+    '3x3': 'grid-template-columns: repeat(3, 1fr);',
+    '1x3': 'grid-template-columns: repeat(3, 1fr); height: 200px;'
+  };
+  collage.style.cssText = `
+    display: grid;
+    gap: 5px;
+    width: 600px;
+    ${layoutStyles[selectedLayout]}
+  `;
+
+  // Convert to PNG
+  try {
+    const canvas = await html2canvas(collage);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    
+    // Share or download
+    if (navigator.share && navigator.canShare({ files: [new File([blob], 'collage.png')] })) {
+      await navigator.share({
+        title: `${profile.name}'s Collage`,
+        files: [new File([blob], 'collage.png')]
+      });
+    } else {
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${profile.name}_collage.png`;
+      link.click();
+    }
+  } catch (error) {
+    console.error("Collage generation failed:", error);
+    showQRStatus("Failed to create collage.", false);
+  } finally {
+    document.getElementById('collage-modal').classList.add('hidden');
+    selectedImages = [];
+  }
+}
+
 //=============
-//  Create collage function
+//  Create collage Core function
 //==================
 async function createPetCollage(index) {
   const profile = window.petProfiles?.[index];
   if (!profile?.gallery?.length) {
-    alert("No photos to collage!");
+    showQRStatus("No photos available for collage.", false);
     return;
   }
-  console.log("Launch collage maker for:", profile.name); 
-  // Next: Fetch images → UI grid → Generate collage
+
+  // Open modal
+  const modal = document.getElementById("collage-modal");
+  modal.classList.remove("hidden");
+
+  // Populate image grid
+  const grid = document.getElementById("collage-image-grid");
+  grid.innerHTML = '';
+  profile.gallery.forEach((img, i) => {
+    const imgElement = document.createElement('img');
+    imgElement.src = typeof img === 'string' ? img : img.url;
+    imgElement.dataset.index = i;
+    imgElement.addEventListener('click', toggleImageSelection);
+    grid.appendChild(imgElement);
+  });
+
+  // Set up layout buttons
+  document.querySelectorAll('.layout-options button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      selectedLayout = e.target.dataset.layout;
+    });
+  });
+
+  // Generate collage
+  document.getElementById('generate-collage').addEventListener('click', () => {
+    generateCollagePNG(profile);
+  });
 }
 
 
@@ -778,7 +888,7 @@ function setupPetProfileDelegation() {
       generateQRCode(index);
     }
       else if (target.classList.contains("collage-btn")) {
-      createPetCollage(index); // Uses the pet's index
+     createPetCollage(index);
     }
         
       // === NEW CELEBRATE BUTTON ===
