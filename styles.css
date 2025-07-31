@@ -408,6 +408,21 @@ h1, h2, h3, p {
 .celebrate-btn.hidden {
   display: none; /* Hide until a date is picked */
 }
+.birthday-reminder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+  font-size: 0.9em;
+  color: #ff6b6b; /* Birthday-themed color */
+}
+
+.birthday-reminder button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1em;
+}
 
 /* ====================
    GALLERY STYLES
