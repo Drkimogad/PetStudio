@@ -412,16 +412,19 @@ h1, h2, h3, p {
   margin: 10px auto;
 }
 /* Style the reminder line Recently added */
-.reminder-line {
+.reminder-controls {
   display: flex;
   align-items: center;
   gap: 10px;
   margin: 15px 0;
 }
+.birthday-reminder-section {
+  margin: 1.5rem 0;
+}
 .birthday-reminder {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-top: 5px;
   font-size: 0.9em;
   color: #ff6b6b; /* Birthday-themed color */
@@ -433,17 +436,17 @@ h1, h2, h3, p {
   font-size: 1.1em;
 }
 .celebrate-btn {
-  background: #ff9a9e; /* Birthday-themed pink */
+  background: #ff9a9e;
   color: white;
   border: none;
-  border-radius: 20px;
   padding: 8px 12px;
-  margin: 5px 0;
+  border-radius: 20px;
   cursor: pointer;
-  font-size: 0.9em;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+  transition: all 0.3s;
+}
+.celebrate-btn.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 .celebrate-btn:hover {
   background: #fad0c4; /* Lighter pink on hover */
@@ -609,6 +612,35 @@ h1, h2, h3, p {
 }
 
 /* ===== Theme/Templates-Specific Styles 5 ===== */
+/* Theme Selection */
+.theme-selection {
+  margin: 1.5rem 0;
+}
+
+.theme-options {
+  display: flex;
+  gap: 15px;
+  margin-top: 8px;
+}
+
+.theme-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.theme-preview {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  border: 2px solid transparent;
+}
+
+.theme-option input:checked + .theme-preview {
+  border-color: #6a5acd;
+}
 /* 1. Balloons */
 .balloons {
   background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
@@ -619,6 +651,9 @@ h1, h2, h3, p {
 .balloons .banner {
   font-size: 1.5em;
   margin-bottom: 15px;
+}
+.balloons-mini {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
 }
 
 /* 2. Paw Prints */
@@ -632,7 +667,10 @@ h1, h2, h3, p {
   letter-spacing: 5px;
   margin-top: 10px;
 }
-
+.paws-mini {
+  background: #fff8e6 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,50 Q50,30 70,50 Q50,70 30,50 Z" fill="%236a5acd"/></svg>');
+  background-size: 20px;
+}
 /* 3. Minimalist */
 .minimal {
   background: white;
