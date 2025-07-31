@@ -121,6 +121,14 @@ function loadSavedProfiles() {
        <div class="mood-history">
             ${renderMoodHistory(profile)}
        </div>
+           <!-- === ADD HERE === -->
+    <div class="birthday-reminder">
+      ${profile.birthday ? `
+        <span>${getCountdown(profile.birthday)}</span>
+        <button onclick="generateBirthdayCard('${profile.id}')">🎉 Celebrate</button>
+      ` : ''}
+    </div>
+       
       </div>
         <div class="pet-card" data-doc-id="${profile.docId}">
         <div class="action-buttons">
