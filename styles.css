@@ -463,6 +463,29 @@ h1, h2, h3, p {
   transform: scale(1.05);
 }
 
+
+/* Notes Section */
+#petNotes {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical; /* Allows vertical resize only */
+}
+
+.pet-notes {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  font-size: 0.9em;
+}
+
+.pet-notes p {
+  margin: 5px 0 0;
+  white-space: pre-line; /* Respects line breaks */
+}
 /* ====================
    GALLERY STYLES
 ==================== */
