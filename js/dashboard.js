@@ -88,7 +88,7 @@ function loadSavedProfiles() {
         </div>
         
       <div class="gallery-grid">
-      ${profile.gallery.map((img, imgIndex) => {   
+      ${Array.isArray(profile.gallery) ? profile.gallery.map((img, imgIndex) => {
       const imgUrl = typeof img === "string" ? img : img?.url;
       const secureUrl = imgUrl?.replace(/^http:/, 'https:'); // 🧪 force HTTPS          
       return `
@@ -99,7 +99,7 @@ function loadSavedProfiles() {
         data-index="${index}" data-photo-index="${imgIndex}">★</button>
       </div>
     `;
-  }).join('')}
+  }).join('') : ''}
 </div>
 
 <div id="editGalleryPreview"></div>
