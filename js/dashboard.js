@@ -832,28 +832,32 @@ console.log("📨 Submit triggered!");
 
     // 🧩 Merge gallery (EDIT vs CREATE)
     if (isEditing) {
-      const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
-      const combinedGallery = [...oldGallery, ...uploadedImageUrls];
+  try {
+    const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
+    const combinedGallery = [...oldGallery, ...uploadedImageUrls];
 
-      // ✅ De-duplicate based on `img.url`
-      const deduplicatedGallery = Array.from(
-        new Map(combinedGallery.map(img => {
-          const url = typeof img === "string" ? img : img.url;
-          return [url, img];
-        })).values()
-      );
+    // 🔶 Added null checks for image URLs
+    const deduplicatedGallery = Array.from(
+      new Map(combinedGallery.filter(img => img?.url || typeof img === "string").map(img => {
+        const url = typeof img === "string" ? img : img.url;
+        return [url, img];
+      })).values()
+    );
 
-      if (combinedGallery.length !== deduplicatedGallery.length) {
-        Utils.showErrorToUser("⚠️ Duplicate images removed.");
-      }
-
-      newProfile.gallery = deduplicatedGallery;
-
-    } else {
-      newProfile.gallery = uploadedImageUrls;
-    }
+    newProfile.gallery = deduplicatedGallery;
+  } catch (err) {
+    console.error("Gallery merge failed, using new uploads only:", err);
+    newProfile.gallery = uploadedImageUrls; // Fallback
+  }
+}
 
     // 🧨 Save to Firestore
+    //Add this before Firestore save to convert selected tags into an array: Recently added
+    // 🔶 Convert selected tags to array (e.g., ["birthday", "cute"])
+const tagElements = document.querySelectorAll('#tagsDropdown input[type="checkbox"]:checked');
+newProfile.tags = Array.from(tagElements).map(el => el.value);
+
+// Proceed with Firestore save...
     let docRef;
 
     if (isEditing && petProfiles[currentEditIndex]?.docId) {
@@ -871,16 +875,21 @@ console.log("📨 Submit triggered!");
       await docRef.update({ docId: docRef.id }); // ⬅️ Add docId field to doc
     }
 
-    // 🎉 Add birthday reminder if needed inapp
+    // 🎉 Add birthday reminder if needed inapp modified to include the new fields
     if (newProfile.birthday) {
-      const reminderData = {
-        userId,
-        petName: newProfile.name,
-        date: Utils.formatFirestoreDate(newProfile.birthday),
-        message: `It's ${newProfile.name}'s birthday today! 🎉`,
-        createdAt: new Date().toISOString(),
-        profileDocId: newProfile.docId
-      };
+  const reminderData = {
+    userId,
+    petName: newProfile.name,
+    date: Utils.formatFirestoreDate(newProfile.birthday),
+    type: "birthday",
+    // 🔶 Use getCountdown() for dynamic messaging
+    message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.birthday)}`, // "5 days until birthday! 🎉"
+    createdAt: new Date().toISOString(),
+    profileDocId: newProfile.docId,
+    // 🔶 Add countdown days for sorting/filtering later
+    countdownDays: parseInt(getCountdown(newProfile.birthday).split(' ')[0]), // Stores "5" (number)
+    nickname: newProfile.nicknames || null
+  };
 
       try {
         const reminderDoc = await firebase.firestore().collection("reminders").add(reminderData);
