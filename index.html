@@ -174,24 +174,35 @@
         <div id="profileSection" class="hidden">
             <h2>Create a Pet Profile</h2>
             <form id="profileForm" autocomplete="on">
+                
                 <label for="petName">Pet Name:</label>
                 <input type="text" id="petName" name="petName" required>
+
+                <!-- 🔥 Add Nickname Field HERE -->
+               <label for="petNicknames">Nicknames (Optional):</label>
+                <input type="text" id="petNicknames" name="petNicknames" placeholder="e.g., 'Fluffy', 'Sir Barksalot'"  >
+                
                 <label for="petBreed">Breed:</label>
                 <input type="text" id="petBreed" name="petBreed" required>
+                
                 <label for="petDob">Date of Birth:</label>
                 <input type="date" id="petDob" name="petDob" required>
+                
                 <label for="petGallery">Upload Photos:</label>
                 <input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
+                
                 <label for="petBirthday">Birthday Reminder:</label>
                 <input type="date" id="petBirthday" name="petBirthday">
+                
                 <!-- Inside your existing form (after birthday reminder) -->
-<label for="petNotes">Notes & Memories:</label>
-<textarea 
-  id="petNotes" 
-  name="petNotes" 
-  rows="3" 
-  placeholder="Gift ideas, funny habits, favorite toys..."
-></textarea>
+                <label for="petNotes">Notes & Memories:</label>
+                <textarea 
+                  id="petNotes" 
+                  name="petNotes" 
+                  rows="3" 
+                  placeholder="Gift ideas, funny habits, favorite toys..."
+               ></textarea>
+                
                 <label for="moodHistoryInput">Mood at Creation:</label>
                 <select id="moodHistoryInput" name="moodHistoryInput">
                      <option value="">Select Mood</option>
@@ -201,17 +212,18 @@
                      <option value="angry">😠 Angry</option>
                      <option value="sick">🤒 Sick</option>
                  </select>
-                <!-- === ADD THIS === -->
-<!-- Birthday Reminder + Celebrate Button -->
-<label for="birthdayReminder">Birthday Reminder:</label>
-<div class="reminder-line">
-  <input type="date" id="birthdayReminder" name="birthdayReminder">
-  <button type="button" class="celebrate-btn hidden" onclick="generateBirthdayCard()">🎉 Celebrate!</button>
-</div>
+                
+             <!-- Birthday Reminder + Celebrate Button -->
+                 <label for="birthdayReminder">Birthday Reminder:</label>
+                  <div class="reminder-line">
+                  <input type="date" id="birthdayReminder" name="birthdayReminder">
+                  <button type="button" class="celebrate-btn hidden" onclick="generateBirthdayCard()">🎉 Celebrate!</button>
+                 </div>
+                
                 <fieldset>
-  <legend>Birthday Card Theme</legend>
-  <label><input type="radio" name="theme" value="balloons" checked> Balloons</label>
-  <label><input type="radio" name="theme" value="paws"> Paw Prints</label>
+                 <legend>Birthday Card Theme</legend>
+                    <label><input type="radio" name="theme" value="balloons" checked> Balloons</label>
+                    <label><input type="radio" name="theme" value="paws"> Paw Prints</label>
                 </fieldset>
                 
                 <button type="submit" class="button">Save Profile</button>
