@@ -106,7 +106,7 @@ function loadSavedProfiles() {
       return `
       
       <div class="gallery-item">
-        <img src="${secureUrl}" alt="Pet Photo" onload="this.classList.add('loaded')">
+       <img src="${profile.gallery[0]?.url || 'placeholder.jpg'}" alt="Pet Photo">
         <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
         data-index="${index}" data-photo-index="${imgIndex}">★</button>
       </div>
@@ -763,22 +763,22 @@ function showQRStatus(message, isSuccess) {
 //===================================
 // Birthday card templates function 
 //=====================================
-async function generateBirthdayCard(petId) {
-  const profile = window.petProfiles.find(p => p.id === petId);
-  if (!profile?.birthday) return;
+function generateBirthdayCard(petId, index) {
+  const profile = window.petProfiles[index];
+  if (!profile) return;
 
-  // Get selected theme (default to balloons)
-  const theme = localStorage.getItem('birthdayTheme') || 'balloons';
-
-  // Prepare data
-  const age = profile.dob ? calculateAge(profile.dob) : null;
-  const cardData = {
-    name: profile.name,
-    photoUrl: profile.gallery[profile.coverPhotoIndex],
-    countdown: getCountdown(profile.birthday),
-    ageText: age ? `Turning ${age}!` : 'Celebrating!'
-  };
-
+  const theme = document.querySelector('input[name="theme"]:checked')?.value || 'balloons';
+  const template = document.querySelector(`[data-theme="${theme}"]`).cloneNode(true);
+  
+  // Replace ALL template variables
+  const html = template.innerHTML
+    .replace(/{{name}}/g, profile.name)
+    .replace(/{{photoUrl}}/g, profile.gallery[0]?.url || '')
+    .replace(/{{countdown}}/g, getCountdown(profile.birthday))
+    .replace(/{{ageText}}/g, profile.dob ? `Age ${calculateAge(profile.dob)}` : '');
+  
+  template.innerHTML = html;
+ 
   // Generate and share
   const card = buildCardTemplate(theme, cardData);
   const canvas = await html2canvas(card);
@@ -815,7 +815,9 @@ async function shareOrDownload(canvas, filename) {
     link.click();
   }
 }
-
+ // Cleanup
+  setTimeout(() => URL.revokeObjectURL(link.href), 100);
+}
 
 //===============================
 //  Create  AND GENERATE collage Core functionS
@@ -945,22 +947,17 @@ function setupPetProfileDelegation() {
 
   DOM.petList?.addEventListener("click", (e) => {
     const button = e.target.closest('button');
-    if (!button) return;
+      if (!button || !button.dataset.index) return; // ← Key check
 
     // Safely get all attributes
-    const index = parseInt(button.dataset.index || '');
+    const index = parseInt(button.dataset.index);
     const petId = button.dataset.id;
     const docId = button.dataset.docId;
 
-    if (isNaN(index) || !petId) {
-      console.warn("Invalid button attributes:", {
-        class: button.className,
-        index,
-        petId,
-        docId
-      });
-      return;
-    }
+    if (isNaN(index)) {
+    console.warn("Invalid index on:", button.className);
+    return;
+  }
 
     // === Action buttons ===
     if (target.classList.contains("edit-profile")) {
