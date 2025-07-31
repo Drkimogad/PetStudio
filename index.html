@@ -230,18 +230,54 @@
                   <input type="text" id="microchipNumber" name="microchipNumber">
                   </div>
                 
-             <!-- Birthday Reminder + Celebrate Button -->
-                 <label for="birthdayReminder">Birthday Reminder:</label>
-                  <div class="reminder-line">
-                  <input type="date" id="birthdayReminder" name="birthdayReminder">
-                  <button type="button" class="celebrate-btn hidden" onclick="generateBirthdayCard()">🎉 Celebrate!</button>
-                 </div>
+             <!-- Replace existing birthday reminder section with this -->
+<div class="birthday-reminder-section">
+  <label for="birthdayReminder">Birthday Reminder:</label>
+  <div class="reminder-controls">
+    <input 
+      type="date" 
+      id="birthdayReminder" 
+      name="birthdayReminder"
+      onchange="toggleCelebrateButton(this)"
+    >
+    <button 
+      type="button" 
+      class="celebrate-btn hidden" 
+      data-action="generate-card"
+    >
+      🎉 Preview Card
+    </button>
+  </div>
+</div>
                 
-                <fieldset>
-                 <legend>Birthday Card Theme</legend>
-                    <label><input type="radio" name="theme" value="balloons" checked> Balloons</label>
-                    <label><input type="radio" name="theme" value="paws"> Paw Prints</label>
-                </fieldset>
+    <!-- Replace theme radios with this styled version -->
+<div class="theme-selection">
+  <h4>Card Theme</h4>
+  <div class="theme-options">
+    <label class="theme-option">
+      <input 
+        type="radio" 
+        name="theme" 
+        value="balloons" 
+        checked
+        onchange="previewTheme(this.value)"
+      >
+      <div class="theme-preview balloons-mini"></div>
+      <span>Balloons</span>
+    </label>
+    
+    <label class="theme-option">
+      <input 
+        type="radio" 
+        name="theme" 
+        value="paws"
+        onchange="previewTheme(this.value)"
+      >
+      <div class="theme-preview paws-mini"></div>
+      <span>Paw Prints</span>
+    </label>
+  </div>
+</div>
 
                 <div id="birthday-card-templates" class="hidden">
 <!-- 1. Balloons (Default) -->
