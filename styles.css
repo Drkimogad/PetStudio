@@ -486,6 +486,23 @@ h1, h2, h3, p {
   margin: 5px 0 0;
   white-space: pre-line; /* Respects line breaks */
 }
+/* css for collage function */
+.collage-btn {
+  background: #6a5acd; /* Purple to distinguish from other buttons */
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 12px;
+  margin: 5px 0;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.collage-btn:hover {
+  background: #9370db; /* Lighter purple */
+  transform: scale(1.05);
+}
+
 /* ====================
    GALLERY STYLES
 ==================== */
