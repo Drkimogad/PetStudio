@@ -1146,14 +1146,19 @@ console.log("📨 Submit triggered!");
     const newProfile = {
       id: newProfileId,
       name: document.getElementById("petName").value,
+      nicknames: document.getElementById("petNicknames")?.value || "", // Optional field
       breed: document.getElementById("petBreed").value,
       dob: document.getElementById("petDob").value,
       birthday: document.getElementById("petBirthday").value,
-      notes: document.getElementById("petNotes").value.trim() || "", // 🔶 New field
       moodHistory,
       // 🔶 NEW FIELDS (from our discussion)
-     nicknames: document.getElementById("petNicknames")?.value || "", // Optional field
-     notes: document.getElementById("petNotes")?.value || "",       // Former "gift ideas"
+     emergencyContact: {
+     name: document.getElementById("emergencyName").value.trim(),
+     phone: document.getElementById("emergencyPhone").value.trim(),
+     relationship: document.getElementById("emergencyRelationship").value.trim()
+     },
+     microchipNumber: document.getElementById("microchipNumber").value.trim(),
+     notes: document.getElementById("petNotes")?.value.trim() || "", // ✅ Single consistent field
      tags: [], // Will populate from a tags dropdown (see Step 2)
      coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
       // gallery & docId added below
