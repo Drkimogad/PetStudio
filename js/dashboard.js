@@ -75,6 +75,7 @@ function loadSavedProfiles() {
       
         <div class="profile-header" ${profileHeaderStyle}>
           <h3>${profile.name}</h3>
+           ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
           <p class="countdown">${getCountdown(profile.birthday)}</p>
         </div>
         
@@ -125,6 +126,7 @@ function loadSavedProfiles() {
        <div class="mood-history">
             ${renderMoodHistory(profile)}
        </div>
+       
            <!-- === ADD HERE === -->
     <div class="birthday-reminder">
       ${profile.birthday ? `
@@ -132,8 +134,9 @@ function loadSavedProfiles() {
         <button onclick="generateBirthdayCard('${profile.id}')">🎉 Celebrate</button>
       ` : ''}
     </div>
-    <div id="collage-modal" class="modal hidden">
-  <div class="modal-content">
+    
+  <div id="collage-modal" class="modal hidden">
+   <div class="modal-content">
     <h3>Create Collage</h3>
     <div class="image-grid" id="collage-image-grid"></div>
     <div class="layout-options">
@@ -145,22 +148,55 @@ function loadSavedProfiles() {
   </div>
 </div>
 
-   <div id="birthday-card-templates" class="hidden">
-  <!-- Template 1: Balloons -->
-  <div class="card-template balloons" data-theme="balloons">
-    <div class="banner">🎉 Happy Birthday! 🎉</div>
-    <div class="pet-name">{{name}}</div>
-    <div class="age">{{ageText}}</div>
-    <div class="countdown">{{countdown}}</div>
-    <img class="pet-photo" src="{{photoUrl}}">
-  </div>
-
-  <!-- Template 2: Paw Prints -->
-  <div class="card-template paws" data-theme="paws">
-    <!-- ... similar structure, different styling ... -->
-  </div>
+<div id="birthday-card-templates" class="hidden">
+<!-- 1. Balloons (Default) -->
+<div class="card-template balloons" data-theme="balloons">
+  <div class="banner">🎉 Happy Birthday! 🎉</div>
+  <div class="pet-name">{{name}}</div>
+  <div class="age">{{ageText}}</div>
+  <div class="countdown">{{countdown}}</div>
+  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
+  <div class="footer">Made with ❤️ on PetStudio</div>
 </div>
 
+<!-- 2. Paw Prints -->
+<div class="card-template paws" data-theme="paws">
+  <div class="banner">🐾 Birthday Paws 🐾</div>
+  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
+  <div class="pet-name">{{name}}</div>
+  <div class="age">{{ageText}}</div>
+  <div class="countdown">{{countdown}}</div>
+  <div class="paw-decoration">🐾 🐾 🐾</div>
+</div>
+
+<!-- 3. Minimalist -->
+<div class="card-template minimal" data-theme="minimal">
+  <div class="pet-name">{{name}}</div>
+  <div class="age">{{ageText}}</div>
+  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
+  <div class="countdown">{{countdown}}</div>
+</div>
+
+<!-- 4. Party Theme -->
+<div class="card-template party" data-theme="party">
+  <div class="confetti"></div>
+  <div class="banner">🎊 PARTY TIME! 🎊</div>
+  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
+  <div class="pet-name">{{name}}</div>
+  <div class="age">{{ageText}}</div>
+  <div class="countdown">{{countdown}}</div>
+</div>
+
+<!-- 5. Elegant -->
+<div class="card-template elegant" data-theme="elegant">
+  <div class="banner">Happy Birthday</div>
+  <div class="pet-name">{{name}}</div>
+  <div class="age">{{ageText}}</div>
+  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
+  <div class="countdown">{{countdown}}</div>
+  <div class="signature">From PetStudio</div>
+</div>
+</div>
        
       </div>
         <div class="pet-card" data-doc-id="${profile.docId}">
@@ -171,14 +207,7 @@ function loadSavedProfiles() {
         <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
         <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
         <button class="collage-btn" data-index="${index}" data-doc-id="${profile.docId}">🖼️ Create Collage</button>
-        <button 
-  class="celebrate-btn" 
-  data-index="${index}" 
-  data-doc-id="${profile.docId}"
-  onclick="generateBirthdayCard('${profile.id}')"
->
-  🎉 Celebrate
-</button>
+        <button class="celebrate-btn" data-index="${index}" data-doc-id="${profile.docId}"onclick="generateBirthdayCard('${profile.id}')">🎉 Celebrate</button>
         </div>
       </div>  
       `;
@@ -199,6 +228,7 @@ function getCountdown(birthday) {
   const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
   return `${diffDays} days until birthday! 🎉`;
 }
+
 //=============================
 // Render mood history
 //==========================
@@ -214,7 +244,9 @@ function getMoodEmoji(mood) {
   return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
 }
 
-//==== collage making helper function 
+//====================================
+// CREATE COLLAGE HELPER FUNCTION
+//===================================
 let selectedImages = [];
 let selectedLayout = '2x2';
 
@@ -232,6 +264,7 @@ function toggleImageSelection(e) {
   // Enable/disable generate button
   document.getElementById('generate-collage').disabled = selectedImages.length < 2;
 }
+
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 //======================================
 // 🌀 EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
@@ -372,7 +405,7 @@ async function deleteProfile(index) {
 
 //===========================================
 // 🌀 PRINT PROFILE BUTTON FUNCTION
-// WORKS ON DESKTOP, TO VERIFY ON TABLETS
+// OPTIMISED FOR TABLLET AND DESKTOIP
 //================================================
 function printProfile(profile) {
   const printWindow = window.open('', '_blank');
@@ -450,9 +483,9 @@ ${profile.moodHistory.map(entry => `
   });
 }
 
-//===========
-//======generate birthday card()
-//==========
+//===============================
+// Generate Birthday card()
+//==============================
 async function generateBirthdayCard(petId) {
   try {
     // 1. Fetch the pet's profile
@@ -504,9 +537,8 @@ async function generateBirthdayCard(petId) {
   }
 }
 
-
 //====================================================
-// 🌀 HYBRID OPTIMIZED SHARE PET CARD FUNCTION 🌟🌟🌟
+// 🌀 OPTIMIZED SHARE PET CARD FUNCTION
 //=======================================================
 async function sharePetCard(profile, event) {
   try {
@@ -593,9 +625,8 @@ async function sharePetCard(profile, event) {
   }
 }
 
-
 //===============================
-//🌀 QR Code Management 🌟
+//🌀 QR Code Managementenhanced
 //===========================
 //1. Generate QR code
 function generateQRCode(profileIndex) {
@@ -723,7 +754,6 @@ async function shareQR() {
     showQRStatus('Sharing failed. Copy manually.', false);
   }
 }
-//=============================================
 // Initialize QR modal (safe initialization)
 //=============================================
 function initQRModal() {
@@ -745,7 +775,6 @@ function initQRModal() {
     }
   });
 }
-//==========================
 // Show QR status message
 //==========================
 function showQRStatus(message, isSuccess) {
@@ -757,6 +786,32 @@ function showQRStatus(message, isSuccess) {
     statusEl.textContent = '';
     statusEl.style.color = '';
   }, 3000);
+}
+
+
+//===================================
+// Birthday card templates function 
+//=====================================
+async function generateBirthdayCard(petId) {
+  const profile = window.petProfiles.find(p => p.id === petId);
+  if (!profile?.birthday) return;
+
+  // Get selected theme (default to balloons)
+  const theme = localStorage.getItem('birthdayTheme') || 'balloons';
+
+  // Prepare data
+  const age = profile.dob ? calculateAge(profile.dob) : null;
+  const cardData = {
+    name: profile.name,
+    photoUrl: profile.gallery[profile.coverPhotoIndex],
+    countdown: getCountdown(profile.birthday),
+    ageText: age ? `Turning ${age}!` : 'Celebrating!'
+  };
+
+  // Generate and share
+  const card = buildCardTemplate(theme, cardData);
+  const canvas = await html2canvas(card);
+  shareOrDownload(canvas, `${profile.name}_birthday.png`);
 }
 
 // template builder
@@ -794,32 +849,46 @@ async function shareOrDownload(canvas, filename) {
 }
 
 
-// birthday card templates function 
-async function generateBirthdayCard(petId) {
-  const profile = window.petProfiles.find(p => p.id === petId);
-  if (!profile?.birthday) return;
+//===============================
+//  Create  AND GENERATE collage Core functionS
+//===============================
+// 1. CREATE COLLAGE FIRST
+async function createPetCollage(index) {
+  const profile = window.petProfiles?.[index];
+  if (!profile?.gallery?.length) {
+    showQRStatus("No photos available for collage.", false);
+    return;
+  }
 
-  // Get selected theme (default to balloons)
-  const theme = localStorage.getItem('birthdayTheme') || 'balloons';
+  // Open modal
+  const modal = document.getElementById("collage-modal");
+  modal.classList.remove("hidden");
 
-  // Prepare data
-  const age = profile.dob ? calculateAge(profile.dob) : null;
-  const cardData = {
-    name: profile.name,
-    photoUrl: profile.gallery[profile.coverPhotoIndex],
-    countdown: getCountdown(profile.birthday),
-    ageText: age ? `Turning ${age}!` : 'Celebrating!'
-  };
+  // Populate image grid
+  const grid = document.getElementById("collage-image-grid");
+  grid.innerHTML = '';
+  profile.gallery.forEach((img, i) => {
+    const imgElement = document.createElement('img');
+    imgElement.src = typeof img === 'string' ? img : img.url;
+    imgElement.dataset.index = i;
+    imgElement.addEventListener('click', toggleImageSelection);
+    grid.appendChild(imgElement);
+  });
 
-  // Generate and share
-  const card = buildCardTemplate(theme, cardData);
-  const canvas = await html2canvas(card);
-  shareOrDownload(canvas, `${profile.name}_birthday.png`);
+  // Set up layout buttons
+  document.querySelectorAll('.layout-options button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      selectedLayout = e.target.dataset.layout;
+    });
+  });
+
+  // Generate collage
+  document.getElementById('generate-collage').addEventListener('click', () => {
+    generateCollagePNG(profile);
+  });
 }
 
-
-
-//== png generation function
+// 2. THEN GENERATE COLLAGE PNG
 async function generateCollagePNG(profile) {
   if (selectedImages.length < 2) return;
 
@@ -872,45 +941,6 @@ async function generateCollagePNG(profile) {
     selectedImages = [];
   }
 }
-
-//=============
-//  Create collage Core function
-//==================
-async function createPetCollage(index) {
-  const profile = window.petProfiles?.[index];
-  if (!profile?.gallery?.length) {
-    showQRStatus("No photos available for collage.", false);
-    return;
-  }
-
-  // Open modal
-  const modal = document.getElementById("collage-modal");
-  modal.classList.remove("hidden");
-
-  // Populate image grid
-  const grid = document.getElementById("collage-image-grid");
-  grid.innerHTML = '';
-  profile.gallery.forEach((img, i) => {
-    const imgElement = document.createElement('img');
-    imgElement.src = typeof img === 'string' ? img : img.url;
-    imgElement.dataset.index = i;
-    imgElement.addEventListener('click', toggleImageSelection);
-    grid.appendChild(imgElement);
-  });
-
-  // Set up layout buttons
-  document.querySelectorAll('.layout-options button').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      selectedLayout = e.target.dataset.layout;
-    });
-  });
-
-  // Generate collage
-  document.getElementById('generate-collage').addEventListener('click', () => {
-    generateCollagePNG(profile);
-  });
-}
-
 
 //==============  
 // Log mood
@@ -988,10 +1018,6 @@ function setupPetProfileDelegation() {
     }
   });
 }
-
-
-// Call it when the app loads
-setupThemePreferences();
 // renderProfiles(0 was abstracted to loadSavedProfiles()
 //=============================
 //✅ FINAL INITIALIZATION ✅
