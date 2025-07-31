@@ -390,6 +390,25 @@ h1, h2, h3, p {
   background-color: #e9d5ff;
 }
 
+/* Style the reminder line Recently added */
+.reminder-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.celebrate-btn {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.celebrate-btn.hidden {
+  display: none; /* Hide until a date is picked */
+}
+
 /* ====================
    GALLERY STYLES
 ==================== */
