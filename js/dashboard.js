@@ -37,7 +37,9 @@ function initDashboardDOM() {
     if (!DOM.profileSection) console.error("profileSection element missing");
 }
 
-// RENDER ALL PROFILES FORM OLD 
+//========================
+// LOADSAVEDPROFILES()
+//==========================
 function loadSavedProfiles() {
   // ➡️ ADD THIS LINE to use the correct data and trace actual rendering
   const petProfiles = window.petProfiles || []; // 👈 Always check window.petProfiles
@@ -84,12 +86,16 @@ function loadSavedProfiles() {
           <p><strong>DOB:</strong> ${profile.dob}</p>
           <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
         </div>
-        <div class="pet-notes">
-      <strong>Notes:</strong> 
-      <p>${profile.notes.replace(/\n/g, '<br>')}</p> <!-- Preserves line breaks -->
-       </div>
-        
-        <div class="profile-reminder">
+
+      <!-- === ADD HERE CELEBRATE BUTTON CLICKING WILL TRIGGERE THE TEMPLATES! === -->
+    <div class="birthday-reminder">
+      ${profile.birthday ? `
+        <span>${getCountdown(profile.birthday)}</span>
+        <button onclick="generateBirthdayCard('${profile.id}')">🎉 Celebrate</button>
+      ` : ''}
+    </div>
+
+      <div class="profile-reminder">
            <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${profile.birthday} 🎉</p>
         </div>
         
@@ -114,6 +120,14 @@ function loadSavedProfiles() {
 </div>
 <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
 
+       <div class="emergency-info">
+    <h4>Emergency Contact</h4>
+    <p><strong>Name:</strong> ${profile.emergencyContact?.name || 'Not set'}</p>
+    <p><strong>Phone:</strong> ${profile.emergencyContact?.phone || 'Not set'}</p>
+    <p><strong>Relationship:</strong> ${profile.emergencyContact?.relationship || 'Not set'}</p>
+    <p><strong>Microchip:</strong> ${profile.microchipNumber || 'Not registered'}</p>
+  </div>
+
         <div class="mood-tracker">
         <div class="mood-buttons">
        <span>Log Mood:</span>
@@ -127,23 +141,11 @@ function loadSavedProfiles() {
             ${renderMoodHistory(profile)}
        </div>
 
-  <div class="emergency-info">
-    <h4>Emergency Contact</h4>
-    <p><strong>Name:</strong> ${profile.emergencyContact?.name || 'Not set'}</p>
-    <p><strong>Phone:</strong> ${profile.emergencyContact?.phone || 'Not set'}</p>
-    <p><strong>Relationship:</strong> ${profile.emergencyContact?.relationship || 'Not set'}</p>
-    <p><strong>Microchip:</strong> ${profile.microchipNumber || 'Not registered'}</p>
-  </div>
+      <div class="pet-notes">
+        <strong>Notes:</strong> 
+        <p>${profile.notes.replace(/\n/g, '<br>')}</p> <!-- Preserves line breaks -->
+      </div>
        
-           <!-- === ADD HERE CELEBRATE BUTTON CLICKING WILL TRIGGERE THE TEMPLATES! === -->
-    <div class="birthday-reminder">
-      ${profile.birthday ? `
-        <span>${getCountdown(profile.birthday)}</span>
-        <button onclick="generateBirthdayCard('${profile.id}')">🎉 Celebrate</button>
-      ` : ''}
-    </div>
-
-
       <!-- Add this after other details but before buttons for tags -->
       ${profile.tags?.length ? `
        <div class="tags-container">
