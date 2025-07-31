@@ -389,7 +389,7 @@ h1, h2, h3, p {
   border-color: #6a1b9a;
   background-color: #e9d5ff;
 }
-
+/* NEW ENHANCEMENTS */
 /* ====birthday card style======*/
 .birthday-card {
   width: 300px; 
@@ -418,17 +418,6 @@ h1, h2, h3, p {
   gap: 10px;
   margin: 15px 0;
 }
-
-.celebrate-btn {
-  background: none;
-  border: none;
-  font-size: 1.2em;
-  cursor: pointer;
-}
-
-.celebrate-btn.hidden {
-  display: none; /* Hide until a date is picked */
-}
 .birthday-reminder {
   display: flex;
   align-items: center;
@@ -437,7 +426,6 @@ h1, h2, h3, p {
   font-size: 0.9em;
   color: #ff6b6b; /* Birthday-themed color */
 }
-
 .birthday-reminder button {
   background: none;
   border: none;
@@ -457,12 +445,10 @@ h1, h2, h3, p {
   align-items: center;
   gap: 5px;
 }
-
 .celebrate-btn:hover {
   background: #fad0c4; /* Lighter pink on hover */
   transform: scale(1.05);
 }
-
 
 /* Notes Section */
 #petNotes {
@@ -481,12 +467,17 @@ h1, h2, h3, p {
   border-radius: 8px;
   font-size: 0.9em;
 }
-
 .pet-notes p {
   margin: 5px 0 0;
   white-space: pre-line; /* Respects line breaks */
 }
-/* css for collage function */
+.nickname {
+  font-style: italic;
+  color: #6a5acd;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+/* =====css for collage function========= */
 .collage-btn {
   background: #6a5acd; /* Purple to distinguish from other buttons */
   color: white;
