@@ -243,6 +243,57 @@
                     <label><input type="radio" name="theme" value="paws"> Paw Prints</label>
                 </fieldset>
 
+                <div id="birthday-card-templates" class="hidden">
+<!-- 1. Balloons (Default) -->
+<div class="card-template balloons" data-theme="balloons">
+  <div class="banner">🎉 Happy Birthday! 🎉</div>
+  <div class="pet-name">{{name}}</div>
+  <div class="age">{{ageText}}</div>
+  <div class="countdown">{{countdown}}</div>
+  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
+  <div class="footer">Made with ❤️ on PetStudio</div>
+</div>
+
+<!-- 2. Paw Prints -->
+<div class="card-template paws" data-theme="paws">
+  <div class="banner">🐾 Birthday Paws 🐾</div>
+  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
+  <div class="pet-name">{{name}}</div>
+  <div class="age">{{ageText}}</div>
+  <div class="countdown">{{countdown}}</div>
+  <div class="paw-decoration">🐾 🐾 🐾</div>
+</div>
+
+<!-- 3. Minimalist -->
+<div class="card-template minimal" data-theme="minimal">
+  <div class="pet-name">{{name}}</div>
+  <div class="age">{{ageText}}</div>
+  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
+  <div class="countdown">{{countdown}}</div>
+</div>
+
+<!-- 4. Party Theme -->
+<div class="card-template party" data-theme="party">
+  <div class="confetti"></div>
+  <div class="banner">🎊 PARTY TIME! 🎊</div>
+  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
+  <div class="pet-name">{{name}}</div>
+  <div class="age">{{ageText}}</div>
+  <div class="countdown">{{countdown}}</div>
+</div>
+
+<!-- 5. Elegant -->
+<div class="card-template elegant" data-theme="elegant">
+  <div class="banner">Happy Birthday</div>
+  <div class="pet-name">{{name}}</div>
+  <div class="age">{{ageText}}</div>
+  <img class="pet-photo" src="{{photoUrl}}" alt="{{name}}">
+  <div class="countdown">{{countdown}}</div>
+  <div class="signature">From PetStudio</div>
+</div>
+</div>
+
+
                 <!-- After other fields, before submit button -->
                <label for="petTags">Tags (Select multiple):</label>
                <select id="petTags" name="petTags" multiple>
