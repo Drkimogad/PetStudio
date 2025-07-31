@@ -126,6 +126,14 @@ function loadSavedProfiles() {
        <div class="mood-history">
             ${renderMoodHistory(profile)}
        </div>
+
+  <div class="emergency-info">
+    <h4>Emergency Contact</h4>
+    <p><strong>Name:</strong> ${profile.emergencyContact?.name || 'Not set'}</p>
+    <p><strong>Phone:</strong> ${profile.emergencyContact?.phone || 'Not set'}</p>
+    <p><strong>Relationship:</strong> ${profile.emergencyContact?.relationship || 'Not set'}</p>
+    <p><strong>Microchip:</strong> ${profile.microchipNumber || 'Not registered'}</p>
+  </div>
        
            <!-- === ADD HERE === -->
     <div class="birthday-reminder">
@@ -197,6 +205,15 @@ function loadSavedProfiles() {
   <div class="signature">From PetStudio</div>
 </div>
 </div>
+
+      <!-- Add this after other details but before buttons -->
+      ${profile.tags?.length ? `
+       <div class="tags-container">
+        ${profile.tags.map(tag => `
+         <span class="tag-pill">${tag}</span>
+        `).join('')}
+       </div>
+      ` : ''}  
        
       </div>
         <div class="pet-card" data-doc-id="${profile.docId}">
@@ -1159,7 +1176,8 @@ console.log("📨 Submit triggered!");
      },
      microchipNumber: document.getElementById("microchipNumber").value.trim(),
      notes: document.getElementById("petNotes")?.value.trim() || "", // ✅ Single consistent field
-     tags: [], // Will populate from a tags dropdown (see Step 2)
+     tags: Array.from(document.getElementById('petTags').selectedOptions)
+      .map(option => option.value), // Converts selected options to array     
      coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
       // gallery & docId added below
     };
