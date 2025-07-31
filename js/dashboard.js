@@ -83,6 +83,10 @@ function loadSavedProfiles() {
           <p><strong>DOB:</strong> ${profile.dob}</p>
           <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
         </div>
+        <div class="pet-notes">
+      <strong>Notes:</strong> 
+      <p>${profile.notes.replace(/\n/g, '<br>')}</p> <!-- Preserves line breaks -->
+       </div>
         
         <div class="profile-reminder">
            <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${profile.birthday} 🎉</p>
@@ -897,6 +901,7 @@ console.log("📨 Submit triggered!");
       breed: document.getElementById("petBreed").value,
       dob: document.getElementById("petDob").value,
       birthday: document.getElementById("petBirthday").value,
+      notes: document.getElementById("petNotes").value.trim() || "", // 🔶 New field
       moodHistory,
       // 🔶 NEW FIELDS (from our discussion)
   nicknames: document.getElementById("petNicknames")?.value || "", // Optional field
