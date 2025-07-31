@@ -141,6 +141,7 @@ function loadSavedProfiles() {
         <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print Petcard</button>
         <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
         <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
+        <button class="collage-btn" data-index="${index}" data-doc-id="${profile.docId}">🖼️ Create Collage</button>
         <button 
   class="celebrate-btn" 
   data-index="${index}" 
@@ -710,6 +711,20 @@ function showQRStatus(message, isSuccess) {
     statusEl.style.color = '';
   }, 3000);
 }
+//=============
+//  Create collage function
+//==================
+async function createPetCollage(index) {
+  const profile = window.petProfiles?.[index];
+  if (!profile?.gallery?.length) {
+    alert("No photos to collage!");
+    return;
+  }
+  console.log("Launch collage maker for:", profile.name); 
+  // Next: Fetch images → UI grid → Generate collage
+}
+
+
 //==============  
 // Log mood
 //================
@@ -762,6 +777,10 @@ function setupPetProfileDelegation() {
     } else if (target.classList.contains("generate-qr")) {
       generateQRCode(index);
     }
+      else if (target.classList.contains("collage-btn")) {
+      createPetCollage(index); // Uses the pet's index
+    }
+        
       // === NEW CELEBRATE BUTTON ===
     else if (target.classList.contains("celebrate-btn")) {
       generateBirthdayCard(window.petProfiles?.[index]?.id); // Pass pet ID
