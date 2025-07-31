@@ -193,6 +193,14 @@
                      <option value="angry">😠 Angry</option>
                      <option value="sick">🤒 Sick</option>
                  </select>
+                <!-- === ADD THIS === -->
+<!-- Birthday Reminder + Celebrate Button -->
+<label for="birthdayReminder">Birthday Reminder:</label>
+<div class="reminder-line">
+  <input type="date" id="birthdayReminder" name="birthdayReminder">
+  <button type="button" class="celebrate-btn hidden" onclick="generateBirthdayCard()">🎉 Celebrate!</button>
+</div>
+                
                 <button type="submit" class="button">Save Profile</button>
             </form>
         </div>
