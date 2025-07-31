@@ -1,4 +1,18 @@
+# Firebase & Cloudinary Secrets
+functions/.env
+functions/.runtimeconfig.json
+firebase-debug.log
+firebase-debug.*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Node modules
 node_modules/
-firebase-adminsdk.json
-# Ignore firebase.json to prevent it from being uploaded to the repository
-firebase.json
+functions/node_modules/
+
+# IDE files
+.vscode/
+.idea/
