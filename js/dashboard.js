@@ -144,6 +144,23 @@ function loadSavedProfiles() {
     <button id="generate-collage" disabled>Generate Collage</button>
   </div>
 </div>
+
+   <div id="birthday-card-templates" class="hidden">
+  <!-- Template 1: Balloons -->
+  <div class="card-template balloons" data-theme="balloons">
+    <div class="banner">🎉 Happy Birthday! 🎉</div>
+    <div class="pet-name">{{name}}</div>
+    <div class="age">{{ageText}}</div>
+    <div class="countdown">{{countdown}}</div>
+    <img class="pet-photo" src="{{photoUrl}}">
+  </div>
+
+  <!-- Template 2: Paw Prints -->
+  <div class="card-template paws" data-theme="paws">
+    <!-- ... similar structure, different styling ... -->
+  </div>
+</div>
+
        
       </div>
         <div class="pet-card" data-doc-id="${profile.docId}">
@@ -742,6 +759,66 @@ function showQRStatus(message, isSuccess) {
   }, 3000);
 }
 
+// template builder
+function buildCardTemplate(theme, data) {
+  const template = document.querySelector(`.card-template[data-theme="${theme}"]`).cloneNode(true);
+  template.classList.remove('hidden');
+
+  // Inject data
+  template.querySelector('.pet-name').textContent = data.name;
+  template.querySelector('.countdown').textContent = data.countdown;
+  template.querySelector('.age').textContent = data.ageText;
+  template.querySelector('.pet-photo').src = data.photoUrl;
+
+  return template;
+}
+
+// share and download 
+async function shareOrDownload(canvas, filename) {
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  
+  // Try native share
+  if (navigator.share?.canShare({ files: [new File([blob], filename)] })) {
+    await navigator.share({
+      title: 'Birthday Card',
+      files: [new File([blob], filename)]
+    });
+  } 
+  // Fallback to download
+  else {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+  }
+}
+
+
+// birthday card templates function 
+async function generateBirthdayCard(petId) {
+  const profile = window.petProfiles.find(p => p.id === petId);
+  if (!profile?.birthday) return;
+
+  // Get selected theme (default to balloons)
+  const theme = localStorage.getItem('birthdayTheme') || 'balloons';
+
+  // Prepare data
+  const age = profile.dob ? calculateAge(profile.dob) : null;
+  const cardData = {
+    name: profile.name,
+    photoUrl: profile.gallery[profile.coverPhotoIndex],
+    countdown: getCountdown(profile.birthday),
+    ageText: age ? `Turning ${age}!` : 'Celebrating!'
+  };
+
+  // Generate and share
+  const card = buildCardTemplate(theme, cardData);
+  const canvas = await html2canvas(card);
+  shareOrDownload(canvas, `${profile.name}_birthday.png`);
+}
+
+
+
 //== png generation function
 async function generateCollagePNG(profile) {
   if (selectedImages.length < 2) return;
@@ -911,6 +988,10 @@ function setupPetProfileDelegation() {
     }
   });
 }
+
+
+// Call it when the app loads
+setupThemePreferences();
 // renderProfiles(0 was abstracted to loadSavedProfiles()
 //=============================
 //✅ FINAL INITIALIZATION ✅
@@ -918,14 +999,26 @@ function setupPetProfileDelegation() {
 function initializeDashboard() {
   petProfiles = window.petProfiles || [];
 
-  // Only render if we have profiles
+  // Theme preference listener (add this near other init code)
+  const themeRadios = document.querySelectorAll('input[name="theme"]');
+  if (themeRadios.length > 0) {
+    // Set saved theme or default
+    const savedTheme = localStorage.getItem('birthdayTheme') || 'balloons';
+    themeRadios.forEach(radio => {
+      radio.checked = (radio.value === savedTheme);
+      radio.addEventListener('change', (e) => {
+        localStorage.setItem('birthdayTheme', e.target.value);
+      });
+    });
+  }
+
+  // Rest of your existing code
   if (petProfiles.length > 0 && DOM.petList) {
     loadSavedProfiles();
   }
-
-  setupPetProfileDelegation(); // ✅ Handles all buttons
-  attachFormListenerWhenReady(); // ✅ Handles form submission
-
+  setupPetProfileDelegation();
+  attachFormListenerWhenReady();
+  
   if (document.getElementById('qr-modal')) {
     initQRModal();
   }  
