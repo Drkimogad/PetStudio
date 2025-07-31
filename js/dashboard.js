@@ -787,14 +787,11 @@ async function generateBirthdayCard(petId) {
 
 // template builder
 function buildCardTemplate(theme, data) {
-  const template = document.querySelector(`.card-template[data-theme="${theme}"]`).cloneNode(true);
-  template.classList.remove('hidden');
-
-  // Inject data
-  template.querySelector('.pet-name').textContent = data.name;
-  template.querySelector('.countdown').textContent = data.countdown;
-  template.querySelector('.age').textContent = data.ageText;
-  template.querySelector('.pet-photo').src = data.photoUrl;
+  // In generateBirthdayCard():
+const template = document.querySelector(`[data-theme="${theme}"]`).cloneNode(true);
+template.innerHTML = template.innerHTML
+  .replaceAll('{{name}}', profile.name)
+  .replaceAll('{{photoUrl}}', profile.gallery[0]?.url || 'placeholder.jpg');
 
   return template;
 }
@@ -1142,8 +1139,8 @@ console.log("📨 Submit triggered!");
      },
      microchipNumber: document.getElementById("microchipNumber").value.trim(),
      notes: document.getElementById("petNotes")?.value.trim() || "", // ✅ Single consistent field
-     tags: Array.from(document.getElementById('petTags').selectedOptions)
-      .map(option => option.value), // Converts selected options to array     
+     tags: Array.from(document.querySelectorAll('#petTags option:checked'))
+          .map(opt => opt.value),    
      coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
       // gallery & docId added below
     };
