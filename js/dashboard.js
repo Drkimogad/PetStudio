@@ -137,6 +137,14 @@ function loadSavedProfiles() {
         <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print Petcard</button>
         <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
         <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
+        <button 
+  class="celebrate-btn" 
+  data-index="${index}" 
+  data-doc-id="${profile.docId}"
+  onclick="generateBirthdayCard('${profile.id}')"
+>
+  🎉 Celebrate
+</button>
         </div>
       </div>  
       `;
@@ -389,6 +397,62 @@ ${profile.moodHistory.map(entry => `
     else img.addEventListener('load', checkPrint);
   });
 }
+
+//===========
+//======generate birthday card()
+//==========
+async function generateBirthdayCard(petId) {
+  try {
+    // 1. Fetch the pet's profile
+    const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+    const profile = petProfiles.find(p => p.id === petId);
+    if (!profile || !profile.birthday) return;
+
+    // 2. Create a birthday-themed card container
+    const card = document.createElement('div');
+    card.className = 'birthday-card';
+    card.innerHTML = `
+      <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
+      <div class="birthday-countdown">${getCountdown(profile.birthday)}</div>
+      <img src="${profile.gallery[profile.coverPhotoIndex]}" alt="${profile.name}" class="birthday-photo">
+      <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
+    `;
+
+    // 3. Convert to PNG (reuse your html2canvas logic)
+    const canvas = await html2canvas(card, { 
+      scale: 2,
+      backgroundColor: '#fff8e6' // Light yellow
+    });
+
+    // 4. Share or download (reuse your sharePetCard() flow)
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], `${profile.name}_birthday.png`, { type: 'image/png' });
+      
+      // Try native share (mobile)
+      if (navigator.share && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: `${profile.name}'s Birthday!`,
+          files: [file]
+        });
+      } 
+      // Fallback to download
+      else {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${profile.name}_birthday.png`;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+      }
+    }, 'image/png');
+
+  } catch (error) {
+    console.error('Birthday card failed:', error);
+    alert('Could not generate birthday card. Try again later!');
+  }
+}
+
+
 //====================================================
 // 🌀 HYBRID OPTIMIZED SHARE PET CARD FUNCTION 🌟🌟🌟
 //=======================================================
@@ -693,6 +757,10 @@ function setupPetProfileDelegation() {
       sharePetCard(window.petProfiles?.[index]);
     } else if (target.classList.contains("generate-qr")) {
       generateQRCode(index);
+    }
+      // === NEW CELEBRATE BUTTON ===
+    else if (target.classList.contains("celebrate-btn")) {
+      generateBirthdayCard(window.petProfiles?.[index]?.id); // Pass pet ID
     }
 
     // === Mood button ===
