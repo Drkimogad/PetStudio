@@ -1152,10 +1152,10 @@ console.log("📨 Submit triggered!");
       notes: document.getElementById("petNotes").value.trim() || "", // 🔶 New field
       moodHistory,
       // 🔶 NEW FIELDS (from our discussion)
-  nicknames: document.getElementById("petNicknames")?.value || "", // Optional field
-  notes: document.getElementById("petNotes")?.value || "",       // Former "gift ideas"
-  tags: [], // Will populate from a tags dropdown (see Step 2)
-  coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
+     nicknames: document.getElementById("petNicknames")?.value || "", // Optional field
+     notes: document.getElementById("petNotes")?.value || "",       // Former "gift ideas"
+     tags: [], // Will populate from a tags dropdown (see Step 2)
+     coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
       // gallery & docId added below
     };
 
