@@ -816,9 +816,14 @@ async function createPetCollage(index) {
     showQRStatus("No photos available for collage.", false);
     return;
   }
-
+  
   // Open modal
   const modal = document.getElementById("collage-modal");
+  // Verify the modal exists in DOM before showing
+  if (!modal) {
+    console.error('Collage modal not found');
+    return;
+  }
   modal.classList.remove("hidden");
 
   // Populate image grid
