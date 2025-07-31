@@ -477,6 +477,28 @@ h1, h2, h3, p {
   margin-top: -10px;
   margin-bottom: 10px;
 }
+/* Tags styling */
+.pet-tags {
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag {
+  background: #6a5acd;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+}
+
+#petTags {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
 /* =====css for collage function========= */
 .collage-btn {
   background: #6a5acd; /* Purple to distinguish from other buttons */
