@@ -483,29 +483,45 @@ async function generateBirthdayCard(petId) {
     // 4. Share or download (reuse your sharePetCard() flow)
     canvas.toBlob(async (blob) => {
       const file = new File([blob], `${profile.name}_birthday.png`, { type: 'image/png' });
-      
-      // Try native share (mobile)
-      if (navigator.share && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: `${profile.name}'s Birthday!`,
-          files: [file]
-        });
-      } 
-      // Fallback to download
-      else {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${profile.name}_birthday.png`;
-        link.click();
-        setTimeout(() => URL.revokeObjectURL(url), 100);
-      }
-    }, 'image/png');
+       blobUrl = URL.createObjectURL(blob); // Store for cleanup
+
+       // Try native share
+    if (navigator.share?.canShare({ files: [new File([blob], filename)] })) {
+      await navigator.share({
+        title: `${profile.name}'s Birthday Card`,
+        files: [new File([blob], filename)]
+      });
+    }
+    // Fallback to download
+    else {
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => document.body.removeChild(link), 100);
+    }
 
   } catch (error) {
-    console.error('Birthday card failed:', error);
-    alert('Could not generate birthday card. Try again later!');
+    console.error("Sharing failed:", error);
+    alert("Couldn't share card. Downloading instead.");
+    if (blobUrl) {
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `${profile.name}_birthday.png`;
+      link.click();
+    }
+  } finally {
+    // Guaranteed cleanup
+    if (blobUrl) {
+      setTimeout(() => {
+        URL.revokeObjectURL(blobUrl);
+        console.log("Cleaned up blob URL");
+      }, 1000); // Extended timeout for slow connections
+    }
   }
+}
+}
 }
 
 //====================================================
@@ -763,22 +779,25 @@ function showQRStatus(message, isSuccess) {
 //===================================
 // Birthday card templates function 
 //=====================================
-function generateBirthdayCard(petId, index) {
+async function generateBirthdayCard(petId, index) {
   const profile = window.petProfiles[index];
   if (!profile) return;
 
   const theme = document.querySelector('input[name="theme"]:checked')?.value || 'balloons';
   const template = document.querySelector(`[data-theme="${theme}"]`).cloneNode(true);
   
-  // Replace ALL template variables
-  const html = template.innerHTML
-    .replace(/{{name}}/g, profile.name)
-    .replace(/{{photoUrl}}/g, profile.gallery[0]?.url || '')
-    .replace(/{{countdown}}/g, getCountdown(profile.birthday))
-    .replace(/{{ageText}}/g, profile.dob ? `Age ${calculateAge(profile.dob)}` : '');
+    // ▼▼▼ REPLACE THIS SECTION ▼▼▼
+    const photoUrl = profile.gallery?.[0]?.url || 
+                   (typeof profile.gallery?.[0] === 'string' ? profile.gallery[0] : '');
+    
+    template.innerHTML = template.innerHTML
+      .replace(/{{name}}/g, profile.name)
+      .replace(/{{photoUrl}}/g, photoUrl || 'placeholder.jpg')
+      .replace(/{{countdown}}/g, getCountdown(profile.birthday))
+      .replace(/{{ageText}}/g, profile.dob ? `Age ${calculateAge(profile.dob)}` : '');
+    // ▲▲▲ END REPLACEMENT ▲▲▲
   
   template.innerHTML = html;
- 
   // Generate and share
   const card = buildCardTemplate(theme, cardData);
   const canvas = await html2canvas(card);
