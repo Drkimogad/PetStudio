@@ -457,7 +457,9 @@ ${profile.moodHistory.map(entry => `
 //===============================
 // Generate Birthday card()
 //==============================
-async function generateBirthdayCard(petId) {
+async function generateBirthdayCard(petId, index) {
+    let blobUrl = null;
+  
   try {
     // 1. Fetch the pet's profile
     const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
@@ -491,7 +493,8 @@ async function generateBirthdayCard(petId) {
         title: `${profile.name}'s Birthday Card`,
         files: [new File([blob], filename)]
       });
-    }
+    } // ← THIS closes the if statement  
+      
     // Fallback to download
     else {
       const link = document.createElement('a');
@@ -520,8 +523,6 @@ async function generateBirthdayCard(petId) {
       }, 1000); // Extended timeout for slow connections
     }
   }
-}
-}
 }
 
 //====================================================
