@@ -535,38 +535,41 @@ async function generateBirthdayCard(petId, index) {
     });
 
     // 4. Share or download (reuse your sharePetCard() flow)
-canvas.toBlob(async (blob) => {
-  try {  // ← Add try INSIDE the callback
-    const file = new File([blob], `${profile.name}_birthday.png`, { type: 'image/png' });
-    blobUrl = URL.createObjectURL(blob);
+    canvas.toBlob(async (blob) => { // (3) OPEN toBlob callback
+      try { // (4) OPEN nested try
+        const file = new File([blob], `${profile.name}_birthday.png`, { type: 'image/png' });
+        blobUrl = URL.createObjectURL(blob);
 
-    if (navigator.share?.canShare({ files: [file] })) {
-      await navigator.share({
-        title: `${profile.name}'s Birthday Card`,
-        files: [file]
-      });
-    } else {
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = `${profile.name}_birthday.png`;
-      link.click();
-    }
-  } catch (error) {  // ← Now properly paired with the inner try
-    console.error("Sharing failed:", error);
-    if (blobUrl) {
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = `${profile.name}_birthday.png`;
-      link.click();
-    }
-  } finally {
-    if (blobUrl) {
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-    }
-  }
- });  // ← Closes toBlob callback
-} // ← THIS BRACE WAS MISSING (closes the function)
-
+        if (navigator.share?.canShare({ files: [file] })) {
+          await navigator.share({
+            title: `${profile.name}'s Birthday Card`,
+            files: [file]
+          });
+        } else {
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = `${profile.name}_birthday.png`;
+          link.click();
+        }
+      } catch (error) { // (4) CLOSE try, (5) OPEN catch
+        console.error("Sharing failed:", error);
+        if (blobUrl) {
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = `${profile.name}_birthday.png`;
+          link.click();
+        }
+      } finally { // (5) CLOSE catch, (6) OPEN finally
+        if (blobUrl) {
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+        }
+      } // (6) CLOSE finally
+    }); // (3) CLOSE toBlob callback
+  } catch (error) { // (2) CLOSE try, (7) OPEN outer catch
+    console.error("Generation failed:", error);
+  } // (7) CLOSE outer catch
+} // (1) CLOSE function ← YOU HAVE THIS
+    
 //====================================================
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
 //=======================================================
