@@ -504,7 +504,7 @@ async function generateBirthdayCard(petId, index) {
       link.click();
       setTimeout(() => document.body.removeChild(link), 100);
     }
-
+      
   } catch (error) {
     console.error("Sharing failed:", error);
     alert("Couldn't share card. Downloading instead.");
@@ -513,7 +513,8 @@ async function generateBirthdayCard(petId, index) {
       link.href = blobUrl;
       link.download = `${profile.name}_birthday.png`;
       link.click();
-    }
+    } 
+    
   } finally {
     // Guaranteed cleanup
     if (blobUrl) {
@@ -523,8 +524,8 @@ async function generateBirthdayCard(petId, index) {
       }, 1000); // Extended timeout for slow connections
     }
   }
+ }
 }
-
 //====================================================
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
 //=======================================================
