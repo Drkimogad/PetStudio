@@ -483,49 +483,90 @@ async function generateBirthdayCard(petId, index) {
     });
 
     // 4. Share or download (reuse your sharePetCard() flow)
-    canvas.toBlob(async (blob) => {
-      const file = new File([blob], `${profile.name}_birthday.png`, { type: 'image/png' });
-       blobUrl = URL.createObjectURL(blob); // Store for cleanup
+   async function generateBirthdayCard(petId, index) {
+    let blobUrl = null;
+  
+  try {
+    // 1. Fetch the pet's profile
+    const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+    const profile = petProfiles.find(p => p.id === petId);
+    if (!profile || !profile.birthday) return;
 
-       // Try native share
-    if (navigator.share?.canShare({ files: [new File([blob], filename)] })) {
+    // 2. Create a birthday-themed card container
+    const card = document.createElement('div');
+    card.className = 'birthday-card';
+    card.innerHTML = `
+      <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
+      <div class="birthday-countdown">${getCountdown(profile.birthday)}</div>
+      <img src="${profile.gallery[profile.coverPhotoIndex]}" alt="${profile.name}" class="birthday-photo">
+      <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
+    `;
+
+    // 3. Convert to PNG (reuse your html2canvas logic)
+    const canvas = await html2canvas(card, { 
+      scale: 2,
+      backgroundColor: '#fff8e6' // Light yellow
+    });
+
+    // 4. Share or download (reuse your sharePetCard() flow)
+   async function generateBirthdayCard(petId, index) {
+    let blobUrl = null;
+  
+  try {
+    // 1. Fetch the pet's profile
+    const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+    const profile = petProfiles.find(p => p.id === petId);
+    if (!profile || !profile.birthday) return;
+
+    // 2. Create a birthday-themed card container
+    const card = document.createElement('div');
+    card.className = 'birthday-card';
+    card.innerHTML = `
+      <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
+      <div class="birthday-countdown">${getCountdown(profile.birthday)}</div>
+      <img src="${profile.gallery[profile.coverPhotoIndex]}" alt="${profile.name}" class="birthday-photo">
+      <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
+    `;
+
+    // 3. Convert to PNG (reuse your html2canvas logic)
+    const canvas = await html2canvas(card, { 
+      scale: 2,
+      backgroundColor: '#fff8e6' // Light yellow
+    });
+
+    // 4. Share or download (reuse your sharePetCard() flow)
+canvas.toBlob(async (blob) => {
+  try {  // ← Add try INSIDE the callback
+    const file = new File([blob], `${profile.name}_birthday.png`, { type: 'image/png' });
+    blobUrl = URL.createObjectURL(blob);
+
+    if (navigator.share?.canShare({ files: [file] })) {
       await navigator.share({
         title: `${profile.name}'s Birthday Card`,
-        files: [new File([blob], filename)]
+        files: [file]
       });
-    } // ← THIS closes the if statement  
-      
-    // Fallback to download
-    else {
+    } else {
       const link = document.createElement('a');
       link.href = blobUrl;
-      link.download = filename;
-      document.body.appendChild(link);
+      link.download = `${profile.name}_birthday.png`;
       link.click();
-      setTimeout(() => document.body.removeChild(link), 100);
     }
-      
-  } catch (error) {
+  } catch (error) {  // ← Now properly paired with the inner try
     console.error("Sharing failed:", error);
-    alert("Couldn't share card. Downloading instead.");
     if (blobUrl) {
       const link = document.createElement('a');
       link.href = blobUrl;
       link.download = `${profile.name}_birthday.png`;
       link.click();
-    } 
-    
+    }
   } finally {
-    // Guaranteed cleanup
     if (blobUrl) {
-      setTimeout(() => {
-        URL.revokeObjectURL(blobUrl);
-        console.log("Cleaned up blob URL");
-      }, 1000); // Extended timeout for slow connections
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
     }
   }
- }
-}
+ });  // ← Closes toBlob callback
+} // ← THIS BRACE WAS MISSING (closes the function)
+
 //====================================================
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
 //=======================================================
