@@ -1184,28 +1184,30 @@ console.log("📨 Submit triggered!");
       });
     }
 
-    // 🧠 Construct newProfile object
-    const newProfile = {
-      id: newProfileId,
-      name: document.getElementById("petName").value,
-      nicknames: document.getElementById("petNicknames")?.value || "", // Optional field
-      breed: document.getElementById("petBreed").value,
-      dob: document.getElementById("petDob").value,
-      birthday: document.getElementById("petBirthday").value,
-      moodHistory,
-      // 🔶 NEW FIELDS (from our discussion)
-     emergencyContact: {
-     name: document.getElementById("emergencyName").value.trim(),
-     phone: document.getElementById("emergencyPhone").value.trim(),
-     relationship: document.getElementById("emergencyRelationship").value.trim()
-     },
-     microchipNumber: document.getElementById("microchipNumber").value.trim(),
-     notes: document.getElementById("petNotes")?.value.trim() || "", // ✅ Single consistent field
-     tags: Array.from(document.querySelectorAll('#petTags option:checked'))
-          .map(opt => opt.value),    
-     coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
-      // gallery & docId added below
-    };
+// ✅ Extract tags BEFORE creating newProfile
+const tagSelect = document.getElementById("petTags");
+const selectedTags = Array.from(tagSelect?.selectedOptions || []).map(opt => opt.value);
+
+// 🧠 Construct newProfile object
+const newProfile = {
+  id: newProfileId,
+  name: document.getElementById("petName").value,
+  nicknames: document.getElementById("petNicknames")?.value || "",
+  breed: document.getElementById("petBreed").value,
+  dob: document.getElementById("petDob").value,
+  birthday: document.getElementById("petBirthday").value,
+  moodHistory,
+  emergencyContact: {
+    name: document.getElementById("emergencyName").value.trim(),
+    phone: document.getElementById("emergencyPhone").value.trim(),
+    relationship: document.getElementById("emergencyRelationship").value.trim()
+  },
+  microchipNumber: document.getElementById("microchipNumber").value.trim(),
+  notes: document.getElementById("petNotes")?.value.trim() || "",
+  tags: selectedTags, // ✅ Inserted properly now
+  coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0
+};
+
 
     // 🧩 Merge gallery (EDIT vs CREATE)
     if (isEditing) {
