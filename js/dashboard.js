@@ -125,25 +125,27 @@ function loadSavedProfiles() {
     }
     
     return profile.gallery.map((img, imgIndex) => {
-  let imgUrl = '';
-  
-  if (typeof img === 'string') {
-    imgUrl = img;
-  } else if (img?.url) {
-    imgUrl = img.url;
-  }
+      let imgUrl = '';
+      
+      if (typeof img === 'string') {
+        imgUrl = img;
+      } else if (img?.url) {
+        imgUrl = img.url;
+      }
 
-  // Skip if URL contains template tags
-  if (imgUrl.includes('{{') || imgUrl.includes('%7B%7B')) {
-    console.warn(`Skipping invalid image URL at index ${imgIndex}`);
-    return '';
-  }
+      // Skip if URL contains template tags
+      if (imgUrl.includes('{{') || imgUrl.includes('%7B%7B')) {
+        console.warn(`Skipping invalid image URL at index ${imgIndex}`);
+        return '';
+      }
+
+      return `
         <div class="gallery-item">
-          <img src="${secureUrl}" alt="Pet Photo">
+          <img src="${imgUrl}" alt="Pet photo ${imgIndex + 1}">
           <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
             data-index="${index}" data-photo-index="${imgIndex}">★</button>
         </div>
-      ` : '';
+      `;
     }).join('');
   })()}
 </div>
