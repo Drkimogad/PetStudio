@@ -200,7 +200,7 @@ function loadSavedProfiles() {
         <button class="share-btn" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
         <button class="qr-btn" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
         <button class="collage-btn" data-index="${index}" data-doc-id="${profile.docId}">🖼️ Create Collage</button>
-        <button class="celebrate-btn" data-index="${index}" data-doc-id="${profile.docId}"onclick="generateBirthdayCard('${profile.id}', ${index})">🎉 Celebrate</button>
+        <button class="celebrate-btn" data-index="${index}" data-id="${profile.id}">🎉 Celebrate</button>
         </div>
       </div>  
       `;
@@ -276,7 +276,7 @@ function toggleImageSelection(e) {
 //======================================
 // 🌀 EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
 //======================================
-function openEditForm(index) {
+function openEditForm(petId, index, docId) {
   uploadedImageUrls = [];
   isEditing = true;
   currentEditIndex = index;
@@ -284,7 +284,9 @@ function openEditForm(index) {
  console.log("petProfiles:", window.petProfiles);
  console.log("Requested index:", index);
 
-  const profile = petProfiles[index];
+  // Prefer using petId when possible
+  const profile = window.petProfiles.find(p => p.id === petId) || 
+                 window.petProfiles[index];
   if (!profile) {
     console.error("❌ No profile found at index", index);
     return;
@@ -367,11 +369,12 @@ function cancelEdit() {
 // 🌀 UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
 // DELET CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER
 //=========================
-async function deleteProfile(index) {
+async function deleteProfile(petId, index, docId) {
   if (!confirm("Are you sure you want to delete this profile?")) return;
 
-  const profile = petProfiles[index];
-
+  // Prefer using petId when possible
+  const profile = window.petProfiles.find(p => p.id === petId) || 
+                 window.petProfiles[index];
   // Delete from Firestore profile
   if (profile.docId) {
     try {
@@ -940,11 +943,11 @@ function setCoverPhoto(profileIndex, imageIndex) {
 function setupPetProfileDelegation() {
   DOM.petList?.addEventListener("click", (e) => {
     const target = e.target.closest('button');
-    if (!target || !target.dataset.index) return; // Check for required data attribute
+    if (!target || !target.dataset.id) return; // Check for petId existence
 
     // Safely get all attributes - USE TARGET CONSISTENTLY
-    const index = parseInt(target.dataset.index);
     const petId = target.dataset.id;
+    const index = parseInt(target.dataset.index || "-1");
     const docId = target.dataset.docId;
 
     if (isNaN(index)) {
@@ -957,10 +960,10 @@ function setupPetProfileDelegation() {
 
     // === Action buttons ===
     if (target.classList.contains("edit-btn")) {
-      openEditForm(index, docId);
+      openEditForm(petId, index, docId);
     } 
     else if (target.classList.contains("delete-btn")) {
-      deleteProfile(index, docId);
+      deleteProfile(petId, index, docId);
     } 
     else if (target.classList.contains("print-btn")) {
       printProfile(window.petProfiles[index] || 
@@ -977,7 +980,7 @@ function setupPetProfileDelegation() {
       createPetCollage(index, petId); // Now takes both params
     }
     else if (target.classList.contains("celebrate-btn")) {
-      generateBirthdayCard(petId, index);
+     generateBirthdayCard(petId, index); // petId comes from data-id
     }
     else if (target.classList.contains("mood-btn")) {
       const mood = target.dataset.mood;
