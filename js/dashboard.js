@@ -101,8 +101,9 @@ function loadSavedProfiles() {
 <div class="gallery-grid">
   ${(() => {
     // Add this validation check
-    if (!Array.isArray(profile.gallery) {
-      console.warn('Gallery is not an array for profile:', profile.id);
+if (!Array.isArray(profile.gallery)) {  // Added missing parenthesis      
+  console.warn('Gallery is not an array for profile:', profile.id);
+  
       return '';
     }
     if (profile.gallery.length === 0) {
