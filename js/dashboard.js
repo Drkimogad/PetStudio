@@ -1039,7 +1039,7 @@ function setupPetProfileDelegation() {
         if (mood) logMood(petId, mood); // Uses petId only
       }
       else if (target.classList.contains("cover-btn")) {
-        if (!isNaN(photoIndex) {
+        if (!isNaN(photoIndex)) {
           setCoverPhoto(petId, photoIndex); // Uses petId + photoIndex
         }
       }
