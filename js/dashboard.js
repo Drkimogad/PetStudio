@@ -404,7 +404,7 @@ function cancelEdit() {
 // 🌀 UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
 // DELET CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER
 //=========================
-function deleteProfile(petId, docId) {
+async function deleteProfile(petId, docId) {
   if (!confirm("Are you sure you want to delete this profile?")) return;
   const profileIndex = window.petProfiles.findIndex(p => p.id === petId);
   if (profileIndex === -1) return;
