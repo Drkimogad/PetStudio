@@ -230,19 +230,16 @@
                   <input type="text" id="microchipNumber" name="microchipNumber">
                   </div>
                 
-             <!-- Replace existing birthday reminder section with this -->
+<!-- Just the date input - no duplicate button -->
 <div class="birthday-reminder-section">
-  <label for="birthdayReminder">Birthday Reminder:</label>
-  <div class="reminder-controls">
-    <input 
-      type="date" 
-      id="birthdayReminder" 
-      name="birthdayReminder"
-      onchange="toggleCelebrateButton(this)"
-    ><button class="celebrate-btn" data-index="${index}" data-id="${profile.id}" data-doc-id="${profile.docId}">>
-      🎉 Preview Card
-    </button>
-  </div>
+  <label for="birthdayReminder-${profile.id}">Birthday Reminder:</label>
+  <input 
+    type="date" 
+    id="birthdayReminder-${profile.id}" 
+    name="birthdayReminder"
+    value="${profile.birthday || ''}"
+    onchange="toggleCelebrateButton(this, ${index})"
+  >
 </div>
                 
     <!-- Replace theme radios with this styled version -->
