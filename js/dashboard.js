@@ -317,7 +317,7 @@ function toggleImageSelection(e) {
 //======================================
 // 🌀 EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
 //======================================
-function openEditForm(petId, index, docId) {
+function openEditForm(index) {
   uploadedImageUrls = [];
   isEditing = true;
   currentEditIndex = index;
@@ -325,9 +325,7 @@ function openEditForm(petId, index, docId) {
  console.log("petProfiles:", window.petProfiles);
  console.log("Requested index:", index);
 
-  // Prefer using petId when possible
-  const profile = window.petProfiles.find(p => p.id === petId) || 
-                 window.petProfiles[index];
+  const profile = petProfiles[index];
   if (!profile) {
     console.error("❌ No profile found at index", index);
     return;
@@ -410,12 +408,11 @@ function cancelEdit() {
 // 🌀 UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
 // DELET CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER
 //=========================
-async function deleteProfile(petId, index, docId) {
+async function deleteProfile(index) {
   if (!confirm("Are you sure you want to delete this profile?")) return;
 
-  // Prefer using petId when possible
-  const profile = window.petProfiles.find(p => p.id === petId) || 
-                 window.petProfiles[index];
+  const profile = petProfiles[index];
+
   // Delete from Firestore profile
   if (profile.docId) {
     try {
