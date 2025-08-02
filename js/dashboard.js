@@ -482,7 +482,7 @@ async function generateBirthdayCard(petId, index) {
       backgroundColor: '#fff8e6' // Light yellow
     });
 
-    // 4. Share or download (reuse your sharePetCard() flow)
+    // 4. Share or download (reuse your sharePetCard() flow NESTED SHARE FUNCTION)
    async function generateBirthdayCard(petId, index) {
     let blobUrl = null;
   
@@ -535,9 +535,10 @@ async function generateBirthdayCard(petId, index) {
     });
   } catch (error) {
     console.error("Generation failed:", error);
+   }
   }
-}
-
+ } //ADDED
+} //ADDED
 //===============================
 //  Create  AND GENERATE collage Core functionS
 //===============================
