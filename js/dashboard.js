@@ -198,7 +198,7 @@ function loadSavedProfiles() {
 <button class="delete-btn" data-id="${profile.id}" data-doc-id="${profile.docId}">🗑️ Delete</button>
 <button class="print-btn" data-id="${profile.id}" data-index="${index}">🖨️ Print</button>
 <button class="share-btn" data-id="${profile.id}" data-doc-id="${profile.docId}">📤 Share</button>
-<button class="qr-btn" data-id="${profile.id}">🔲 QR Code</button>
+<button class="qr-btn" data-id="${profile.id}" data-doc-id="${profile.docId}>🔲 QR Code</button>
 <button class="collage-btn" data-index="${index}">🖼️ Collage</button>
 <button class="celebrate-btn" data-id="${profile.id}">🎉 Celebrate</button>
 </div>
@@ -279,8 +279,11 @@ function toggleImageSelection(e) {
 // 🌀 EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
 //======================================
 function openEditForm(petId, index) {
+  console.log("🛠️ Editing pet:", petId, index, profile);
+
   const profile = window.petProfiles.find(p => p.id === petId);
-  if (!profile) return;
+  if (!profile) return console.warn("⚠️ Edit: profile not found", petId);
+
   currentEditIndex = index;
   isEditing = true;
   
