@@ -91,7 +91,6 @@ function loadSavedProfiles() {
     <div class="birthday-reminder">
       ${profile.birthday ? `
         <span>${getCountdown(profile.birthday)}</span>
-        <button onclick="generateBirthdayCard('${profile.id}')">🎉 Celebrate</button>
       ` : ''}
     </div>
 
@@ -99,19 +98,30 @@ function loadSavedProfiles() {
            <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${profile.birthday} 🎉</p>
         </div>
         
-      <div class="gallery-grid">
-      ${Array.isArray(profile.gallery) ? profile.gallery.map((img, imgIndex) => {
+<div class="gallery-grid">
+  ${(() => {
+    // Add this validation check
+    if (!Array.isArray(profile.gallery) {
+      console.warn('Gallery is not an array for profile:', profile.id);
+      return '';
+    }
+    if (profile.gallery.length === 0) {
+      console.warn('Empty gallery for profile:', profile.id);
+      return '<p>No photos yet</p>';
+    }
+    
+    return profile.gallery.map((img, imgIndex) => {
       const imgUrl = typeof img === "string" ? img : img?.url;
-      const secureUrl = imgUrl?.replace(/^http:/, 'https:'); // 🧪 force HTTPS          
-      return `
-      
-      <div class="gallery-item">
-       <img src="${profile.gallery[0]?.url || 'placeholder.jpg'}" alt="Pet Photo">
-        <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-        data-index="${index}" data-photo-index="${imgIndex}">★</button>
-      </div>
-    `;
-  }).join('') : ''}
+      const secureUrl = imgUrl?.replace(/^http:/, 'https:');
+      return secureUrl ? `
+        <div class="gallery-item">
+          <img src="${secureUrl}" alt="Pet Photo">
+          <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
+            data-index="${index}" data-photo-index="${imgIndex}">★</button>
+        </div>
+      ` : '';
+    }).join('');
+  })()}
 </div>
 
 <div id="editGalleryPreview"></div>
@@ -529,7 +539,7 @@ async function generateBirthdayCard(petId, index) {
 //  Create  AND GENERATE collage Core functionS
 //===============================
 // 1. CREATE COLLAGE FIRST
-async function createPetCollage(index) {
+async function generateBirthdayCard(petId, index) {
   const profile = window.petProfiles?.[index];
   if (!profile?.gallery?.length) {
     showQRStatus("No photos available for collage.", false);
@@ -904,7 +914,7 @@ function setCoverPhoto(profileIndex, imageIndex) {
 function setupPetProfileDelegation() {
 
   DOM.petList?.addEventListener("click", (e) => {
-    const button = e.target.closest('button');
+    const target = e.target.closest('button'); // Fix: Changed from 'button' to target
       if (!button || !button.dataset.index) return; // ← Key check
 
     // Safely get all attributes
