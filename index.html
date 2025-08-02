@@ -188,31 +188,30 @@
 				<label for="petNicknames">Nicknames (Optional):</label>
 				<input type="text" id="petNicknames" name="petNicknames" placeholder="e.g., 'Fluffy', 'Sir Barksalot'">
 
+				<label for="petGallery">Upload Photos:</label>
+				<input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
+
+			        <!-- After other fields, before submit button -->
+				<label for="petTags">Tags (Select multiple):</label>
+				<select id="petTags" name="petTags" multiple>
+					<option value="Adventure">Adventure</option>
+					<option value="Cuddly">Cuddly</option>
+					<option value="Playful">Playful</option>
+					<option value="Foodie">Foodie</option>
+					<option value="Athletic">Athletic</option>
+				</select>
+				<small>Hold Ctrl/Cmd to select multiple</small>
+
+
 				<label for="petBreed">Breed:</label>
 				<input type="text" id="petBreed" name="petBreed" required>
 
 				<label for="petDob">Date of Birth:</label>
 				<input type="date" id="petDob" name="petDob" required>
 
-				<label for="petGallery">Upload Photos:</label>
-				<input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
 
 				<label for="petBirthday">Birthday Reminder:</label>
 				<input type="date" id="petBirthday" name="petBirthday">
-
-				<!-- Inside your existing form (after birthday reminder) -->
-				<label for="petNotes">Notes & Memories:</label>
-				<textarea id="petNotes" name="petNotes" rows="3" placeholder="Gift ideas, funny habits, favorite toys..."></textarea>
-
-				<label for="moodHistoryInput">Mood at Creation:</label>
-				<select id="moodHistoryInput" name="moodHistoryInput">
-					<option value="">Select Mood</option>
-					<option value="happy">😊 Happy</option>
-					<option value="depressed">😔 Depressed</option>
-					<option value="sad">😞 Sad</option>
-					<option value="angry">😠 Angry</option>
-					<option value="sick">🤒 Sick</option>
-				</select>
 
 				<!-- Emergency Contact Section -->
 				<div class="emergency-contact-section">
@@ -230,6 +229,20 @@
 					<label for="microchipNumber">Microchip Number:</label>
 					<input type="text" id="microchipNumber" name="microchipNumber">
 				</div>
+
+				
+				<label for="moodHistoryInput">Mood at Creation:</label>
+				<select id="moodHistoryInput" name="moodHistoryInput">
+					<option value="">Select Mood</option>
+					<option value="happy">😊 Happy</option>
+					<option value="depressed">😔 Depressed</option>
+					<option value="sad">😞 Sad</option>
+					<option value="angry">😠 Angry</option>
+					<option value="sick">🤒 Sick</option>
+				</select>
+
+				<label for="petNotes">Notes & Memories:</label>
+				<textarea id="petNotes" name="petNotes" rows="3" placeholder="Gift ideas, funny habits, favorite toys..."></textarea>
 
 				<!-- Just the date input - no duplicate button -->
 				<div class="birthday-reminder-section">
@@ -313,21 +326,8 @@
 							<button data-layout="3x3">3×3</button>
 							<button data-layout="1x3">1×3</button>
 						</div>
-						<button id="generate-collage" disabled>Generate Collage</button>
 					</div>
 				</div>
-
-
-				<!-- After other fields, before submit button -->
-				<label for="petTags">Tags (Select multiple):</label>
-				<select id="petTags" name="petTags" multiple>
-					<option value="Adventure">Adventure</option>
-					<option value="Cuddly">Cuddly</option>
-					<option value="Playful">Playful</option>
-					<option value="Foodie">Foodie</option>
-					<option value="Athletic">Athletic</option>
-				</select>
-				<small>Hold Ctrl/Cmd to select multiple</small>
 
 				<button type="submit" class="button">Save Profile</button>
 			</form>
