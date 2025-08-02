@@ -239,12 +239,7 @@
       id="birthdayReminder" 
       name="birthdayReminder"
       onchange="toggleCelebrateButton(this)"
-    >
-    <button 
-      type="button" 
-      class="celebrate-btn hidden" 
-      data-action="generate-card"
-    >
+    ><button class="celebrate-btn" data-index="${index}" data-id="${profile.id}" data-doc-id="${profile.docId}">>
       🎉 Preview Card
     </button>
   </div>
