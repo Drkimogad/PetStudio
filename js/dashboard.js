@@ -503,40 +503,8 @@ async function generateBirthdayCard(petId, index) {
     `;
 
     // 3. Convert to PNG (reuse your html2canvas logic)
-    const canvas = await html2canvas(card, { 
-      scale: 2,
-      backgroundColor: '#fff8e6' // Light yellow
-    });
-
-    // 4. Share or download (reuse your sharePetCard() flow)
-   async function generateBirthdayCard(petId, index) {
-    let blobUrl = null;
-  
-  try {
-    // 1. Fetch the pet's profile
-    const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-    const profile = petProfiles.find(p => p.id === petId);
-    if (!profile || !profile.birthday) return;
-
-    // 2. Create a birthday-themed card container
-    const card = document.createElement('div');
-    card.className = 'birthday-card';
-    card.innerHTML = `
-      <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
-      <div class="birthday-countdown">${getCountdown(profile.birthday)}</div>
-      <img src="${profile.gallery[profile.coverPhotoIndex]}" alt="${profile.name}" class="birthday-photo">
-      <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
-    `;
-
-    // 3. Convert to PNG (reuse your html2canvas logic)
-    const canvas = await html2canvas(card, { 
-      scale: 2,
-      backgroundColor: '#fff8e6' // Light yellow
-    });
-
-    // 4. Share or download (reuse your sharePetCard() flow)
-    canvas.toBlob(async (blob) => { // (3) OPEN toBlob callback
-      try { // (4) OPEN nested try
+      canvas.toBlob(async (blob) => {
+      try {
         const file = new File([blob], `${profile.name}_birthday.png`, { type: 'image/png' });
         blobUrl = URL.createObjectURL(blob);
 
@@ -551,7 +519,7 @@ async function generateBirthdayCard(petId, index) {
           link.download = `${profile.name}_birthday.png`;
           link.click();
         }
-      } catch (error) { // (4) CLOSE try, (5) OPEN catch
+      } catch (error) {
         console.error("Sharing failed:", error);
         if (blobUrl) {
           const link = document.createElement('a');
@@ -559,16 +527,114 @@ async function generateBirthdayCard(petId, index) {
           link.download = `${profile.name}_birthday.png`;
           link.click();
         }
-      } finally { // (5) CLOSE catch, (6) OPEN finally
+      } finally {
         if (blobUrl) {
           setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
         }
-      } // (6) CLOSE finally
-    }); // (3) CLOSE toBlob callback
-  } catch (error) { // (2) CLOSE try, (7) OPEN outer catch
+      }
+    });
+  } catch (error) {
     console.error("Generation failed:", error);
-  } // (7) CLOSE outer catch
-} // (1) CLOSE function ← YOU HAVE THIS
+  }
+}
+
+//===============================
+//  Create  AND GENERATE collage Core functionS
+//===============================
+// 1. CREATE COLLAGE FIRST
+async function createPetCollage(index) {
+  const profile = window.petProfiles?.[index];
+  if (!profile?.gallery?.length) {
+    showQRStatus("No photos available for collage.", false);
+    return;
+  }
+  
+  // Open modal
+  const modal = document.getElementById("collage-modal");
+  // Verify the modal exists in DOM before showing
+  if (!modal) {
+    console.error('Collage modal not found');
+    return;
+  }
+  modal.classList.remove("hidden");
+
+  // Populate image grid
+  const grid = document.getElementById("collage-image-grid");
+  grid.innerHTML = '';
+  profile.gallery.forEach((img, i) => {
+    const imgElement = document.createElement('img');
+    imgElement.src = typeof img === 'string' ? img : img.url;
+    imgElement.dataset.index = i;
+    imgElement.addEventListener('click', toggleImageSelection);
+    grid.appendChild(imgElement);
+  });
+
+  // Set up layout buttons
+  document.querySelectorAll('.layout-options button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      selectedLayout = e.target.dataset.layout;
+    });
+  });
+
+  // Generate collage
+  document.getElementById('generate-collage').addEventListener('click', () => {
+    generateCollagePNG(profile);
+  });
+}
+
+// 2. THEN GENERATE COLLAGE PNG
+async function generateCollagePNG(profile) {
+  if (selectedImages.length < 2) return;
+
+  // Create collage container
+  const collage = document.createElement('div');
+  collage.className = `collage-layout-${selectedLayout}`;
+
+  // Add selected images
+  selectedImages.forEach(i => {
+    const img = document.createElement('img');
+    img.src = typeof profile.gallery[i] === 'string' ? profile.gallery[i] : profile.gallery[i].url;
+    collage.appendChild(img);
+  });
+
+  // Apply layout-specific CSS
+  const layoutStyles = {
+    '2x2': 'grid-template-columns: repeat(2, 1fr);',
+    '3x3': 'grid-template-columns: repeat(3, 1fr);',
+    '1x3': 'grid-template-columns: repeat(3, 1fr); height: 200px;'
+  };
+  collage.style.cssText = `
+    display: grid;
+    gap: 5px;
+    width: 600px;
+    ${layoutStyles[selectedLayout]}
+  `;
+
+  // Convert to PNG
+  try {
+    const canvas = await html2canvas(collage);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    
+    // Share or download
+    if (navigator.share && navigator.canShare({ files: [new File([blob], 'collage.png')] })) {
+      await navigator.share({
+        title: `${profile.name}'s Collage`,
+        files: [new File([blob], 'collage.png')]
+      });
+    } else {
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${profile.name}_collage.png`;
+      link.click();
+    }
+  } catch (error) {
+    console.error("Collage generation failed:", error);
+    showQRStatus("Failed to create collage.", false);
+  } finally {
+    document.getElementById('collage-modal').classList.add('hidden');
+    selectedImages = [];
+  }
+}
     
 //====================================================
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
@@ -821,166 +887,6 @@ function showQRStatus(message, isSuccess) {
   }, 3000);
 }
 
-
-//===================================
-// Birthday card templates function 
-//=====================================
-async function generateBirthdayCard(petId, index) {
-  const profile = window.petProfiles[index];
-  if (!profile) return;
-
-  const theme = document.querySelector('input[name="theme"]:checked')?.value || 'balloons';
-  const template = document.querySelector(`[data-theme="${theme}"]`).cloneNode(true);
-  
-    // ▼▼▼ REPLACE THIS SECTION ▼▼▼
-    const photoUrl = profile.gallery?.[0]?.url || 
-                   (typeof profile.gallery?.[0] === 'string' ? profile.gallery[0] : '');
-    
-    template.innerHTML = template.innerHTML
-      .replace(/{{name}}/g, profile.name)
-      .replace(/{{photoUrl}}/g, photoUrl || 'placeholder.jpg')
-      .replace(/{{countdown}}/g, getCountdown(profile.birthday))
-      .replace(/{{ageText}}/g, profile.dob ? `Age ${calculateAge(profile.dob)}` : '');
-    // ▲▲▲ END REPLACEMENT ▲▲▲
-  
-  template.innerHTML = html;
-  // Generate and share
-  const card = buildCardTemplate(theme, cardData);
-  const canvas = await html2canvas(card);
-  shareOrDownload(canvas, `${profile.name}_birthday.png`);
-}
-
-// template builder
-function buildCardTemplate(theme, data) {
-  // In generateBirthdayCard():
-const template = document.querySelector(`[data-theme="${theme}"]`).cloneNode(true);
-template.innerHTML = template.innerHTML
-  .replaceAll('{{name}}', profile.name)
-  .replaceAll('{{photoUrl}}', profile.gallery[0]?.url || 'placeholder.jpg');
-
-  return template;
-}
-
-// share and download 
-async function shareOrDownload(canvas, filename) {
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-  
-  // Try native share
-  if (navigator.share?.canShare({ files: [new File([blob], filename)] })) {
-    await navigator.share({
-      title: 'Birthday Card',
-      files: [new File([blob], filename)]
-    });
-  } 
-  // Fallback to download
-  else {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-  }
-}
- // Cleanup
-  setTimeout(() => URL.revokeObjectURL(link.href), 100);
-}
-
-//===============================
-//  Create  AND GENERATE collage Core functionS
-//===============================
-// 1. CREATE COLLAGE FIRST
-async function createPetCollage(index) {
-  const profile = window.petProfiles?.[index];
-  if (!profile?.gallery?.length) {
-    showQRStatus("No photos available for collage.", false);
-    return;
-  }
-  
-  // Open modal
-  const modal = document.getElementById("collage-modal");
-  // Verify the modal exists in DOM before showing
-  if (!modal) {
-    console.error('Collage modal not found');
-    return;
-  }
-  modal.classList.remove("hidden");
-
-  // Populate image grid
-  const grid = document.getElementById("collage-image-grid");
-  grid.innerHTML = '';
-  profile.gallery.forEach((img, i) => {
-    const imgElement = document.createElement('img');
-    imgElement.src = typeof img === 'string' ? img : img.url;
-    imgElement.dataset.index = i;
-    imgElement.addEventListener('click', toggleImageSelection);
-    grid.appendChild(imgElement);
-  });
-
-  // Set up layout buttons
-  document.querySelectorAll('.layout-options button').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      selectedLayout = e.target.dataset.layout;
-    });
-  });
-
-  // Generate collage
-  document.getElementById('generate-collage').addEventListener('click', () => {
-    generateCollagePNG(profile);
-  });
-}
-
-// 2. THEN GENERATE COLLAGE PNG
-async function generateCollagePNG(profile) {
-  if (selectedImages.length < 2) return;
-
-  // Create collage container
-  const collage = document.createElement('div');
-  collage.className = `collage-layout-${selectedLayout}`;
-
-  // Add selected images
-  selectedImages.forEach(i => {
-    const img = document.createElement('img');
-    img.src = typeof profile.gallery[i] === 'string' ? profile.gallery[i] : profile.gallery[i].url;
-    collage.appendChild(img);
-  });
-
-  // Apply layout-specific CSS
-  const layoutStyles = {
-    '2x2': 'grid-template-columns: repeat(2, 1fr);',
-    '3x3': 'grid-template-columns: repeat(3, 1fr);',
-    '1x3': 'grid-template-columns: repeat(3, 1fr); height: 200px;'
-  };
-  collage.style.cssText = `
-    display: grid;
-    gap: 5px;
-    width: 600px;
-    ${layoutStyles[selectedLayout]}
-  `;
-
-  // Convert to PNG
-  try {
-    const canvas = await html2canvas(collage);
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-    
-    // Share or download
-    if (navigator.share && navigator.canShare({ files: [new File([blob], 'collage.png')] })) {
-      await navigator.share({
-        title: `${profile.name}'s Collage`,
-        files: [new File([blob], 'collage.png')]
-      });
-    } else {
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `${profile.name}_collage.png`;
-      link.click();
-    }
-  } catch (error) {
-    console.error("Collage generation failed:", error);
-    showQRStatus("Failed to create collage.", false);
-  } finally {
-    document.getElementById('collage-modal').classList.add('hidden');
-    selectedImages = [];
-  }
-}
 
 //==============  
 // Log mood
