@@ -192,24 +192,55 @@ function loadSavedProfiles() {
       ` : ''}  
        
       </div>
-        <div class="pet-card" data-doc-id="${profile.docId}">
-        <div class="action-buttons">
-        <button class="edit-btn" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit Petcard</button>
-        <button class="delete-btn" data-index="${index}" data-doc-id="${profile.docId}">🗑️ Delete Petcard</button>
-        <button class="print-btn" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print Petcard</button>
-        <button class="share-btn" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
-        <button class="qr-btn" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
-        <button class="collage-btn" data-index="${index}" data-doc-id="${profile.docId}">🖼️ Create Collage</button>
-        <button 
-            class="celebrate-btn" 
-            data-index="${index}" 
-            data-id="${profile.id}"
-            ${!profile.birthday ? 'disabled style="opacity:0.5"' : ''}
-          >
-          🎉 Preview Card
-        </button>        
+  <div class="pet-card" data-doc-id="${profile.docId}">
+    <div class="action-buttons">
+  <!-- EDIT (uses id + index) -->
+  <button class="edit-btn" 
+          data-id="${profile.id}" 
+          data-index="${index}">
+    ✏️ Edit
+  </button>
 
-        </div>
+  <!-- DELETE (uses id + docId) -->
+  <button class="delete-btn" 
+          data-id="${profile.id}" 
+          data-doc-id="${profile.docId || ''}">
+    🗑️ Delete
+  </button>
+
+  <!-- SHARE (uses id + docId) -->
+  <button class="share-btn" 
+          data-id="${profile.id}" 
+          data-doc-id="${profile.docId || ''}">
+    📤 Share
+  </button>
+
+  <!-- PRINT (uses index only) -->
+  <button class="print-btn" 
+          data-index="${index}">
+    🖨️ Print
+  </button>
+
+  <!-- QR CODE (uses id + docId) -->
+  <button class="qr-btn" 
+          data-id="${profile.id}" 
+          data-doc-id="${profile.docId || ''}">
+    🔲 QR Code
+  </button>
+
+  <!-- COLLAGE (uses index only) -->
+  <button class="collage-btn" 
+          data-index="${index}">
+    🖼️ Collage
+  </button>
+
+  <!-- CELEBRATE (uses id only) -->
+  <button class="celebrate-btn" 
+          data-id="${profile.id}"
+          ${!profile.birthday ? 'disabled style="opacity:0.5"' : ''}>
+    🎉 Celebrate
+  </button>
+</div>
       </div>  
       `;
    
@@ -953,58 +984,71 @@ function setCoverPhoto(profileIndex, imageIndex) {
 function setupPetProfileDelegation() {
   DOM.petList?.addEventListener("click", (e) => {
     const target = e.target.closest('button');
-    if (!target || !target.dataset.id) return; // Check for petId existence
+    if (!target) return; // Exit if not a button
 
-    // Safely get all attributes - USE TARGET CONSISTENTLY
+    // Debugging (keep temporarily)
+    console.log('Button clicked:', target.className, target.dataset);
+
+    // Extract all possible identifiers
     const petId = target.dataset.id;
     const index = parseInt(target.dataset.index || "-1");
     const docId = target.dataset.docId;
+    const photoIndex = parseInt(target.dataset.photoIndex || "-1");
 
-    if (isNaN(index)) {
-      console.warn("Invalid index on:", target.className);
+    // Get the profile using the most reliable available identifier
+    const profile = petId 
+      ? window.petProfiles.find(p => p.id === petId)
+      : !isNaN(index) && index >= 0 
+        ? window.petProfiles[index]
+        : null;
+
+    if (!profile) {
+      console.error("Profile not found", { petId, index });
       return;
     }
 
-    // Debugging line - add this temporarily
-    console.log('Button clicked:', target.className, {index, petId, docId});
-
-    // === Action buttons ===
-    if (target.classList.contains("edit-btn")) {
-      openEditForm(petId, index, docId);
-    } 
-    else if (target.classList.contains("delete-btn")) {
-      deleteProfile(petId, index, docId);
-    } 
-    else if (target.classList.contains("print-btn")) {
-      printProfile(window.petProfiles[index] || 
-                 window.petProfiles.find(p => p.id === petId));
-    } 
-    else if (target.classList.contains("share-btn")) {
-      sharePetCard(window.petProfiles[index] || 
-                 window.petProfiles.find(p => p.id === petId));
-    } 
-    else if (target.classList.contains("qr-btn")) {
-      generateQRCode(index, petId); // Update function to accept both
-    }
-    else if (target.classList.contains("collage-btn")) {
-      createPetCollage(index, petId); // Now takes both params
-    }
-    else if (target.classList.contains("celebrate-btn")) {
-     generateBirthdayCard(petId, index); // petId comes from data-id
-    }
-    else if (target.classList.contains("mood-btn")) {
-      const mood = target.dataset.mood;
-      if (mood) logMood(index, petId, mood); // Update mood logger
-    }
-    else if (target.classList.contains("cover-btn")) {
-      const photoIndex = parseInt(target.dataset.photoIndex, 10);
-      if (!isNaN(photoIndex)) {
-        setCoverPhoto(index, petId, photoIndex); // Update to take petId
+    // === Action handlers ===
+    try {
+      if (target.classList.contains("edit-btn")) {
+        openEditForm(petId, index); // Uses both but prioritizes petId
+      } 
+      else if (target.classList.contains("delete-btn")) {
+        if (confirm(`Delete ${profile.name}?`)) {
+          deleteProfile(petId, docId); // Requires both for cloud/local
+        }
+      } 
+      else if (target.classList.contains("print-btn")) {
+        printProfile(profile); // Pass the resolved profile object
+      } 
+      else if (target.classList.contains("share-btn")) {
+        sharePetCard(profile); // Pass the full profile
+      } 
+      else if (target.classList.contains("qr-btn")) {
+        generateQRCode(petId, docId); // Cloud operation needs both
       }
+      else if (target.classList.contains("collage-btn")) {
+        createPetCollage(index); // Index-based UI operation
+      }
+      else if (target.classList.contains("celebrate-btn")) {
+        if (profile.birthday) {
+          generateBirthdayCard(petId); // Uses only petId
+        }
+      }
+      else if (target.classList.contains("mood-btn")) {
+        const mood = target.dataset.mood;
+        if (mood) logMood(petId, mood); // Uses petId only
+      }
+      else if (target.classList.contains("cover-btn")) {
+        if (!isNaN(photoIndex) {
+          setCoverPhoto(petId, photoIndex); // Uses petId + photoIndex
+        }
+      }
+    } catch (error) {
+      console.error("Action failed:", target.className, error);
+      Utils.showErrorToUser(`Action failed: ${target.textContent.trim()}`);
     }
   });
 }
-// renderProfiles(0 was abstracted to loadSavedProfiles()
 //=============================
 //✅ FINAL INITIALIZATION ✅
 //================================
