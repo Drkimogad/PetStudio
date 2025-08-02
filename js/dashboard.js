@@ -985,25 +985,27 @@ function setupPetProfileDelegation() {
     if (!target) return;
 
     const petId = target.dataset.id;
+    const index = parseInt(target.dataset.index || "-1");
     const docId = target.dataset.docId;
     const mood = target.dataset.mood;
     const photoIndex = parseInt(target.dataset.photoIndex || "-1");
-    const index = parseInt(target.dataset.index || "-1");
 
     const profile = window.petProfiles.find(p => p.id == petId);
     if (!profile) return;
 
     try {
       if (target.classList.contains("edit-btn")) {
-        openEditForm(petId, index);
+        openEditForm(index, petId);
       } else if (target.classList.contains("delete-btn")) {
-        if (confirm(`Delete ${profile.name}?`)) deleteProfile(petId, docId);
+        if (confirm(`Delete ${profile.name}?`)) {
+          deleteProfile(petId, docId);
+        }
       } else if (target.classList.contains("print-btn")) {
         printProfile(profile);
       } else if (target.classList.contains("share-btn")) {
         sharePetCard(profile);
       } else if (target.classList.contains("qr-btn")) {
-        generateQRCode(petId, docId);
+        generateQRCode(petId);
       } else if (target.classList.contains("collage-btn")) {
         createPetCollage(index);
       } else if (target.classList.contains("celebrate-btn")) {
@@ -1019,6 +1021,7 @@ function setupPetProfileDelegation() {
     }
   });
 }
+
 
 //=============================
 //✅ FINAL INITIALIZATION ✅
