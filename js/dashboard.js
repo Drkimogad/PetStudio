@@ -190,58 +190,19 @@ function loadSavedProfiles() {
         `).join('')}
        </div>
       ` : ''}  
-       
-      </div>
-  <div class="pet-card" data-doc-id="${profile.docId}">
-    <div class="action-buttons">
-  <!-- EDIT (uses id + index) -->
-  <button class="edit-btn" 
-          data-id="${profile.id}" 
-          data-index="${index}">
-    ✏️ Edit
-  </button>
-
-  <!-- DELETE (uses id + docId) -->
-  <button class="delete-btn" 
-          data-id="${profile.id}" 
-          data-doc-id="${profile.docId || ''}">
-    🗑️ Delete
-  </button>
-
-  <!-- SHARE (uses id + docId) -->
-  <button class="share-btn" 
-          data-id="${profile.id}" 
-          data-doc-id="${profile.docId || ''}">
-    📤 Share
-  </button>
-
-  <!-- PRINT (uses index only) -->
-  <button class="print-btn" 
-          data-index="${index}">
-    🖨️ Print
-  </button>
-
-  <!-- QR CODE (uses id + docId) -->
-  <button class="qr-btn" 
-          data-id="${profile.id}" 
-          data-doc-id="${profile.docId || ''}">
-    🔲 QR Code
-  </button>
-
-  <!-- COLLAGE (uses index only) -->
-  <button class="collage-btn" 
-          data-index="${index}">
-    🖼️ Collage
-  </button>
-
-  <!-- CELEBRATE (uses id only) -->
-  <button class="celebrate-btn" 
-          data-id="${profile.id}"
-          ${!profile.birthday ? 'disabled style="opacity:0.5"' : ''}>
-    🎉 Celebrate
-  </button>
+      
 </div>
-      </div>  
+<div class="pet-card" data-doc-id="${profile.docId}">
+<div class="action-buttons">
+<button class="edit-btn" data-id="${profile.id}" data-index="${index}">✏️ Edit</button>
+<button class="delete-btn" data-id="${profile.id}" data-doc-id="${profile.docId}">🗑️ Delete</button>
+<button class="print-btn" data-id="${profile.id}" data-index="${index}">🖨️ Print</button>
+<button class="share-btn" data-id="${profile.id}" data-doc-id="${profile.docId}">📤 Share</button>
+<button class="qr-btn" data-id="${profile.id}">🔲 QR Code</button>
+<button class="collage-btn" data-index="${index}">🖼️ Collage</button>
+<button class="celebrate-btn" data-id="${profile.id}">🎉 Celebrate</button>
+</div>
+  </div>  
       `;
    
       DOM.petList.appendChild(petCard);
