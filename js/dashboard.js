@@ -200,7 +200,15 @@ function loadSavedProfiles() {
         <button class="share-btn" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
         <button class="qr-btn" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
         <button class="collage-btn" data-index="${index}" data-doc-id="${profile.docId}">🖼️ Create Collage</button>
-        <button class="celebrate-btn" data-index="${index}" data-id="${profile.id}">🎉 Celebrate</button>
+        <button 
+            class="celebrate-btn" 
+            data-index="${index}" 
+            data-id="${profile.id}"
+            ${!profile.birthday ? 'disabled style="opacity:0.5"' : ''}
+          >
+          🎉 Preview Card
+        </button>        
+
         </div>
       </div>  
       `;
@@ -239,16 +247,18 @@ function getMoodEmoji(mood) {
 //==========================================
 // Helper functions for theme togling
 //==========================================
-// Toggle celebrate button when date is selected
-function toggleCelebrateButton(input) {
-  const btn = input.closest('.reminder-controls').querySelector('.celebrate-btn');
-  btn.classList.toggle('hidden', !input.value);
-}
-
-// Theme preview handler (add real implementation later)
-function previewTheme(theme) {
-  console.log('Selected theme:', theme); 
-  // You'll implement live preview here
+function toggleCelebrateButton(dateInput, index) {
+  const petCard = document.querySelector(`.petCard[data-index="${index}"]`);
+  const celebrateBtn = petCard.querySelector('.celebrate-btn');
+  
+  // Update button state
+  celebrateBtn.disabled = !dateInput.value;
+  celebrateBtn.style.opacity = dateInput.value ? 1 : 0.5;
+  
+  // Update data model if needed
+  if (dateInput.value) {
+    window.petProfiles[index].birthday = dateInput.value;
+  }
 }
 
 //====================================
