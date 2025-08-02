@@ -7,6 +7,8 @@ const CLOUDINARY_CONFIG = {
 let auth = null;
 let provider = null;
 let isSignupInProgress = false;
+let googleSignInInitialized = false;
+
 // 🔶 State Management🔶🔶🔶
 const VALID_ORIGINS = [
   'https://drkimogad.github.io',
@@ -122,11 +124,11 @@ if (typeof loadSavedProfiles === "function" && window.petProfiles?.length > 0) {
 }
 
 // ====== Google Sign-In Initialization ======
-function setupGoogleLoginButton() {
+async function setupGoogleLoginButton() {
   // Check if Google and Firebase are loaded
-  if (typeof google === 'undefined' || !google.accounts || typeof firebase === 'undefined') {
+  if (googleSignInInitialized || !window.google) {
     console.log("Waiting for libraries to load...");
-    setTimeout(setupGoogleLoginButton, 300);
+    setTimeout(setupGoogleLoginButton, 500);
     return;
   } 
   if (!firebase.apps.length) {
@@ -165,7 +167,7 @@ function setupGoogleLoginButton() {
         theme: "filled_blue",
         size: "large",
         text: "continue_with",
-        shape: "rectangular",
+        shape: "circular",
         width: 250
       });  
       
