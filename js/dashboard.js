@@ -54,6 +54,7 @@ function loadSavedProfiles() {
   if (petProfiles.length === 0) {
     DOM.petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
     return;
+    
   } else {
     petProfiles.forEach((profile, index) => {
       // Ensure gallery exists and is initialized
@@ -86,7 +87,7 @@ function loadSavedProfiles() {
           <p class="countdown">${getCountdown(profile.birthday)}</p>
         </div>
 
-        <!-- Add this after other details but before buttons for tags -->
+        <!-- Add this for tags -->
       ${profile.tags?.length ? `
        <div class="tags-container">
         ${profile.tags.map(tag => `
