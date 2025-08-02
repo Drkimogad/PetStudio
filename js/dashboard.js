@@ -100,15 +100,22 @@ function loadSavedProfiles() {
         
 <div class="gallery-grid">
   ${(() => {
-    // Add this validation check
-if (!Array.isArray(profile.gallery)) {  // Added missing parenthesis      
-  console.warn('Gallery is not an array for profile:', profile.id);
-  
-      return '';
+    // Debug first - log the gallery data with both profile.id AND index
+    console.log('Validating gallery for profile:', { 
+      id: profile.id, 
+      index: index,
+      gallery: profile.gallery 
+    });
+    
+    // Fixed validation with index in warning
+    if (!Array.isArray(profile.gallery)) {
+      console.warn(`Gallery is not an array for profile (Index:${index}, ID:${profile.id})`);
+      return '<p class="gallery-warning">⚠️ No valid gallery data</p>';
     }
+    
     if (profile.gallery.length === 0) {
-      console.warn('Empty gallery for profile:', profile.id);
-      return '<p>No photos yet</p>';
+      console.warn(`Empty gallery for profile (Index:${index}, ID:${profile.id})`);
+      return '<p class="gallery-empty">No photos yet</p>';
     }
     
     return profile.gallery.map((img, imgIndex) => {
