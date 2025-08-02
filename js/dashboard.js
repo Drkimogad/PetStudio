@@ -125,9 +125,19 @@ function loadSavedProfiles() {
     }
     
     return profile.gallery.map((img, imgIndex) => {
-      const imgUrl = typeof img === "string" ? img : img?.url;
-      const secureUrl = imgUrl?.replace(/^http:/, 'https:');
-      return secureUrl ? `
+  let imgUrl = '';
+  
+  if (typeof img === 'string') {
+    imgUrl = img;
+  } else if (img?.url) {
+    imgUrl = img.url;
+  }
+
+  // Skip if URL contains template tags
+  if (imgUrl.includes('{{') || imgUrl.includes('%7B%7B')) {
+    console.warn(`Skipping invalid image URL at index ${imgIndex}`);
+    return '';
+  }
         <div class="gallery-item">
           <img src="${secureUrl}" alt="Pet Photo">
           <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
