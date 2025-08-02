@@ -938,20 +938,22 @@ function setCoverPhoto(profileIndex, imageIndex) {
 // Handles all profile card actions centrally
 //==========================================
 function setupPetProfileDelegation() {
-
   DOM.petList?.addEventListener("click", (e) => {
-    const target = e.target.closest('button'); // Consistent naming
-      if (!target) return;
+    const target = e.target.closest('button');
+    if (!target || !target.dataset.index) return; // Check for required data attribute
 
-    // Safely get all attributes
-    const index = parseInt(button.dataset.index);
-    const petId = button.dataset.id;
-    const docId = button.dataset.docId;
+    // Safely get all attributes - USE TARGET CONSISTENTLY
+    const index = parseInt(target.dataset.index);
+    const petId = target.dataset.id;
+    const docId = target.dataset.docId;
 
     if (isNaN(index)) {
-    console.warn("Invalid index on:", button.className);
-    return;
-  }
+      console.warn("Invalid index on:", target.className);
+      return;
+    }
+
+    // Debugging line - add this temporarily
+    console.log('Button clicked:', target.className, {index, petId, docId});
 
     // === Action buttons ===
     if (target.classList.contains("edit-btn")) {
