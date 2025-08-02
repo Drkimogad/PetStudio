@@ -457,88 +457,74 @@ ${profile.moodHistory.map(entry => `
 //===============================
 // Generate Birthday card()
 //==============================
+//===============================
+// Generate Birthday card()
+//===============================
 async function generateBirthdayCard(petId, index) {
     let blobUrl = null;
   
-  try {
-    // 1. Fetch the pet's profile
-    const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-    const profile = petProfiles.find(p => p.id === petId);
-    if (!profile || !profile.birthday) return;
+    try {
+        // 1. Fetch the pet's profile
+        const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+        const profile = petProfiles.find(p => p.id === petId);
+        if (!profile || !profile.birthday) return;
 
-    // 2. Create a birthday-themed card container
-    const card = document.createElement('div');
-    card.className = 'birthday-card';
-    card.innerHTML = `
-      <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
-      <div class="birthday-countdown">${getCountdown(profile.birthday)}</div>
-      <img src="${profile.gallery[profile.coverPhotoIndex]}" alt="${profile.name}" class="birthday-photo">
-      <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
-    `;
+        // 2. Create a birthday-themed card container
+        const card = document.createElement('div');
+        card.className = 'birthday-card';
+        card.innerHTML = `
+            <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
+            <div class="birthday-countdown">${getCountdown(profile.birthday)}</div>
+            <img src="${profile.gallery[profile.coverPhotoIndex]}" alt="${profile.name}" class="birthday-photo">
+            <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
+        `;
 
-    // 3. Convert to PNG (reuse your html2canvas logic)
-    const canvas = await html2canvas(card, { 
-      scale: 2,
-      backgroundColor: '#fff8e6' // Light yellow
-    });
+        // 3. Convert to PNG (reuse your html2canvas logic)
+        const canvas = await html2canvas(card, { 
+            scale: 2,
+            backgroundColor: '#fff8e6' // Light yellow
+        });
 
-    // 4. Share or download (reuse your sharePetCard() flow NESTED SHARE FUNCTION)
-   async function generateBirthdayCard(petId, index) {
-    let blobUrl = null;
-  
-  try {
-    // 1. Fetch the pet's profile
-    const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-    const profile = petProfiles.find(p => p.id === petId);
-    if (!profile || !profile.birthday) return;
+        // 4. Share or download
+        await new Promise((resolve, reject) => {
+            canvas.toBlob(async (blob) => {
+                try {
+                    const file = new File([blob], `${profile.name}_birthday.png`, { type: 'image/png' });
+                    blobUrl = URL.createObjectURL(blob);
 
-    // 2. Create a birthday-themed card container
-    const card = document.createElement('div');
-    card.className = 'birthday-card';
-    card.innerHTML = `
-      <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
-      <div class="birthday-countdown">${getCountdown(profile.birthday)}</div>
-      <img src="${profile.gallery[profile.coverPhotoIndex]}" alt="${profile.name}" class="birthday-photo">
-      <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
-    `;
-
-    // 3. Convert to PNG (reuse your html2canvas logic)
-      canvas.toBlob(async (blob) => {
-      try {
-        const file = new File([blob], `${profile.name}_birthday.png`, { type: 'image/png' });
-        blobUrl = URL.createObjectURL(blob);
-
-        if (navigator.share?.canShare({ files: [file] })) {
-          await navigator.share({
-            title: `${profile.name}'s Birthday Card`,
-            files: [file]
-          });
-        } else {
-          const link = document.createElement('a');
-          link.href = blobUrl;
-          link.download = `${profile.name}_birthday.png`;
-          link.click();
-        }
-      } catch (error) {
-        console.error("Sharing failed:", error);
-        if (blobUrl) {
-          const link = document.createElement('a');
-          link.href = blobUrl;
-          link.download = `${profile.name}_birthday.png`;
-          link.click();
-        }
-      } finally {
-        if (blobUrl) {
-          setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-        }
-      }
-    });
-  } catch (error) {
-    console.error("Generation failed:", error);
-   }
-  }
- } //ADDED
-} //ADDED
+                    if (navigator.share?.canShare({ files: [file] })) {
+                        await navigator.share({
+                            title: `${profile.name}'s Birthday Card`,
+                            files: [file]
+                        });
+                    } else {
+                        const link = document.createElement('a');
+                        link.href = blobUrl;
+                        link.download = `${profile.name}_birthday.png`;
+                        link.click();
+                    }
+                    resolve();
+                } catch (error) {
+                    console.error("Sharing failed:", error);
+                    if (blobUrl) {
+                        const link = document.createElement('a');
+                        link.href = blobUrl;
+                        link.download = `${profile.name}_birthday.png`;
+                        link.click();
+                    }
+                    reject(error);
+                } finally {
+                    if (blobUrl) {
+                        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+                    }
+                }
+            });
+        });
+    } catch (error) {
+        console.error("Generation failed:", error);
+        throw error; // Re-throw if you want calling code to handle it
+    }
+}
 //===============================
 //  Create  AND GENERATE collage Core functionS
 //===============================
