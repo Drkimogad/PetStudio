@@ -1,4 +1,4 @@
-0// image preview in new creation and open edit form to be fixed
+// image preview in new creation and open edit form to be fixed
 // QR code to be finalized.
 
 //🌟 Global declarations 🌟
@@ -14,27 +14,27 @@ if (!window.petProfiles || !Array.isArray(window.petProfiles) || window.petProfi
 
 // SAFE GLOBAL INITIALIZATION (compatible with auth.js)
 if (typeof isEditing === 'undefined') {
-    window.isEditing = false;
+  window.isEditing = false;
 }
 if (typeof currentEditIndex === 'undefined') {
-    window.currentEditIndex = -1;
+  window.currentEditIndex = -1;
 }
 
 // SAFE DOM REFERENCES (compatible with auth.js)
 function initDashboardDOM() {
-    // Only initialize missing references
-    if (!window.DOM) window.DOM = {};
-    
-    // Add dashboard-specific references
-    DOM.addPetProfileBtn = DOM.addPetProfileBtn || addPetProfileBtn;
-    DOM.profileSection = DOM.profileSection || document.getElementById("profileSection");
-    DOM.petList = DOM.petList || document.getElementById("petList");
-    DOM.fullPageBanner = DOM.fullPageBanner || document.getElementById("fullPageBanner");
-    DOM.profileForm = DOM.profileForm || document.getElementById("profileForm");
-    
-    // Ensure required elements exist
-    if (!DOM.petList) console.error("petList element missing");
-    if (!DOM.profileSection) console.error("profileSection element missing");
+  // Only initialize missing references
+  if (!window.DOM) window.DOM = {};
+
+  // Add dashboard-specific references
+  DOM.addPetProfileBtn = DOM.addPetProfileBtn || addPetProfileBtn;
+  DOM.profileSection = DOM.profileSection || document.getElementById("profileSection");
+  DOM.petList = DOM.petList || document.getElementById("petList");
+  DOM.fullPageBanner = DOM.fullPageBanner || document.getElementById("fullPageBanner");
+  DOM.profileForm = DOM.profileForm || document.getElementById("profileForm");
+
+  // Ensure required elements exist
+  if (!DOM.petList) console.error("petList element missing");
+  if (!DOM.profileSection) console.error("profileSection element missing");
 }
 
 //========================
@@ -49,36 +49,35 @@ function loadSavedProfiles() {
     console.error("❌ petList not found");
     return;
   }
-    
+
   DOM.petList.innerHTML = '';
-  if(petProfiles.length === 0) {
+  if (petProfiles.length === 0) {
     DOM.petList.innerHTML = '<p>No profiles available. Please add a pet profile!</p>';
     return;
-  }
-  else {
+  } else {
     petProfiles.forEach((profile, index) => {
-  // Ensure gallery exists and is initialized
+      // Ensure gallery exists and is initialized
       if (!profile.gallery) {
-       console.warn(`Initializing empty gallery for profile ${profile.id}`);
-       profile.gallery = [];
-       petProfiles[index] = profile; // Update the array
-       }
-        
+        console.warn(`Initializing empty gallery for profile ${profile.id}`);
+        profile.gallery = [];
+        petProfiles[index] = profile; // Update the array
+      }
+
       const petCard = document.createElement("div");
       petCard.classList.add("petCard");
       petCard.style.marginBottom = "2rem";
       petCard.id = `pet-card-${profile.id}`;
-        
-// ✅ Support both object-based and string-based gallery entries
-    const coverImageObj = profile.gallery?.[profile.coverPhotoIndex];
-    const coverPhotoUrl = typeof coverImageObj === "string"
-      ? coverImageObj
-      : coverImageObj?.url;
 
-    const profileHeaderStyle = coverPhotoUrl
-      ? `style="background-image: url('${coverPhotoUrl}');"`
-      : '';
-      
+      // ✅ Support both object-based and string-based gallery entries
+      const coverImageObj = profile.gallery?.[profile.coverPhotoIndex];
+      const coverPhotoUrl = typeof coverImageObj === "string" ?
+        coverImageObj :
+        coverImageObj?.url;
+
+      const profileHeaderStyle = coverPhotoUrl ?
+        `style="background-image: url('${coverPhotoUrl}');"` :
+        '';
+
       petCard.innerHTML = `
       
         <div class="profile-header" ${profileHeaderStyle}>
@@ -107,12 +106,24 @@ function loadSavedProfiles() {
     
     // Fixed validation with index in warning
     if (!Array.isArray(profile.gallery)) {
-      console.warn(`Gallery is not an array for profile (Index:${index}, ID:${profile.id})`);
+      console.warn(`
+      Gallery is not an array
+      for profile(Index: $ {
+        index
+      }, ID: $ {
+        profile.id
+      })`);
       return '<p class="gallery-warning">⚠️ No valid gallery data</p>';
     }
     
     if (profile.gallery.length === 0) {
-      console.warn(`Empty gallery for profile (Index:${index}, ID:${profile.id})`);
+      console.warn(`
+      Empty gallery
+      for profile(Index: $ {
+        index
+      }, ID: $ {
+        profile.id
+      })`);
       return '<p class="gallery-empty">No photos yet</p>';
     }
     
@@ -127,17 +138,25 @@ function loadSavedProfiles() {
 
       // Skip if URL contains template tags
       if (imgUrl.includes('{{') || imgUrl.includes('%7B%7B')) {
-        console.warn(`Skipping invalid image URL at index ${imgIndex}`);
+        console.warn(`
+      Skipping invalid image URL at index $ {
+        imgIndex
+      }
+      `);
         return '';
       }
 
-      return `
-        <div class="gallery-item">
-          <img src="${imgUrl}" alt="Pet photo ${imgIndex + 1}">
-          <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-            data-index="${index}" data-photo-index="${imgIndex}">★</button>
-        </div>
-      `;
+      return ` <
+      div class = "gallery-item" >
+      <
+      img src = "${imgUrl}"
+      alt = "Pet photo ${imgIndex + 1}" >
+        <
+        button class = "cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
+      data - index = "${index}"
+      data - photo - index = "${imgIndex}" > ★ < /button> < /
+      div >
+        `;
     }).join('');
   })()}
 </div>
@@ -205,7 +224,7 @@ function loadSavedProfiles() {
   </div>
 </div>  
       `;
-   
+
       DOM.petList.appendChild(petCard);
     });
   }
@@ -218,7 +237,7 @@ function getCountdown(birthday) {
   const today = new Date();
   const nextBirthday = new Date(birthday);
   nextBirthday.setFullYear(today.getFullYear());
-  if(nextBirthday < today) nextBirthday.setFullYear(today.getFullYear() + 1);
+  if (nextBirthday < today) nextBirthday.setFullYear(today.getFullYear() + 1);
   const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
   return `${diffDays} days until birthday! 🎉`;
 }
@@ -227,7 +246,7 @@ function getCountdown(birthday) {
 // Render mood history
 //==========================
 function renderMoodHistory(profile) {
-  if(!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
+  if (!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
   return profile.moodHistory
     .slice(-7)
     .map(entry => `${entry.date}: ${getMoodEmoji(entry.mood)}`)
@@ -243,11 +262,11 @@ function getMoodEmoji(mood) {
 function toggleCelebrateButton(dateInput, index) {
   const petCard = document.querySelector(`.petCard[data-index="${index}"]`);
   const celebrateBtn = petCard.querySelector('.celebrate-btn');
-  
+
   // Update button state
   celebrateBtn.disabled = !dateInput.value;
   celebrateBtn.style.opacity = dateInput.value ? 1 : 0.5;
-  
+
   // Update data model if needed
   if (dateInput.value) {
     window.petProfiles[index].birthday = dateInput.value;
@@ -283,19 +302,19 @@ function openEditForm(index) {
   uploadedImageUrls = [];
   isEditing = true;
   currentEditIndex = index;
-//added to debug
- console.log("petProfiles:", window.petProfiles);
- console.log("Requested index:", index);
+  //added to debug
+  console.log("petProfiles:", window.petProfiles);
+  console.log("Requested index:", index);
 
   const profile = petProfiles[index];
   if (!profile) {
     console.error("❌ No profile found at index", index);
     return;
   }
-  
-//added to debug
- console.log("petProfiles:", window.petProfiles);
- console.log("Requested index:", index);
+
+  //added to debug
+  console.log("petProfiles:", window.petProfiles);
+  console.log("Requested index:", index);
 
   // Fill form fields
   const nameField = document.getElementById("petName");
@@ -313,16 +332,16 @@ function openEditForm(index) {
   // Setup cover photo index on form (used on save)
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
-// ✅ Show gallery preview when editing
-const galleryPreview = document.getElementById("editGalleryPreview");
-if (galleryPreview && profile.gallery?.length) {
-  galleryPreview.innerHTML = profile.gallery.map(img => {
-    const imgUrl = typeof img === "string" ? img : img?.url;
-    const safeUrl = imgUrl?.replace(/^http:/, 'https:');
-    return `<img src="${safeUrl}" class="preview-thumb" style="max-height:60px; margin-right:5px;" />`;
-  }).join('');
-}
-  
+  // ✅ Show gallery preview when editing
+  const galleryPreview = document.getElementById("editGalleryPreview");
+  if (galleryPreview && profile.gallery?.length) {
+    galleryPreview.innerHTML = profile.gallery.map(img => {
+      const imgUrl = typeof img === "string" ? img : img?.url;
+      const safeUrl = imgUrl?.replace(/^http:/, 'https:');
+      return `<img src="${safeUrl}" class="preview-thumb" style="max-height:60px; margin-right:5px;" />`;
+    }).join('');
+  }
+
   // ✅ Insert Cancel button if not already added
   const form = document.getElementById("profileForm");
   if (form && !document.getElementById("cancelEditBtn")) {
@@ -352,9 +371,9 @@ function cancelEdit() {
   console.log("🛑 Cancel Edit triggered.");
   isEditing = false;
   currentEditIndex = -1;
-  
- const preview = document.getElementById("editGalleryPreview");
- if (preview) preview.innerHTML = "";
+
+  const preview = document.getElementById("editGalleryPreview");
+  if (preview) preview.innerHTML = "";
 
   // Hide form, show dashboard again
   DOM.profileSection.classList.add("hidden");
@@ -422,7 +441,7 @@ async function deleteProfile(index) {
 // OPTIMISED FOR TABLLET AND DESKTOIP
 //================================================
 function printProfile(profile) {
-  
+
   const printWindow = window.open('', '_blank');
   const printDocument = printWindow.document;
 
@@ -482,9 +501,9 @@ ${profile.moodHistory.map(entry => `
       </body>
     </html>
   `);
-  
+
   printWindow.document.close();
-    
+
   const images = printDocument.querySelectorAll('img');
   let loaded = 0;
   const checkPrint = () => {
@@ -502,69 +521,73 @@ ${profile.moodHistory.map(entry => `
 // Generate Birthday card()
 //===============================
 async function generateBirthdayCard(index) {
-    let blobUrl = null;
-  
-    try {
-        // 1. Fetch the pet's profile
-        const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-        const profile = window.petProfiles[index];
-        if (!profile || !profile.birthday) return;
+  let blobUrl = null;
 
-        // 2. Create a birthday-themed card container
-        const card = document.createElement('div');
-        card.className = 'birthday-card';
-        card.innerHTML = `
+  try {
+    // 1. Fetch the pet's profile
+    const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+    const profile = window.petProfiles[index];
+    if (!profile || !profile.birthday) return;
+
+    // 2. Create a birthday-themed card container
+    const card = document.createElement('div');
+    card.className = 'birthday-card';
+    card.innerHTML = `
             <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
             <div class="birthday-countdown">${getCountdown(profile.birthday)}</div>
             <img src="${profile.gallery[profile.coverPhotoIndex]}" alt="${profile.name}" class="birthday-photo">
             <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
         `;
 
-        // 3. Convert to PNG (reuse your html2canvas logic)
-        const canvas = await html2canvas(card, { 
-            scale: 2,
-            backgroundColor: '#fff8e6' // Light yellow
-        });
+    // 3. Convert to PNG (reuse your html2canvas logic)
+    const canvas = await html2canvas(card, {
+      scale: 2,
+      backgroundColor: '#fff8e6' // Light yellow
+    });
 
-        // 4. Share or download
-        await new Promise((resolve, reject) => {
-            canvas.toBlob(async (blob) => {
-                try {
-                    const file = new File([blob], `${profile.name}_birthday.png`, { type: 'image/png' });
-                    blobUrl = URL.createObjectURL(blob);
+    // 4. Share or download
+    await new Promise((resolve, reject) => {
+      canvas.toBlob(async (blob) => {
+        try {
+          const file = new File([blob], `${profile.name}_birthday.png`, {
+            type: 'image/png'
+          });
+          blobUrl = URL.createObjectURL(blob);
 
-                    if (navigator.share?.canShare({ files: [file] })) {
-                        await navigator.share({
-                            title: `${profile.name}'s Birthday Card`,
-                            files: [file]
-                        });
-                    } else {
-                        const link = document.createElement('a');
-                        link.href = blobUrl;
-                        link.download = `${profile.name}_birthday.png`;
-                        link.click();
-                    }
-                    resolve();
-                } catch (error) {
-                    console.error("Sharing failed:", error);
-                    if (blobUrl) {
-                        const link = document.createElement('a');
-                        link.href = blobUrl;
-                        link.download = `${profile.name}_birthday.png`;
-                        link.click();
-                    }
-                    reject(error);
-                } finally {
-                    if (blobUrl) {
-                        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-                    }
-                }
+          if (navigator.share?.canShare({
+              files: [file]
+            })) {
+            await navigator.share({
+              title: `${profile.name}'s Birthday Card`,
+              files: [file]
             });
-        });
-    } catch (error) {
-        console.error("Generation failed:", error);
-        throw error; // Re-throw if you want calling code to handle it
-    }
+          } else {
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = `${profile.name}_birthday.png`;
+            link.click();
+          }
+          resolve();
+        } catch (error) {
+          console.error("Sharing failed:", error);
+          if (blobUrl) {
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = `${profile.name}_birthday.png`;
+            link.click();
+          }
+          reject(error);
+        } finally {
+          if (blobUrl) {
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+          }
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Generation failed:", error);
+    throw error; // Re-throw if you want calling code to handle it
+  }
 }
 //===============================
 //  Create  AND GENERATE collage Core functionS
@@ -572,12 +595,12 @@ async function generateBirthdayCard(index) {
 // 1. CREATE COLLAGE FIRST
 function createPetCollage(index) {
   const profile = window.petProfiles[index];
-  
+
   if (!profile?.gallery?.length) {
     showQRStatus("No photos available for collage.", false);
     return;
   }
-  
+
   // Open modal
   const modal = document.getElementById("collage-modal");
   // Verify the modal exists in DOM before showing
@@ -643,9 +666,11 @@ async function generateCollagePNG(profile) {
   try {
     const canvas = await html2canvas(collage);
     const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-    
+
     // Share or download
-    if (navigator.share && navigator.canShare({ files: [new File([blob], 'collage.png')] })) {
+    if (navigator.share && navigator.canShare({
+        files: [new File([blob], 'collage.png')]
+      })) {
       await navigator.share({
         title: `${profile.name}'s Collage`,
         files: [new File([blob], 'collage.png')]
@@ -664,11 +689,11 @@ async function generateCollagePNG(profile) {
     selectedImages = [];
   }
 }
-    
+
 //====================================================
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
 //=======================================================
-async function sharePetCard(profile, event) {  
+async function sharePetCard(profile, event) {
 
   try {
     const petStudioLink = "https://drkimogad.github.io/PetStudio/";
@@ -682,8 +707,8 @@ async function sharePetCard(profile, event) {
     const linkElement = document.createElement('div');
     linkElement.textContent = `View more: ${petStudioLink}`;
     linkElement.style.marginTop = '10px';
-    linkElement.style.fontWeight = 'bold';  // Highlight URL
-    linkElement.style.color = '#0066cc';    // Make URL stand out
+    linkElement.style.fontWeight = 'bold'; // Highlight URL
+    linkElement.style.color = '#0066cc'; // Make URL stand out
     cardElement.appendChild(linkElement);
 
     // Capture as PNG (higher quality for sharing)
@@ -700,7 +725,9 @@ async function sharePetCard(profile, event) {
     // ==== CHANGE 3: PRIORITIZE NATIVE SHARE WITH PNG (MOBILE/TABLETS) ====
     if (navigator.share && navigator.canShare) {
       canvas.toBlob(async (blob) => {
-        const file = new File([blob], `${profile.name}_profile.png`, { type: 'image/png' });
+        const file = new File([blob], `${profile.name}_profile.png`, {
+          type: 'image/png'
+        });
         try {
           await navigator.share({
             title: `Meet ${profile.name}! 🐾`,
@@ -718,7 +745,9 @@ async function sharePetCard(profile, event) {
     canvas.toBlob(async (blob) => {
       try {
         // Copy PNG to clipboard
-        const item = new ClipboardItem({ 'image/png': blob });
+        const item = new ClipboardItem({
+          'image/png': blob
+        });
         await navigator.clipboard.write([item]);
       } catch (clipboardError) {
         console.log("Clipboard copy failed, falling back to download");
@@ -761,7 +790,7 @@ async function sharePetCard(profile, event) {
 function generateQRCode(profileIndex) {
   if (generatingQR) return;
   generatingQR = true;
- // why it doesn't rely on window.Profiles like other functions?
+  // why it doesn't rely on window.Profiles like other functions?
   const savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   currentQRProfile = savedProfiles[profileIndex];
 
@@ -839,7 +868,7 @@ function printQR() {
 function downloadQR() {
   if (!currentQRProfile) return; // Null check
   const canvas = document.querySelector('#qrcode-container canvas');
-  if(canvas) {
+  if (canvas) {
     const link = document.createElement('a');
     link.download = `${currentQRProfile?.name || 'pet_profile'}_qr.png`.replace(/[^a-z0-9]/gi, '_');
     link.href = canvas.toDataURL();
@@ -858,9 +887,13 @@ async function shareQR() {
     // Priority: Share QR as PNG (mobile/tablets)
     if (canvas && navigator.share && navigator.canShare) {
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-      const file = new File([blob], `${currentQRProfile.name}_qr.png`, { type: 'image/png' });
-      
-      if (navigator.canShare({ files: [file] })) {
+      const file = new File([blob], `${currentQRProfile.name}_qr.png`, {
+        type: 'image/png'
+      });
+
+      if (navigator.canShare({
+          files: [file]
+        })) {
         await navigator.share({
           title: `${currentQRProfile.name}'s QR Code`,
           files: [file],
@@ -872,8 +905,11 @@ async function shareQR() {
 
     // Fallback 1: Share text via Web Share API
     if (navigator.share) {
-      await navigator.share({ title: 'Pet Profile', text });
-    } 
+      await navigator.share({
+        title: 'Pet Profile',
+        text
+      });
+    }
     // Fallback 2: Copy text to clipboard
     else {
       await navigator.clipboard.writeText(text);
@@ -888,7 +924,7 @@ async function shareQR() {
 function initQRModal() {
   const modal = document.getElementById('qr-modal');
   if (!modal) return;
-  
+
   document.addEventListener('click', (e) => {
     console.log('Button clicked:', e.target.className); // for clicking handling
     if (e.target.classList.contains('qr-print')) {
@@ -897,8 +933,8 @@ function initQRModal() {
       downloadQR();
     } else if (e.target.classList.contains('qr-share')) {
       shareQR();
-    } else if (e.target.classList.contains('qr-close') || 
-              (e.target === modal && e.target.classList.contains('modal'))) {
+    } else if (e.target.classList.contains('qr-close') ||
+      (e.target === modal && e.target.classList.contains('modal'))) {
       modal.style.display = 'none';
       document.body.style.overflow = 'auto';
     }
@@ -908,7 +944,7 @@ function initQRModal() {
 //==========================
 function showQRStatus(message, isSuccess) {
   const statusEl = document.getElementById('qr-status');
-  if(!statusEl) return;
+  if (!statusEl) return;
   statusEl.textContent = message;
   statusEl.style.color = isSuccess ? '#28a745' : '#dc3545';
   setTimeout(() => {
@@ -923,7 +959,7 @@ function showQRStatus(message, isSuccess) {
 //================
 function logMood(profileIndex, mood) {
   const today = new Date().toISOString().split('T')[0];
-  if(!petProfiles[profileIndex].moodHistory) petProfiles[profileIndex].moodHistory = [];
+  if (!petProfiles[profileIndex].moodHistory) petProfiles[profileIndex].moodHistory = [];
   petProfiles[profileIndex].moodHistory.push({
     date: today,
     mood: mood
@@ -939,7 +975,7 @@ function setCoverPhoto(profileIndex, imageIndex) {
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
   loadSavedProfiles();
 }
-  
+
 //==========================================
 // ✅ FINALIZED - setupPetProfileDelegation
 // Handles all profile card actions centrally
@@ -1015,10 +1051,10 @@ function initializeDashboard() {
   }
   setupPetProfileDelegation();
   attachFormListenerWhenReady();
-  
+
   if (document.getElementById('qr-modal')) {
     initQRModal();
-  }  
+  }
 
   const addBtn = document.getElementById('addPetProfileBtn');
   if (addBtn) {
@@ -1036,228 +1072,236 @@ function initializeDashboard() {
 // MOVED FORM SUBMISSION INSIDE INITIALIZEDASHBOARD
 //====================================================
 function attachFormListenerWhenReady() {
-  
-// the whole form submission wrapped in an if block 
-// ✅ Only attach once
-if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) {
 
-// Enable live preview when user selects images ADDED RECENTLY
-document.getElementById("petGallery").addEventListener("change", function () {
-  const preview = document.getElementById("editGalleryPreview");
-  const files = Array.from(this.files);
-  if (!preview) return;
+  // the whole form submission wrapped in an if block 
+  // ✅ Only attach once
+  if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) {
 
-  preview.innerHTML = ""; // clear before showing new previews
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      preview.innerHTML += `<img src="${e.target.result}" class="preview-thumb" style="max-height:60px; margin-right:5px;" />`;
-    };
-    reader.readAsDataURL(file);
-  });
-});
-  
-// OLD SECTION     
-DOM.profileForm.addEventListener("submit", async (e) => {
-console.log("✅ Form submission listener attached."); // You already had this 👍
-console.log("📨 Submit triggered!");
-  e.preventDefault(); 
-  
-  console.log("🧪 Auth before saving:", firebase.auth().currentUser);
+    // Enable live preview when user selects images ADDED RECENTLY
+    document.getElementById("petGallery").addEventListener("change", function() {
+      const preview = document.getElementById("editGalleryPreview");
+      const files = Array.from(this.files);
+      if (!preview) return;
 
-  const submitBtn = e.target.querySelector('button[type="submit"]');
-  const originalBtnText = submitBtn.innerHTML;
-  submitBtn.innerHTML = '⏳ Saving...';
-  submitBtn.disabled = true;
+      preview.innerHTML = ""; // clear before showing new previews
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.innerHTML += `<img src="${e.target.result}" class="preview-thumb" style="max-height:60px; margin-right:5px;" />`;
+        };
+        reader.readAsDataURL(file);
+      });
+    });
 
-  try {
-    const userId = firebase.auth().currentUser?.uid;
-    if (!userId) throw new Error("User not authenticated");
+    // OLD SECTION     
+    DOM.profileForm.addEventListener("submit", async (e) => {
+      console.log("✅ Form submission listener attached."); // You already had this 👍
+      console.log("📨 Submit triggered!");
+      e.preventDefault();
 
-    const newProfileId = Date.now();
+      console.log("🧪 Auth before saving:", firebase.auth().currentUser);
 
-    // 📁 Upload gallery
-    const galleryFiles = Array.from(document.getElementById("petGallery").files);
-    const uploadedImageUrls = [];
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '⏳ Saving...';
+      submitBtn.disabled = true;
 
-    if (galleryFiles.length > 0) { // added
-    for (const file of galleryFiles) {
       try {
-        showLoading(true);
-        const result = await uploadToCloudinary(file, userId, newProfileId);
-        if (result?.url) {
-          uploadedImageUrls.push(result);
+        const userId = firebase.auth().currentUser?.uid;
+        if (!userId) throw new Error("User not authenticated");
+
+        const newProfileId = Date.now();
+
+        // 📁 Upload gallery
+        const galleryFiles = Array.from(document.getElementById("petGallery").files);
+        const uploadedImageUrls = [];
+
+        if (galleryFiles.length > 0) { // added
+          for (const file of galleryFiles) {
+            try {
+              showLoading(true);
+              const result = await uploadToCloudinary(file, userId, newProfileId);
+              if (result?.url) {
+                uploadedImageUrls.push(result);
+              }
+            } catch (uploadError) {
+              console.error('Failed to upload image:', uploadError);
+              Utils.showErrorToUser(`Failed to upload ${file.name}.`);
+            } finally {
+              showLoading(false);
+            } //closes finally
+          } // closes 2nf if
+        } // closes 1st if
+
+        // 😺 Mood logic (preserve and append)
+        const moodInput = document.getElementById("moodHistoryInput");
+        let moodHistory = [];
+
+        if (isEditing && petProfiles[currentEditIndex]?.moodHistory) {
+          moodHistory = [...petProfiles[currentEditIndex].moodHistory];
         }
-      } catch (uploadError) {
-        console.error('Failed to upload image:', uploadError);
-        Utils.showErrorToUser(`Failed to upload ${file.name}.`);
+
+        const newMood = moodInput?.value?.trim();
+        if (newMood) {
+          moodHistory.push({
+            date: new Date().toISOString().split("T")[0],
+            mood: newMood
+          });
+        }
+
+        // ✅ Extract tags BEFORE creating newProfile
+        const tagSelect = document.getElementById("petTags");
+        const selectedTags = Array.from(tagSelect?.selectedOptions || []).map(opt => opt.value);
+
+        // 🧠 Construct newProfile object
+        const newProfile = {
+          id: newProfileId,
+          name: document.getElementById("petName").value,
+          nicknames: document.getElementById("petNicknames")?.value || "",
+          breed: document.getElementById("petBreed").value,
+          dob: document.getElementById("petDob").value,
+          birthday: document.getElementById("petBirthday").value,
+          moodHistory,
+          emergencyContact: {
+            name: document.getElementById("emergencyName").value.trim(),
+            phone: document.getElementById("emergencyPhone").value.trim(),
+            relationship: document.getElementById("emergencyRelationship").value.trim()
+          },
+          microchipNumber: document.getElementById("microchipNumber").value.trim(),
+          notes: document.getElementById("petNotes")?.value.trim() || "",
+          tags: selectedTags, // ✅ Inserted properly now
+          coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0
+        };
+
+
+        // 🧩 Merge gallery (EDIT vs CREATE)
+        if (isEditing) {
+          try {
+            const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
+            const combinedGallery = [...oldGallery, ...uploadedImageUrls];
+
+            // 🔶 Added null checks for image URLs
+            const deduplicatedGallery = Array.from(
+              new Map(combinedGallery.filter(img => img?.url || typeof img === "string").map(img => {
+                const url = typeof img === "string" ? img : img.url;
+                return [url, img];
+              })).values()
+            );
+
+            newProfile.gallery = deduplicatedGallery;
+          } catch (err) {
+            console.error("Gallery merge failed, using new uploads only:", err);
+            newProfile.gallery = uploadedImageUrls; // Fallback
+          }
+        }
+
+        // 🧨 Save to Firestore
+        //Add this before Firestore save to convert selected tags into an array: Recently added
+        // 🔶 Convert selected tags to array (e.g., ["birthday", "cute"])
+        const tagElements = document.querySelectorAll('#tagsDropdown input[type="checkbox"]:checked');
+        newProfile.tags = Array.from(tagElements).map(el => el.value);
+
+        // Proceed with Firestore save...
+        let docRef;
+
+        if (isEditing && petProfiles[currentEditIndex]?.docId) {
+          // 🔁 Update existing
+          docRef = firebase.firestore().collection("profiles").doc(petProfiles[currentEditIndex].docId);
+          await docRef.set({
+            ...newProfile,
+            userId
+          }, {
+            merge: true
+          });
+          newProfile.docId = petProfiles[currentEditIndex].docId;
+        } else {
+          // 🆕 New profile
+          docRef = await firebase.firestore().collection("profiles").add({
+            userId,
+            ...newProfile
+          });
+          newProfile.docId = docRef.id;
+          await docRef.update({
+            docId: docRef.id
+          }); // ⬅️ Add docId field to doc
+        }
+
+        // 🎉 Add birthday reminder if needed inapp modified to include the new fields
+        if (newProfile.birthday) {
+          const reminderData = {
+            userId,
+            petName: newProfile.name,
+            date: Utils.formatFirestoreDate(newProfile.birthday),
+            type: "birthday",
+            // 🔶 Use getCountdown() for dynamic messaging
+            message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.birthday)}`, // "5 days until birthday! 🎉"
+            createdAt: new Date().toISOString(),
+            profileDocId: newProfile.docId,
+            // 🔶 Add countdown days for sorting/filtering later
+            countdownDays: parseInt(getCountdown(newProfile.birthday).split(' ')[0]), // Stores "5" (number)
+            nickname: newProfile.nicknames || null
+          };
+
+          try {
+            const reminderDoc = await firebase.firestore().collection("reminders").add(reminderData);
+            newProfile.reminderDocId = reminderDoc.id;
+            await reminderDoc.update({
+              reminderId: reminderDoc.id
+            });
+          } catch (reminderErr) {
+            console.warn("Reminder not saved:", reminderErr.message);
+          }
+        }
+
+        // 🧠 Update local array & localStorage
+        if (isEditing) {
+          petProfiles[currentEditIndex] = newProfile;
+        } else {
+          petProfiles.push(newProfile);
+        }
+
+        localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+
+        // ✅ UI Update
+        showDashboard();
+
+        window.scrollTo(0, 0);
+        console.log("✅ Profile saved and UI updated.");
+
+      } catch (err) {
+        console.error("Profile save failed:", err);
+        Utils.showErrorToUser("❌ Failed to save profile.");
       } finally {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
         showLoading(false);
-      } //closes finally
-    }// closes 2nf if
-  } // closes 1st if
-    
-  // 😺 Mood logic (preserve and append)
-    const moodInput = document.getElementById("moodHistoryInput");
-    let moodHistory = [];
 
-    if (isEditing && petProfiles[currentEditIndex]?.moodHistory) {
-      moodHistory = [...petProfiles[currentEditIndex].moodHistory];
-    }
+        // ✅ Safely clear petGallery input
+        const galleryInput = document.getElementById("petGallery");
+        if (galleryInput) galleryInput.value = "";
 
-    const newMood = moodInput?.value?.trim();
-    if (newMood) {
-      moodHistory.push({
-        date: new Date().toISOString().split("T")[0],
-        mood: newMood
-      });
-    }
+        // ✅ Refresh gallery preview after submission/wrapped in an if block
+        if (typeof newProfile !== "undefined") {
+          const galleryPreview = document.getElementById("editGalleryPreview");
+          if (galleryPreview && newProfile.gallery?.length) {
+            galleryPreview.innerHTML = newProfile.gallery.map(img => {
+              const imgUrl = typeof img === "string" ? img : img?.url;
+              const safeUrl = imgUrl?.replace(/^http:/, 'https:');
+              return `<img src="${safeUrl}" class="preview-thumb" style="max-height:60px; margin-right:5px;" />`;
+            }).join('');
+          }
+        } // closes if 
+      } // ✅ closes finally
+    }); // ✅ closes addEventListener
 
-// ✅ Extract tags BEFORE creating newProfile
-const tagSelect = document.getElementById("petTags");
-const selectedTags = Array.from(tagSelect?.selectedOptions || []).map(opt => opt.value);
-
-// 🧠 Construct newProfile object
-const newProfile = {
-  id: newProfileId,
-  name: document.getElementById("petName").value,
-  nicknames: document.getElementById("petNicknames")?.value || "",
-  breed: document.getElementById("petBreed").value,
-  dob: document.getElementById("petDob").value,
-  birthday: document.getElementById("petBirthday").value,
-  moodHistory,
-  emergencyContact: {
-    name: document.getElementById("emergencyName").value.trim(),
-    phone: document.getElementById("emergencyPhone").value.trim(),
-    relationship: document.getElementById("emergencyRelationship").value.trim()
-  },
-  microchipNumber: document.getElementById("microchipNumber").value.trim(),
-  notes: document.getElementById("petNotes")?.value.trim() || "",
-  tags: selectedTags, // ✅ Inserted properly now
-  coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0
-};
-
-
-    // 🧩 Merge gallery (EDIT vs CREATE)
-    if (isEditing) {
-  try {
-    const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
-    const combinedGallery = [...oldGallery, ...uploadedImageUrls];
-
-    // 🔶 Added null checks for image URLs
-    const deduplicatedGallery = Array.from(
-      new Map(combinedGallery.filter(img => img?.url || typeof img === "string").map(img => {
-        const url = typeof img === "string" ? img : img.url;
-        return [url, img];
-      })).values()
-    );
-
-    newProfile.gallery = deduplicatedGallery;
-  } catch (err) {
-    console.error("Gallery merge failed, using new uploads only:", err);
-    newProfile.gallery = uploadedImageUrls; // Fallback
-  }
-}
-
-    // 🧨 Save to Firestore
-    //Add this before Firestore save to convert selected tags into an array: Recently added
-    // 🔶 Convert selected tags to array (e.g., ["birthday", "cute"])
-const tagElements = document.querySelectorAll('#tagsDropdown input[type="checkbox"]:checked');
-newProfile.tags = Array.from(tagElements).map(el => el.value);
-
-// Proceed with Firestore save...
-    let docRef;
-
-    if (isEditing && petProfiles[currentEditIndex]?.docId) {
-      // 🔁 Update existing
-      docRef = firebase.firestore().collection("profiles").doc(petProfiles[currentEditIndex].docId);
-      await docRef.set({ ...newProfile, userId }, { merge: true });
-      newProfile.docId = petProfiles[currentEditIndex].docId;
-    } else {
-      // 🆕 New profile
-      docRef = await firebase.firestore().collection("profiles").add({
-        userId,
-        ...newProfile
-      });
-      newProfile.docId = docRef.id;
-      await docRef.update({ docId: docRef.id }); // ⬅️ Add docId field to doc
-    }
-
-    // 🎉 Add birthday reminder if needed inapp modified to include the new fields
-    if (newProfile.birthday) {
-  const reminderData = {
-    userId,
-    petName: newProfile.name,
-    date: Utils.formatFirestoreDate(newProfile.birthday),
-    type: "birthday",
-    // 🔶 Use getCountdown() for dynamic messaging
-    message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.birthday)}`, // "5 days until birthday! 🎉"
-    createdAt: new Date().toISOString(),
-    profileDocId: newProfile.docId,
-    // 🔶 Add countdown days for sorting/filtering later
-    countdownDays: parseInt(getCountdown(newProfile.birthday).split(' ')[0]), // Stores "5" (number)
-    nickname: newProfile.nicknames || null
-  };
-
-      try {
-        const reminderDoc = await firebase.firestore().collection("reminders").add(reminderData);
-        newProfile.reminderDocId = reminderDoc.id;
-        await reminderDoc.update({ reminderId: reminderDoc.id });
-      } catch (reminderErr) {
-        console.warn("Reminder not saved:", reminderErr.message);
-      }
-    }
-
-    // 🧠 Update local array & localStorage
-    if (isEditing) {
-      petProfiles[currentEditIndex] = newProfile;
-    } else {
-      petProfiles.push(newProfile);
-    }
-
-    localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-
-    // ✅ UI Update
-    showDashboard();
-      
-    window.scrollTo(0, 0);
-    console.log("✅ Profile saved and UI updated.");
-
-  } catch (err) {
-    console.error("Profile save failed:", err);
-    Utils.showErrorToUser("❌ Failed to save profile.");
-  } finally {
-    submitBtn.innerHTML = originalBtnText;
-    submitBtn.disabled = false;
-    showLoading(false);
-    
-   // ✅ Safely clear petGallery input
-   const galleryInput = document.getElementById("petGallery");
-      if (galleryInput) galleryInput.value = ""; 
-    
-  // ✅ Refresh gallery preview after submission/wrapped in an if block
-   if (typeof newProfile !== "undefined") { 
-  const galleryPreview = document.getElementById("editGalleryPreview");
-  if (galleryPreview && newProfile.gallery?.length) {
-  galleryPreview.innerHTML = newProfile.gallery.map(img => {
-    const imgUrl = typeof img === "string" ? img : img?.url;
-    const safeUrl = imgUrl?.replace(/^http:/, 'https:');
-    return `<img src="${safeUrl}" class="preview-thumb" style="max-height:60px; margin-right:5px;" />`;
-    }).join('');
-  }
-} // closes if 
-} // ✅ closes finally
-}); // ✅ closes addEventListener
-  
-DOM.profileForm.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
- } // closes the if (!Dom.profileForm.dataset.listenerAttached)
+    DOM.profileForm.dataset.listenerAttached = "true"; // ✅ Prevent duplicates
+  } // closes the if (!Dom.profileForm.dataset.listenerAttached)
 } // closes the function
 
 //==============================================
 // Start initialization based on document state
 //=================================================
 document.addEventListener('DOMContentLoaded', () => {
-  initDashboardDOM();      // 🧠 Make sure DOM references are set
-  initializeDashboard();     // ✅ Use the correct one
+  initDashboardDOM(); // 🧠 Make sure DOM references are set
+  initializeDashboard(); // ✅ Use the correct one
 });
-
