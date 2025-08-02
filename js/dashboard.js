@@ -1,4 +1,4 @@
-// image preview in new creation and open edit form to be fixed
+0// image preview in new creation and open edit form to be fixed
 // QR code to be finalized.
 
 //🌟 Global declarations 🌟
@@ -86,25 +86,17 @@ function loadSavedProfiles() {
            ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
           <p class="countdown">${getCountdown(profile.birthday)}</p>
         </div>
-        
-        <div class="profile-details">
-          <p><strong>Breed:</strong> ${profile.breed}</p>
-          <p><strong>DOB:</strong> ${profile.dob}</p>
-          <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
-        </div>
 
-      <!-- === ADD HERE CELEBRATE BUTTON CLICKING WILL TRIGGERE THE TEMPLATES! === -->
-    <div class="birthday-reminder">
-      ${profile.birthday ? `
-        <span>${getCountdown(profile.birthday)}</span>
-      ` : ''}
-    </div>
-
-      <div class="profile-reminder">
-           <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${profile.birthday} 🎉</p>
-        </div>
+        <!-- Add this after other details but before buttons for tags -->
+      ${profile.tags?.length ? `
+       <div class="tags-container">
+        ${profile.tags.map(tag => `
+         <span class="tag-pill">${tag}</span>
+        `).join('')}
+       </div>
+      ` : ''}  
         
-<div class="gallery-grid">
+        <div class="gallery-grid">
   ${(() => {
     // Debug first - log the gallery data with both profile.id AND index
     console.log('Validating gallery for profile:', { 
@@ -149,14 +141,19 @@ function loadSavedProfiles() {
     }).join('');
   })()}
 </div>
-
 <div id="editGalleryPreview"></div>
 <div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
   ⚠️ Duplicate image detected. Please check your gallery!
 </div>
 <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
-
-       <div class="emergency-info">
+        
+        <div class="profile-details">
+          <p><strong>Breed:</strong> ${profile.breed}</p>
+          <p><strong>DOB:</strong> ${profile.dob}</p>
+          <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+        </div>
+        
+        <div class="emergency-info">
     <h4>Emergency Contact</h4>
     <p><strong>Name:</strong> ${profile.emergencyContact?.name || 'Not set'}</p>
     <p><strong>Phone:</strong> ${profile.emergencyContact?.phone || 'Not set'}</p>
@@ -177,19 +174,24 @@ function loadSavedProfiles() {
             ${renderMoodHistory(profile)}
        </div>
 
+      <!-- === ADD HERE CELEBRATE BUTTON CLICKING WILL TRIGGERE THE TEMPLATES! === -->
+    <div class="birthday-reminder">
+      ${profile.birthday ? `
+        <span>${getCountdown(profile.birthday)}</span>
+      ` : ''}
+    </div>
+
+      <div class="profile-reminder">
+           <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${profile.birthday} 🎉</p>
+        </div>
+              
+
       <div class="pet-notes">
         <strong>Notes:</strong> 
        <p>${profile.notes?.replace(/\n/g, '<br>') || ''}</p>
        </div>
        
-      <!-- Add this after other details but before buttons for tags -->
-      ${profile.tags?.length ? `
-       <div class="tags-container">
-        ${profile.tags.map(tag => `
-         <span class="tag-pill">${tag}</span>
-        `).join('')}
-       </div>
-      ` : ''}  
+      
       
 </div>
 <div class="pet-card" data-doc-id="${profile.docId}">
