@@ -57,6 +57,12 @@ function loadSavedProfiles() {
   }
   else {
     petProfiles.forEach((profile, index) => {
+  // Ensure gallery exists and is initialized
+      if (!profile.gallery) {
+       console.warn(`Initializing empty gallery for profile ${profile.id}`);
+       profile.gallery = [];
+       petProfiles[index] = profile; // Update the array
+       }
         
       const petCard = document.createElement("div");
       petCard.classList.add("petCard");
@@ -176,11 +182,11 @@ function loadSavedProfiles() {
       </div>
         <div class="pet-card" data-doc-id="${profile.docId}">
         <div class="action-buttons">
-        <button class="edit-profile" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit Petcard</button>
-        <button class="delete-profile" data-index="${index}" data-doc-id="${profile.docId}">🗑️ Delete Petcard</button>
-        <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print Petcard</button>
-        <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
-        <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
+        <button class="edit-btn" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit Petcard</button>
+        <button class="delete-btn" data-index="${index}" data-doc-id="${profile.docId}">🗑️ Delete Petcard</button>
+        <button class="print-btn" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print Petcard</button>
+        <button class="share-btn" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
+        <button class="qr-btn" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
         <button class="collage-btn" data-index="${index}" data-doc-id="${profile.docId}">🖼️ Create Collage</button>
         <button class="celebrate-btn" data-index="${index}" data-doc-id="${profile.docId}"onclick="generateBirthdayCard('${profile.id}', ${index})">🎉 Celebrate</button>
         </div>
@@ -922,8 +928,8 @@ function setCoverPhoto(profileIndex, imageIndex) {
 function setupPetProfileDelegation() {
 
   DOM.petList?.addEventListener("click", (e) => {
-    const target = e.target.closest('button'); // Fix: Changed from 'button' to target
-      if (!button || !button.dataset.index) return; // ← Key check
+    const target = e.target.closest('button'); // Consistent naming
+      if (!target) return;
 
     // Safely get all attributes
     const index = parseInt(button.dataset.index);
@@ -936,21 +942,21 @@ function setupPetProfileDelegation() {
   }
 
     // === Action buttons ===
-    if (target.classList.contains("edit-profile")) {
+    if (target.classList.contains("edit-btn")) {
       openEditForm(index, docId);
     } 
-    else if (target.classList.contains("delete-profile")) {
+    else if (target.classList.contains("delete-btn")) {
       deleteProfile(index, docId);
     } 
-    else if (target.classList.contains("print-profile")) {
+    else if (target.classList.contains("print-btn")) {
       printProfile(window.petProfiles[index] || 
                  window.petProfiles.find(p => p.id === petId));
     } 
-    else if (target.classList.contains("share-profile")) {
+    else if (target.classList.contains("share-btn")) {
       sharePetCard(window.petProfiles[index] || 
                  window.petProfiles.find(p => p.id === petId));
     } 
-    else if (target.classList.contains("generate-qr")) {
+    else if (target.classList.contains("qr-btn")) {
       generateQRCode(index, petId); // Update function to accept both
     }
     else if (target.classList.contains("collage-btn")) {
