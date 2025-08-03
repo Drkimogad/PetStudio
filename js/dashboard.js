@@ -145,15 +145,20 @@ function loadSavedProfiles() {
        </div>
 
       <!-- === ADD HERE CELEBRATE BUTTON CLICKING WILL TRIGGERE THE TEMPLATES! === -->
-    <div class="birthday-reminder">
-      ${profile.birthday ? `
-        <span>${getCountdown(profile.birthday)}</span>
-      ` : ''}
-    </div>
+    ${profile.birthday ? `
+  <div class="birthday-reminder">
+    <span>🎂 ${getCountdown(profile.birthday)}</span>
+    <button 
+      class="celebrate-btn" 
+      data-index="${index}" 
+      title="Generate birthday card"
+    >🎉 Celebrate</button>
+  </div>
+  <div class="profile-reminder">
+    <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.birthday).toLocaleDateString()} 🎉</p>
+  </div>
+` : ''}
 
-      <div class="profile-reminder">
-           <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${profile.birthday} 🎉</p>
-        </div>
               
 
       <div class="pet-notes">
@@ -210,19 +215,22 @@ function getMoodEmoji(mood) {
 //==========================================
 // Helper functions for theme togling
 //==========================================
-function toggleCelebrateButton(dateInput, index) {
-  const petCard = document.querySelector(`.petCard[data-index="${index}"]`);
-  const celebrateBtn = petCard.querySelector('.celebrate-btn');
+ffunction toggleCelebrateButton(dateInput) {
+  const isValid = !!dateInput.value;
 
-  // Update button state
-  celebrateBtn.disabled = !dateInput.value;
-  celebrateBtn.style.opacity = dateInput.value ? 1 : 0.5;
+  // Optional: update visual feedback (if you're previewing something)
+  if (isValid) {
+    dateInput.style.borderColor = "green";
+  } else {
+    dateInput.style.borderColor = "red";
+  }
 
-  // Update data model if needed
-  if (dateInput.value) {
-    window.petProfiles[index].birthday = dateInput.value;
+  // Optional: update internal temp data model if you're previewing live
+  if (isEditing && typeof currentEditIndex === 'number') {
+    window.petProfiles[currentEditIndex].birthday = dateInput.value;
   }
 }
+
 
 //====================================
 // CREATE COLLAGE HELPER FUNCTION
