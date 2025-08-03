@@ -508,6 +508,11 @@ async function generateBirthdayCard(index) {
             <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
         `;
 
+    // ✅ Append temporarily (hidden)
+    card.style.position = "fixed";
+    card.style.left = "-9999px";
+    document.body.appendChild(card);
+
     // 3. Convert to PNG (reuse your html2canvas logic)
     const canvas = await html2canvas(card, {
       scale: 2,
@@ -515,44 +520,50 @@ async function generateBirthdayCard(index) {
     });
 
     // 4. Share or download
-    await new Promise((resolve, reject) => {
-      canvas.toBlob(async (blob) => {
-        try {
-          const file = new File([blob], `${profile.name}_birthday.png`, {
-            type: 'image/png'
-          });
-          blobUrl = URL.createObjectURL(blob);
-
-          if (navigator.share?.canShare({
-              files: [file]
-            })) {
-            await navigator.share({
-              title: `${profile.name}'s Birthday Card`,
-              files: [file]
-            });
-          } else {
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = `${profile.name}_birthday.png`;
-            link.click();
-          }
-          resolve();
-        } catch (error) {
-          console.error("Sharing failed:", error);
-          if (blobUrl) {
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = `${profile.name}_birthday.png`;
-            link.click();
-          }
-          reject(error);
-        } finally {
-          if (blobUrl) {
-            setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-          }
-        }
+   // 4. Share or download
+await new Promise((resolve, reject) => {
+  canvas.toBlob(async (blob) => {
+    try {
+      const file = new File([blob], `${profile.name}_birthday.png`, {
+        type: 'image/png'
       });
-    });
+      blobUrl = URL.createObjectURL(blob);
+
+      if (navigator.share?.canShare({ files: [file] })) {
+        await navigator.share({
+          title: `${profile.name}'s Birthday Card`,
+          files: [file]
+        });
+      } else {
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = `${profile.name}_birthday.png`;
+        link.click();
+      }
+
+      resolve(); // ✅ Resolve success
+
+    } catch (error) {
+      console.error("Sharing failed:", error);
+
+      if (blobUrl) {
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = `${profile.name}_birthday.png`;
+        link.click();
+      }
+
+      reject(error); // ❌ Important: reject so outer catch runs if needed
+
+    } finally {
+      // ✅ Always clean up card and blobUrl once done
+      document.body.removeChild(card);
+      if (blobUrl) {
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+      }
+    }
+  });
+});
   } catch (error) {
     console.error("Generation failed:", error);
     throw error; // Re-throw if you want calling code to handle it
