@@ -96,45 +96,26 @@ function loadSavedProfiles() {
        </div>
       ` : ''}  
         
-  <div class="gallery-grid">
-    ${(() => {
-      console.log('Validating gallery for profile:', { id: profile.id, index, gallery: profile.gallery });
-
-      if (!Array.isArray(profile.gallery)) {
-        console.warn(\`Gallery is not an array (Index: \${index}, ID: \${profile.id})\`);
-        return '<p class="gallery-warning">⚠️ No valid gallery data</p>';
-      }
-
-      if (profile.gallery.length === 0) {
-        console.warn(\`Empty gallery (Index: \${index}, ID: \${profile.id})\`);
-        return '<p class="gallery-empty">No photos yet</p>';
-      }
-
-      return profile.gallery.map((img, imgIndex) => {
-        const imgUrl = typeof img === 'string' ? img : img?.url || '';
-        if (!imgUrl || imgUrl.includes('{{') || imgUrl.includes('%7B%7B')) {
-          console.warn(\`Skipping invalid image URL at index \${imgIndex}\`);
-          return '';
-        }
-
-      <div class="gallery-item">
-  <img src="\${imgUrl}" alt="Pet photo \${imgIndex + 1}">
-  <button 
-    class="cover-btn \${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-    data-id="\${profile.id}"
-    data-index="\${index}"
-    data-photo-index="\${imgIndex}"
-  >★</button>
-</div>`;
-      }).join('');
-    })()}
+<div class="gallery-grid">
+  <div class="gallery-item">
+    <img src="https://res.cloudinary.com/dh7d6otgu/image/upload/v1754178448/PetStudio/users/xsxJWEWm4PXoHWTxKNoVS3hACR13/1754178444262/gallery/rovy2p03nj9ogh0rs5sc.jpg" alt="Pet photo 1">
+    <button class="cover-btn active" data-id="1754178444262" data-index="0" data-photo-index="0">★</button>
   </div>
-      
-  <div id="editGalleryPreview"></div>
-  <div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
-    ⚠️ Duplicate image detected. Please check your gallery!
+
+  <div class="gallery-item">
+    <img src="https://res.cloudinary.com/dh7d6otgu/image/upload/v1754178452/PetStudio/users/xsxJWEWm4PXoHWTxKNoVS3hACR13/1754178444262/gallery/e8kogrsfbnxpz7n0gyeg.jpg" alt="Pet photo 2">
+    <button class="cover-btn" data-id="1754178444262" data-index="0" data-photo-index="1">★</button>
   </div>
-  <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
+</div>
+
+<div id="editGalleryPreview"></div>
+
+<div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
+  ⚠️ Duplicate image detected. Please check your gallery!
+</div>
+
+<div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
+
    
         <div class="profile-details">
           <p><strong>Breed:</strong> ${profile.breed}</p>
