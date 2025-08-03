@@ -86,6 +86,36 @@ function loadSavedProfiles() {
                           ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
           <!-- === <p class="countdown">${getCountdown(profile.birthday)}</p> === -->
         </div>
+
+            
+       <div class="gallery-grid">
+  <div class="gallery-item">
+    <img src="https://res.cloudinary.com/dh7d6otgu/image/upload/v1754178448/PetStudio/users/xsxJWEWm4PXoHWTxKNoVS3hACR13/1754178444262/gallery/rovy2p03nj9ogh0rs5sc.jpg" alt="Pet photo 1">
+    <button class="cover-btn active" data-id="1754178444262" data-index="0" data-photo-index="0">★</button>
+  </div>
+
+  <div class="gallery-item">
+    <img src="https://res.cloudinary.com/dh7d6otgu/image/upload/v1754178452/PetStudio/users/xsxJWEWm4PXoHWTxKNoVS3hACR13/1754178444262/gallery/e8kogrsfbnxpz7n0gyeg.jpg" alt="Pet photo 2">
+    <button class="cover-btn" data-id="1754178444262" data-index="0" data-photo-index="1">★</button>
+  </div>
+</div>
+
+<div id="editGalleryPreview"></div>
+
+<div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
+  ⚠️ Duplicate image detected. Please check your gallery!
+</div>
+
+<div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
+
+                  <!-- Add this for tags -->
+      ${profile.tags?.length ? `
+       <div class="tags-container">
+        ${profile.tags.map(tag => `
+         <span class="tag-pill">${tag}</span>
+        `).join('')}
+       </div>
+      ` : ''} 
            
         <div class="profile-details">
           <p><strong>Breed:</strong> ${profile.breed}</p>
@@ -124,39 +154,11 @@ function loadSavedProfiles() {
             ${renderMoodHistory(profile)}
        </div>
 
-               <!-- Add this for tags -->
-      ${profile.tags?.length ? `
-       <div class="tags-container">
-        ${profile.tags.map(tag => `
-         <span class="tag-pill">${tag}</span>
-        `).join('')}
-       </div>
-      ` : ''} 
-
        <div class="pet-notes">
         <strong>Notes:</strong> 
        <p>${profile.notes?.replace(/\n/g, '<br>') || ''}</p>
        </div>
-    
-       <div class="gallery-grid">
-  <div class="gallery-item">
-    <img src="https://res.cloudinary.com/dh7d6otgu/image/upload/v1754178448/PetStudio/users/xsxJWEWm4PXoHWTxKNoVS3hACR13/1754178444262/gallery/rovy2p03nj9ogh0rs5sc.jpg" alt="Pet photo 1">
-    <button class="cover-btn active" data-id="1754178444262" data-index="0" data-photo-index="0">★</button>
-  </div>
 
-  <div class="gallery-item">
-    <img src="https://res.cloudinary.com/dh7d6otgu/image/upload/v1754178452/PetStudio/users/xsxJWEWm4PXoHWTxKNoVS3hACR13/1754178444262/gallery/e8kogrsfbnxpz7n0gyeg.jpg" alt="Pet photo 2">
-    <button class="cover-btn" data-id="1754178444262" data-index="0" data-photo-index="1">★</button>
-  </div>
-</div>
-
-<div id="editGalleryPreview"></div>
-
-<div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
-  ⚠️ Duplicate image detected. Please check your gallery!
-</div>
-
-<div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
                    
   </div>
   <div class="pet-card" data-doc-id="${profile.docId}">
