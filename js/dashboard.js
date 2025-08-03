@@ -96,7 +96,6 @@ function loadSavedProfiles() {
        </div>
       ` : ''}  
         
-gallery.innerHTML = `
   <div class="gallery-grid">
     ${(() => {
       console.log('Validating gallery for profile:', { id: profile.id, index, gallery: profile.gallery });
@@ -118,7 +117,7 @@ gallery.innerHTML = `
           return '';
         }
 
-        return `<div class="gallery-item">
+      <div class="gallery-item">
   <img src="\${imgUrl}" alt="Pet photo \${imgIndex + 1}">
   <button 
     class="cover-btn \${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
@@ -130,12 +129,12 @@ gallery.innerHTML = `
       }).join('');
     })()}
   </div>
+      
   <div id="editGalleryPreview"></div>
   <div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
     ⚠️ Duplicate image detected. Please check your gallery!
   </div>
   <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
-`;
    
         <div class="profile-details">
           <p><strong>Breed:</strong> ${profile.breed}</p>
