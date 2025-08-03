@@ -37,6 +37,24 @@ function initDashboardDOM() {
   if (!DOM.profileSection) console.error("profileSection element missing");
 }
 
+// ======================
+// URL VALIDATION UTILITY
+// ======================
+/**
+ * Validates image URLs with Cloudinary checks
+ * @param {string} url - Image URL to validate
+ * @returns {string} - Original URL if valid, placeholder if invalid
+ */
+function validateImageUrl(url) {
+  if (!url) return ''; // Return empty if no URL
+  
+  // Check for Cloudinary URLs or data URIs
+  const isCloudinary = url.includes('res.cloudinary.com');
+  const isDataUri = url.startsWith('data:image/');
+  
+  return (isCloudinary || isDataUri) ? url : '';
+}
+
 //========================
 // LOADSAVEDPROFILES()
 //==========================
@@ -71,9 +89,10 @@ function loadSavedProfiles() {
 
       // ✅ Support both object-based and string-based gallery entries
       const coverImageObj = profile.gallery?.[profile.coverPhotoIndex];
-      const coverPhotoUrl = typeof coverImageObj === "string" ?
-        coverImageObj :
-        coverImageObj?.url;
+       //validate coverphoto url
+      const coverPhotoUrl = validateImageUrl(
+      typeof coverImageObj === "string" ? coverImageObj : coverImageObj?.url
+      );
 
       const profileHeaderStyle = coverPhotoUrl ?
         `style="background-image: url('${coverPhotoUrl}');"` :
@@ -100,7 +119,11 @@ petCard.innerHTML = `
   <div class="gallery-grid">
     ${profile.gallery?.map((img, imgIndex) => `
       <div class="gallery-item">
-        <img src="${typeof img === 'string' ? img : img.url}" alt="Pet photo ${imgIndex + 1}">
+        <!-- =validate image url first=== -->
+        <img src="${validateImageUrl(typeof img === 'string' ? img : img?.url)}" 
+          alt="Pet photo ${imgIndex + 1}"
+          onerror="this.src='placeholder.jpg';this.alt='Image failed to load'">
+     
         <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}" 
                 data-id="${profile.id}" 
                 data-index="${index}" 
