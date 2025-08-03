@@ -81,11 +81,17 @@ function loadSavedProfiles() {
 
       petCard.innerHTML = `
       
-        <div class="profile-header" ${profileHeaderStyle}>
-          <h3>${profile.name}</h3>
-                          ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
-          <!-- === <p class="countdown">${getCountdown(profile.birthday)}</p> === -->
-        </div>
+  <div class="profile-header" style="position: relative;">
+  <h3>${profile.name}</h3>
+  ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
+  
+  ${profile.birthday ? `
+    <div class="countdown-badge">
+      🎂${getCountdown(profile.birthday)}
+    </div>
+  ` : ''}
+</div>
+
 
             
        <div class="gallery-grid">
@@ -124,10 +130,7 @@ function loadSavedProfiles() {
         </div>
         
       <!-- === ADD HERE CELEBRATE BUTTON CLICKING WILL TRIGGERE THE TEMPLATES! === -->
-    ${profile.birthday ? `
-  <div class="birthday-reminder">
-    <span>🎂 ${getCountdown(profile.birthday)}</span>
-  </div>
+
   <div class="profile-reminder">
     <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.birthday).toLocaleDateString()} 🎉</p>
   </div>
