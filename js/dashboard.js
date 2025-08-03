@@ -1053,7 +1053,7 @@ function setupPetProfileDelegation() {
     setCoverPhoto(index, photoIndex);
 
     // ✅ Toggle active class locally without re-render
-    else if (target.classList.contains("cover-btn")) {
+  } else if (target.classList.contains("cover-btn")) {
   const photoIndex = parseInt(target.dataset.photoIndex, 10);
   if (!isNaN(photoIndex)) {
     setCoverPhoto(index, photoIndex);
