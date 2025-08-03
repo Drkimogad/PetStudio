@@ -215,7 +215,7 @@ function getMoodEmoji(mood) {
 //==========================================
 // Helper functions for theme togling
 //==========================================
-ffunction toggleCelebrateButton(dateInput) {
+function toggleCelebrateButton(dateInput) {
   const isValid = !!dateInput.value;
 
   // Optional: update visual feedback (if you're previewing something)
