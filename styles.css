@@ -211,9 +211,6 @@ h1, h2, h3, p {
     background-color: #808080;
 }
 
-/* QR Button Styles in QR SECTION */
-
-/* LOGOUT BUTTON */
 #logoutBtn {
   background-color: #e74c3c;
   color: white;
@@ -230,9 +227,9 @@ h1, h2, h3, p {
    PET CARD STYLES - UPDATED
 ==================== */
 .petCard {
-    border: 1px solid #e0e0e0;
+    border: 10px solid #800080;
     border-radius: 10px;
-    padding: 20px;
+    padding: 30px;
     margin: 20px auto; /* Centered with automatic margins */
     background-color: #ffffff;
     width: 80%; /* Occupies 80% of page width */
@@ -294,6 +291,7 @@ h1, h2, h3, p {
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: bold;
+   z-index: 1; /* optional, ensures it stays on top */
 }
 
 /* Image container with cover button */
