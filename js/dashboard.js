@@ -96,76 +96,51 @@ function loadSavedProfiles() {
        </div>
       ` : ''}  
         
-        <div class="gallery-grid">
-  ${(() => {
-    // Debug first - log the gallery data with both profile.id AND index
-    console.log('Validating gallery for profile:', { 
-      id: profile.id, 
-      index: index,
-      gallery: profile.gallery 
-    });
-    
-    // Fixed validation with index in warning
-    if (!Array.isArray(profile.gallery)) {
-      console.warn(`
-      Gallery is not an array
-      for profile(Index: $ {
-        index
-      }, ID: $ {
-        profile.id
-      })`);
-      return '<p class="gallery-warning">⚠️ No valid gallery data</p>';
-    }
-    
-    if (profile.gallery.length === 0) {
-      console.warn(`
-      Empty gallery
-      for profile(Index: $ {
-        index
-      }, ID: $ {
-        profile.id
-      })`);
-      return '<p class="gallery-empty">No photos yet</p>';
-    }
-    
-    return profile.gallery.map((img, imgIndex) => {
-      let imgUrl = '';
-      
-      if (typeof img === 'string') {
-        imgUrl = img;
-      } else if (img?.url) {
-        imgUrl = img.url;
+        gallery.innerHTML = `
+  <div class="gallery-grid">
+    ${(() => {
+      console.log('Validating gallery for profile:', { id: profile.id, index, gallery: profile.gallery });
+
+      if (!Array.isArray(profile.gallery)) {
+        console.warn(`Gallery is not an array (Index: ${index}, ID: ${profile.id})`);
+        return '<p class="gallery-warning">⚠️ No valid gallery data</p>';
       }
 
-      // Skip if URL contains template tags
-      if (imgUrl.includes('{{') || imgUrl.includes('%7B%7B')) {
-        console.warn(`
-      Skipping invalid image URL at index $ {
-        imgIndex
-      }
-      `);
-        return '';
+      if (profile.gallery.length === 0) {
+        console.warn(`Empty gallery (Index: ${index}, ID: ${profile.id})`);
+        return '<p class="gallery-empty">No photos yet</p>';
       }
 
-      return ` <
-      div class = "gallery-item" >
-      <
-      img src = "${imgUrl}"
-      alt = "Pet photo ${imgIndex + 1}" >
-        <
-        button class = "cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
-      data - index = "${index}"
-      data - photo - index = "${imgIndex}" > ★ < /button> < /
-      div >
+      return profile.gallery.map((img, imgIndex) => {
+        const imgUrl = typeof img === 'string' ? img : img?.url || '';
+
+        if (!imgUrl || imgUrl.includes('{{') || imgUrl.includes('%7B%7B')) {
+          console.warn(`Skipping invalid image URL at index ${imgIndex}`);
+          return '';
+        }
+
+        return `
+          <div class="gallery-item">
+            <img src="${imgUrl}" alt="Pet photo ${imgIndex + 1}">
+            <button 
+              class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}"
+              data-id="${profile.id}"
+              data-index="${index}"
+              data-photo-index="${imgIndex}"
+            >★</button>
+          </div>
         `;
-    }).join('');
-  })()}
-</div>
-<div id="editGalleryPreview"></div>
-<div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
-  ⚠️ Duplicate image detected. Please check your gallery!
-</div>
-<div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
+      }).join('');
+    })()}
+  </div>
+
+  <div id="editGalleryPreview"></div>
+
+  <div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
+    ⚠️ Duplicate image detected. Please check your gallery!
+  </div>
+
+  <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
         
         <div class="profile-details">
           <p><strong>Breed:</strong> ${profile.breed}</p>
@@ -1018,13 +993,11 @@ function setupPetProfileDelegation() {
     const index = parseInt(target.dataset.index, 10);
     const docId = target.dataset.docId || null;
 
-    // ✅ Safety check for index
     if (isNaN(index)) {
       console.warn("⚠️ Ignored click: Invalid or missing data-index", target);
       return;
     }
 
-    // === Action buttons ===
     if (target.classList.contains("edit-profile")) {
       openEditForm(index, docId);
     } else if (target.classList.contains("delete-profile")) {
@@ -1039,32 +1012,19 @@ function setupPetProfileDelegation() {
       createPetCollage(index);
     } else if (target.classList.contains("celebrate-btn")) {
       generateBirthdayCard(index);
-    }
-    // === Mood button ===
-    else if (target.classList.contains("mood-btn")) {
+    } else if (target.classList.contains("mood-btn")) {
       const mood = target.dataset.mood;
       if (mood) logMood(index, mood);
+    } else if (target.classList.contains("cover-btn")) {
+      const photoIndex = parseInt(target.dataset.photoIndex, 10);
+      if (!isNaN(photoIndex)) {
+        setCoverPhoto(index, photoIndex);
+        if (isEditing) {
+          DOM.profileForm.dataset.coverIndex = photoIndex;
+        }
+      }
     }
-
-    // === Cover Photo button ===
-    else if (target.classList.contains("cover-btn")) {
-  const photoIndex = parseInt(target.dataset.photoIndex, 10);
-  if (!isNaN(photoIndex)) {
-    setCoverPhoto(index, photoIndex);
-
-    // ✅ Toggle active class locally without re-render
-  } else if (target.classList.contains("cover-btn")) {
-  const photoIndex = parseInt(target.dataset.photoIndex, 10);
-  if (!isNaN(photoIndex)) {
-    setCoverPhoto(index, photoIndex);
-
-    // If editing, also store in form
-    if (isEditing) {
-      DOM.profileForm.dataset.coverIndex = photoIndex;
-    }
-   }
-  }
- });
+  });
 }
 
 //=============================
