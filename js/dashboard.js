@@ -83,8 +83,8 @@ function loadSavedProfiles() {
       
         <div class="profile-header" ${profileHeaderStyle}>
           <h3>${profile.name}</h3>
-           ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
-          <p class="countdown">${getCountdown(profile.birthday)}</p>
+                          ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
+          <!-- === <p class="countdown">${getCountdown(profile.birthday)}</p> === -->
         </div>
 
         <!-- Add this for tags -->
