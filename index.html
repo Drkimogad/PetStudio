@@ -191,16 +191,33 @@
 				<label for="petGallery">Upload Photos:</label>
 				<input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
 
-			        <!-- After other fields, before submit button -->
-				<label for="petTags">Tags (Select multiple):</label>
-				<select id="petTags" name="petTags" multiple>
-					<option value="Adventure">Adventure</option>
-					<option value="Cuddly">Cuddly</option>
-					<option value="Playful">Playful</option>
-					<option value="Foodie">Foodie</option>
-					<option value="Athletic">Athletic</option>
-				</select>
-				<small>Hold Ctrl/Cmd to select multiple</small>
+			        <!-- Pet Tags Section -->
+<div class="pet-tags-container">
+  <label>Tags:</label>
+  <div class="pet-tags-options">
+    <label class="tag-option">
+      <input type="checkbox" name="petTags" value="Adventure" hidden>
+      <span class="tag">Adventure</span>
+    </label>
+    <label class="tag-option">
+      <input type="checkbox" name="petTags" value="Cuddly" hidden>
+      <span class="tag">Cuddly</span>
+    </label>
+    <label class="tag-option">
+      <input type="checkbox" name="petTags" value="Playful" hidden>
+      <span class="tag">Playful</span>
+    </label>
+    <label class="tag-option">
+      <input type="checkbox" name="petTags" value="Foodie" hidden>
+      <span class="tag">Foodie</span>
+    </label>
+    <label class="tag-option">
+      <input type="checkbox" name="petTags" value="Athletic" hidden>
+      <span class="tag">Athletic</span>
+    </label>
+  </div>
+  <small>Click to select multiple tags</small>
+</div>
 
 
 				<label for="petBreed">Breed:</label>
