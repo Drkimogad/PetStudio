@@ -134,9 +134,8 @@ function loadSavedProfiles() {
   <div class="profile-reminder">
     <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.birthday).toLocaleDateString()} 🎉</p>
   </div>
-` : ''}
-
-           <div class="emergency-info">
+  
+    <div class="emergency-info">
     <h4>Emergency Contact</h4>
     <p><strong>Name:</strong> ${profile.emergencyContact?.name || 'Not set'}</p>
     <p><strong>Phone:</strong> ${profile.emergencyContact?.phone || 'Not set'}</p>
