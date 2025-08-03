@@ -291,7 +291,6 @@ h1, h2, h3, p {
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: bold;
-   z-index: 1; /* optional, ensures it stays on top */
 }
 
 /* Image container with cover button */
