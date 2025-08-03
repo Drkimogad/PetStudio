@@ -500,24 +500,24 @@ async function generateBirthdayCard(index) {
     const profile = window.petProfiles[index];
     if (!profile || !profile.birthday) return;
 
+    const coverPhoto = profile.gallery?.[profile.coverPhotoIndex];
+    const coverUrl = typeof coverPhoto === 'string'
+     ? coverPhoto
+     : coverPhoto?.url || '';
+   const validCover = coverUrl && !coverUrl.includes('{{');
+    
     // 2. Create a birthday-themed card container
     const card = document.createElement('div');
     card.className = 'birthday-card';
     card.innerHTML = `
-            <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
-            <div class="birthday-countdown">${getCountdown(profile.birthday)}</div>
-            ${
-           profile.gallery && Array.isArray(profile.gallery) && profile.gallery.length > 0
-           ? (() => {
-         const img = profile.gallery[profile.coverPhotoIndex ?? 0];
-         const imgUrl = typeof img === "string" ? img : img?.url || "";
-         return imgUrl
-          ? `<img src="${imgUrl}" alt="${profile.name}" class="birthday-photo">`
-          : '<div class="no-photo">📷 No photo available</div>';
-         })()
-         : '<div class="no-photo">📷 No photo available</div>'
-         }   
-            <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
+      <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
+      <div class="birthday-countdown">${getCountdown(profile.birthday)}</div>
+       ${
+       validCover
+        ? `<img src="${coverUrl}" alt="${profile.name}" class="birthday-photo">`
+        : `<div class="birthday-photo-placeholder">No valid cover image</div>`
+       }
+      <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
         `;
 
     // ✅ Append temporarily (hidden)
