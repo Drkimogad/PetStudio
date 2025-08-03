@@ -280,7 +280,8 @@ h1, h2, h3, p {
     align-items: flex-start;
     text-align: left;
 }
-/* Countdown days indicator */
+/* Countdown days indicator
+styled to show in petcard header plus nickname */
 .countdown-badge {
     position: absolute;
     top: 15px;
@@ -522,27 +523,49 @@ h1, h2, h3, p {
 }
 
 /* Tags styling */
-.pet-tags {
-  margin: 10px 0;
+/* Tags Container */
+.pet-tags-container {
+  margin-bottom: 15px;
+}
+
+/* Tags Options Grid */
+.pet-tags-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+/* Individual Tag Styling */
+.tag-option input:checked + .tag {
+  background: #6a5acd;
+  color: white;
+  border-color: #6a5acd;
 }
 
 .tag {
-  background: #6a5acd;
-  color: white;
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 0.8em;
+  display: inline-block;
+  padding: 5px 12px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  cursor: pointer;
+  background: #f5f5f5;
+  transition: all 0.2s;
+  font-size: 0.9em;
 }
 
-#petTags {
-  width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  margin-bottom: 10px;
+.tag:hover {
+  background: #e0e0e0;
 }
+
+/* Helper Text */
+.pet-tags-container small {
+  display: block;
+  color: #666;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
 /* =====css for collage function========= */
 .collage-btn {
   background: #6a5acd; /* Purple to distinguish from other buttons */
