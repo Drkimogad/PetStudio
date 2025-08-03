@@ -166,8 +166,8 @@ function loadSavedProfiles() {
   <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print Petcard</button>
   <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
   <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
-  <button class="collage-btn" data-index="${index}" data-doc-id="${profile.docId}">🔲 🖼️ Collage</button>
-  <button class="celebrate-btn" data-index="${index}" data-doc-id="${profile.docId}">🔲 🎉 Celebrate</button>
+  <button class="collage-btn" data-index="${index}" data-doc-id="${profile.docId}">🖼️ Collage</button>
+  <button class="celebrate-btn" data-index="${index}" data-doc-id="${profile.docId}">🎉 Celebrate🎉</button>
   </div>
 </div>  
       `;
