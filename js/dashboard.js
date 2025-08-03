@@ -446,51 +446,72 @@ function cancelEdit() {
     loader.style.display = 'none';
   }, 300); // Just enough time to show the message
 }
+
 //==========≈==============
 // 🌀 UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
 // DELET CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER
 //=========================
 async function deleteProfile(index) {
-  if (!confirm("Are you sure you want to delete this profile?")) return;
+  // 1. Enhanced Confirmation UI
+  if (!confirm(`Permanently delete ${petProfiles[index]?.name}'s profile?\nThis cannot be undone!`)) return;
 
-  const profile = petProfiles[index];
+  const loader = document.getElementById('processing-loader');
+  loader.style.display = 'block';
+  loader.querySelector('p').textContent = 'Deleting profile...';
 
-  // Delete from Firestore profile
-  if (profile.docId) {
-    try {
-      await firebase.firestore().collection("profiles").doc(profile.docId).delete();
-    } catch (err) {
-      console.warn("Failed to delete from Firestore:", err.message);
+  try {
+    const profile = petProfiles[index];
+    if (!profile) throw new Error("Profile not found");
+
+    // 2. Parallel Deletions (Firestore + Cloudinary)
+    const deletions = [];
+
+    // Firestore Profile
+    if (profile.docId) {
+      deletions.push(
+        firebase.firestore().collection("profiles").doc(profile.docId).delete()
+          .catch(err => console.warn("Firestore profile deletion warning:", err))
+      );
     }
-  }
 
-  // Delete reminder from Firestore
-  if (profile.reminderDocId) {
-    try {
-      await firebase.firestore().collection("reminders").doc(profile.reminderDocId).delete();
-    } catch (err) {
-      console.warn("Failed to delete reminder from Firestore:", err.message);
+    // Firestore Reminder
+    if (profile.reminderDocId) {
+      deletions.push(
+        firebase.firestore().collection("reminders").doc(profile.reminderDocId).delete()
+          .catch(err => console.warn("Firestore reminder deletion warning:", err))
+      );
     }
-  }
 
-  // Delete Cloudinary images (if public_id exists)
-  if (Array.isArray(profile.gallery)) {
-    for (const image of profile.gallery) {
-      if (image.public_id) {
-        try {
-          await deleteImageFromCloudinary(image.public_id);
-        } catch (err) {
-          console.warn("Image not deleted from Cloudinary:", err.message);
-        }
-      }
+    // Cloudinary Images (Filter + Parallel)
+    if (Array.isArray(profile.gallery)) {
+      profile.gallery
+        .filter(img => img?.public_id)
+        .forEach(img => {
+          deletions.push(
+            deleteImageFromCloudinary(img.public_id)
+              .catch(err => console.warn("Cloudinary deletion warning:", img.public_id, err))
+          );
+        });
     }
-  }
 
-  // Remove from local storage and update UI
-  const deleted = petProfiles.splice(index, 1);
-  localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
-  loadSavedProfiles();
-  Utils.showErrorToUser(`${deleted[0].name}'s profile was deleted.`, true);
+    // 3. Await All Deletions
+    await Promise.allSettled(deletions);
+
+    // 4. Update Local State
+    const [deletedProfile] = petProfiles.splice(index, 1);
+    localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+
+    // 5. UI Feedback
+    Utils.showErrorToUser(`Successfully deleted ${deletedProfile.name}'s profile.`, true);
+
+  } catch (error) {
+    console.error("Critical deletion error:", error);
+    Utils.showErrorToUser("Deletion failed - please try again");
+  } finally {
+    // 6. Always Update UI and Hide Loader
+    loadSavedProfiles();
+    loader.style.display = 'none';
+  }
 }
 
 //===========================================
