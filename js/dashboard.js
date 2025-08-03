@@ -79,102 +79,126 @@ function loadSavedProfiles() {
         `style="background-image: url('${coverPhotoUrl}');"` :
         '';
 
-      petCard.innerHTML = `
-      
+petCard.innerHTML = `
+  <!-- ==================== -->
+  <!-- PROFILE HEADER SECTION -->
+  <!-- ==================== -->
   <div class="profile-header" style="position: relative;">
-  <h3>${profile.name}</h3>
-  ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
-  
-  ${profile.birthday ? `
-    <div class="countdown-badge">
-      🎂${getCountdown(profile.birthday)}
+    <h3>${profile.name}</h3>
+    ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
+    
+    ${profile.birthday ? `
+      <div class="countdown-badge">
+        🎂${getCountdown(profile.birthday)}
+      </div>
+    ` : ''}
+  </div>
+
+  <!-- ==================== -->
+  <!-- GALLERY SECTION -->
+  <!-- ==================== -->
+  <div class="gallery-grid">
+    ${profile.gallery?.map((img, imgIndex) => `
+      <div class="gallery-item">
+        <img src="${typeof img === 'string' ? img : img.url}" alt="Pet photo ${imgIndex + 1}">
+        <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}" 
+                data-id="${profile.id}" 
+                data-index="${index}" 
+                data-photo-index="${imgIndex}">
+          ★
+        </button>
+      </div>
+    `).join('')}
+  </div>
+
+  <div id="editGalleryPreview"></div>
+  <div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
+    ⚠️ Duplicate image detected. Please check your gallery!
+  </div>
+  <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
+
+  <!-- ==================== -->
+  <!-- TAGS SECTION -->
+  <!-- ==================== -->
+  ${profile.tags?.length ? `
+    <div class="tags-container">
+      ${profile.tags.map(tag => `
+        <span class="tag-pill">${tag}</span>
+      `).join('')}
     </div>
   ` : ''}
-</div>
 
-
-            
-       <div class="gallery-grid">
-  <div class="gallery-item">
-    <img src="https://res.cloudinary.com/dh7d6otgu/image/upload/v1754178448/PetStudio/users/xsxJWEWm4PXoHWTxKNoVS3hACR13/1754178444262/gallery/rovy2p03nj9ogh0rs5sc.jpg" alt="Pet photo 1">
-    <button class="cover-btn active" data-id="1754178444262" data-index="0" data-photo-index="0">★</button>
+  <!-- ==================== -->
+  <!-- DETAILS SECTION -->
+  <!-- ==================== -->
+  <div class="profile-details">
+    <p><strong>Breed:</strong> ${profile.breed || 'Not specified'}</p>
+    <p><strong>DOB:</strong> ${profile.dob || 'Unknown'}</p>
+    ${profile.birthday ? `
+      <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+    ` : ''}
   </div>
 
-  <div class="gallery-item">
-    <img src="https://res.cloudinary.com/dh7d6otgu/image/upload/v1754178452/PetStudio/users/xsxJWEWm4PXoHWTxKNoVS3hACR13/1754178444262/gallery/e8kogrsfbnxpz7n0gyeg.jpg" alt="Pet photo 2">
-    <button class="cover-btn" data-id="1754178444262" data-index="0" data-photo-index="1">★</button>
-  </div>
-</div>
+  <!-- ==================== -->
+  <!-- BIRTHDAY REMINDER (CONDITIONAL) -->
+  <!-- ==================== -->
+  ${profile.birthday ? `
+    <div class="profile-reminder">
+      <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.birthday).toLocaleDateString()} 🎉</p>
+    </div>
+  ` : ''}
 
-<div id="editGalleryPreview"></div>
-
-<div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
-  ⚠️ Duplicate image detected. Please check your gallery!
-</div>
-
-<div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
-
-                  <!-- Add this for tags -->
-      ${profile.tags?.length ? `
-       <div class="tags-container">
-        ${profile.tags.map(tag => `
-         <span class="tag-pill">${tag}</span>
-        `).join('')}
-       </div>
-      ` : ''} 
-           
-        <div class="profile-details">
-          <p><strong>Breed:</strong> ${profile.breed}</p>
-          <p><strong>DOB:</strong> ${profile.dob}</p>
-          <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
-        </div>
-        
-      <!-- === ADD HERE CELEBRATE BUTTON CLICKING WILL TRIGGERE THE TEMPLATES! === -->
-
-  <div class="profile-reminder">
-    <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.birthday).toLocaleDateString()} 🎉</p>
-  </div>
-  
-    <div class="emergency-info">
+  <!-- ==================== -->
+  <!-- EMERGENCY INFO -->
+  <!-- ==================== -->
+  <div class="emergency-info">
     <h4>Emergency Contact</h4>
     <p><strong>Name:</strong> ${profile.emergencyContact?.name || 'Not set'}</p>
     <p><strong>Phone:</strong> ${profile.emergencyContact?.phone || 'Not set'}</p>
     <p><strong>Relationship:</strong> ${profile.emergencyContact?.relationship || 'Not set'}</p>
     <p><strong>Microchip:</strong> ${profile.microchipNumber || 'Not registered'}</p>
-  </div> 
-
-        <div class="mood-tracker">
-        <div class="mood-buttons">
-       <span>Log Mood:</span>
-       <button class="mood-btn" data-mood="happy" data-index="${index}">😊</button>
-       <button class="mood-btn" data-mood="depressed" data-index="${index}">😔</button>
-       <button class="mood-btn" data-mood="sad" data-index="${index}">😞</button>
-       <button class="mood-btn" data-mood="angry" data-index="${index}">😠</button>
-       <button class="mood-btn" data-mood="sick" data-index="${index}">🤒</button>
-       </div>
-       <div class="mood-history">
-            ${renderMoodHistory(profile)}
-       </div>
-
-       <div class="pet-notes">
-        <strong>Notes:</strong> 
-       <p>${profile.notes?.replace(/\n/g, '<br>') || ''}</p>
-       </div>
-
-                   
   </div>
+
+  <!-- ==================== -->
+  <!-- MOOD TRACKER -->
+  <!-- ==================== -->
+  <div class="mood-tracker">
+    <div class="mood-buttons">
+      <span>Log Mood:</span>
+      <button class="mood-btn" data-mood="happy" data-index="${index}">😊</button>
+      <button class="mood-btn" data-mood="depressed" data-index="${index}">😔</button>
+      <button class="mood-btn" data-mood="sad" data-index="${index}">😞</button>
+      <button class="mood-btn" data-mood="angry" data-index="${index}">😠</button>
+      <button class="mood-btn" data-mood="sick" data-index="${index}">🤒</button>
+    </div>
+    <div class="mood-history">
+      ${profile.moodHistory?.length ? renderMoodHistory(profile) : 'No mood history yet'}
+    </div>
+  </div>
+
+  <!-- ==================== -->
+  <!-- NOTES SECTION -->
+  <!-- ==================== -->
+  <div class="pet-notes">
+    <strong>Notes:</strong>
+    <p>${profile.notes?.replace(/\n/g, '<br>') || 'No notes yet'}</p>
+  </div>
+
+  <!-- ==================== -->
+  <!-- ACTION BUTTONS -->
+  <!-- ==================== -->
   <div class="pet-card" data-doc-id="${profile.docId}">
-  <div class="action-buttons">
-  <button class="edit-profile" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit Petcard</button>
-  <button class="delete-profile" data-index="${index}" data-doc-id="${profile.docId}">🗑️ Delete Petcard</button>
-  <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print Petcard</button>
-  <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
-  <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
-  <button class="collage-btn" data-index="${index}" data-doc-id="${profile.docId}">🖼️ Collage</button>
-  <button class="celebrate-btn" data-index="${index}" data-doc-id="${profile.docId}">🎉 Celebrate🎉</button>
+    <div class="action-buttons">
+      <button class="edit-profile" data-index="${index}" data-doc-id="${profile.docId}">✏️ Edit Petcard</button>
+      <button class="delete-profile" data-index="${index}" data-doc-id="${profile.docId}">🗑️ Delete Petcard</button>
+      <button class="print-profile" data-index="${index}" data-doc-id="${profile.docId}">🖨️ Print Petcard</button>
+      <button class="share-profile" data-index="${index}" data-doc-id="${profile.docId}">📤 Share Petcard</button>
+      <button class="generate-qr" data-index="${index}" data-doc-id="${profile.docId}">🔲 Generate QR Code</button>
+      <button class="collage-btn" data-index="${index}" data-doc-id="${profile.docId}">🖼️ Collage</button>
+      <button class="celebrate-btn" data-index="${index}" data-doc-id="${profile.docId}">🎉 Celebrate</button>
+    </div>
   </div>
-</div>  
-      `;
+`; // ← ONLY ONE CLOSING BACKTICK
 
       DOM.petList.appendChild(petCard);
     });
