@@ -300,115 +300,152 @@ function toggleImageSelection(e) {
 // 🌀 EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
 //======================================
 function openEditForm(index) {
-  uploadedImageUrls = [];
-  isEditing = true;
-  currentEditIndex = index;
-  //added to debug
-  console.log("petProfiles:", window.petProfiles);
-  console.log("Requested index:", index);
+    const loader = document.getElementById('processing-loader');
+  try {
+        // Show loader immediately
+    loader.style.display = 'block';
+    loader.querySelector('p').textContent = 'Loading pet profile...';
+    // ======================
+    // 1. INITIALIZATION & CHECKS
+    // ======================
+  setTimeout(() => {
+    console.log("✏️ Opening edit form for index:", index); // Debug
+    uploadedImageUrls = [];
+    isEditing = true;
+    currentEditIndex = index;
 
-  const profile = petProfiles[index];
-  if (!profile) {
-    console.error("❌ No profile found at index", index);
-    return;
+    const profile = petProfiles[index];
+    if (!profile) {
+      console.error("❌ Profile not found at index:", index);
+      Utils.showErrorToUser("Profile data failed to load");
+      return;
+    }
+
+    // ======================
+    // 2. FORM FIELD POPULATION
+    // ======================
+    // Core fields
+    document.getElementById("petName").value = profile.name || "";
+    document.getElementById("petBreed").value = profile.breed || "";
+    document.getElementById("petDob").value = profile.dob || "";
+    document.getElementById("petBirthday").value = profile.birthday || "";
+    document.getElementById("petNicknames").value = profile.nicknames || "";
+    document.getElementById("petNotes").value = profile.notes || "";
+
+    // Emergency contact
+    document.getElementById("emergencyName").value = profile.emergencyContact?.name || "";
+    document.getElementById("emergencyPhone").value = profile.emergencyContact?.phone || "";
+    document.getElementById("emergencyRelationship").value = profile.emergencyContact?.relationship || "";
+    document.getElementById("microchipNumber").value = profile.microchipNumber || "";
+
+    // Tags
+    const tagSelect = document.getElementById("petTags");
+    if (tagSelect) {
+      Array.from(tagSelect.options).forEach(option => {
+        option.selected = profile.tags?.includes(option.value);
+      });
+    }
+    
+    Object.entries(fields).forEach(([id, value]) => {
+        document.getElementById(id).value = value;
+      });
+    
+    // ======================
+    // 3. GALLERY SETUP
+    // ======================
+    DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
+    const galleryPreview = document.getElementById("editGalleryPreview");
+    
+    if (galleryPreview) {
+      galleryPreview.innerHTML = profile.gallery?.length ? 
+        profile.gallery.map((img, idx) => {
+          const imgUrl = validateImageUrl(typeof img === "string" ? img : img?.url);
+          return `
+            <div class="gallery-thumbnail ${idx === profile.coverPhotoIndex ? 'active-cover' : ''}">
+              <img src="${imgUrl}" 
+                   alt="Pet photo ${idx + 1}"
+                   onerror="this.src='placeholder.jpg'">
+              ${idx === profile.coverPhotoIndex ? 
+                '<span class="cover-star">★</span>' : ''}
+            </div>`;
+        }).join('') : 
+        '<p class="empty-gallery">No images yet</p>';
+    }
+
+    // ======================
+    // 4. MOOD HISTORY UI
+    // ======================
+    const moodInput = document.getElementById("moodHistoryInput");
+    if (moodInput) {
+      moodInput.value = "";
+      moodInput.placeholder = profile.moodHistory?.length ? 
+        `Last mood: ${profile.moodHistory.slice(-1)[0]?.mood}` : 
+        "Add new mood...";
+    }
+
+    // ======================
+    // 5. UI STATE MANAGEMENT
+    // ======================
+    // Add cancel button if missing
+    if (!document.getElementById("cancelEditBtn")) {
+      const cancelBtn = document.createElement("button");
+      cancelBtn.id = "cancelEditBtn";
+      cancelBtn.type = "button";
+      cancelBtn.className = "button cancel-btn";
+      cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+      cancelBtn.addEventListener("click", () => {
+        if (confirm('Discard all changes?')) cancelEdit();
+      });
+
+      const submitBtn = DOM.profileForm.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.after(cancelBtn);
+    }
+
+    // Show editor
+    DOM.profileSection.classList.remove("hidden");
+    DOM.petList.classList.add("hidden");
+    window.scrollTo(0, 0);
+    console.log("✅ Edit form ready for:", profile.name); // Debug
+      // Hide loader when done
+      loader.style.display = 'none';
+    
+    }, 100); // Minimal delay for loader visibility
+  } catch (error) {
+    console.error("Error:", error);
+    loader.querySelector('p').textContent = 'Failed to load profile';
+    setTimeout(() => {
+      loader.style.display = 'none';
+      cancelEdit();
+    }, 1500);
   }
-
-  //added to debug
-  console.log("petProfiles:", window.petProfiles);
-  console.log("Requested index:", index);
-
-  // Fill form fields
-  const nameField = document.getElementById("petName");
-  const breedField = document.getElementById("petBreed");
-  const dobField = document.getElementById("petDob");
-  const bdayField = document.getElementById("petBirthday");
-  const moodInput = document.getElementById("moodHistoryInput");
-
-  if (nameField) nameField.value = profile.name || "";
-  if (breedField) breedField.value = profile.breed || "";
-  if (dobField) dobField.value = profile.dob || "";
-  if (bdayField) bdayField.value = profile.birthday || "";
-  if (moodInput && profile.moodHistory?.length > 0) moodInput.value = "";
-
-  // Setup cover photo index on form (used on save)
-  DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
-  // Fill emergency contact & notes
-document.getElementById("emergencyName").value = profile.emergencyContact?.name || "";
-document.getElementById("emergencyPhone").value = profile.emergencyContact?.phone || "";
-document.getElementById("emergencyRelationship").value = profile.emergencyContact?.relationship || "";
-document.getElementById("microchipNumber").value = profile.microchipNumber || "";
-document.getElementById("petNotes").value = profile.notes || "";
-  // Nickname
-document.getElementById("petNicknames").value = profile.nicknames || "";
-
-// Tags (multi-select)
-const tagSelect = document.getElementById("petTags");
-Array.from(tagSelect.options).forEach(option => {
-  option.selected = profile.tags?.includes(option.value);
-});
-
-// Mood at creation
-document.getElementById("moodHistoryInput").value = profile.moodHistory?.[0]?.mood || "";
-
-
-  // ✅ Show gallery preview when editing
-  const galleryPreview = document.getElementById("editGalleryPreview");
-  if (galleryPreview && profile.gallery?.length) {
-    galleryPreview.innerHTML = profile.gallery.map(img => {
-      const imgUrl = typeof img === "string" ? img : img?.url;
-      const safeUrl = imgUrl?.replace(/^http:/, 'https:');
-      return `<img src="${safeUrl}" class="preview-thumb" style="max-height:60px; margin-right:5px;" />`;
-    }).join('');
-  }
-
-  // ✅ Insert Cancel button if not already added
-  const form = document.getElementById("profileForm");
-  if (form && !document.getElementById("cancelEditBtn")) {
-    const cancelBtn = document.createElement("button");
-    cancelBtn.id = "cancelEditBtn";
-    cancelBtn.type = "button";
-    cancelBtn.className = "button cancel-edit-btn";
-    cancelBtn.textContent = "❌ Cancel Edit";
-    cancelBtn.style.marginLeft = "1rem";
-    cancelBtn.addEventListener("click", cancelEdit);
-
-    // Insert after submit button
-    const submitBtn = form.querySelector('button[type="submit"]');
-    if (submitBtn) submitBtn.after(cancelBtn);
-  }
-
-  // Reveal editor
-  DOM.profileSection.classList.remove("hidden");
-  DOM.petList.classList.add("hidden");
-  DOM.fullPageBanner.classList.add("hidden");
-  window.scrollTo(0, 0); // scroll top
 }
-
 
 // function cancel edit recently added
 function cancelEdit() {
-  console.log("🛑 Cancel Edit triggered.");
+  // 1. Show loader immediately
+  const loader = document.getElementById('processing-loader');
+  loader.style.display = 'block';
+  loader.querySelector('p').textContent = 'Resetting editor...';
+
+  // 2. Core reset (sync)
   isEditing = false;
   currentEditIndex = -1;
+  uploadedImageUrls = [];
+  document.getElementById('profileForm').reset();
 
-  const preview = document.getElementById("editGalleryPreview");
-  if (preview) preview.innerHTML = "";
+  // 3. UI cleanup
+  document.getElementById('editGalleryPreview').innerHTML = '';
+  document.getElementById('cancelEditBtn')?.remove();
+  
+  // 4. Switch views
+  DOM.profileSection.classList.add('hidden');
+  DOM.petList.classList.remove('hidden');
 
-  // Hide form, show dashboard again
-  DOM.profileSection.classList.add("hidden");
-  DOM.petList.classList.remove("hidden");
-  DOM.fullPageBanner.classList.remove("hidden");
-
-  // Remove cancel button
-  const cancelBtn = document.getElementById("cancelEditBtn");
-  if (cancelBtn) cancelBtn.remove();
-
-  // Optionally reset form values (clean state)
-  document.getElementById("profileForm").reset();
-  DOM.profileForm.dataset.coverIndex = "0"; // Reset cover index only cancellation 
-  window.scrollTo(0, 0); // scroll top
+  // 5. Hide loader after minimal delay (UX polish)
+  setTimeout(() => {
+    loader.style.display = 'none';
+  }, 300); // Just enough time to show the message
 }
-
 //==========≈==============
 // 🌀 UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
 // DELET CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER
