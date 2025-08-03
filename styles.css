@@ -226,6 +226,15 @@ h1, h2, h3, p {
 /* ====================
    PET CARD STYLES - UPDATED
 ==================== */
+/* Failsafe for invalid images implemented recently*/
+.petCard img {
+  background: #f5f5f5;
+  border: 1px dashed #ccc;
+}
+.petCard img[src=""] {
+  visibility: hidden;
+}
+/* old section */
 .petCard {
     border: 10px solid #800080;
     border-radius: 10px;
