@@ -332,6 +332,24 @@ function openEditForm(index) {
 
   // Setup cover photo index on form (used on save)
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
+  // Fill emergency contact & notes
+document.getElementById("emergencyName").value = profile.emergencyContact?.name || "";
+document.getElementById("emergencyPhone").value = profile.emergencyContact?.phone || "";
+document.getElementById("emergencyRelationship").value = profile.emergencyContact?.relationship || "";
+document.getElementById("microchipNumber").value = profile.microchipNumber || "";
+document.getElementById("petNotes").value = profile.notes || "";
+  // Nickname
+document.getElementById("petNicknames").value = profile.nicknames || "";
+
+// Tags (multi-select)
+const tagSelect = document.getElementById("petTags");
+Array.from(tagSelect.options).forEach(option => {
+  option.selected = profile.tags?.includes(option.value);
+});
+
+// Mood at creation
+document.getElementById("moodHistoryInput").value = profile.moodHistory?.[0]?.mood || "";
+
 
   // ✅ Show gallery preview when editing
   const galleryPreview = document.getElementById("editGalleryPreview");
@@ -387,6 +405,7 @@ function cancelEdit() {
 
   // Optionally reset form values (clean state)
   document.getElementById("profileForm").reset();
+  DOM.profileForm.dataset.coverIndex = "0"; // Reset cover index only cancellation 
   window.scrollTo(0, 0); // scroll top
 }
 
@@ -972,8 +991,18 @@ function logMood(profileIndex, mood) {
 // Set cover photo
 //====================
 function setCoverPhoto(profileIndex, imageIndex) {
+  // Update model
   petProfiles[profileIndex].coverPhotoIndex = imageIndex;
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+
+  // Visually update ★ buttons
+  const galleryItems = document.querySelectorAll(`.gallery-item button[data-index="${profileIndex}"]`);
+  galleryItems.forEach(btn => btn.classList.remove("active"));
+
+  const selectedBtn = document.querySelector(`.gallery-item button[data-index="${profileIndex}"][data-photo-index="${imageIndex}"]`);
+  if (selectedBtn) selectedBtn.classList.add("active");
+
+  // Re-render if needed
   loadSavedProfiles();
 }
 
@@ -1019,11 +1048,23 @@ function setupPetProfileDelegation() {
 
     // === Cover Photo button ===
     else if (target.classList.contains("cover-btn")) {
-      const photoIndex = parseInt(target.dataset.photoIndex, 10);
-      if (!isNaN(photoIndex)) {
-        setCoverPhoto(index, photoIndex);
-      }
+  const photoIndex = parseInt(target.dataset.photoIndex, 10);
+  if (!isNaN(photoIndex)) {
+    setCoverPhoto(index, photoIndex);
+
+    // ✅ Toggle active class locally without re-render
+    else if (target.classList.contains("cover-btn")) {
+  const photoIndex = parseInt(target.dataset.photoIndex, 10);
+  if (!isNaN(photoIndex)) {
+    setCoverPhoto(index, photoIndex);
+
+    // If editing, also store in form
+    if (isEditing) {
+      DOM.profileForm.dataset.coverIndex = photoIndex;
     }
+  }
+}
+
   });
 }
 
