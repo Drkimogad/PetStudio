@@ -504,7 +504,17 @@ async function generateBirthdayCard(index) {
     card.innerHTML = `
             <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
             <div class="birthday-countdown">${getCountdown(profile.birthday)}</div>
-            <img src="${profile.gallery[profile.coverPhotoIndex]}" alt="${profile.name}" class="birthday-photo">
+            ${
+           profile.gallery && Array.isArray(profile.gallery) && profile.gallery.length > 0
+           ? (() => {
+         const img = profile.gallery[profile.coverPhotoIndex ?? 0];
+         const imgUrl = typeof img === "string" ? img : img?.url || "";
+         return imgUrl
+          ? `<img src="${imgUrl}" alt="${profile.name}" class="birthday-photo">`
+          : '<div class="no-photo">📷 No photo available</div>';
+         })()
+         : '<div class="no-photo">📷 No photo available</div>'
+         }   
             <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
         `;
 
