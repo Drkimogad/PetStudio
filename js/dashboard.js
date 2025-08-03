@@ -141,7 +141,8 @@ function loadSavedProfiles() {
   </div>
 
   <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
-        
+   `;
+   
         <div class="profile-details">
           <p><strong>Breed:</strong> ${profile.breed}</p>
           <p><strong>DOB:</strong> ${profile.dob}</p>
