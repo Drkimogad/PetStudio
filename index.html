@@ -96,6 +96,8 @@
 	</script>
 
 	<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+	<!-- Add this in your <head> to use Font Awesome icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 	<!-- Metadata -->
 	<meta property="og:url" content="https://your-petstudio-url.com">
@@ -192,28 +194,39 @@
 				<input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
 
 			        <!-- Pet Tags Section -->
+				<!-- Pet Tags Section with Icons -->
 <div class="pet-tags-container">
   <label>Tags:</label>
   <div class="pet-tags-options">
     <label class="tag-option">
       <input type="checkbox" name="petTags" value="Adventure" hidden>
-      <span class="tag">Adventure</span>
+      <span class="tag">
+        <i class="fas fa-hiking"></i> Adventure
+      </span>
     </label>
     <label class="tag-option">
       <input type="checkbox" name="petTags" value="Cuddly" hidden>
-      <span class="tag">Cuddly</span>
+      <span class="tag">
+        <i class="fas fa-heart"></i> Cuddly
+      </span>
     </label>
     <label class="tag-option">
       <input type="checkbox" name="petTags" value="Playful" hidden>
-      <span class="tag">Playful</span>
+      <span class="tag">
+        <i class="fas fa-table-tennis"></i> Playful
+      </span>
     </label>
     <label class="tag-option">
       <input type="checkbox" name="petTags" value="Foodie" hidden>
-      <span class="tag">Foodie</span>
+      <span class="tag">
+        <i class="fas fa-utensils"></i> Foodie
+      </span>
     </label>
     <label class="tag-option">
       <input type="checkbox" name="petTags" value="Athletic" hidden>
-      <span class="tag">Athletic</span>
+      <span class="tag">
+        <i class="fas fa-running"></i> Athletic
+      </span>
     </label>
   </div>
   <small>Click to select multiple tags</small>
