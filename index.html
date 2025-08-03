@@ -244,11 +244,16 @@
 				<label for="petNotes">Notes & Memories:</label>
 				<textarea id="petNotes" name="petNotes" rows="3" placeholder="Gift ideas, funny habits, favorite toys..."></textarea>
 
-				<!-- Just the date input - no duplicate button -->
 				<div class="birthday-reminder-section">
-					<label for="birthdayReminder-${profile.id}">Birthday Reminder:</label>
-					<input type="date" id="birthdayReminder-${profile.id}" name="birthdayReminder" value="${profile.birthday || ''}" onchange="toggleCelebrateButton(this, ${index})">
-				</div>
+  <label for="petBirthday">Birthday Reminder:</label>
+  <input 
+    type="date" 
+    id="petBirthday" 
+    name="birthdayReminder" 
+    onchange="toggleCelebrateButton(this)"
+  >
+</div>
+
 
 				<!-- Replace theme radios with this styled version -->
 				<div class="theme-selection">
