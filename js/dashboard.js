@@ -86,17 +86,59 @@ function loadSavedProfiles() {
                           ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
           <!-- === <p class="countdown">${getCountdown(profile.birthday)}</p> === -->
         </div>
+           
+        <div class="profile-details">
+          <p><strong>Breed:</strong> ${profile.breed}</p>
+          <p><strong>DOB:</strong> ${profile.dob}</p>
+          <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+        </div>
+        
+      <!-- === ADD HERE CELEBRATE BUTTON CLICKING WILL TRIGGERE THE TEMPLATES! === -->
+    ${profile.birthday ? `
+  <div class="birthday-reminder">
+    <span>🎂 ${getCountdown(profile.birthday)}</span>
+  </div>
+  <div class="profile-reminder">
+    <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.birthday).toLocaleDateString()} 🎉</p>
+  </div>
+` : ''}
 
-        <!-- Add this for tags -->
+           <div class="emergency-info">
+    <h4>Emergency Contact</h4>
+    <p><strong>Name:</strong> ${profile.emergencyContact?.name || 'Not set'}</p>
+    <p><strong>Phone:</strong> ${profile.emergencyContact?.phone || 'Not set'}</p>
+    <p><strong>Relationship:</strong> ${profile.emergencyContact?.relationship || 'Not set'}</p>
+    <p><strong>Microchip:</strong> ${profile.microchipNumber || 'Not registered'}</p>
+  </div> 
+
+        <div class="mood-tracker">
+        <div class="mood-buttons">
+       <span>Log Mood:</span>
+       <button class="mood-btn" data-mood="happy" data-index="${index}">😊</button>
+       <button class="mood-btn" data-mood="depressed" data-index="${index}">😔</button>
+       <button class="mood-btn" data-mood="sad" data-index="${index}">😞</button>
+       <button class="mood-btn" data-mood="angry" data-index="${index}">😠</button>
+       <button class="mood-btn" data-mood="sick" data-index="${index}">🤒</button>
+       </div>
+       <div class="mood-history">
+            ${renderMoodHistory(profile)}
+       </div>
+
+               <!-- Add this for tags -->
       ${profile.tags?.length ? `
        <div class="tags-container">
         ${profile.tags.map(tag => `
          <span class="tag-pill">${tag}</span>
         `).join('')}
        </div>
-      ` : ''}  
-        
-<div class="gallery-grid">
+      ` : ''} 
+
+       <div class="pet-notes">
+        <strong>Notes:</strong> 
+       <p>${profile.notes?.replace(/\n/g, '<br>') || ''}</p>
+       </div>
+    
+       <div class="gallery-grid">
   <div class="gallery-item">
     <img src="https://res.cloudinary.com/dh7d6otgu/image/upload/v1754178448/PetStudio/users/xsxJWEWm4PXoHWTxKNoVS3hACR13/1754178444262/gallery/rovy2p03nj9ogh0rs5sc.jpg" alt="Pet photo 1">
     <button class="cover-btn active" data-id="1754178444262" data-index="0" data-photo-index="0">★</button>
@@ -115,58 +157,7 @@ function loadSavedProfiles() {
 </div>
 
 <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
-
-   
-        <div class="profile-details">
-          <p><strong>Breed:</strong> ${profile.breed}</p>
-          <p><strong>DOB:</strong> ${profile.dob}</p>
-          <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
-        </div>
-        
-        <div class="emergency-info">
-    <h4>Emergency Contact</h4>
-    <p><strong>Name:</strong> ${profile.emergencyContact?.name || 'Not set'}</p>
-    <p><strong>Phone:</strong> ${profile.emergencyContact?.phone || 'Not set'}</p>
-    <p><strong>Relationship:</strong> ${profile.emergencyContact?.relationship || 'Not set'}</p>
-    <p><strong>Microchip:</strong> ${profile.microchipNumber || 'Not registered'}</p>
-  </div>
-
-        <div class="mood-tracker">
-        <div class="mood-buttons">
-       <span>Log Mood:</span>
-       <button class="mood-btn" data-mood="happy" data-index="${index}">😊</button>
-       <button class="mood-btn" data-mood="depressed" data-index="${index}">😔</button>
-       <button class="mood-btn" data-mood="sad" data-index="${index}">😞</button>
-       <button class="mood-btn" data-mood="angry" data-index="${index}">😠</button>
-       <button class="mood-btn" data-mood="sick" data-index="${index}">🤒</button>
-       </div>
-       <div class="mood-history">
-            ${renderMoodHistory(profile)}
-       </div>
-
-      <!-- === ADD HERE CELEBRATE BUTTON CLICKING WILL TRIGGERE THE TEMPLATES! === -->
-    ${profile.birthday ? `
-  <div class="birthday-reminder">
-    <span>🎂 ${getCountdown(profile.birthday)}</span>
-    <button 
-      class="celebrate-btn" 
-      data-index="${index}" 
-      title="Generate birthday card"
-    >🎉 Celebrate</button>
-  </div>
-  <div class="profile-reminder">
-    <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.birthday).toLocaleDateString()} 🎉</p>
-  </div>
-` : ''}
-
-              
-
-      <div class="pet-notes">
-        <strong>Notes:</strong> 
-       <p>${profile.notes?.replace(/\n/g, '<br>') || ''}</p>
-       </div>
-             
-      
+                   
   </div>
   <div class="pet-card" data-doc-id="${profile.docId}">
   <div class="action-buttons">
