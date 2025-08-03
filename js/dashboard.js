@@ -1092,96 +1092,123 @@ function initializeDashboard() {
   }
 }
 
-//==================================================
-// MOVED FORM SUBMISSION INSIDE INITIALIZEDASHBOARD
-//====================================================
+ // ==================================================
+// ENHANCED FORM SUBMISSION HANDLER (PRODUCTION-READY)
+// ==================================================
 function attachFormListenerWhenReady() {
+  console.log("🔄 Initializing form listener..."); // DEBUG LINE KEPT
 
-  // the whole form submission wrapped in an if block 
   // ✅ Only attach once
   if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) {
+    console.log("✅ Form element found, attaching listeners..."); // DEBUG LINE KEPT
 
-    // Enable live preview when user selects images ADDED RECENTLY
+    // ========================
+    // SECTION 1: GALLERY PREVIEW
+    // ========================
     document.getElementById("petGallery").addEventListener("change", function() {
+      console.log("📸 Gallery input changed"); // DEBUG LINE KEPT
       const preview = document.getElementById("editGalleryPreview");
       const files = Array.from(this.files);
-      if (!preview) return;
+      
+      if (!preview) {
+        console.warn("⚠️ Preview container not found"); // DEBUG LINE KEPT
+        return;
+      }
 
-      preview.innerHTML = ""; // clear before showing new previews
+      preview.innerHTML = "";
       files.forEach(file => {
         const reader = new FileReader();
         reader.onload = function(e) {
-          preview.innerHTML += `<img src="${e.target.result}" class="preview-thumb" style="max-height:60px; margin-right:5px;" />`;
+          preview.innerHTML += `<img src="${e.target.result}" class="preview-thumb" />`;
+          console.log("🖼️ Added preview for:", file.name); // DEBUG LINE KEPT
         };
         reader.readAsDataURL(file);
       });
     });
 
-    // OLD SECTION     
+    // ========================
+    // SECTION 2: FORM SUBMISSION
+    // ========================
     DOM.profileForm.addEventListener("submit", async (e) => {
-      console.log("✅ Form submission listener attached."); // You already had this 👍
-      console.log("📨 Submit triggered!");
+      console.log("📨 Form submit triggered"); // DEBUG LINE KEPT
       e.preventDefault();
 
-      console.log("🧪 Auth before saving:", firebase.auth().currentUser);
-
+      // ✅ UI State Management
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const originalBtnText = submitBtn.innerHTML;
       submitBtn.innerHTML = '⏳ Saving...';
       submitBtn.disabled = true;
 
       try {
+        // ========================
+        // SECTION 3: AUTH & SETUP
+        // ========================
+        console.log("🔐 Checking auth state..."); // DEBUG LINE KEPT
         const userId = firebase.auth().currentUser?.uid;
         if (!userId) throw new Error("User not authenticated");
-
+        
         const newProfileId = Date.now();
+        console.log("🆕 New profile ID:", newProfileId); // DEBUG LINE KEPT
 
-        // 📁 Upload gallery
+        // ========================
+        // SECTION 4: GALLERY UPLOAD
+        // ========================
+        console.log("📁 Processing gallery..."); // DEBUG LINE KEPT
         const galleryFiles = Array.from(document.getElementById("petGallery").files);
         const uploadedImageUrls = [];
 
-        if (galleryFiles.length > 0) { // added
+        if (galleryFiles.length > 0) {
+          console.log("🔼 Found", galleryFiles.length, "files to upload"); // DEBUG LINE KEPT
           for (const file of galleryFiles) {
             try {
-              showLoading(true);
+              console.log("⬆️ Uploading:", file.name); // DEBUG LINE KEPT
               const result = await uploadToCloudinary(file, userId, newProfileId);
+              
               if (result?.url) {
+                console.log("✅ Upload success:", result.url); // DEBUG LINE KEPT
                 uploadedImageUrls.push(result);
               }
             } catch (uploadError) {
-              console.error('Failed to upload image:', uploadError);
-              Utils.showErrorToUser(`Failed to upload ${file.name}.`);
-            } finally {
-              showLoading(false);
-            } //closes finally
-          } // closes 2nf if
-        } // closes 1st if
+              console.error('❌ Upload failed:', uploadError); // DEBUG LINE KEPT
+              Utils.showErrorToUser(`Failed to upload ${file.name}`);
+            }
+          } // closes for loop
+        } // closes if galleryFiles.length
 
-        // 😺 Mood logic (preserve and append)
-        const moodInput = document.getElementById("moodHistoryInput");
+        // ========================
+        // SECTION 5: MOOD HANDLING
+        // ========================
+        console.log("😊 Processing mood data..."); // DEBUG LINE KEPT
         let moodHistory = [];
-
         if (isEditing && petProfiles[currentEditIndex]?.moodHistory) {
           moodHistory = [...petProfiles[currentEditIndex].moodHistory];
+          console.log("♻️ Loaded existing mood history"); // DEBUG LINE KEPT
         }
 
-        const newMood = moodInput?.value?.trim();
+        const newMood = document.getElementById("moodHistoryInput")?.value?.trim();
         if (newMood) {
           moodHistory.push({
             date: new Date().toISOString().split("T")[0],
             mood: newMood
           });
+          console.log("➕ Added new mood entry:", newMood); // DEBUG LINE KEPT
         }
 
+    // ========================
+    // SECTION 6: PROFILE ASSEMBLY
+    // ========================
         // ✅ Extract tags BEFORE creating newProfile
         const tagSelect = document.getElementById("petTags");
         const selectedTags = Array.from(tagSelect?.selectedOptions || []).map(opt => opt.value);
+        
+        console.log("🧩 Building profile object..."); // DEBUG LINE KEPT
 
         // 🧠 Construct newProfile object
         const newProfile = {
           id: newProfileId,
           name: document.getElementById("petName").value,
           nicknames: document.getElementById("petNicknames")?.value || "",
+          gallery: [], // Temporary empty array
           breed: document.getElementById("petBreed").value,
           dob: document.getElementById("petDob").value,
           birthday: document.getElementById("petBirthday").value,
@@ -1198,56 +1225,29 @@ function attachFormListenerWhenReady() {
         };
 
 
-        // 🧩 Merge gallery (EDIT vs CREATE)
+        // 🖼️ Gallery Consolidation
         if (isEditing) {
-          try {
-            const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
-            const combinedGallery = [...oldGallery, ...uploadedImageUrls];
-
-            // 🔶 Added null checks for image URLs
-            const deduplicatedGallery = Array.from(
-              new Map(combinedGallery.filter(img => img?.url || typeof img === "string").map(img => {
-                const url = typeof img === "string" ? img : img.url;
-                return [url, img];
-              })).values()
-            );
-
-            newProfile.gallery = deduplicatedGallery;
-          } catch (err) {
-            console.error("Gallery merge failed, using new uploads only:", err);
-            newProfile.gallery = uploadedImageUrls; // Fallback
-          }
-        }
-
-        // 🧨 Save to Firestore
-        //Add this before Firestore save to convert selected tags into an array: Recently added
-        // 🔶 Convert selected tags to array (e.g., ["birthday", "cute"])
-        const tagElements = document.querySelectorAll('#tagsDropdown input[type="checkbox"]:checked');
-        newProfile.tags = Array.from(tagElements).map(el => el.value);
-
-        // Proceed with Firestore save...
-        let docRef;
-
-        if (isEditing && petProfiles[currentEditIndex]?.docId) {
-          // 🔁 Update existing
-          docRef = firebase.firestore().collection("profiles").doc(petProfiles[currentEditIndex].docId);
-          await docRef.set({
-            ...newProfile,
-            userId
-          }, {
-            merge: true
-          });
-          newProfile.docId = petProfiles[currentEditIndex].docId;
+          console.log("✏️ Merging with existing gallery..."); // DEBUG LINE KEPT
+          const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
+          newProfile.gallery = [...oldGallery, ...uploadedImageUrls];
         } else {
-          // 🆕 New profile
-          docRef = await firebase.firestore().collection("profiles").add({
-            userId,
-            ...newProfile
-          });
-          newProfile.docId = docRef.id;
-          await docRef.update({
-            docId: docRef.id
-          }); // ⬅️ Add docId field to doc
+          newProfile.gallery = uploadedImageUrls;
+        }
+        
+
+       // ========================
+        // SECTION 7: FIRESTORE SYNC
+        // ========================
+        console.log("🔥 Saving to Firestore..."); // DEBUG LINE KEPT
+        let docRef;
+        if (isEditing && petProfiles[currentEditIndex]?.docId) {
+          docRef = firebase.firestore().collection("profiles").doc(petProfiles[currentEditIndex].docId);
+          await docRef.set(newProfile, { merge: true });
+          console.log("🔄 Updated existing profile"); // DEBUG LINE KEPT
+        } else {
+          docRef = await firebase.firestore().collection("profiles").add(newProfile);
+          await docRef.update({ docId: docRef.id });
+          console.log("✨ Created new profile"); // DEBUG LINE KEPT
         }
 
         // 🎉 Add birthday reminder if needed inapp modified to include the new fields
@@ -1286,11 +1286,12 @@ function attachFormListenerWhenReady() {
 
         localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
-        // ✅ UI Update
+        // ========================
+        // SECTION 8: UI UPDATE
+        // ======================== 
+        console.log("🖥️ Updating UI..."); // DEBUG LINE KEPT
         showDashboard();
-
         window.scrollTo(0, 0);
-        console.log("✅ Profile saved and UI updated.");
 
       } catch (err) {
         console.error("Profile save failed:", err);
@@ -1309,10 +1310,8 @@ function attachFormListenerWhenReady() {
           const galleryPreview = document.getElementById("editGalleryPreview");
           if (galleryPreview && newProfile.gallery?.length) {
             galleryPreview.innerHTML = newProfile.gallery.map(img => {
-              const imgUrl = typeof img === "string" ? img : img?.url;
-              const safeUrl = imgUrl?.replace(/^http:/, 'https:');
-              return `<img src="${safeUrl}" class="preview-thumb" style="max-height:60px; margin-right:5px;" />`;
-            }).join('');
+             `<img src="${typeof img === 'string' ? img : img.url}" class="preview-thumb">`
+            ).join('');
           }
         } // closes if 
       } // ✅ closes finally
