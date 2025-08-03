@@ -1062,10 +1062,9 @@ function setupPetProfileDelegation() {
     if (isEditing) {
       DOM.profileForm.dataset.coverIndex = photoIndex;
     }
+   }
   }
-}
-
-  });
+ });
 }
 
 //=============================
