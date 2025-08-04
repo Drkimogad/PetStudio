@@ -107,9 +107,9 @@ petCard.innerHTML = `
     <div class="petCard-header-content">
       <h3>${profile.name}</h3>
       ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
-      ${profile.birthday ? `
+      ${profile.upcomingbirthday ? `
         <div class="countdown-badge">
-          🎂${getCountdown(profile.birthday)}
+          🎂${getCountdown(profile.upcomingbirthday)}
       </div>
     ` : ''}
   </div>
@@ -158,17 +158,17 @@ petCard.innerHTML = `
   <div class="profile-details">
     <p><strong>Breed:</strong> ${profile.breed || 'Not specified'}</p>
     <p><strong>DOB:</strong> ${profile.dob || 'Unknown'}</p>
-    ${profile.birthday ? `
-      <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+    ${profile.upcomingbirthday ? `
+      <p><strong>Upcoming Birthday:</strong> ${profile.upcomingbirthday}</p>
     ` : ''}
   </div>
 
   <!-- ==================== -->
   <!-- BIRTHDAY REMINDER (CONDITIONAL) -->
   <!-- ==================== -->
-  ${profile.birthday ? `
+  ${profile.upcomingbirthday ? `
     <div class="profile-reminder">
-      <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.birthday).toLocaleDateString()} 🎉</p>
+      <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.upcomingbirthday).toLocaleDateString()} 🎉</p>
     </div>
   ` : ''}
 
@@ -232,9 +232,9 @@ petCard.innerHTML = `
 //==============================
 // Calculate days until birthday
 //=================================
-function getCountdown(birthday) {
+function getCountdown(upcomingBirthday) {
   const today = new Date();
-  const nextBirthday = new Date(birthday);
+  const nextBirthday = new Date(upcomingBirthday);
   nextBirthday.setFullYear(today.getFullYear());
   if (nextBirthday < today) nextBirthday.setFullYear(today.getFullYear() + 1);
   const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
@@ -332,7 +332,7 @@ function openEditForm(index) {
     document.getElementById("petName").value = profile.name || "";
     document.getElementById("petBreed").value = profile.breed || "";
     document.getElementById("petDob").value = profile.dob || "";
-    document.getElementById("petBirthday").value = profile.birthday || "";
+    document.getElementById("upcomingBirthday").value = profile.upcomingbirthday || "";
     document.getElementById("petNicknames").value = profile.nicknames || "";
     document.getElementById("petNotes").value = profile.notes || "";
 
@@ -608,7 +608,7 @@ function printProfile(profile) {
         <div class="print-details">
           <p><strong>Breed:</strong> ${profile.breed}</p>
           <p><strong>Date of Birth:</strong> ${profile.dob}</p>
-          <p><strong>Next Birthday:</strong> ${profile.birthday}</p>
+          <p><strong>Upcoming Birthday:</strong> ${profile.upcomingbirthday}</p>
         </div>
         <h3>Gallery</h3>
         <div class="print-gallery">
@@ -689,13 +689,13 @@ async function generateBirthdayCard(index) {
     card.className = 'birthday-card';
     card.innerHTML = `
       <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
-      <div class="birthday-countdown">${getCountdown(profile.birthday)}</div>
+      <div class="birthday-countdown">${getCountdown(profile.upcomingbirthday)}</div>
        ${
        validCover
         ? `<img src="${coverUrl}" alt="${profile.name}" class="birthday-photo">`
         : `<div class="birthday-photo-placeholder">No valid cover image</div>`
        }
-      <div class="birthday-footer">Celebrate on ${new Date(profile.birthday).toLocaleDateString()}</div>
+      <div class="birthday-footer">Celebrate on ${new Date(profile.upcomingbirthday).toLocaleDateString()}</div>
         `;
 
     // ✅ Append temporarily (hidden)
@@ -945,7 +945,7 @@ async function sharePetCard(profile, event) {
     if (navigator.share) {
       await navigator.share({
         title: `Meet ${profile.name}! 🐾`,
-        text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.birthday}\n\nView more: ${petStudioLink}`,
+        text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.upcomingbirthday}\n\nView more: ${petStudioLink}`,
       });
     } else {
       alert(`Share this link manually: ${petStudioLink}`);
@@ -967,7 +967,7 @@ function generateQRCode(profileIndex) {
   const qrContent = JSON.stringify({
     n: currentQRProfile.name,
     b: currentQRProfile.breed,
-    d: currentQRProfile.birthday,
+    d: currentQRProfile.upcomingbirthday,
     l: "https://drkimogad.github.io/PetStudio/"
   });
 
@@ -1375,7 +1375,7 @@ function attachFormListenerWhenReady() {
           gallery: [], // Temporary empty array
           breed: document.getElementById("petBreed").value,
           dob: document.getElementById("petDob").value,
-          birthday: document.getElementById("petBirthday").value,
+          upcomingBirthday: document.getElementById("upcomingBirthday").value
           moodHistory,
           emergencyContact: {
             name: document.getElementById("emergencyName").value.trim(),
@@ -1415,14 +1415,14 @@ function attachFormListenerWhenReady() {
         }
 
         // 🎉 Add birthday reminder if needed inapp modified to include the new fields
-        if (newProfile.birthday) {
+        if (newProfile.upcomingbirthday) {
           const reminderData = {
             userId,
             petName: newProfile.name,
-            date: Utils.formatFirestoreDate(newProfile.birthday),
+            date: Utils.formatFirestoreDate(newProfile.upcomingbirthday),
             type: "birthday",
             // 🔶 Use getCountdown() for dynamic messaging
-            message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.birthday)}`, // "5 days until birthday! 🎉"
+            message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.upcomingbirthday)}`, // "5 days until birthday! 🎉"
             createdAt: new Date().toISOString(),
             profileDocId: newProfile.docId,
             // 🔶 Add countdown days for sorting/filtering later
