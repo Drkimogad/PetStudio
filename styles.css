@@ -228,24 +228,12 @@ h1, h2, h3, p {
     flex: 0 1 auto; /* Don't force equal width */
     padding: 8px 16px;
     font-size: 0.9rem;
+    border: #808080;  
     border-radius: 10px;
     min-width: 120px;
 }
 
-.delete-profile {
-    background-color: #ffffff; /*white now*/
-    color: #e74c3c;
-    padding: 5px 10px;
-    border: #e74c3c;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-.delete-profile:hover {
-    background-color: #ffffff;
-    border: #e74c3c;
-}
-
+.petCard .actions button,
 .print-profile {
     background-color: #ffffff;
     color: #000000;
@@ -260,6 +248,7 @@ h1, h2, h3, p {
     border: #808080;
 }
 
+.petCard .actions button,
 .share-profile {
     background-color: #ffffff;
     color: #000000;
@@ -274,6 +263,7 @@ h1, h2, h3, p {
     border: #808080; 
 }
 
+.petCard .actions button,
 .generate-qr {
     background-color: #ffffff;
     color: #000000;
@@ -287,6 +277,7 @@ h1, h2, h3, p {
     background-color: #ffffff;
     border: #808080;
 }
+.petCard .actions button,
 .edit-profile {
    background-color: #ffffff;
     color: #000000;
@@ -299,25 +290,73 @@ h1, h2, h3, p {
     background-color: #ffffff;
     border: #808080;
 }
+/* to be refined if the don't follow rules*/
+.petCard .actions button,
+.celebrate-btn, 
+.collage-btn {
+    flex: 0 1 auto;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border: 1px solid #808080;  
+    border-radius: 10px;
+    min-width: 120px;
+    background: #ffffff;
+    color: #000000;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.celebrate-btn.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.celebrate-btn:hover {
+  background: #ffffff; /* Lighter pink on hover */
+  transform: scale(1.05);
+}
+.collage-btn:hover {
+  background: #ffffff; /* Lighter purple */
+  transform: scale(1.05);
+}
+
+/* Delete button overrides (comes AFTER) */
+.delete-profile {
+    background-color: #ffffff;
+    color: #e74c3c;
+    padding: 5px 10px;
+    border: 1px solid #e74c3c !important; /* Only needed for border */
+    border-radius: 10px;
+    cursor: pointer;
+    min-width: auto; /* Remove min-width if needed */
+}
+
+.delete-profile:hover {
+    background-color: #ffffff;
+    border-color: #e74c3c; 
+}
+
+/* STANDALONE button*/
 .cancel-edit-btn {
-  background-color: #dc2626;
+  background-color: #e60707;
   color: #000000;
   padding: 0.5rem 1rem;
   border-radius: 10px;
   border: #000000;
   cursor: pointer;
 }
+
 .cancel-edit-btn:hover {
-  background-color: #b91c1c;
+  background-color: #e60707;
+  border: #000000;
 }
+
 /* Cover image button */
 .cover-btn {
     position: absolute;
     top: 10px;
     left: 10px;
-    background-color: #808080; /*rgba(106, 27, 154, 0.8);*/
+    background-color: #808080;
     color: white;
-    border: #c9ba2c;   /* was none*/
+    border: #c9ba2c;  
     padding: 5px 10px;
     border-radius: 4px;
     font-size: 0.8rem;
@@ -327,12 +366,13 @@ h1, h2, h3, p {
 }
 
 .cover-btn:hover {
-    background-color: rgba(106, 27, 154, 1);
+    background-color: #c9ba2c;
+    border: #808080;  
     transform: scale(1.05);
 }
 
 /*=============================
-Pet info section - left aligned
+Pet info section inside generated petcard- left aligned
 =======================================*/
 .pet-info {
     display: flex;
@@ -393,7 +433,7 @@ styled to show in petcard header plus nickname */
   max-width: 700px;
   box-shadow: 0 0 10px rgba(0,0,0,0.05);
 }
-
+/*EDITED*/
 #profileSection h2 {
   text-align: center;
   color: #6a1b9a;
@@ -492,23 +532,10 @@ styled to show in petcard header plus nickname */
   color: #ff6b6b; /* Birthday-themed color */
 }
 
-.celebrate-btn {
-  background: #ffffff;
-  color: #000000;
-  border: #000000;
-  padding: 8px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.celebrate-btn.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-.celebrate-btn:hover {
-  background: #ffffff; /* Lighter pink on hover */
-  transform: scale(1.05);
-}
+/*  styled now in petcard actions buttons
+.celebrate-btn */
+
+
 
 /* Notes Section - inline appearance */
 #petNotes {
@@ -598,21 +625,8 @@ styled to show in petcard header plus nickname */
 }
 
 /* =====css for collage function========= */
-.collage-btn {
-  background: #ffffff; /* Purple to distinguish from other buttons */
-  color: #000000;
-  border: #000000;
-  border-radius: 10px;
-  padding: 8px 12px;
-  margin: 5px 0;
-  cursor: pointer;
-  font-size: 0.9em;
-}
+/*  collage-btn styled now in petcard actions buttons */
 
-.collage-btn:hover {
-  background: #ffffff; /* Lighter purple */
-  transform: scale(1.05);
-}
 /* Collage Modal */
 #collage-modal {
   position: fixed;
