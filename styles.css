@@ -247,7 +247,7 @@ h1, h2, h3, p {
 
 .print-profile {
     background-color: #ffffff;
-    color: black;
+    color: #000000;
     padding: 5px 10px;
     border: #808080;
     border-radius: 10px;
@@ -260,7 +260,7 @@ h1, h2, h3, p {
 
 .share-profile {
     background-color: #ffffff;
-    color: black;
+    color: #000000;
     padding: 5px 10px;
     border: #808080;
     border-radius: 10px;
@@ -273,9 +273,9 @@ h1, h2, h3, p {
 
 .generate-qr {
     background-color: #ffffff;
-    color: black;
+    color: #000000;
     padding: 5px 10px;
-    border: #808080;
+    border: #000000;
     border-radius: 10px;
     cursor: pointer;
 }
@@ -304,16 +304,20 @@ h1, h2, h3, p {
     transform: scale(1.05);
 }
 
-.editBtn {
-  background-color: #808080;
-  color: white;
+.edit-profile {
+   background-color: #ffffff;
+    color: #000000;
+    padding: 5px 10px;
+    border: #000000;
+    border-radius: 10px;
+    cursor: pointer;
 }
 .cancel-edit-btn {
   background-color: #dc2626;
-  color: #fff;
+  color: #000000;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: none;
+  border-radius: 10px;
+  border: #000000;
   cursor: pointer;
 }
 .cancel-edit-btn:hover {
@@ -481,11 +485,11 @@ styled to show in petcard header plus nickname */
 }
 
 .celebrate-btn {
-  background: #ff9a9e;
-  color: white;
-  border: none;
+  background: #ffffff;
+  color: #000000;
+  border: #000000;
   padding: 8px 12px;
-  border-radius: 20px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -494,7 +498,7 @@ styled to show in petcard header plus nickname */
   pointer-events: none;
 }
 .celebrate-btn:hover {
-  background: #fad0c4; /* Lighter pink on hover */
+  background: #ffffff; /* Lighter pink on hover */
   transform: scale(1.05);
 }
 
@@ -587,10 +591,10 @@ styled to show in petcard header plus nickname */
 
 /* =====css for collage function========= */
 .collage-btn {
-  background: #6a5acd; /* Purple to distinguish from other buttons */
-  color: white;
-  border: none;
-  border-radius: 20px;
+  background: #ffffff; /* Purple to distinguish from other buttons */
+  color: #000000;
+  border: #000000;
+  border-radius: 10px;
   padding: 8px 12px;
   margin: 5px 0;
   cursor: pointer;
@@ -598,7 +602,7 @@ styled to show in petcard header plus nickname */
 }
 
 .collage-btn:hover {
-  background: #9370db; /* Lighter purple */
+  background: #ffffff; /* Lighter purple */
   transform: scale(1.05);
 }
 /* Collage Modal */
