@@ -202,42 +202,50 @@ h1, h2, h3, p {
     box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
-.petCard h3 {
-    margin: 0 0 10px 0;
-    color: #2c2730; /* it was dark purple*/
-    text-align: left; /* Left-aligned title */
-    font-size: 1.5rem;
-}
+/* ====================== */
+/* PET CARD HEADER STYLES */
+/* ====================== */
+/* Profile Header */
 .petCard-header {
   position: relative;
   min-height: 150px;
-  display: flex;
-  align-items: flex-start; /* Aligns content to top */
-  justify-content: flex-start; /* Left-align */
-  padding: 20px;
   background-size: cover;
   background-position: center;
+  border-radius: 10px 10px 0 0;
+  padding: 20px;
 }
 
+/* Header Content */
 .petCard-header-content {
   position: relative;
   z-index: 2;
-  text-align: left; /* Explicit left alignment */
-  width: 100%; /* Ensures proper content width */
 }
 
-/* Text elements */
-.petCard-header h3,
-.petCard-header .nickname {
-  text-align: left; /* Force left alignment */
-  margin: 5px 0; /* Consistent spacing */
+/* Title - matches existing h3 style */
+.petCard-header h3 {
+  margin: 0 0 10px 0;
+  color: #2c2730;
+  font-size: 1.5rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 }
 
-.petCard-header .countdown-badge {
-  text-align: right !important; /* Force right alignment */
-  margin: 5px 0; /* Consistent spacing */
+/* Nickname - new minimal style */
+.nickname {
+  margin: 0 0 8px 0;
+  font-style: italic;
+  color: #4a4a4a;
 }
 
+/* Countdown Badge */
+.countdown-badge {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background: rgba(255,255,255,0.9);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
 /* =============
 Action buttons container======== */
 .petCard .actions {
