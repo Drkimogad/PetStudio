@@ -250,6 +250,43 @@ h1, h2, h3, p {
   border-radius: 12px;
   font-size: 0.9rem;
 }
+/* petcard body */
+/* Details Section - Left Alignment */
+.profile-details {
+  text-align: left;
+  padding: 0 15px;
+  margin-bottom: 15px;
+}
+
+.profile-details p {
+  margin: 8px 0;
+  color: #555;
+}
+
+/* Mood buttons */
+.mood-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.mood-btn {
+  font-size: 1.5rem;
+  padding: 8px 12px;
+  border: 2px solid transparent;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.mood-btn:hover,
+.mood-btn.active {
+  border-color: #6a1b9a;
+  background-color: #e9d5ff;
+}
 /* =============
 Action buttons container======== */
 .petCard .actions {
@@ -379,7 +416,7 @@ Pet info section inside generated petcard- left aligned
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    text-align: left;
+    text-align: left !important;
 }
 
 /* Countdown days indicator
@@ -468,30 +505,7 @@ styled to show in petcard header plus nickname */
   border-radius: 8px;
 }
 
-/* Mood buttons */
-.mood-btn-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-  justify-content: center;
-}
 
-.mood-btn {
-  font-size: 1.5rem;
-  padding: 8px 12px;
-  border: 2px solid transparent;
-  background-color: #f4f4f4;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.mood-btn:hover,
-.mood-btn.active {
-  border-color: #6a1b9a;
-  background-color: #e9d5ff;
-}
 /* NEW ENHANCEMENTS */
 /* ====birthday card style======*/
 .birthday-card {
@@ -514,17 +528,19 @@ styled to show in petcard header plus nickname */
   border-radius: 10px;
   margin: 10px auto;
 }
-/* Style the reminder line Recently added */
-.reminder-controls {
+
+/* Style the birthday reminder line Recently added */
+.profile-reminder-controls {
   display: flex;
   align-items: center;
   gap: 10px;
   margin: 15px 0;
 }
-.birthday-reminder-section {
+.profile-reminder-section {
   margin: 1.5rem 0;
 }
-.birthday-reminder {
+.profile-reminder {
+  text-align: left;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -535,8 +551,6 @@ styled to show in petcard header plus nickname */
 
 /*  styled now in petcard actions buttons
 .celebrate-btn */
-
-
 
 /* Notes Section - inline appearance */
 #petNotes {
