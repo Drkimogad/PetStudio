@@ -1215,6 +1215,10 @@ function attachFormListenerWhenReady() {
       e.preventDefault();
 
           // 🟢 1. NEW PROFILE CREATION LOADER MESSAGE
+      //define loader to init properly
+     const loader = document.getElementById('processing-loader');
+     const loaderText = loader.querySelector('p'); // Define loaderText here
+
      loaderText.innerHTML = isEditing ? 
     '<i class="fas fa-save"></i> Updating profile...' : 
     '<i class="fas fa-paw"></i> Creating pet profile...';
@@ -1223,7 +1227,6 @@ function attachFormListenerWhenReady() {
       // ✅ UI State Management
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const originalBtnText = submitBtn.innerHTML;
-     // submitBtn.innerHTML = '⏳ Saving...';
       submitBtn.disabled = true;
 
       try {
@@ -1393,11 +1396,9 @@ setTimeout(() => {
   console.error("Profile save failed:", err);
   // 🟢 ERROR MESSAGE
   loaderText.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Failed to save';
-  setTimeout(() => {
-    loader.style.display = 'none';
+    setTimeout(() => loader.style.display = 'none', 3000);
     window.scrollTo(0, 0);
-  }, 3000);
-  Utils.showErrorToUser("❌ Failed to save profile.");
+    console.error("Save failed:", err);
 
 } finally {
   submitBtn.innerHTML = originalBtnText;
