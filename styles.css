@@ -208,11 +208,34 @@ h1, h2, h3, p {
     text-align: left; /* Left-aligned title */
     font-size: 1.5rem;
 }
+.petCard-header {
+  position: relative;
+  min-height: 150px;
+  display: flex;
+  align-items: flex-start; /* Aligns content to top */
+  justify-content: flex-start; /* Left-align */
+  padding: 20px;
+  background-size: cover;
+  background-position: center;
+}
 
-.petCard p {
-    margin: 8px 0;
-    text-align: left; /* Left-aligned content */
-    color: #555;
+.petCard-header-content {
+  position: relative;
+  z-index: 2;
+  text-align: left; /* Explicit left alignment */
+  width: 100%; /* Ensures proper content width */
+}
+
+/* Text elements */
+.petCard-header h3,
+.petCard-header .nickname {
+  text-align: left; /* Force left alignment */
+  margin: 5px 0; /* Consistent spacing */
+}
+
+.petCard-header .countdown-badge {
+  text-align: right !important; /* Force right alignment */
+  margin: 5px 0; /* Consistent spacing */
 }
 
 /* =============
