@@ -1,375 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>PetStudio</title>
-	<meta name="description" content="Celebrate your pets' milestones and keep track of their birthdays with PetStudio">
-	<meta property="og:title" content="PetStudio - Pet Profile Manager">
-	<meta property="og:description" content="Create and share your pet's profile with milestones and birthday reminders">
-	<meta property="og:type" content="website">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetStudio</title>
+  <meta name="description" content="Celebrate your pets' milestones and keep track of their birthdays with PetStudio">
+  
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:title" content="PetStudio - Pet Profile Manager">
+  <meta property="og:description" content="Create and share your pet's profile with milestones and birthday reminders">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://your-petstudio-url.com">
+  <meta name="twitter:card" content="summary_large_image">
 
-<!-- Enhanced CSP for Self-Hosted Font Awesome -->
-<meta http-equiv="Content-Security-Policy" content="
-  default-src 'self';
-  script-src 'self' 'unsafe-inline' 'unsafe-eval'
-    https://www.gstatic.com
-    https://cdn.jsdelivr.net
-    https://cdnjs.cloudflare.com
-    https://apis.google.com
-    https://accounts.google.com
-    https://www.googleapis.com
-    https://unpkg.com;
-  style-src 'self' 'unsafe-inline'
-    https://fonts.googleapis.com
-    https://accounts.google.com;
-  style-src-elem 'self' 'unsafe-inline'
-    https://fonts.googleapis.com
-    https://accounts.google.com;
-  connect-src 'self'
-    https://www.googleapis.com
-    https://firestore.googleapis.com
-    https://*.googleapis.com
-    https://identitytoolkit.googleapis.com
-    https://accounts.google.com
-    https://api.cloudinary.com;
-  frame-src https://accounts.google.com;
-  font-src 'self' data: https://fonts.gstatic.com;
-  img-src 'self' blob: data: 
-    https://*.googleusercontent.com 
-    https://res.cloudinary.com;
-  object-src 'none';
-  base-uri 'self';
-  form-action 'self';
-  worker-src 'self';
-">
+  <!-- Enhanced CSP for Security -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval'
+      https://www.gstatic.com
+      https://cdn.jsdelivr.net
+      https://cdnjs.cloudflare.com
+      https://apis.google.com
+      https://accounts.google.com
+      https://www.googleapis.com
+      https://unpkg.com;
+    style-src 'self' 'unsafe-inline'
+      https://fonts.googleapis.com
+      https://accounts.google.com;
+    style-src-elem 'self' 'unsafe-inline'
+      https://fonts.googleapis.com
+      https://accounts.google.com;
+    connect-src 'self'
+      https://www.googleapis.com
+      https://firestore.googleapis.com
+      https://*.googleapis.com
+      https://identitytoolkit.googleapis.com
+      https://accounts.google.com
+      https://api.cloudinary.com;
+    frame-src https://accounts.google.com;
+    font-src 'self' data: https://fonts.gstatic.com;
+    img-src 'self' blob: data: 
+      https://*.googleusercontent.com 
+      https://res.cloudinary.com;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    worker-src 'self';
+  ">
 
-	<!-- Preload critical resources -->
-	<link rel="preconnect" href="https://accounts.google.com">
-	<link rel="preconnect" href="https://apis.google.com">
-	<link rel="preload" href="https://accounts.google.com/gsi/client" as="script">
+  <!-- Preload critical resources -->
+  <link rel="preconnect" href="https://accounts.google.com">
+  <link rel="preconnect" href="https://apis.google.com">
+  <link rel="preload" href="https://accounts.google.com/gsi/client" as="script">
 
-	<script>
-		window.handleScriptError = (error) => {
-			console.error('Script failed to load:', error);
-			document.getElementById('authContainer').innerHTML = `
-      <div class="error-message">
-        <h2>Application Error</h2>
-        <p>Failed to load required resources. Please refresh or try again later.</p>
-      </div>
-    `;
-		};
+  <!-- Local Resources -->
+  <link rel="icon" href="/PetStudio/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="/PetStudio/static/css/all.min.css">
+  <link rel="manifest" href="./manifest.json">
 
-	</script>
+  <style>
+    /* Auth-specific styles */
+    .auth-switch-btn {
+      background: none;
+      border: none;
+      color: #0066cc;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 10px 0;
+      font-size: 1rem;
+      margin-top: 15px;
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
 
-	<!-- Google Sign-In has been removed -->
-	<script src="https://accounts.google.com/gsi/client" async defer></script>
-	<script>
-		window.onload = function() {
-			google.accounts.id.initialize({
-				client_id: "480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com",
-				callback: handleCredentialResponse,
-			});
+    .auth-switch-btn:hover {
+      color: #004499;
+    }
 
-			google.accounts.id.renderButton(
-				document.getElementById("googleSignInButton"), // Make sure this exists in your HTML
-				{
-					theme: "filled_blue",
-					size: "large"
-				}
-			);
-		};
+    .button[disabled] {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
 
-		function handleCredentialResponse(response) {
-			console.log("Google ID Token", response.credential);
-			// You can pass this to Firebase auth if using signInWithCredential
-		}
+    .auth-message {
+      text-align: center;
+      margin: 15px 0;
+      color: #666;
+    }
 
-	</script>
-
-	<!-- Firebase Scripts -->
-	<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-
-	<script src="https://unpkg.com/cloudinary-core@2.11.4/cloudinary-core-shrinkwrap.min.js"></script>
-
-	<!-- html2canvas -->
-	<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha256-6H5VB5QyLldKH9oMFUmjxw2uWpPZETQXpCkBaDjquMs=" crossorigin="anonymous">
-	</script>
-
-	<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-	<!-- Add this in your <head> to use Font Awesome icons -->
-
-	<!-- Metadata -->
-	<meta property="og:url" content="https://your-petstudio-url.com">
-	<meta name="twitter:card" content="summary_large_image">
-
-	<!-- Local Resources -->
-	<link rel="icon" href="/PetStudio/favicon.ico" type="image/x-icon">
-	<link rel="stylesheet" href="./styles.css">
-	<!-- Self-hosted Font Awesome 7 -->
-        <link rel="stylesheet" href="/PetStudio/static/css/all.min.css">
-	<link rel="manifest" href="./manifest.json">
-	<style>
-		/* Additional auth-specific styles */
-		.auth-switch-btn {
-			background: none;
-			border: none;
-			color: #0066cc;
-			text-decoration: underline;
-			cursor: pointer;
-			padding: 10px 0;
-			font-size: 1rem;
-			margin-top: 15px;
-			display: block;
-			width: 100%;
-			text-align: center;
-		}
-
-		.auth-switch-btn:hover {
-			color: #004499;
-		}
-
-		.button[disabled] {
-			opacity: 0.7;
-			cursor: not-allowed;
-		}
-
-		.auth-message {
-			text-align: center;
-			margin: 15px 0;
-			color: #666;
-		}
-
-		.success-message {
-			color: #28a745;
-			text-align: center;
-			margin: 15px 0;
-		}
-
-	</style>
+    .success-message {
+      color: #28a745;
+      text-align: center;
+      margin: 15px 0;
+    }
+  </style>
 </head>
 
 <body>
-	<div id="processing-loader" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000;">
-		<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:white; text-align:center;">
-			<p>Loading your app...</p>
-			<div class="spinner"></div>
-		</div>
-	</div>
-	<!-- Auth Container -->
-	<div id="authContainer">
-		<div class="auth-header">
-			<h1>PetStudio</h1>
-			<h2>Create your pet gallery and more!</h2>
-		</div>
-		<div id="googleSignInWrapper">
-			<div id="googleSignInBtn"></div>
-			<p class="auth-message">Sign in with your Google account to continue</p>
-		</div>
-		<div id="fullPageBanner" class="banner banner-wrapper">
-			<img src="./banner/image.png" alt="Banner Image" class="banner-image">
-			<div class="quote">“Track your pet’s journey every step of the way.”</div>
-		</div>
-	</div>
-
-	<!-- Dashboard -->
-	<div id="dashboard" class="hidden">
-		<h1>Welcome to your pet's dashboard</h1>
-		<button id="addPetProfileBtn" class="button">Add Pet Profile</button>
-
-		<div id="petList" class="pet-list hidden"></div>
-		<button id="logoutBtn" class="button">Logout</button>
-
-
-		<div id="profileSection" class="hidden">
-			<h2>Create a Pet Profile</h2>
-			<form id="profileForm" autocomplete="on">
-
-				<label for="petName">Pet Name:</label>
-				<input type="text" id="petName" name="petName" required>
-
-				<!-- 🔥 Add Nickname Field HERE -->
-				<label for="petNicknames">Nicknames (Optional):</label>
-				<input type="text" id="petNicknames" name="petNicknames" placeholder="e.g., 'Fluffy', 'Sir Barksalot'">
-
-				<label for="petGallery">Upload Photos:</label>
-				<input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
-
-			        <!-- Pet Tags Section -->
-				<!-- Pet Tags Section with Icons -->
-<div class="pet-tags-container">
-  <label>Tags:</label>
-  <div class="pet-tags-options">
-    <label class="tag-option">
-      <input type="checkbox" name="petTags" value="Adventure" hidden>
-      <span class="tag">
-        <i class="fas fa-hiking"></i> Adventure
-      </span>
-    </label>
-    <label class="tag-option">
-      <input type="checkbox" name="petTags" value="Cuddly" hidden>
-      <span class="tag">
-        <i class="fas fa-heart"></i> Cuddly
-      </span>
-    </label>
-    <label class="tag-option">
-      <input type="checkbox" name="petTags" value="Playful" hidden>
-      <span class="tag">
-        <i class="fas fa-table-tennis"></i> Playful
-      </span>
-    </label>
-    <label class="tag-option">
-      <input type="checkbox" name="petTags" value="Foodie" hidden>
-      <span class="tag">
-        <i class="fas fa-utensils"></i> Foodie
-      </span>
-    </label>
-    <label class="tag-option">
-      <input type="checkbox" name="petTags" value="Athletic" hidden>
-      <span class="tag">
-        <i class="fas fa-running"></i> Athletic
-      </span>
-    </label>
-  </div>
-  <small>Click to select multiple tags</small>
-</div>
-
-
-				<label for="petBreed">Breed:</label>
-				<input type="text" id="petBreed" name="petBreed" required>
-
-				<label for="petDob">Date of Birth:</label>
-				<input type="date" id="petDob" name="petDob" required>
-
-
-				<label for="petBirthday">Birthday Reminder:</label>
-				<input type="date" id="petBirthday" name="petBirthday">
-
-				<!-- Emergency Contact Section -->
-				<div class="emergency-contact-section">
-					<h3>Emergency Contact</h3>
-
-					<label for="emergencyName">Full Name:</label>
-					<input type="text" id="emergencyName" name="emergencyName">
-
-					<label for="emergencyPhone">Contact Number:</label>
-					<input type="tel" id="emergencyPhone" name="emergencyPhone">
-
-					<label for="emergencyRelationship">Relationship to Pet:</label>
-					<input type="text" id="emergencyRelationship" name="emergencyRelationship">
-
-					<label for="microchipNumber">Microchip Number:</label>
-					<input type="text" id="microchipNumber" name="microchipNumber">
-				</div>
-
-				
-				<label for="moodHistoryInput">Mood at Creation:</label>
-				<select id="moodHistoryInput" name="moodHistoryInput">
-					<option value="">Select Mood</option>
-					<option value="happy">😊 Happy</option>
-					<option value="depressed">😔 Depressed</option>
-					<option value="sad">😞 Sad</option>
-					<option value="angry">😠 Angry</option>
-					<option value="sick">🤒 Sick</option>
-				</select>
-
-				<label for="petNotes">Notes & Memories:</label>
-				<textarea id="petNotes" name="petNotes" rows="3" placeholder="Gift ideas, funny habits, favorite toys..."></textarea>
-
-				<div class="birthday-reminder-section">
-  <label for="petBirthday">Birthday Reminder:</label>
-  <input 
-    type="date" 
-    id="petBirthday" 
-    name="birthdayReminder" 
-    onchange="toggleCelebrateButton(this)"
-  >
-</div>
-
-
-<div class="theme-selection">
-  <h4>Card Theme</h4>
-  <div class="theme-options">
-    <label class="theme-option">
-      <input type="radio" name="theme" value="balloons" checked onchange="previewTheme(this.value)">
-      <div class="theme-preview balloons-mini">
-      <span class="theme-icon">🎈</span>
-      </div>
-      <span>Balloons</span>
-    </label>
-
-    <label class="theme-option">
-      <input type="radio" name="theme" value="paws" onchange="previewTheme(this.value)">
-      <div class="theme-preview paws-mini">
-      <span class="theme-icon">🐾</span>
-      </div>
-      <span>Paw Prints</span>
-    </label>
-
-    <label class="theme-option">
-      <input type="radio" name="theme" value="minimal" onchange="previewTheme(this.value)">
-      <div class="theme-preview minimal-mini">
-	<span class="theme-icon">M</span>
-	</div>
-      <span>Minimal</span>
-    </label>
-
-    <label class="theme-option">
-      <input type="radio" name="theme" value="party" onchange="previewTheme(this.value)">
-      <div class="theme-preview party-mini">
-     <span class="theme-icon">🎊</span>
+  <!-- Processing Loader -->
+  <div id="processing-loader" class="fullscreen-loader">
+    <div class="loader-content">
+      <p>Loading your app...</p>
+      <div class="spinner"></div>
     </div>
-      <span>Party</span>
-    </label>
-
-    <label class="theme-option">
-      <input type="radio" name="theme" value="elegant" onchange="previewTheme(this.value)">
-      <div class="theme-preview elegant-mini">
-      <span class="theme-icon">E</span>
-     </div>
-      <span>Elegant</span>
-    </label>
   </div>
-</div>
 
-				<div id="collage-modal" class="modal hidden">
-					<div class="modal-content">
-						<h3>Create Collage</h3>
-						<div class="image-grid" id="collage-image-grid"></div>
-						<div class="layout-options">
-							<button data-layout="2x2">2×2</button>
-							<button data-layout="3x3">3×3</button>
-							<button data-layout="1x3">1×3</button>
-						</div>
-					</div>
-				</div>
+  <!-- Auth Container -->
+  <div id="authContainer">
+    <div class="auth-header">
+      <h1>PetStudio</h1>
+      <h2>Create your pet gallery and more!</h2>
+    </div>
+    
+    <div id="googleSignInWrapper">
+      <div id="googleSignInBtn"></div>
+      <p class="auth-message">Sign in with your Google account to continue</p>
+    </div>
+    
+    <div id="fullPageBanner" class="banner banner-wrapper">
+      <img src="./banner/image.png" alt="Banner Image" class="banner-image">
+      <div class="quote">"Track your pet's journey every step of the way."</div>
+    </div>
+  </div>
 
-				<button type="submit" class="button">Save Profile</button>
-			</form>
-		</div>
-	</div>
-	<!-- QR Modal -->
-	<div id="qr-modal">
-		<div class="printable-area">
-			<div id="qrcode-container"></div>
-			<div id="qr-controls" style="margin-top:20px;">
-				<button class="qr-print" data-action="print">Print</button>
-				<button class="qr-download" data-action="download">Download</button>
-				<button class="qr-share" data-action="share" style="background:#9b59b6; color:white;">Share</button>
-				<button class="qr-close" data-action="close" style="background:#e74c3c; color:white;">Close</button>
-			</div>
-			<p id="qr-status" style="font-size:12px; color:#666; margin-top:10px;"></p>
-		</div>
-	</div>
+  <!-- Dashboard -->
+  <div id="dashboard" class="hidden">
+    <header class="dashboard-header">
+      <h1>Welcome to your pet's dashboard</h1>
+      <button id="addPetProfileBtn" class="button">Add Pet Profile</button>
+    </header>
 
-	<footer>
-		<p>&copy; 2025 PetStudio. All rights reserved.</p>
-	</footer>
+    <div id="petList" class="pet-list hidden"></div>
+    <button id="logoutBtn" class="button">Logout</button>
 
-	<!-- Scripts (Optimized Order) -->
-	<script src="./js/auth.js" defer></script>
-	<script src="./js/utils.js" defer></script>
-	<script src="./js/dashboard.js" defer></script>
+    <!-- Profile Section -->
+    <div id="profileSection" class="hidden">
+      <h2>Create a Pet Profile</h2>
+      <form id="profileForm" autocomplete="on">
+        <!-- Basic Info Section -->
+        <fieldset class="form-section">
+          <legend>Basic Information</legend>
+          
+          <div class="form-group">
+            <label for="petName">Pet Name:</label>
+            <input type="text" id="petName" name="petName" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="petNicknames">Nicknames (Optional):</label>
+            <input type="text" id="petNicknames" name="petNicknames" placeholder="e.g., 'Fluffy', 'Sir Barksalot'">
+          </div>
+          
+          <div class="form-group">
+            <label for="petBreed">Breed:</label>
+            <input type="text" id="petBreed" name="petBreed" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="petDob">Date of Birth:</label>
+            <input type="date" id="petDob" name="petDob" required>
+          </div>
+	  <div class="form-group">
+            <label for="upcomingBirthday">Upcoming Birthday:</label>
+            <input type="date" id="upcomingBirthday" name="upcomingBirthday" required>
+	   </div>
+        </fieldset>
+
+        <!-- Gallery Section -->
+        <fieldset class="form-section">
+          <legend>Photos</legend>
+          <div class="form-group">
+            <label for="petGallery">Upload Photos:</label>
+            <input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
+          </div>
+        </fieldset>
+
+        <!-- Tags Section -->
+        <fieldset class="form-section">
+          <legend>Personality Tags</legend>
+          <div class="pet-tags-container">
+            <div class="pet-tags-options">
+              <label class="tag-option">
+                <input type="checkbox" name="petTags" value="Adventure" hidden>
+                <span class="tag"><i class="fas fa-hiking"></i> Adventure</span>
+              </label>
+              <label class="tag-option">
+                <input type="checkbox" name="petTags" value="Cuddly" hidden>
+                <span class="tag"><i class="fas fa-heart"></i> Cuddly</span>
+              </label>
+              <label class="tag-option">
+                <input type="checkbox" name="petTags" value="Playful" hidden>
+                <span class="tag"><i class="fas fa-table-tennis"></i> Playful</span>
+              </label>
+              <label class="tag-option">
+                <input type="checkbox" name="petTags" value="Foodie" hidden>
+                <span class="tag"><i class="fas fa-utensils"></i> Foodie</span>
+              </label>
+              <label class="tag-option">
+                <input type="checkbox" name="petTags" value="Athletic" hidden>
+                <span class="tag"><i class="fas fa-running"></i> Athletic</span>
+              </label>
+            </div>
+            <small>Click to select multiple tags</small>
+          </div>
+        </fieldset>
+
+        <!-- Emergency Contact Section -->
+        <fieldset class="form-section">
+          <legend>Emergency Information</legend>
+          <div class="form-group">
+            <label for="emergencyName">Full Name:</label>
+            <input type="text" id="emergencyName" name="emergencyName">
+          </div>
+          
+          <div class="form-group">
+            <label for="emergencyPhone">Contact Number:</label>
+            <input type="tel" id="emergencyPhone" name="emergencyPhone">
+          </div>
+          
+          <div class="form-group">
+            <label for="emergencyRelationship">Relationship to Pet:</label>
+            <input type="text" id="emergencyRelationship" name="emergencyRelationship">
+          </div>
+          
+          <div class="form-group">
+            <label for="microchipNumber">Microchip Number:</label>
+            <input type="text" id="microchipNumber" name="microchipNumber">
+          </div>
+        </fieldset>
+
+        <!-- Mood and Notes -->
+        <fieldset class="form-section">
+          <legend>Mood & Memories</legend>
+          <div class="form-group">
+            <label for="moodHistoryInput">Mood at Creation:</label>
+            <select id="moodHistoryInput" name="moodHistoryInput">
+              <option value="">Select Mood</option>
+              <option value="happy">😊 Happy</option>
+              <option value="depressed">😔 Depressed</option>
+              <option value="sad">😞 Sad</option>
+              <option value="angry">😠 Angry</option>
+              <option value="sick">🤒 Sick</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="petNotes">Notes & Memories:</label>
+            <textarea id="petNotes" name="petNotes" rows="3" placeholder="Gift ideas, funny habits, favorite toys..."></textarea>
+          </div>
+        </fieldset>
+
+        <!-- Birthday Reminder -->
+        <fieldset class="form-section">
+          <legend>Birthday Settings</legend>
+          <div class="form-group">
+            <label for="petBirthday">Birthday Reminder:</label>
+            <input type="date" id="petBirthday" name="birthdayReminder" onchange="toggleCelebrateButton(this)">
+          </div>
+        </fieldset>
+
+        <!-- Theme Selection -->
+        <fieldset class="form-section">
+          <legend>Card Theme</legend>
+          <div class="theme-options">
+            <label class="theme-option">
+              <input type="radio" name="theme" value="balloons" checked onchange="previewTheme(this.value)">
+              <div class="theme-preview balloons-mini"><span class="theme-icon">🎈</span></div>
+              <span>Balloons</span>
+            </label>
+
+            <label class="theme-option">
+              <input type="radio" name="theme" value="paws" onchange="previewTheme(this.value)">
+              <div class="theme-preview paws-mini"><span class="theme-icon">🐾</span></div>
+              <span>Paw Prints</span>
+            </label>
+
+            <label class="theme-option">
+              <input type="radio" name="theme" value="minimal" onchange="previewTheme(this.value)">
+              <div class="theme-preview minimal-mini"><span class="theme-icon">M</span></div>
+              <span>Minimal</span>
+            </label>
+
+            <label class="theme-option">
+              <input type="radio" name="theme" value="party" onchange="previewTheme(this.value)">
+              <div class="theme-preview party-mini"><span class="theme-icon">🎊</span></div>
+              <span>Party</span>
+            </label>
+
+            <label class="theme-option">
+              <input type="radio" name="theme" value="elegant" onchange="previewTheme(this.value)">
+              <div class="theme-preview elegant-mini"><span class="theme-icon">E</span></div>
+              <span>Elegant</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="button">Save Profile</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- QR Modal -->
+  <div id="qr-modal" class="modal">
+    <div class="printable-area">
+      <div id="qrcode-container"></div>
+      <div id="qr-controls">
+        <button class="qr-print" data-action="print">Print</button>
+        <button class="qr-download" data-action="download">Download</button>
+        <button class="qr-share" data-action="share">Share</button>
+        <button class="qr-close" data-action="close">Close</button>
+      </div>
+      <p id="qr-status">QR code generated successfully</p>
+    </div>
+  </div>
+
+  <!-- Collage Modal -->
+  <div id="collage-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Create Collage</h3>
+      <div class="image-grid" id="collage-image-grid"></div>
+      <div class="layout-options">
+        <button data-layout="2x2">2×2</button>
+        <button data-layout="3x3">3×3</button>
+        <button data-layout="1x3">1×3</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 PetStudio. All rights reserved.</p>
+  </footer>
+
+  <!-- External Scripts -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+  <script src="https://unpkg.com/cloudinary-core@2.11.4/cloudinary-core-shrinkwrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha256-6H5VB5QyLldKH9oMFUmjxw2uWpPZETQXpCkBaDjquMs=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+  <!-- Local Scripts -->
+  <script src="./js/auth.js" defer></script>
+  <script src="./js/utils.js" defer></script>
+  <script src="./js/dashboard.js" defer></script>
+
+  <script>
+    // Google Sign-In Initialization
+    window.handleScriptError = (error) => {
+      console.error('Script failed to load:', error);
+      document.getElementById('authContainer').innerHTML = `
+        <div class="error-message">
+          <h2>Application Error</h2>
+          <p>Failed to load required resources. Please refresh or try again later.</p>
+        </div>
+      `;
+    };
+
+    window.onload = function() {
+      google.accounts.id.initialize({
+        client_id: "480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+      });
+
+      google.accounts.id.renderButton(
+        document.getElementById("googleSignInButton"), {
+          theme: "filled_blue",
+          size: "large"
+        }
+      );
+    };
+
+    function handleCredentialResponse(response) {
+      console.log("Google ID Token", response.credential");
+      // You can pass this to Firebase auth if using signInWithCredential
+    }
+  </script>
 </body>
-
 </html>
