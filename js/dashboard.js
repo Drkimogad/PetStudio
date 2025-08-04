@@ -1223,6 +1223,8 @@ function attachFormListenerWhenReady() {
     '<i class="fas fa-save"></i> Updating profile...' : 
     '<i class="fas fa-paw"></i> Creating pet profile...';
      loader.style.display = 'block';
+     document.body.style.pointerEvents = 'none';
+
 
       // ✅ UI State Management
       const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -1389,6 +1391,7 @@ loaderText.innerHTML = isEditing ?
 setTimeout(() => {
   showDashboard();
   loader.style.display = 'none';
+  document.body.style.pointerEvents = 'auto';
   window.scrollTo(0, 0); // Ensures consistent scrolling
 }, 1500);
 
