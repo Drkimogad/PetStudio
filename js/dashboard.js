@@ -94,16 +94,16 @@ function loadSavedProfiles() {
       typeof coverImageObj === "string" ? coverImageObj : coverImageObj?.url
       );
   // using coverphoto as a header background
-      const profileHeaderStyle = coverPhotoUrl ?
-        `style="background-image: url('${coverPhotoUrl}');"` :
-        '';
+      const profileHeaderStyle = coverPhotoUrl
+        ? `background-image: url('${coverPhotoUrl}');`
+        : '';
+
 
 petCard.innerHTML = `
   <!-- ==================== -->
   <!-- PROFILE HEADER SECTION -->
   <!-- ==================== -->
-<div class="profile-header" style="position: relative; ${profileHeaderStyle}">
-  <div style="position: relative; z-index: 2;">
+<div class="profile-header" style="position: relative; z-index: 2; background-image: url(...);">
   <h3>${profile.name}</h3>
     ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
     
