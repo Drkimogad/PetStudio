@@ -425,20 +425,17 @@ function openEditForm(index) {
   }
 } // ←✅ End of openEditForm
 
-//===========================
 // OPENCREATEFORM()
 //==========================
 function openCreateForm() {
   console.log("➕ Opening form to create new pet profile");
   
-  // ======================
   // 1. RESET STATE & FLAGS
   // ======================
   isEditing = false;
   currentEditIndex = null;
   uploadedImageUrls = [];
 
-  // ======================
   // 2. CLEAR FORM FIELDS
   // ======================
   DOM.profileForm.reset(); // clears all standard inputs
@@ -466,7 +463,6 @@ function openCreateForm() {
     moodInput.placeholder = "Add new mood...";
   }
 
-  // ======================
   // 3. CANCEL BUTTON SETUP
   // ======================
   if (!document.getElementById("cancelEditBtn")) {
@@ -486,7 +482,6 @@ function openCreateForm() {
     if (submitBtn) submitBtn.after(cancelBtn);
   }
 
-  // ======================
   // 4. SHOW FORM / HIDE DASHBOARD
   // ======================
   DOM.profileSection.classList.remove("hidden");
@@ -496,9 +491,7 @@ function openCreateForm() {
   console.log("✅ Create form ready for new profile");
 }
 
-
-
-// function cancel edit recently added
+//==function cancel edit recently added=============
 function cancelEdit() {
   // 1. Show loader immediately
   const loader = document.getElementById('processing-loader');
