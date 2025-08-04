@@ -407,7 +407,9 @@ function openEditForm(index) {
       // Hide loader when done
       loader.style.display = 'none';
     
-    }, 100); // Minimal delay for loader visibility
+    setTimeout(() => {
+      // Your existing form population code here
+    }, 100);
   } catch (error) {
     console.error("Edit form error:", error);
     loader.querySelector('p').textContent = 'Failed to load profile';
