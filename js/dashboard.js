@@ -409,14 +409,15 @@ function openEditForm(index) {
     
     }, 100); // Minimal delay for loader visibility
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Edit form error:", error);
     loader.querySelector('p').textContent = 'Failed to load profile';
+    Utils.showErrorToUser("Failed to load profile");
     setTimeout(() => {
       loader.style.display = 'none';
       cancelEdit();
     }, 1500);
   }
-}
+} // <-- Maintained closing brace for the function
 
 // function cancel edit recently added
 function cancelEdit() {
