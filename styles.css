@@ -32,13 +32,13 @@ h1, h2, h3, p {
 }
 
 .auth-header h1 {
-  font-size: 2.5rem;     /* Main title size */
+  font-size: 5rem;     /* Main title size */
   color: #808080;       /* Your deep purple #6a1b9a */
   margin-top: 1rem;
 }
 
 .auth-header h2 {
-  font-size: 1.2rem;    /* Subtitle size */
+  font-size: 2rem;    /* Subtitle size */
   color: #d4a017;       /* Mustard accent */
   margin-bottom: 1rem;
 }
