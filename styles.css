@@ -191,6 +191,7 @@ h1, h2, h3, p {
     background-color: #ffffff;
     width: 80%; /* Occupies 80% of page width */
     position: relative;
+    text-align: left; /* Force left alignment */
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -225,6 +226,8 @@ h1, h2, h3, p {
 .petCard-header h3 {
   margin: 0 0 10px 0;
   color: #2c2730;
+  text-align: left; /* Force left alignment */
+  margin: 5px 0; /* Consistent spacing */
   font-size: 1.5rem;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 }
@@ -234,6 +237,7 @@ h1, h2, h3, p {
   margin: 0 0 8px 0;
   font-style: italic;
   color: #4a4a4a;
+   text-align: left; /* Force left alignment */
 }
 
 /* Countdown Badge */
@@ -306,20 +310,16 @@ Action buttons container======== */
 
 /* STANDALONE button*/
 .cancel-edit-btn {
-  background-color: #e60707 !important;
-  color: white !important;
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  border: 1px solid #000000 !important; /* Only needed for border */
+  background-color: #dc2626;
+  color: #fff;
+  padding: 0.5rem 1rem;      
+  top: 10px;
+  border-radius: 8px;
+  border: none;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-  margin-top: 50px;
 }
-
 .cancel-edit-btn:hover {
-  background-color: #e60707 !important;
-  border: 1px solid #000000 !important;
+  background-color: #b91c1c;
 }
 
 /* Cover image button */
