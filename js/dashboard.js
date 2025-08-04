@@ -95,18 +95,18 @@ function loadSavedProfiles() {
       );
   // using coverphoto as a header background
       const profileHeaderStyle = coverPhotoUrl
-        ? `background-image: url('${coverPhotoUrl}');`
-        : '';
+  ? `background-image: url('${coverPhotoUrl}'); background-size: cover; background-position: center;` 
+  : '';
 
 
 petCard.innerHTML = `
   <!-- ==================== -->
   <!-- PROFILE HEADER SECTION -->
   <!-- ==================== -->
-<div class="profile-header" style="position: relative; z-index: 2; background-image: url(...);">
-  <h3>${profile.name}</h3>
+<div class="profile-header" style="${profileHeaderStyle}">
+  <div class="header-content" style="position: relative; z-index: 2;">
+    <h3>${profile.name}</h3>
     ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
-    
     ${profile.birthday ? `
       <div class="countdown-badge">
         🎂${getCountdown(profile.birthday)}
