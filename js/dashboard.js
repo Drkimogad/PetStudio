@@ -1392,7 +1392,7 @@ function attachFormListenerWhenReady() {
           if (galleryPreview && newProfile.gallery?.length) {
             galleryPreview.innerHTML = newProfile.gallery.map(img => {
              `<img src="${typeof img === 'string' ? img : img.url}" class="preview-thumb">`
-            ).join('');
+           }).join('');
           }
         } // closes if 
       } // ✅ closes finally
