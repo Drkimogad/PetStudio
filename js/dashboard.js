@@ -405,10 +405,7 @@ function openEditForm(index) {
     window.scrollTo(0, 0);
     console.log("✅ Edit form ready for:", profile.name); // Debug
       // Hide loader when done
-      loader.style.display = 'none';
-    
-    setTimeout(() => {
-      // Your existing form population code here
+      loader.style.display = 'none'; 
     }, 100);
   } catch (error) {
     console.error("Edit form error:", error);
