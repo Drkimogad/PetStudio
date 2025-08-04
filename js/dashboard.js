@@ -1242,11 +1242,12 @@ function initializeDashboard() {
   const addBtn = document.getElementById('addPetProfileBtn');
   if (addBtn) {
     addBtn.addEventListener('click', () => {
-      isEditing = false;
-      currentEditIndex = -1;
-      DOM.profileSection.classList.remove('hidden');
-      DOM.petList.classList.add('hidden');
-      attachFormListenerWhenReady();
+      //isEditing = false;
+     // currentEditIndex = -1;
+     // DOM.profileSection.classList.remove('hidden');
+     // DOM.petList.classList.add('hidden');
+     // attachFormListenerWhenReady();
+      openCreateForm();
     });
   }
 }
