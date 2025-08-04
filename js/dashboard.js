@@ -1214,10 +1214,16 @@ function attachFormListenerWhenReady() {
       console.log("📨 Form submit triggered"); // DEBUG LINE KEPT
       e.preventDefault();
 
+          // 🟢 1. NEW PROFILE CREATION LOADER MESSAGE
+     loaderText.innerHTML = isEditing ? 
+    '<i class="fas fa-save"></i> Updating profile...' : 
+    '<i class="fas fa-paw"></i> Creating pet profile...';
+     loader.style.display = 'block';
+
       // ✅ UI State Management
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const originalBtnText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '⏳ Saving...';
+     // submitBtn.innerHTML = '⏳ Saving...';
       submitBtn.disabled = true;
 
       try {
@@ -1367,20 +1373,35 @@ function attachFormListenerWhenReady() {
 
         localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
-        // ========================
-        // SECTION 8: UI UPDATE
-        // ======================== 
-        console.log("🖥️ Updating UI..."); // DEBUG LINE KEPT
-        showDashboard();
-        window.scrollTo(0, 0);
+       // ========================
+// SECTION 8: UI UPDATE
+// ======================== 
+console.log("🖥️ Updating UI..."); // DEBUG LINE KEPT
 
-      } catch (err) {
-        console.error("Profile save failed:", err);
-        Utils.showErrorToUser("❌ Failed to save profile.");
-      } finally {
-        submitBtn.innerHTML = originalBtnText;
-        submitBtn.disabled = false;
-        showLoading(false);
+// 🟢 SUCCESS MESSAGE
+loaderText.innerHTML = isEditing ? 
+  '<i class="fas fa-check-circle"></i> Profile updated!' : 
+  '<i class="fas fa-check-circle"></i> Pet profile created!';
+
+setTimeout(() => {
+  showDashboard();
+  loader.style.display = 'none';
+  window.scrollTo(0, 0); // Ensures consistent scrolling
+}, 1500);
+
+} catch (err) {
+  console.error("Profile save failed:", err);
+  // 🟢 ERROR MESSAGE
+  loaderText.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Failed to save';
+  setTimeout(() => {
+    loader.style.display = 'none';
+    window.scrollTo(0, 0);
+  }, 3000);
+  Utils.showErrorToUser("❌ Failed to save profile.");
+
+} finally {
+  submitBtn.innerHTML = originalBtnText;
+  submitBtn.disabled = false;
 
         // ✅ Safely clear petGallery input
         const galleryInput = document.getElementById("petGallery");
