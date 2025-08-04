@@ -344,11 +344,8 @@ function openEditForm(index) {
       Array.from(tagSelect.options).forEach(option => {
         option.selected = profile.tags?.includes(option.value);
       });
-    }
-    
-    Object.entries(fields).forEach(([id, value]) => {
-        document.getElementById(id).value = value;
-      });
+    }   
+  });
     
     // ======================
     // 3. GALLERY SETUP
