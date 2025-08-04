@@ -33,7 +33,7 @@ h1, h2, h3, p {
 
 .auth-header h1 {
   font-size: 2.5rem;     /* Main title size */
-  color: #6a1b9a;       /* Your deep purple */
+  color: #808080;       /* Your deep purple #6a1b9a */
   margin-top: 1rem;
 }
 
@@ -109,7 +109,7 @@ h1, h2, h3, p {
 #dashboard {
   display: none;
   padding: 20px;
-  background-color: #ffffff;
+  background-color: #ffffff; /* white background*/
 }
 
 #dashboard {
@@ -132,11 +132,11 @@ h1, h2, h3, p {
 ==================== */
 .button {
   display: inline-block;
-  background-color: #6a1b9a; /* deep purple */
+  background-color: #808080; /* it was deep purple #6a1b9a, charcoal grey now  */
   color: white;
   padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
+  border: #c9ba2c; /* it was none now mustard colour*/
+  border-radius: 10px;
   font-size: 1rem;
   cursor: pointer;
   text-align: center;
@@ -148,7 +148,7 @@ h1, h2, h3, p {
 }
 
 #addPetProfileBtn {
-  background-color: #6a1b9a;
+  background-color: #808080; /*was deep purple #6a1b9a now charcoal grey*/
   color: white;
   font-size: 1.1rem;
   padding: 10px 20px;
@@ -158,59 +158,6 @@ h1, h2, h3, p {
 #addPetProfileBtn::before {
   content: '➕ ';
 }
-
-.delete-profile {
-    background-color: #ff0000;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.delete-profile:hover {
-    background-color: #cc0000;
-}
-
-.print-profile {
-    background-color: #800080;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.print-profile:hover {
-    background-color: #0056b3;
-}
-
-.share-profile {
-    background-color: #FFA500;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.share-profile:hover {
-    background-color: #FFA500;
-}
-
-.generate-qr {
-    background-color: #808080;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.generate-qr:hover {
-    background-color: #808080;
-}
-
 #logoutBtn {
   background-color: #e74c3c;
   color: white;
@@ -234,9 +181,10 @@ h1, h2, h3, p {
 .petCard img[src=""] {
   visibility: hidden;
 }
+
 /* old section */
 .petCard {
-    border: 10px solid #800080;
+    border: 2px solid ##808080;
     border-radius: 10px;
     padding: 30px;
     margin: 20px auto; /* Centered with automatic margins */
@@ -256,7 +204,7 @@ h1, h2, h3, p {
 
 .petCard h3 {
     margin: 0 0 10px 0;
-    color: #6a0dad;
+    color: #2c2730; /* it was dark purple*/
     text-align: left; /* Left-aligned title */
     font-size: 1.5rem;
 }
@@ -266,6 +214,7 @@ h1, h2, h3, p {
     text-align: left; /* Left-aligned content */
     color: #555;
 }
+
 /* Action buttons container */
 .petCard .actions {
     display: flex;
@@ -279,44 +228,69 @@ h1, h2, h3, p {
     flex: 0 1 auto; /* Don't force equal width */
     padding: 8px 16px;
     font-size: 0.9rem;
-    border-radius: 6px;
+    border-radius: 10px;
     min-width: 120px;
 }
-/* Pet info section - left aligned */
-.pet-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-}
-/* Countdown days indicator
-styled to show in petcard header plus nickname */
-.countdown-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background-color: #6a0dad;
-    color: white;
+
+.delete-profile {
+    background-color: #ffffff; /*white now*/
+    color: red;
     padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: bold;
+    border: #e74c3c;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
-/* Image container with cover button */
-.image-container {
-    position: relative;
-    margin: 15px 0;
-    width: 100%;
+.delete-profile:hover {
+    background-color: #ffffff;
+}
+
+.print-profile {
+    background-color: #ffffff;
+    color: black;
+    padding: 5px 10px;
+    border: #808080;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.print-profile:hover {
+    background-color: #ffffff;
+}
+
+.share-profile {
+    background-color: #ffffff;
+    color: black;
+    padding: 5px 10px;
+    border: #808080;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.share-profile:hover {
+    background-color: #ffffff;
+}
+
+.generate-qr {
+    background-color: #ffffff;
+    color: black;
+    padding: 5px 10px;
+    border: #808080;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.generate-qr:hover {
+    background-color: #ffffff;
 }
 /* Cover image button */
 .cover-btn {
     position: absolute;
     top: 10px;
     left: 10px;
-    background-color: rgba(106, 27, 154, 0.8);
+    background-color: #808080; /*rgba(106, 27, 154, 0.8);*/
     color: white;
-    border: none;
+    border: #c9ba2c;   /* was none*/
     padding: 5px 10px;
     border-radius: 4px;
     font-size: 0.8rem;
@@ -329,11 +303,11 @@ styled to show in petcard header plus nickname */
     background-color: rgba(106, 27, 154, 1);
     transform: scale(1.05);
 }
+
 .editBtn {
-  background-color: #9b59b6;
+  background-color: #808080;
   color: white;
 }
-/* added recently */
 .cancel-edit-btn {
   background-color: #dc2626;
   color: #fff;
@@ -345,6 +319,36 @@ styled to show in petcard header plus nickname */
 .cancel-edit-btn:hover {
   background-color: #b91c1c;
 }
+
+/* Pet info section - left aligned */
+.pet-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+/* Countdown days indicator
+styled to show in petcard header plus nickname */
+.countdown-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #c9ba2c;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+/* Image container with cover button */
+.image-container {
+    position: relative;
+    margin: 15px 0;
+    width: 100%;
+}
+
 
 /* added recently */
 .gallery-grid {
