@@ -218,7 +218,10 @@ h1, h2, h3, p {
 /* ==ONCE ADD PROFILE BUTTON CLICKED AND
        PETLIST OPENED===== */
 #profileSection {
-  max-width: 800px;
+  width: 100%
+  max-width: 700px;
+  padding: 20px;
+   
   margin: 0 auto;
   padding: 20px;
 }
