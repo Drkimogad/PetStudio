@@ -37,6 +37,25 @@ function initDashboardDOM() {
   if (!DOM.profileSection) console.error("profileSection element missing");
 }
 
+// ==============================
+// 🎨 previewTheme() - Live Theme Preview
+// ==============================
+function previewTheme(selectedTheme) {
+  const themeOptions = document.querySelectorAll('.theme-preview');
+
+  themeOptions.forEach(preview => {
+    preview.classList.remove('selected-theme');
+  });
+
+  const selected = document.querySelector(`.theme-preview.${selectedTheme}-mini`);
+  if (selected) {
+    selected.classList.add('selected-theme');
+  }
+
+  // Optional: Save for use in generateBirthdayCard()
+  localStorage.setItem('birthdayTheme', selectedTheme);
+}
+
 // ======================
 // URL VALIDATION UTILITY
 // ======================
