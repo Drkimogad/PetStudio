@@ -218,17 +218,36 @@ h1, h2, h3, p {
 /* ==ONCE ADD PROFILE BUTTON CLICKED AND
        PETLIST OPENED===== */
 #profileSection {
-  width: 100%
+  background: #fff8e1;
+  border: 1px solid #e0c471;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 30px;
+  width: 100%;
   max-width: 700px;
-  padding: 20px;
-   
-  margin: 0 auto;
-  padding: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
 }
 
-#profileForm {
-  display: grid;
-  gap: 1.5rem;
+#profileSection h2 {
+  text-align: center;
+  color: #6a1b9a;
+}
+
+#profileForm label {
+  display: block;
+  margin-top: 12px;
+  font-weight: bold;
+  color: #444;
+}
+
+#profileForm input,
+#profileForm textarea {
+  width: 80%;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
 /* ===== BASIC INFO SECTION ===== */
@@ -425,7 +444,7 @@ h1, h2, h3, p {
   font-size: 0.9rem;
 }
 /* Optional: Add hover effect */
-.countdown-badge:hover {
+.petCard .countdown-badge:hover {
     transform: scale(1.05);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
