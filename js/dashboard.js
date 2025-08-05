@@ -107,9 +107,9 @@ petCard.innerHTML = `
     <div class="petCard-header-content">
       <h3>${profile.name}</h3>
       ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
-      ${profile.upcomingbirthday ? `
+      ${profile.petUpcomingBirthday ? `
         <div class="countdown-badge">
-          🎂${getCountdown(profile.upcomingbirthday)}
+          🎂${getCountdown(profile.petUpcomingBirthday)}
       </div>
     ` : ''}
   </div>
@@ -158,17 +158,17 @@ petCard.innerHTML = `
   <div class="profile-details">
     <p><strong>Breed:</strong> ${profile.breed || 'Not specified'}</p>
     <p><strong>DOB:</strong> ${profile.dob || 'Unknown'}</p>
-    ${profile.upcomingbirthday ? `
-      <p><strong>Upcoming Birthday:</strong> ${profile.upcomingbirthday}</p>
+    ${profile.petUpcomingBirthday ? `
+      <p><strong>Upcoming Birthday:</strong> ${profile.petUpcomingBirthday}</p>
     ` : ''}
   </div>
 
   <!-- ==================== -->
   <!-- BIRTHDAY REMINDER (CONDITIONAL) -->
   <!-- ==================== -->
-  ${profile.upcomingbirthday ? `
+  ${profile.petUpcomingBirthday ? `
     <div class="profile-reminder">
-      <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.upcomingbirthday).toLocaleDateString()} 🎉</p>
+      <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.petUpcomingBirthday).toLocaleDateString()} 🎉</p>
     </div>
   ` : ''}
 
@@ -204,7 +204,7 @@ petCard.innerHTML = `
   <!-- NOTES SECTION -->
   <!-- ==================== -->
   <div class="pet-notes">
-    <strong>Notes:</strong>
+    <strong>Notes & Memories:</strong>
     <p>${profile.notes?.replace(/\n/g, '<br>') || 'No notes yet'}</p>
   </div>
 
@@ -232,9 +232,9 @@ petCard.innerHTML = `
 //==============================
 // Calculate days until birthday
 //=================================
-function getCountdown(upcomingBirthday) {
+function getCountdown(petUpcomingBirthday) {
   const today = new Date();
-  const nextBirthday = new Date(upcomingBirthday);
+  const nextBirthday = new Date(petUpcomingBirthday);
   nextBirthday.setFullYear(today.getFullYear());
   if (nextBirthday < today) nextBirthday.setFullYear(today.getFullYear() + 1);
   const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
@@ -332,7 +332,7 @@ function openEditForm(index) {
     document.getElementById("petName").value = profile.name || "";
     document.getElementById("petBreed").value = profile.breed || "";
     document.getElementById("petDob").value = profile.dob || "";
-    document.getElementById("upcomingBirthday").value = profile.upcomingbirthday || "";
+    document.getElementById("petUpcomingBirthday").value = profile.upcomingBirthday || "";
     document.getElementById("petNicknames").value = profile.nicknames || "";
     document.getElementById("petNotes").value = profile.notes || "";
 
