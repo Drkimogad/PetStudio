@@ -31,10 +31,21 @@ h1, h2, h3, p {
   display: block;
 }
 
+.auth-header {
+  width: 90%;
+  margin: 0 auto; /* Centers the container */
+  padding: 1.5rem;
+  background: white;
+  border: 1px solid #808080; /* Your exact gray */
+  border-radius: 8px;
+  text-align: center; /* Optional: Center-align text */
+}
+
 .auth-header h1 {
-  font-size: 4rem;     /* Main title size */
-  color: #808080;       /* Your deep purple #6a1b9a */
-  margin-top: 0.3rem;
+  font-size: 4rem;
+  color: #808080;
+  margin: 0.3rem 0 0 0; /* Tight top margin like your original */
+  line-height: 1.2; /* Better text breathing */
 }
 
 .auth-header h2 {
@@ -102,6 +113,43 @@ h1, h2, h3, p {
   to { transform: rotate(360deg); }
 }
 
+/* ====================
+   BANNER & QUOTE STYLES
+==================== */
+.banner-wrapper {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+  overflow: hidden;
+  box-sizing: border-box;
+  border-bottom: 3px solid #e1b12c;
+  margin-bottom: 20px;
+}
+
+.banner-image {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+.quote {
+    position: absolute;
+    bottom: 10%; /* Responsive positioning */
+    right: 10%;
+    background: rgba(0, 0, 0, 0.6);
+    color: #f5f5dc;
+    padding: 20px 30px;
+    border-radius: 10px;
+    font-style: italic;
+    font-size: clamp(1rem, 2.2vw, 1.4rem); /* 🔧 slightly larger across devices */
+    max-width: 45%;
+    text-align: right;
+    margin: 0;
+}
 /* ====================
    DASHBOARD & LAYOUT
 ==================== */
@@ -1036,44 +1084,6 @@ styled to show in petcard header plus nickname */
 }
 
 /* ====================
-   BANNER & QUOTE STYLES
-==================== */
-.banner-wrapper {
-  position: relative;
-  width: 100%;
-  height: 70vh;
-  overflow: hidden;
-  box-sizing: border-box;
-  border-bottom: 3px solid #e1b12c;
-  margin-bottom: 20px;
-}
-
-.banner-image {
-  width: 100% !important;
-  height: auto !important;
-  max-height: 100% !important;
-  object-fit: contain !important;
-  object-position: center !important;
-  display: block !important;
-  margin: 0 auto !important;
-}
-
-.quote {
-    position: absolute;
-    bottom: 10%; /* Responsive positioning */
-    right: 10%;
-    background: rgba(0, 0, 0, 0.6);
-    color: #f5f5dc;
-    padding: 20px 30px;
-    border-radius: 10px;
-    font-style: italic;
-    font-size: clamp(1rem, 2.2vw, 1.4rem); /* 🔧 slightly larger across devices */
-    max-width: 45%;
-    text-align: right;
-    margin: 0;
-}
-
-/* ====================
    DRIVE SYNC STATUS
 ==================== */
 .drive-status {
@@ -1114,6 +1124,7 @@ footer {
     bottom: 0;
     margin-top: 20px;
 }
+
 /* ====================
    DASHBOARD PRINT VIEW
 ==================== */
@@ -1257,10 +1268,6 @@ footer {
   }
 }
 
-/*=== SHARE RULES ===*/
-
-
-
 /* ======= QR CODE RULES ========== */
 #qr-modal {
   display: none;
@@ -1312,7 +1319,7 @@ footer {
 }
 
 /* ====================
-   MEDIA QUERIES
+   MEDIA QUERIES/EIGNS
 ==================== */
 /* For screens taller than wide (mobile) */
 @media (max-aspect-ratio: 1/1) {
