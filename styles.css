@@ -966,6 +966,12 @@ styled to show in petcard header plus nickname */
   font-weight: bold;
   color: white; /* adjust per theme */
 }
+.theme-preview.selected-theme {
+  outline: 3px solid #3498db;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
 
 /* Mini Preview Thumbnails for Additional Themes */
 .minimal-mini {
