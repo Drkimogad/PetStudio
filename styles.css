@@ -127,9 +127,7 @@ h1, h2, h3, p {
   margin-bottom: 80px; /* Space so print button isn't hidden */
 }
 
-/* ====================
-   BUTTON BEFORE OPENING PETLIST STYLES
-==================== */
+/* =BUTTON BEFORE OPENING PETLIST STYLES=== */
 .button {
   display: inline-block;
   background-color: #808080; /* it was deep purple #6a1b9a, charcoal grey now  */
@@ -307,7 +305,8 @@ h1, h2, h3, p {
 
 /* ====================
    PETCARD ALL STYLES  
-==================== */
+  DESIGNED FOR SAVEDPETPROFILES()
+  ==================== */
 .petCard {
     border: 6px solid ##808080;
     border-radius: 10px;
@@ -328,10 +327,8 @@ h1, h2, h3, p {
     box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
-/* ====================== */
 /* PET CARD HEADER STYLES */
-/* ====================== */
-/* Profile Header edited */
+/* petCard header INCLUDING HEADER, NICKNAME AND COUNTDOWN BADGE */
 .petCard-header {
   position: relative;
   min-height: 150px;
@@ -380,6 +377,7 @@ h1, h2, h3, p {
     transform: scale(1.05);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
+
 /* Force left alignment for all text */
 .profile-details,
 .profile-details p,
@@ -388,7 +386,7 @@ h1, h2, h3, p {
   justify-content: flex-start !important;
 }
 
-/* Structural styling */
+/* Structural PETCARD BODY styling */
 .profile-details {
   padding: 0 15px;
   margin-bottom: 15px;
@@ -404,6 +402,7 @@ h1, h2, h3, p {
 }
 /*=============================
 Pet info section inside generated petcard- left aligned
+Includes breed, DOF, upcoming reminer
 =======================================*/
 .pet-info {
     display: flex;
@@ -419,8 +418,7 @@ Pet info section inside generated petcard- left aligned
     text-align: left !important;
     justify-content: flex-start !important;
 }
-/* =============
-Action buttons container======== */
+/* ==Action buttons container==== */
 .petCard .actions {
     display: flex;
     justify-content: flex-start;
@@ -559,54 +557,76 @@ styled to show in petcard header plus nickname */
 }
 
 /* ====================== */
-/* IMAGE FAILSAFE RULES */
+/* IMAGE AND GALLERY RULES */
 /* ====================== */
+/* 1. Unified Image Handling */
+.gallery-item img,
 .petCard img {
   background: #f5f5f5 url('placeholder-icon.svg') no-repeat center;
   border: 1px dashed #ccc;
   object-fit: cover;
+  transition: all 0.3s ease;
 }
 
-.petCard img[src=""],
-.petCard img:not([src]) {
-  opacity: 0;
-  height: 0;
-}
-
-/* IMAGE CONTAINER */
-/* ====================== */
-.image-container {
-  position: relative;
-  margin: 15px 0;
-  width: 100%;
-  min-height: 150px; /* Prevent collapse */
-  background: #f9f9f9; /* Container fallback */
-}
-
-/* Responsive images */
-.image-container img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* added recently */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 10px;
-  margin-top: 15px;
-}
-
+/* 2. State Handling */
 .gallery-item {
   position: relative;
+  overflow: hidden; /* For loading/error states */
 }
 
-.gallery-item img {
+/* Loading State */
+.gallery-item.loading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 5px;
+  height: 100%;
+  background: rgba(255,255,255,0.8) url('spinner.svg') no-repeat center;
+}
+
+/* Error State */
+.gallery-item.error img {
+  filter: grayscale(100%);
+  opacity: 0.5;
+}
+
+.gallery-item.error::before {
+  content: "⚠️ Failed to load";
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  color: #ff4757;
+}
+
+/* 3. Empty Gallery State */
+.gallery-grid:empty::before {
+  content: "No photos yet - upload some!";
+  display: block;
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #999;
+  padding: 20px;
+}
+
+/* 4. Hover/Focus Enhancements */
+.gallery-item:hover img {
+  transform: scale(1.02);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+/* 5. Responsive Tweaks */
+@media (max-width: 600px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+  }
+  
+  .gallery-item img {
+    height: 80px;
+  }
 }
 
 /* ====================
