@@ -141,6 +141,7 @@ petCard.innerHTML = `
   </div>
   <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
 
+
   <!-- ==================== -->
   <!-- TAGS SECTION -->
   <!-- ==================== -->
