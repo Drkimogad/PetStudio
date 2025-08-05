@@ -160,9 +160,11 @@
     <button id="addPetProfileBtn" class="button">Add Pet Profile</button>
     <div id="petList" class="pet-list hidden"></div>
     <button id="logoutBtn" class="button">Logout</button>
+	  
     <div id="profileSection" class="hidden">
       <h2>Create a Pet Profile</h2>
      <form id="profileForm" autocomplete="on">
+	     
   <!-- BASIC INFO SECTION -->
   <div class="petBasicInfo">
     <label for="petName">Pet Name:</label>
@@ -170,10 +172,7 @@
    <!-- 🔥 Add Nickname Field HERE -->
     <label for="petNicknames">Nicknames (Optional):</label>
     <input type="text" id="petNicknames" name="petNicknames" placeholder="e.g., 'Fluffy', 'Sir Barksalot'">
-    
-    <label for="petGallery">Upload Photos:</label>
-    <input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
-    
+        
     <label for="petBreed">Breed:</label>
     <input type="text" id="petBreed" name="petBreed" required>
     
@@ -182,6 +181,12 @@
     
     <label for="petUpcomingBirthday">Upcoming Birthday:</label>
     <input type="date" id="petUpcomingBirthday" name="petUpcomingBirthday">
+  </div>
+	 <!-- NEW: Dedicated gallery section -->
+  <div class="petGallerySection">
+    <label for="petGallery">Upload Photos:</label>
+    <input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
+    <div id="galleryPreview" class="gallery-preview"></div>
   </div>
 
   <!-- MOOD SECTION -->
