@@ -114,34 +114,37 @@ petCard.innerHTML = `
     ` : ''}
   </div>
 
-  <!-- ==================== -->
-  <!-- 2. GALLERY SECTION -->
-  <!-- ==================== -->
-  <div class="gallery-grid">
-    ${profile.gallery?.map((img, imgIndex) => `
-      <div class="gallery-item">
-        <!-- =validate image url first=== -->
+<!-- ==================== -->
+<!--2. GALLERY SECTION -->
+<!-- ==================== -->
+<div class="gallery-grid">
+  ${profile.gallery?.length > 0 
+    ? profile.gallery.map((img, imgIndex) => `
+      <div class="gallery-item ${!img?.url ? 'error' : ''}">
         <img src="${validateImageUrl(typeof img === 'string' ? img : img?.url)}" 
-          alt="Pet photo ${imgIndex + 1}"
-          onerror="this.src='placeholder.jpg';this.alt='Image failed to load'">
-     
+             alt="Pet photo ${imgIndex + 1}"
+             onerror="this.classList.add('error'); this.src='placeholder.jpg';"
+             loading="lazy">
+        
         <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}" 
                 data-id="${profile.id}" 
                 data-index="${index}" 
-                data-photo-index="${imgIndex}">
+                data-photo-index="${imgIndex}"
+                aria-label="Set as cover photo">
           ★
         </button>
       </div>
-    `).join('')}
-  </div>
+    `).join('') 
+    : '<div class="empty-gallery-msg">No photos yet</div>'
+  }
+</div>
 
-  <div id="editGalleryPreview"></div>
-  <div id="galleryWarning" class="text-red-600 text-sm mt-2 hidden">
-    ⚠️ Duplicate image detected. Please check your gallery!
-  </div>
-  <div id="errorBox" style="display:none; color: red; font-weight: bold;"></div>
-
-
+<div id="editGalleryPreview" class="gallery-preview"></div>
+<div id="galleryWarning" class="gallery-warning hidden">
+  ⚠️ Duplicate image detected
+</div>
+<div id="errorBox" class="error-box"></div>`
+ 
   <!-- ==================== -->
   <!-- 3. TAGS SECTION -->
   <!-- ==================== -->
