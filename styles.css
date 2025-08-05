@@ -454,60 +454,12 @@ h1, h2, h3, p {
 /* 2.IMAGE AND GALLERY RULES */
 /* ====================== */
 /* 1. Unified Image Handling */
-/* Base image styles (applies to ALL images) */
 .petCard img,
 .gallery-item img {
   width: 100%;
   object-fit: cover;
   transition: all 0.3s ease;
   background: #f5f5f5 url('placeholder-icon.svg') no-repeat center;
-}
-
-/* Main Card Images */
-.petCard > .image-container img { /* Specificity for primary images */
-  max-height: 400px;
-  border-radius: 6px;
-  border: 1px solid #eee; /* Solid border for main images */
-}
-
-/* Gallery Grid Images */
-.gallery-item img {
-  aspect-ratio: 1/1; /* Force square thumbnails */
-  border: 1px dashed #ccc; /* Dashed for upload area */
-  border-radius: 4px; /* Slightly smaller radius */
-}
-
-/* Containers */
-.petCard .image-container {
-  width: 100%;
-  margin: 15px 0;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.petCard .gallery-grid {
-  margin-top: 20px;
-  gap: 12px;
-}
-.petCard img {
-  width: 100%;
-  object-fit: cover;
-  background: #f5f5f5 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="%23ccc" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2z"/><circle cx="8.5" cy="8.5" r="2.5"/><path d="M21 15l-5-5L5 21"/></svg>') no-repeat center;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-}
-
-/* Main profile image (if exists) */
-.petCard > img:first-of-type {
-  max-height: 400px;
-  margin-bottom: 15px;
-}
-
-/* Gallery grid images */
-.gallery-grid img {
-  aspect-ratio: 1/1;
-  border-style: dashed;
 }
 
 /* 2. State Handling */
