@@ -101,7 +101,7 @@ function loadSavedProfiles() {
 
 petCard.innerHTML = `
   <!-- ==================== -->
-  <!-- PROFILE HEADER SECTION -->
+  <!-- 1. PETCARD HEADER SECTION -->
   <!-- ==================== -->
   <div class="petCard-header" style="${petCardHeaderStyle}">
     <div class="petCard-header-content">
@@ -115,7 +115,7 @@ petCard.innerHTML = `
   </div>
 
   <!-- ==================== -->
-  <!-- GALLERY SECTION -->
+  <!-- 2. GALLERY SECTION -->
   <!-- ==================== -->
   <div class="gallery-grid">
     ${profile.gallery?.map((img, imgIndex) => `
@@ -143,7 +143,7 @@ petCard.innerHTML = `
 
 
   <!-- ==================== -->
-  <!-- TAGS SECTION -->
+  <!-- 3. TAGS SECTION -->
   <!-- ==================== -->
   ${profile.tags?.length ? `
     <div class="tags-container">
@@ -154,7 +154,7 @@ petCard.innerHTML = `
   ` : ''}
 
   <!-- ==================== -->
-  <!-- DETAILS SECTION -->
+  <!-- 4. DETAILS SECTION -->
   <!-- ==================== -->
   <div class="pet-info">
     <p><strong>Breed:</strong> ${profile.breed || 'Not specified'}</p>
@@ -165,7 +165,7 @@ petCard.innerHTML = `
   </div>
 
   <!-- ==================== -->
-  <!-- BIRTHDAY REMINDER (CONDITIONAL) -->
+  <!--5. BIRTHDAY REMINDER -->
   <!-- ==================== -->
   ${profile.petUpcomingBirthday ? `
     <div class="profile-reminder">
@@ -174,7 +174,7 @@ petCard.innerHTML = `
   ` : ''}
 
   <!-- ==================== -->
-  <!-- EMERGENCY INFO -->
+  <!--6. EMERGENCY INFO -->
   <!-- ==================== -->
   <div class="emergency-info">
     <h4>Emergency Contact</h4>
@@ -185,7 +185,7 @@ petCard.innerHTML = `
   </div>
 
   <!-- ==================== -->
-  <!-- MOOD TRACKER -->
+  <!-- 7. MOOD TRACKER -->
   <!-- ==================== -->
   <div class="mood-tracker">
     <div class="mood-buttons">
@@ -202,7 +202,7 @@ petCard.innerHTML = `
   </div>
 
   <!-- ==================== -->
-  <!-- NOTES SECTION -->
+  <!-- 8. NOTES SECTION -->
   <!-- ==================== -->
   <div class="pet-notes">
     <strong>Notes & Memories:</strong>
@@ -210,7 +210,7 @@ petCard.innerHTML = `
   </div>
 
   <!-- ==================== -->
-  <!-- ACTION BUTTONS -->
+  <!-- 9. ACTION BUTTONS -->
   <!-- ==================== -->
   <div class="pet-card" data-doc-id="${profile.docId}">
     <div class="action-buttons">
