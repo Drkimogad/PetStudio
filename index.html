@@ -184,20 +184,42 @@
 		<div id="profileSection" class="hidden">
 			<h2>Create a Pet Profile</h2>
 			<form id="profileForm" autocomplete="on">
+				<!-- Pet old form -->
 
 				<label for="petName">Pet Name:</label>
 				<input type="text" id="petName" name="petName" required>
 
-				<!-- 🔥 Add Nickname Field HERE -->
-				<label for="petNicknames">Nicknames (Optional):</label>
-				<input type="text" id="petNicknames" name="petNicknames" placeholder="e.g., 'Fluffy', 'Sir Barksalot'">
-
 				<label for="petGallery">Upload Photos:</label>
 				<input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
 
-			        <!-- Pet Tags Section -->
+                                  <label for="petBreed">Breed:</label>
+				<input type="text" id="petBreed" name="petBreed" required>
+
+				<label for="petDob">Date of Birth:</label>
+				<input type="date" id="petDob" name="petDob" required>
+
+				<label for="petUpcomingBirthday">Upcoming Birthday:</label>
+				<input type="date" id="petUpcomingBirthday" name="petUpcomingBirthday">
+
+				<label for="moodHistoryInput">Mood at Creation:</label>
+				<select id="moodHistoryInput" name="moodHistoryInput">
+					<option value="">Select Mood</option>
+					<option value="happy">😊 Happy</option>
+					<option value="depressed">😔 Depressed</option>
+					<option value="sad">😞 Sad</option>
+					<option value="angry">😠 Angry</option>
+					<option value="sick">🤒 Sick</option>
+				</select>
+
+				        
+
+
+
+
+				
+				
 				<!-- Pet Tags Section with Icons -->
-<div class="pet-tags-container">
+					  <div class="pet-tags-container">
   <label>Tags:</label>
   <div class="pet-tags-options">
     <label class="tag-option">
@@ -235,15 +257,8 @@
 </div>
 
 
-				<label for="petBreed">Breed:</label>
-				<input type="text" id="petBreed" name="petBreed" required>
 
-				<label for="petDob">Date of Birth:</label>
-				<input type="date" id="petDob" name="petDob" required>
-
-
-				<label for="petUpcomingBirthday">Upcoming Birthday:</label>
-				<input type="date" id="petUpcomingBirthday" name="petUpcomingBirthday">
+				
 
 				<!-- Emergency Contact Section -->
 				<div class="emergency-contact-section">
@@ -263,28 +278,19 @@
 				</div>
 
 				
-				<label for="moodHistoryInput">Mood at Creation:</label>
-				<select id="moodHistoryInput" name="moodHistoryInput">
-					<option value="">Select Mood</option>
-					<option value="happy">😊 Happy</option>
-					<option value="depressed">😔 Depressed</option>
-					<option value="sad">😞 Sad</option>
-					<option value="angry">😠 Angry</option>
-					<option value="sick">🤒 Sick</option>
-				</select>
+
 
 				<label for="petNotes">Notes & Memories:</label>
 				<textarea id="petNotes" name="petNotes" rows="3" placeholder="Gift ideas, funny habits, favorite toys..."></textarea>
+				
+				<!-- 🔥 Add Nickname Field HERE -->
+				<label for="petNicknames">Nicknames (Optional):</label>
+				<input type="text" id="petNicknames" name="petNicknames" placeholder="e.g., 'Fluffy', 'Sir Barksalot'">
 
 				<div class="birthday-reminder-section">
-  <label for="petUpcomingBirthday">Upcoming Birthday:</label>
-  <input 
-    type="date" 
-    id="petUpcomingBirthday" 
-    name="petUpcomingBirthday" 
-    onchange="toggleCelebrateButton(this)"
-  >
-</div>
+                                 <label for="petUpcomingBirthday">Upcoming Birthday:</label>
+                                 <input type="date" id="petUpcomingBirthday" name="petUpcomingBirthday" onchange="toggleCelebrateButton(this)">
+                                </div>
 
 
 <div class="theme-selection">
