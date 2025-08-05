@@ -379,23 +379,25 @@ h1, h2, h3, p {
   ==================== */
 /* Can't be nested as # it is a class and not id */
 .petCard {
-    border: 6px solid #808080;
-    border-radius: 10px;
-    padding: 30px;
-    margin: 20px auto; /* Centered with automatic margins */
-    background-color: #ffffff;
-    width: 95%; /* Occupies 80% of page width */
-    position: relative;
-    text-align: left; /* Force left alignment */
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 4px solid #808080; /* Slightly thinner border */
+  border-radius: 10px;
+  padding: 25px;
+  margin: 20px auto;
+  background-color: #ffffff;
+  width: 90%; /* Fixed 90% width */
+  max-width: 1200px; /* Preoversizing on large screens */
+  position: relative;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden; /* Contain all child elements */
 }
 
 .petCard:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  transform: translateY(-3px); /* More subtle hover */
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
 /*=============================*/
 /* 1. PET CARD HEADER STYLES */
@@ -452,13 +454,42 @@ h1, h2, h3, p {
 /* 2.IMAGE AND GALLERY RULES */
 /* ====================== */
 /* 1. Unified Image Handling */
-.gallery-item img,
-.petCard img {
-  background: #f5f5f5 url('placeholder-icon.svg') no-repeat center;
-  border: 1px dashed #ccc;
+/* Base image styles (applies to ALL images) */
+.petCard img,
+.gallery-item img {
+  width: 100%;
   object-fit: cover;
   transition: all 0.3s ease;
+  background: #f5f5f5 url('placeholder-icon.svg') no-repeat center;
 }
+
+/* Main Card Images */
+.petCard > .image-container img { /* Specificity for primary images */
+  max-height: 400px;
+  border-radius: 6px;
+  border: 1px solid #eee; /* Solid border for main images */
+}
+
+/* Gallery Grid Images */
+.gallery-item img {
+  aspect-ratio: 1/1; /* Force square thumbnails */
+  border: 1px dashed #ccc; /* Dashed for upload area */
+  border-radius: 4px; /* Slightly smaller radius */
+}
+
+/* Containers */
+.petCard .image-container {
+  width: 100%;
+  margin: 15px 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.petCard .gallery-grid {
+  margin-top: 20px;
+  gap: 12px;
+}
+
 
 /* 2. State Handling */
 .gallery-item {
