@@ -156,7 +156,7 @@ petCard.innerHTML = `
   <!-- ==================== -->
   <!-- DETAILS SECTION -->
   <!-- ==================== -->
-  <div class="profile-details">
+  <div class="pet-info">
     <p><strong>Breed:</strong> ${profile.breed || 'Not specified'}</p>
     <p><strong>DOB:</strong> ${profile.dob || 'Unknown'}</p>
     ${profile.petUpcomingBirthday ? `
