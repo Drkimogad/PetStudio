@@ -107,9 +107,9 @@ petCard.innerHTML = `
     <div class="petCard-header-content">
       <h3>${profile.name}</h3>
       ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
-      ${profile.petUpcomingBirthday ? `
+      ${profile.upcomingBirthday ? `
         <div class="countdown-badge">
-          🎂${getCountdown(profile.petUpcomingBirthday)}
+          🎂${getCountdown(profile.upcomingBirthday)}
       </div>
     ` : ''}
   </div>
@@ -162,19 +162,21 @@ petCard.innerHTML = `
   <div class="pet-info">
     <p><strong>Breed:</strong> ${profile.breed || 'Not specified'}</p>
     <p><strong>DOB:</strong> ${profile.dob || 'Unknown'}</p>
-    ${profile.petUpcomingBirthday ? `
-      <p><strong>Upcoming Birthday:</strong> ${profile.petUpcomingBirthday}</p>
+    ${profile.upcomingBirthday ? `
+    <p><strong>Upcoming Birthday:</strong> ${formatDate(profile.upcomingBirthday)}</p>
     ` : ''}
   </div>
 
-  <!-- ==================== -->
-  <!--5. BIRTHDAY REMINDER -->
-  <!-- ==================== -->
-  ${profile.petUpcomingBirthday ? `
+<!-- ==================== -->
+<!-- 5. BIRTHDAY REMINDER -->
+<!-- ==================== -->
+${profile.upcomingBirthday ? `
+  <div class="profile-reminder-section">
     <div class="profile-reminder">
-      <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.petUpcomingBirthday).toLocaleDateString()} 🎉</p>
+      <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.upcomingBirthday).toLocaleDateString()} 🎉</p>
     </div>
-  ` : ''}
+  </div>
+` : ''}
 
   <!-- ==================== -->
   <!--6. EMERGENCY INFO -->
@@ -1418,21 +1420,19 @@ function attachFormListenerWhenReady() {
           console.log("✨ Created new profile"); // DEBUG LINE KEPT
         }
 
-        // 🎉 Add birthday reminder if needed inapp modified to include the new fields
-        if (newProfile.petUpcomingBirthday) {
-          const reminderData = {
-            userId,
-            petName: newProfile.name,
-            date: Utils.formatFirestoreDate(newProfile.petUcomingBirthday),
-            type: "birthday",
-            // 🔶 Use getCountdown() for dynamic messaging
-            message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.petUpcomingBirthday)}`, // "5 days until birthday! 🎉"
-            createdAt: new Date().toISOString(),
-            profileDocId: newProfile.docId,
-            // 🔶 Add countdown days for sorting/filtering later
-            countdownDays: parseInt(getCountdown(newProfile.petUpcomingBirthday).split(' ')[0]), // Stores "5" (number)
-            nickname: newProfile.nicknames || null
-          };
+        /// 🎉 Add birthday reminder if needed (updated to use upcomingBirthday)
+        if (newProfile.upcomingBirthday) {
+        const reminderData = {
+        userId,
+        petName: newProfile.name,
+        date: Utils.formatFirestoreDate(newProfile.upcomingBirthday), // Fixed typo in "petUcomingBirthday"
+        type: "birthday",
+        message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.upcomingBirthday)}`, // "5 days until birthday! 🎉"
+        createdAt: new Date().toISOString(),
+        profileDocId: newProfile.docId,
+        countdownDays: parseInt(getCountdown(newProfile.upcomingBirthday).split(' ')[0]), // Stores "5" (number)
+        nickname: newProfile.nicknames || null
+        };
 
           try {
             const reminderDoc = await firebase.firestore().collection("reminders").add(reminderData);
