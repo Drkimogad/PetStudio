@@ -143,7 +143,7 @@ petCard.innerHTML = `
 <div id="galleryWarning" class="gallery-warning hidden">
   ⚠️ Duplicate image detected
 </div>
-<div id="errorBox" class="error-box"></div>`
+<div id="errorBox" class="error-box"></div>
  
   <!-- ==================== -->
   <!-- 3. TAGS SECTION -->
