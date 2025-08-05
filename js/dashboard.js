@@ -1379,8 +1379,8 @@ function attachFormListenerWhenReady() {
           gallery: [], // Temporary empty array
           breed: document.getElementById("petBreed").value,
           dob: document.getElementById("petDob").value,
-          upcomingBirthday: document.getElementById("upcomingBirthday").value
-          moodHistory,
+          upcomingBirthday: document.getElementById("petUpcomingBirthday").value,
+          moodHistory: document.getElementById("moodHistoryInput").value, // ✅ Get by ID
           emergencyContact: {
             name: document.getElementById("emergencyName").value.trim(),
             phone: document.getElementById("emergencyPhone").value.trim(),
@@ -1419,18 +1419,18 @@ function attachFormListenerWhenReady() {
         }
 
         // 🎉 Add birthday reminder if needed inapp modified to include the new fields
-        if (newProfile.upcomingbirthday) {
+        if (newProfile.petUpcomingBirthday) {
           const reminderData = {
             userId,
             petName: newProfile.name,
-            date: Utils.formatFirestoreDate(newProfile.upcomingbirthday),
+            date: Utils.formatFirestoreDate(newProfile.petUcomingBirthday),
             type: "birthday",
             // 🔶 Use getCountdown() for dynamic messaging
-            message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.upcomingbirthday)}`, // "5 days until birthday! 🎉"
+            message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.petUpcomingBirthday)}`, // "5 days until birthday! 🎉"
             createdAt: new Date().toISOString(),
             profileDocId: newProfile.docId,
             // 🔶 Add countdown days for sorting/filtering later
-            countdownDays: parseInt(getCountdown(newProfile.birthday).split(' ')[0]), // Stores "5" (number)
+            countdownDays: parseInt(getCountdown(newProfile.petUpcomingBirthday).split(' ')[0]), // Stores "5" (number)
             nickname: newProfile.nicknames || null
           };
 
