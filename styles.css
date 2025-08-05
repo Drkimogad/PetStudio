@@ -307,6 +307,7 @@ h1, h2, h3, p {
    PETCARD ALL STYLES  
   DESIGNED FOR SAVEDPETPROFILES()
   ==================== */
+/* Can't be nested as # it is a class and not id */
 .petCard {
     border: 6px solid ##808080;
     border-radius: 10px;
@@ -326,8 +327,8 @@ h1, h2, h3, p {
     transform: translateY(-5px);
     box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
-
-/* PET CARD HEADER STYLES */
+/*=============================*/
+/* 1. PET CARD HEADER STYLES */
 /* petCard header INCLUDING HEADER, NICKNAME AND COUNTDOWN BADGE */
 .petCard-header {
   position: relative;
@@ -377,34 +378,137 @@ h1, h2, h3, p {
     transform: scale(1.05);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
-
-/* Force left alignment for all text */
-.profile-details,
-.profile-details p,
-.profile-details strong {
-  text-align: left !important;
-  justify-content: flex-start !important;
+/* ====================== */
+/* 2.IMAGE AND GALLERY RULES */
+/* ====================== */
+/* 1. Unified Image Handling */
+.gallery-item img,
+.petCard img {
+  background: #f5f5f5 url('placeholder-icon.svg') no-repeat center;
+  border: 1px dashed #ccc;
+  object-fit: cover;
+  transition: all 0.3s ease;
 }
 
-/* Structural PETCARD BODY styling */
-.profile-details {
-  padding: 0 15px;
-  margin-bottom: 15px;
+/* 2. State Handling */
+.gallery-item {
+  position: relative;
+  overflow: hidden; /* For loading/error states */
+}
+
+/* Loading State */
+.gallery-item.loading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.8) url('spinner.svg') no-repeat center;
 }
 
-/* Paragraph styling */
-.profile-details p {
-  margin: 8px 0;
-  color: #555;
-  display: block;
-  text-align: left !important;
+/* Error State */
+.gallery-item.error img {
+  filter: grayscale(100%);
+  opacity: 0.5;
 }
-/*=============================
-Pet info section inside generated petcard- left aligned
-Includes breed, DOF, upcoming reminer
-=======================================*/
-.pet-info {
+
+.gallery-item.error::before {
+  content: "⚠️ Failed to load";
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  color: #ff4757;
+}
+
+/* 3. Empty Gallery State */
+.gallery-grid:empty::before {
+  content: "No photos yet - upload some!";
+  display: block;
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #999;
+  padding: 20px;
+}
+
+/* 4. Hover/Focus Enhancements */
+.gallery-item:hover img {
+  transform: scale(1.02);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+/* 5. Responsive Tweaks */
+@media (max-width: 600px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+  }
+  
+  .gallery-item img {
+    height: 80px;
+  }
+}
+
+/* Tags styling using font awesome i think*/
+/* Tags Container */
+.pet-tags-container {
+  margin-bottom: 15px;
+}
+
+/* Tags Options Grid */
+.pet-tags-options {
+  display: flex;
+  text-align: left;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}
+/*=======================*/
+/*3. TAGS SECTION  */
+/*====================*/
+.tag-option input:checked + .tag {
+  background: #6a5acd;
+  color: white;
+  border-color: #6a5acd;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  cursor: pointer;
+  background: #f5f5f5;
+  transition: all 0.2s;
+  font-size: 0.9em;
+}
+
+.tag:hover {
+  background: #e0e0e0;
+}
+
+.tag i {
+  font-size: 0.9em;
+}
+
+/* Helper Text */
+.pet-tags-container small {
+  display: block;
+  color: #666;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
+
+/*=============================*/
+/* 4. Pet info section inside generated petcard- left aligned*/
+/*Includes breed, DOF, upcoming reminer*/
+/*=======================================*/
+.petCard .pet-info {
     display: flex;
     flex-direction: column;
     align-items: flex-start; /* Forces horizontal left alignment */
@@ -418,7 +522,122 @@ Includes breed, DOF, upcoming reminer
     text-align: left !important;
     justify-content: flex-start !important;
 }
-/* ==Action buttons container==== */
+
+/*=======================*/
+/* 5. BIRTHDAY REMINDER */
+/*========================*/
+.profile-reminder-section {
+  margin: 1.5rem 0;
+}
+.profile-reminder {
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+  font-size: 0.9em;
+  color: #ff6b6b; /* Birthday-themed color */
+}
+/*====================*/
+/* 6. EMERGENCY INFO */
+/*=====================*/
+/* Emergency Contact Section - inline appearance */
+.emergency-contact-section {
+  margin: 5px 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+}
+
+.emergency-contact-section h3 {
+  margin-top: 0;
+  color: #dc3545;
+  font-size: 1.1em;
+  display: inline;
+  font-weight: bold;
+}
+
+.emergency-info {
+  margin-top: 0;
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+.emergency-info h4 {
+  margin: 0;
+  color: #dc3545;
+  font-size: 1em;
+  font-weight: bold;
+  display: inline;
+}
+
+.emergency-info p {
+  margin: 0 0 5px 0;
+  font-size: 0.9em;
+  display: inline;
+}
+/*==================*/
+/*7. MOOD TRACKER */
+*/====================*/
+.mood-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.mood-btn {
+  font-size: 1.5rem;
+  padding: 8px 12px;
+  border: 2px solid transparent;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.mood-btn:hover,
+.mood-btn.active {
+  border-color: #6a1b9a;
+  background-color: #e9d5ff;
+}
+/*==================*/
+/* 8. NOTES SECTION */
+/*==================*/
+/* Notes Section - inline appearance */
+.petCard .pet-notes {
+  width: 80%;
+  text-align: left;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  font-family: inherit;
+  resize: none; /* Disable resize if you want it to appear seamless */
+  background: none;
+  font-size: 0.9em;
+}
+
+.pet-notes {
+  margin-top: 0;
+  padding: 0;
+  background: none;
+  text-align: left;
+  border-radius: 0;
+  font-size: 0.9em;
+}
+
+.pet-notes p {
+  margin: 0;
+   text-align: left;
+  white-space: pre-line;
+}
+
+/*=================================*/
+/* 9. Action buttons container==== */
+/*=================================*/
 .petCard .actions {
     display: flex;
     justify-content: flex-start;
@@ -556,79 +775,6 @@ styled to show in petcard header plus nickname */
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* ====================== */
-/* IMAGE AND GALLERY RULES */
-/* ====================== */
-/* 1. Unified Image Handling */
-.gallery-item img,
-.petCard img {
-  background: #f5f5f5 url('placeholder-icon.svg') no-repeat center;
-  border: 1px dashed #ccc;
-  object-fit: cover;
-  transition: all 0.3s ease;
-}
-
-/* 2. State Handling */
-.gallery-item {
-  position: relative;
-  overflow: hidden; /* For loading/error states */
-}
-
-/* Loading State */
-.gallery-item.loading::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255,255,255,0.8) url('spinner.svg') no-repeat center;
-}
-
-/* Error State */
-.gallery-item.error img {
-  filter: grayscale(100%);
-  opacity: 0.5;
-}
-
-.gallery-item.error::before {
-  content: "⚠️ Failed to load";
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  font-size: 12px;
-  color: #ff4757;
-}
-
-/* 3. Empty Gallery State */
-.gallery-grid:empty::before {
-  content: "No photos yet - upload some!";
-  display: block;
-  grid-column: 1 / -1;
-  text-align: center;
-  color: #999;
-  padding: 20px;
-}
-
-/* 4. Hover/Focus Enhancements */
-.gallery-item:hover img {
-  transform: scale(1.02);
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-}
-
-/* 5. Responsive Tweaks */
-@media (max-width: 600px) {
-  .gallery-grid {
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 8px;
-  }
-  
-  .gallery-item img {
-    height: 80px;
-  }
-}
-
 /* ====================
    PROFILE CREATION FORM
 ==================== */
@@ -676,29 +822,7 @@ styled to show in petcard header plus nickname */
   border-radius: 8px;
 }
 /* Mood buttons */
-.mood-btn-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-  justify-content: center;
-}
 
-.mood-btn {
-  font-size: 1.5rem;
-  padding: 8px 12px;
-  border: 2px solid transparent;
-  background-color: #f4f4f4;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.mood-btn:hover,
-.mood-btn.active {
-  border-color: #6a1b9a;
-  background-color: #e9d5ff;
-}
 
 /* NEW ENHANCEMENTS */
 /* ====birthday card style======*/
@@ -730,101 +854,12 @@ styled to show in petcard header plus nickname */
   margin: 15px 0;
 }
 
-/*FOR REMINDERS SECTION */
-.profile-reminder-section {
-  margin: 1.5rem 0;
-}
-.profile-reminder {
-  text-align: left;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 5px;
-  font-size: 0.9em;
-  color: #ff6b6b; /* Birthday-themed color */
-}
+
 
 /*  styled now in petcard actions buttons
 .celebrate-btn */
 
-/* Notes Section - inline appearance */
-#petNotes {
-  width: 80%;
-  text-align: left;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  font-family: inherit;
-  resize: none; /* Disable resize if you want it to appear seamless */
-  background: none;
-  font-size: 0.9em;
-}
 
-.pet-notes {
-  margin-top: 0;
-  padding: 0;
-  background: none;
-  text-align: left;
-  border-radius: 0;
-  font-size: 0.9em;
-}
-
-.pet-notes p {
-  margin: 0;
-   text-align: left;
-  white-space: pre-line;
-}
-
-/* Tags styling using font awesome i think*/
-/* Tags Container */
-.pet-tags-container {
-  margin-bottom: 15px;
-}
-
-/* Tags Options Grid */
-.pet-tags-options {
-  display: flex;
-  text-align: left;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 8px 0;
-}
-
-/* Individual Tag Styling */
-.tag-option input:checked + .tag {
-  background: #6a5acd;
-  color: white;
-  border-color: #6a5acd;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: 1px solid #ddd;
-  border-radius: 15px;
-  cursor: pointer;
-  background: #f5f5f5;
-  transition: all 0.2s;
-  font-size: 0.9em;
-}
-
-.tag:hover {
-  background: #e0e0e0;
-}
-
-.tag i {
-  font-size: 0.9em;
-}
-
-/* Helper Text */
-.pet-tags-container small {
-  display: block;
-  color: #666;
-  font-size: 0.8em;
-  margin-top: 5px;
-}
 
 /* =====css for collage function========= */
 /*  collage-btn styled now in petcard actions buttons */
@@ -1055,43 +1090,7 @@ styled to show in petcard header plus nickname */
   margin-top: 15px;
 }
 
-/* Emergency Contact Section - inline appearance */
-.emergency-contact-section {
-  margin: 5px 0;
-  padding: 0;
-  background: none;
-  border: none;
-  border-radius: 0;
-}
 
-.emergency-contact-section h3 {
-  margin-top: 0;
-  color: #dc3545;
-  font-size: 1.1em;
-  display: inline;
-  font-weight: bold;
-}
-
-.emergency-info {
-  margin-top: 0;
-  padding: 0;
-  background: none;
-  border: none;
-}
-
-.emergency-info h4 {
-  margin: 0;
-  color: #dc3545;
-  font-size: 1em;
-  font-weight: bold;
-  display: inline;
-}
-
-.emergency-info p {
-  margin: 0 0 5px 0;
-  font-size: 0.9em;
-  display: inline;
-}
 
 /* ====================
    GALLERY STYLES
