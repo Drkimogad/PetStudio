@@ -552,7 +552,7 @@ h1, h2, h3, p {
 }
 
 /* Nuclear option if still not left-aligned */
-.pet-info * {
+.petCard .pet-info * {
     text-align: left !important;
     justify-content: flex-start !important;
 }
@@ -560,10 +560,10 @@ h1, h2, h3, p {
 /*=======================*/
 /* 5. BIRTHDAY REMINDER */
 /*========================*/
-.profile-reminder-section {
+.petCard .profile-reminder-section {
   margin: 1.5rem 0;
 }
-.profile-reminder {
+.petCard .profile-reminder {
   text-align: left;
   display: flex;
   align-items: center;
@@ -714,13 +714,16 @@ h1, h2, h3, p {
 
 /* Delete button overrides (comes AFTER) */
 .delete-profile {
-    background-color: #ffffff;
-    color: #e74c3c;
-    padding: 5px 10px;
+     flex: 0 1 auto;
+    padding: 8px 16px;
+    font-size: 0.9rem;
     border: 1px solid #e74c3c !important; /* Only needed for border */
     border-radius: 10px;
+    min-width: 120px;
+    background: #ffffff;
+    color: #e74c3c;
     cursor: pointer;
-    min-width: auto; /* Remove min-width if needed */
+    transition: all 0.3s;
 }
 
 .delete-profile:hover {
