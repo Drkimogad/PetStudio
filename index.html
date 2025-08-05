@@ -177,7 +177,7 @@
 		<h1>Welcome to your pet's dashboard</h1>
 		<button id="addPetProfileBtn" class="button">Add Pet Profile</button>
 
-		<div id="petList" class="pet-list hidden"></div>
+	   <div id="petList" class="pet-list hidden"></div>
 		<button id="logoutBtn" class="button">Logout</button>
 
 
@@ -210,19 +210,23 @@
 					<option value="angry">😠 Angry</option>
 					<option value="sick">🤒 Sick</option>
 				</select>
-
-				        
-
-
-
-
 				
+				<label for="petNotes">Notes & Memories:</label>
+				<textarea id="petNotes" name="petNotes" rows="3" placeholder="Gift ideas, funny habits, favorite toys..."></textarea>
 				
+				<!-- 🔥 Add Nickname Field HERE -->
+				<label for="petNicknames">Nicknames (Optional):</label>
+				<input type="text" id="petNicknames" name="petNicknames" placeholder="e.g., 'Fluffy', 'Sir Barksalot'">
+
+				<div class="birthday-reminder-section">
+                                 <label for="petUpcomingBirthday">Upcoming Birthday:</label>
+                                 <input type="date" id="petUpcomingBirthday" name="petUpcomingBirthday" onchange="toggleCelebrateButton(this)">
+				</div>     
 				<!-- Pet Tags Section with Icons -->
-					  <div class="pet-tags-container">
-  <label>Tags:</label>
-  <div class="pet-tags-options">
-    <label class="tag-option">
+				<div class="pet-tags-container">
+                                 <label>Tags:</label>
+                                  <div class="pet-tags-options">
+                     <label class="tag-option">
       <input type="checkbox" name="petTags" value="Adventure" hidden>
       <span class="tag">
         <i class="fas fa-hiking"></i> Adventure
@@ -280,17 +284,7 @@
 				
 
 
-				<label for="petNotes">Notes & Memories:</label>
-				<textarea id="petNotes" name="petNotes" rows="3" placeholder="Gift ideas, funny habits, favorite toys..."></textarea>
-				
-				<!-- 🔥 Add Nickname Field HERE -->
-				<label for="petNicknames">Nicknames (Optional):</label>
-				<input type="text" id="petNicknames" name="petNicknames" placeholder="e.g., 'Fluffy', 'Sir Barksalot'">
-
-				<div class="birthday-reminder-section">
-                                 <label for="petUpcomingBirthday">Upcoming Birthday:</label>
-                                 <input type="date" id="petUpcomingBirthday" name="petUpcomingBirthday" onchange="toggleCelebrateButton(this)">
-                                </div>
+                                
 
 
 <div class="theme-selection">
