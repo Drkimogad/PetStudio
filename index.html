@@ -206,10 +206,12 @@
         <textarea id="petNotes" name="petNotes" rows="3" placeholder="Gift ideas, funny habits, favorite toys..."></textarea>
        </div>
 	      
-        <div class="birthday-reminder-section">
-          <label for="petUpcomingBirthday">Upcoming Birthday:</label>
-          <input type="date" id="petUpcomingBirthday" name="petUpcomingBirthday" onchange="toggleCelebrateButton(this)">
-        </div>
+<div class="birthday-reminder-section">
+      <label for="birthdayReminder">Birthday Reminder:</label>
+      <input type="text" id="birthdayReminder" name="birthdayReminder" 
+         placeholder="Exact birthday or a few days before" 
+         onchange="toggleCelebrateButton(this)">
+</div>
         <!-- Pet Tags Section with Icons -->
         <div class="pet-tags-container">
           <label>Tags:</label>
