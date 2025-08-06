@@ -491,42 +491,52 @@ h1, h2, h3, p {
     border-radius: 6px;
 }
 
-/*=======================*/
-/*3. TAGS SECTION USING FONT AWESOME  */
-/*====================*/
-.tag-option input:checked + .tag {
-  background: #6a5acd;
-  color: white;
-  border-color: #6a5acd;
+/* ==================== */
+/* 3. TAGS SECTION - RENDERED PETCARDS*/
+/* using font awesome */
+/* ==================== */
+.tags-container {
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.tag {
+.tag-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
   border: 1px solid #ddd;
   border-radius: 15px;
-  cursor: pointer;
   background: #f5f5f5;
-  transition: all 0.2s;
   font-size: 0.9em;
+  transition: all 0.2s;
 }
 
-.tag:hover {
+.tag-pill:hover {
   background: #e0e0e0;
 }
 
-.tag i {
+/* Font Awesome icons */
+.tag-pill i {
   font-size: 0.9em;
 }
 
-/* Helper Text */
-.petCard .tags-container small {
+/* Specific icon mappings for tags */
+.tag-pill[data-tag="Adventure"] i { font-family: 'Font Awesome 6 Free'; font-weight: 900; content: "\f6ec"; } /* fa-hiking */
+.tag-pill[data-tag="Cuddly"] i { font-family: 'Font Awesome 6 Free'; font-weight: 900; content: "\f004"; } /* fa-heart */
+.tag-pill[data-tag="Playful"] i { font-family: 'Font Awesome 6 Free'; font-weight: 900; content: "\f45d"; } /* fa-table-tennis */
+.tag-pill[data-tag="Foodie"] i { font-family: 'Font Awesome 6 Free'; font-weight: 900; content: "\f2e7"; } /* fa-utensils */
+.tag-pill[data-tag="Athletic"] i { font-family: 'Font Awesome 6 Free'; font-weight: 900; content: "\f70c"; } /* fa-running */
+
+/* Helper text (if used in petcards) */
+.tags-container small {
   display: block;
   color: #666;
   font-size: 0.8em;
   margin-top: 5px;
+  width: 100%;
 }
 
 
