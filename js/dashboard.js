@@ -123,15 +123,14 @@ petCard.innerHTML = `
   <!-- 1. PETCARD HEADER SECTION -->
   <!-- ==================== -->
   <div class="petCard-header" style="${petCardHeaderStyle}">
-    <div class="petCard-header-content">
-      <h3>${profile.name}</h3>
-      ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
-      ${profile.upcomingBirthday ? `
-        <div class="countdown-badge">
-          🎂${getCountdown(profile.upcomingBirthday)}
-      </div>
-    ` : ''}
+  <div class="petCard-header-content">
+    <h3>${profile.name}</h3>
+    ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
   </div>
+  ${profile.upcomingBirthday ? `
+    <div class="countdown-badge">🎂${getCountdown(profile.upcomingBirthday)}</div>
+  ` : ''}
+ </div>
 
 <!-- ==================== -->
 <!--2. GALLERY SECTION -->
