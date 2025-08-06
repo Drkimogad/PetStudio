@@ -256,9 +256,9 @@ ${profile.nextBirthday ? `
 //==============================
 // Calculate days until birthday
 //=================================
-function getCountdown(petUpcomingBirthday) {
+function getCountdown(nextBirthday) {
   const today = new Date();
-  const nextBirthday = new Date(petUpcomingBirthday);
+  const nextBirthday = new Date(nextBirthday);
   nextBirthday.setFullYear(today.getFullYear());
   if (nextBirthday < today) nextBirthday.setFullYear(today.getFullYear() + 1);
   const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
@@ -356,7 +356,7 @@ function openEditForm(index) {
     document.getElementById("petName").value = profile.name || "";
     document.getElementById("petBreed").value = profile.breed || "";
     document.getElementById("petDob").value = profile.dob || "";
-    document.getElementById("petUpcomingBirthday").value = profile.upcomingBirthday || "";
+    document.getElementById("nextBirthday").value = profile.nextBirthday || "";
     document.getElementById("petNicknames").value = profile.nicknames || "";
     document.getElementById("petNotes").value = profile.notes || "";
 
@@ -632,7 +632,8 @@ function printProfile(profile) {
         <div class="print-details">
           <p><strong>Breed:</strong> ${profile.breed}</p>
           <p><strong>Date of Birth:</strong> ${profile.dob}</p>
-          <p><strong>Upcoming Birthday:</strong> ${profile.upcomingbirthday}</p>
+          <p><strong>Upcoming Birthday:</strong> ${profile.nextbirthday}</p>
+          <p><strong>Birthday Reminder:</strong> ${profile.birthdayReminder}</p>
         </div>
         <h3>Gallery</h3>
         <div class="print-gallery">
@@ -700,7 +701,7 @@ async function generateBirthdayCard(index) {
     // 1. Fetch the pet's profile
     const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
     const profile = window.petProfiles[index];
-    if (!profile || !profile.birthday) return;
+    if (!profile || !profile.nextBirthday) return;
 
     const coverPhoto = profile.gallery?.[profile.coverPhotoIndex];
     const coverUrl = typeof coverPhoto === 'string'
@@ -713,13 +714,13 @@ async function generateBirthdayCard(index) {
     card.className = 'birthday-card';
     card.innerHTML = `
       <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
-      <div class="birthday-countdown">${getCountdown(profile.upcomingbirthday)}</div>
+      <div class="birthday-countdown">${getCountdown(profile.nextBirthday)}</div>
        ${
        validCover
         ? `<img src="${coverUrl}" alt="${profile.name}" class="birthday-photo">`
         : `<div class="birthday-photo-placeholder">No valid cover image</div>`
        }
-      <div class="birthday-footer">Celebrate on ${new Date(profile.upcomingbirthday).toLocaleDateString()}</div>
+      <div class="birthday-footer">Celebrate on ${new Date(profile.nextBirthday).toLocaleDateString()}</div>
         `;
 
     // ✅ Append temporarily (hidden)
