@@ -127,8 +127,8 @@ petCard.innerHTML = `
     <h3>${profile.name}</h3>
     ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
   </div>
-  ${profile.upcomingBirthday ? `
-    <div class="countdown-badge">🎂${getCountdown(profile.upcomingBirthday)}</div>
+  ${profile.nextBirthday ? `
+    <div class="countdown-badge">🎂${getCountdown(profile.nextBirthday)}</div>
   ` : ''}
  </div>
 
@@ -180,18 +180,18 @@ petCard.innerHTML = `
   <div class="pet-info">
     <p><strong>Breed:</strong> ${profile.breed || 'Not specified'}</p>
     <p><strong>DOB:</strong> ${profile.dob || 'Unknown'}</p>
-    ${profile.upcomingBirthday ? `
-    <p><strong>Upcoming Birthday:</strong> ${formatDate(profile.upcomingBirthday)}</p>
+    ${profile.nextBirthday ? `
+    <p><strong>Upcoming Birthday:</strong> ${formatDate(profile.nextBirthday)}</p>
     ` : ''}
   </div>
 
 <!-- ==================== -->
 <!-- 5. BIRTHDAY REMINDER -->
 <!-- ==================== -->
-${profile.upcomingBirthday ? `
+${profile.nextBirthday ? `
   <div class="profile-reminder-section">
     <div class="profile-reminder">
-      <p><strong>Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.upcomingBirthday).toLocaleDateString()} 🎉</p>
+      <p><strong>Birthday Reminder:</strong> It's ${profile.name}'s birthday on ${new Date(profile.nextBirthday).toLocaleDateString()} 🎉</p>
     </div>
   </div>
 ` : ''}
@@ -1399,7 +1399,8 @@ function attachFormListenerWhenReady() {
           gallery: [], // Temporary empty array
           breed: document.getElementById("petBreed").value,
           dob: document.getElementById("petDob").value,
-          upcomingBirthday: document.getElementById("petUpcomingBirthday").value,
+          upcomingBirthday: document.getElementById("nextBirthday").value,
+          birthdayReminder: document.getElementById("birthdayReminder").value,
           moodHistory: document.getElementById("moodHistoryInput").value, // ✅ Get by ID
           emergencyContact: {
             name: document.getElementById("emergencyName").value.trim(),
@@ -1443,9 +1444,9 @@ function attachFormListenerWhenReady() {
         const reminderData = {
         userId,
         petName: newProfile.name,
-        date: Utils.formatFirestoreDate(newProfile.upcomingBirthday), // Fixed typo in "petUcomingBirthday"
+        date: Utils.formatFirestoreDate(newProfile.nextBirthday),
         type: "birthday",
-        message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.upcomingBirthday)}`, // "5 days until birthday! 🎉"
+        message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.nextBirthday)}`, // "5 days until birthday! 🎉"
         createdAt: new Date().toISOString(),
         profileDocId: newProfile.docId,
         countdownDays: parseInt(getCountdown(newProfile.upcomingBirthday).split(' ')[0]), // Stores "5" (number)
