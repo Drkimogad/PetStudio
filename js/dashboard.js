@@ -970,7 +970,7 @@ async function sharePetCard(profile, event) {
     if (navigator.share) {
       await navigator.share({
         title: `Meet ${profile.name}! 🐾`,
-        text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.upcomingbirthday}\n\nView more: ${petStudioLink}`,
+        text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.nextBirthday}\n\nView more: ${petStudioLink}`,
       });
     } else {
       alert(`Share this link manually: ${petStudioLink}`);
@@ -979,7 +979,7 @@ async function sharePetCard(profile, event) {
 }
 
 //===============================
-//🌀 QR Code Managementenhanced
+//🌀 QR Code Managementenhanced to be finalised ⛔️
 //===========================
 //1. Generate QR code
 function generateQRCode(profileIndex) {
@@ -992,7 +992,7 @@ function generateQRCode(profileIndex) {
   const qrContent = JSON.stringify({
     n: currentQRProfile.name,
     b: currentQRProfile.breed,
-    d: currentQRProfile.upcomingbirthday,
+    d: currentQRProfile.nextBirthday,
     l: "https://drkimogad.github.io/PetStudio/"
   });
 
@@ -1077,7 +1077,7 @@ async function shareQR() {
 
   try {
     const canvas = document.querySelector('#qrcode-container canvas');
-    const text = `Check out ${currentQRProfile.name}'s profile!\n\nBreed: ${currentQRProfile.breed}\nBirthday: ${currentQRProfile.birthday}\n\nView more: https://drkimogad.github.io/PetStudio/`;
+    const text = `Check out ${currentQRProfile.name}'s profile!\n\nBreed: ${currentQRProfile.breed}\nUpcoming Birthday: ${currentQRProfile.nextBirthday}\n\nView more: https://drkimogad.github.io/PetStudio/`;
 
     // Priority: Share QR as PNG (mobile/tablets)
     if (canvas && navigator.share && navigator.canShare) {
@@ -1441,7 +1441,7 @@ function attachFormListenerWhenReady() {
         }
 
         /// 🎉 Add birthday reminder if needed (updated to use upcomingBirthday)
-        if (newProfile.upcomingBirthday) {
+        if (newProfile.nextBirthday) {
         const reminderData = {
         userId,
         petName: newProfile.name,
@@ -1450,7 +1450,7 @@ function attachFormListenerWhenReady() {
         message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.nextBirthday)}`, // "5 days until birthday! 🎉"
         createdAt: new Date().toISOString(),
         profileDocId: newProfile.docId,
-        countdownDays: parseInt(getCountdown(newProfile.upcomingBirthday).split(' ')[0]), // Stores "5" (number)
+        countdownDays: parseInt(getCountdown(newProfile.nextBirthday).split(' ')[0]), // Stores "5" (number)
         nickname: newProfile.nicknames || null
         };
 
