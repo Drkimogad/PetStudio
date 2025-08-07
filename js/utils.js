@@ -102,6 +102,7 @@ function renderMoodHistory(profile) {
   
   //==========================================
 // AGE CALCULATION FUNCTION YEARS, MONTHS, DAYS.
+  //=============================================
 calculateAge: function(dobString) {
   try {
     const birthDate = new Date(dobString);
