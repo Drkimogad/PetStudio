@@ -369,6 +369,9 @@ function openEditForm(index) {
     document.getElementById("nextBirthday").value = profile.nextBirthday || "";
     document.getElementById("petNicknames").value = profile.nicknames || "";
     document.getElementById("petNotes").value = profile.notes || "";
+    // UPDATED LINES
+    document.getElementById("nextBirthday").value = profile.nextBirthday || "";
+    document.getElementById("birthdayReminder").value = profile.birthdayReminder || "";
 
     // Emergency contact
     document.getElementById("emergencyName").value = profile.emergencyContact?.name || "";
@@ -1413,8 +1416,8 @@ function attachFormListenerWhenReady() {
           gallery: [], // Temporary empty array
           breed: document.getElementById("petBreed").value,
           dob: document.getElementById("petDob").value,
-          upcomingBirthday: document.getElementById("nextBirthday").value,
-          age: Utils.calculateAge(document.getElementById('petDob').value), // Add this line for age calculation
+          nextBirthday: document.getElementById("nextBirthday").value,
+          // age: Utils.calculateAge(document.getElementById('petDob').value), // Add this line for age calculation
           birthdayReminder: document.getElementById("birthdayReminder").value,
           moodHistory: document.getElementById("moodHistoryInput").value, // ✅ Get by ID
           emergencyContact: {
