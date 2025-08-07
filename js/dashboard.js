@@ -729,7 +729,26 @@ async function generateBirthdayCard(index) {
     const coverUrl = typeof coverPhoto === 'string'
      ? coverPhoto
      : coverPhoto?.url || '';
+  // Add this debug line right after getting coverUrl:
+     console.log("Cover Photo Debug:", {
+     index: profile.coverPhotoIndex,
+     galleryLength: profile.gallery?.length,
+     coverPhoto,
+     coverUrl,
+     validCover
+     });
+  
      const validCover = coverUrl && !coverUrl.includes('{{');
+
+    // Add this RIGHT AFTER getting coverUrl but BEFORE creating the card
+    const testImg = new Image();
+    testImg.src = coverUrl;
+    testImg.onload = () => console.log("✅ Image loads successfully:", coverUrl);
+    testImg.onerror = () => console.log("❌ Image FAILED to load:", coverUrl);
+
+// Then proceed with your existing card creation...
+const card = document.createElement('div');
+// ...rest of your code
     
     // 2. Create a birthday-themed card container
     const card = document.createElement('div');
@@ -754,6 +773,8 @@ async function generateBirthdayCard(index) {
     const canvas = await html2canvas(card, {
       scale: 2,
       backgroundColor: '#fff8e6' // Light yellow
+      useCORS: true, // Add this
+      async: true // Add this so canvas await for image to load
     });
 
     // 4. Share or download
