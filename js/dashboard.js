@@ -231,7 +231,7 @@ ${profile.nextBirthday ? `
       <button class="mood-btn" data-mood="sick" data-index="${index}">🤒</button>
     </div>
     <div class="mood-history">
-      ${profile.moodHistory?.length ? Utils.renderMoodHistory(profile) : 'No mood history yet'}
+      ${profile.moodHistory?.length ? ${Utils.renderMoodHistory(profile)} : 'No mood history yet'}
     </div>
   </div>
 
@@ -262,6 +262,27 @@ ${profile.nextBirthday ? `
       DOM.petList.appendChild(petCard);
     });
   }
+}
+
+//==============  
+// Log mood HAS TO STAY IN DASHBOARD.JS
+// MOST FUNCTIONS RELY ON IT 
+//================
+function logMood(profileIndex, mood) {
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Safer initialization
+  if (!petProfiles[profileIndex].moodHistory || !Array.isArray(petProfiles[profileIndex].moodHistory)) {
+    petProfiles[profileIndex].moodHistory = [];
+  }
+  
+  petProfiles[profileIndex].moodHistory.push({
+    date: today,
+    mood: mood
+  });
+  
+  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  loadSavedProfiles();
 }
 
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
