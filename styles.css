@@ -271,6 +271,30 @@ h1, h2, h3, p {
   border-radius: 4px;
 }
 
+/* AGE DISPLAY - FORM STYLE */
+#profileForm .age-display {
+  font-size: 0.95rem;
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#profileForm .age-highlight {
+  color: #6a5acd; /* Matches your tag accent color */
+  font-weight: 600;
+}
+
+#profileForm .fa-dog {
+  color: #6a5acd; /* Same as tags */
+  font-size: 0.9em;
+}
+
+#profileForm .fa-birthday-cake {
+  color: #ff6b6b; /* Soft red for contrast */
+  font-size: 0.9em;
+}
+
 #profileForm .petGallerySection {
   margin: 1.5rem 0;
   padding: 1rem;
