@@ -1385,8 +1385,8 @@ function attachFormListenerWhenReady() {
     // SECTION 6: PROFILE ASSEMBLY
     // ========================
         // ✅ Extract tags BEFORE creating newProfile
-        const tagSelect = document.getElementById("petTags");
-        const selectedTags = Array.from(tagSelect?.selectedOptions || []).map(opt => opt.value);
+        const selectedTags = Array.from(
+        document.querySelectorAll('input[name="petTags"]:checked')).map(checkbox => checkbox.value);
         
         console.log("🧩 Building profile object..."); // DEBUG LINE KEPT
 
