@@ -271,7 +271,13 @@ h1, h2, h3, p {
   border-radius: 4px;
 }
 
-/* AGE DISPLAY - FORM STYLE */
+#profileForm #agePreview {
+  margin-top: 0.5rem;
+  font-size: 0.9em;
+  color: #555;
+}
+
+/* AGE DISPLAY */
 #profileForm .age-display {
   font-size: 0.95rem;
   margin: 8px 0;
@@ -566,7 +572,7 @@ h1, h2, h3, p {
 
 /*=============================*/
 /* 4. Pet info section inside generated petcard- left aligned*/
-/*Includes breed, DOF, upcoming reminer*/
+/*Includes breed, DOF, upcoming reminer,AGE DISPLAY */
 /*=======================================*/
 .petCard .pet-info {
     display: flex;
@@ -582,9 +588,24 @@ h1, h2, h3, p {
     text-align: left !important;
     justify-content: flex-start !important;
 }
+/* FOR AGE PREVIEW  PART */
+.petCard .pet-age-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+}
+
+.petCard .pet-age-display strong {
+  color: #6a5acd; /* Matches your tags */
+}
+
+.petCard .pet-age-display .fa-dog { color: #6a5acd; }
+.petCard .pet-age-display .fa-birthday-cake { color: #ff6b6b; }
 
 /* ==================== */
-/* 5. PETCARD AGE DISPLAY */
+/* 5. PETCARD AGE CALCULATION DISPLAY */
 /* ==================== */
 .petCard .pet-age {
   display: flex;
