@@ -612,7 +612,7 @@ ${profile.gallery.map(img =>
         <div class="print-moodlog">
   <h3>Mood Log</h3>
   <ul>
-${profile.moodHistory.map(entry => `
+${profile.moodHistory.map(entry => ` 
   <li data-emoji="${
     entry.mood === 'happy' ? '😊' : 
     entry.mood === 'sad' ? '😞' : 
