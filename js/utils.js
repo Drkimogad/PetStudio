@@ -96,28 +96,8 @@ function renderMoodHistory(profile) {
   return profile.moodHistory
     .slice(-7)
     .filter(entry => entry?.date && entry?.mood) // Filter invalid entries
-    .map(entry => `${entry.date}: ${Utils.getMoodEmoji(entry.mood)}`) // Use Utils version
+    .map(entry => `${entry.date}: ${this.getMoodEmoji(entry.mood)}`) // "this" refers to Utils
     .join('<br>');
-},
-  
-//==============  
-// Log mood
-//================
-function logMood(profileIndex, mood) {
-  const today = new Date().toISOString().split('T')[0];
-  
-  // Safer initialization
-  if (!petProfiles[profileIndex].moodHistory || !Array.isArray(petProfiles[profileIndex].moodHistory)) {
-    petProfiles[profileIndex].moodHistory = [];
-  }
-  
-  petProfiles[profileIndex].moodHistory.push({
-    date: today,
-    mood: mood
-  });
-  
-  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  loadSavedProfiles();
 },
   
   //==========================================
