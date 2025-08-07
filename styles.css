@@ -553,50 +553,72 @@ h1, h2, h3, p {
 .petCard .pet-info {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Forces horizontal left alignment */
-    text-align: left !important; /* Forces text left alignment */
-    justify-content: flex-start; /* Explicit vertical start (optional) */
-    width: 100%; /* Ensures full container width */
-     gap: 4px;
+    align-items: flex-start;
+    text-align: left;
+    width: 100%;
+    gap: 3px; /* Uniform gap between all elements it was 6*/
+    padding: 0; /* Remove any default padding */
+    margin: 0 0 4px 0; /* Reduced bottom margin */
 }
 
-/* Nuclear option if still not left-aligned */
-.petCard .pet-info * {
-    text-align: left !important;
-    justify-content: flex-start !important;
-}
-
-/* FOR AGE PREVIEW  PART */
+/* Age display section */
 .petCard .pet-age-display {
-  display: flex;
-  align-items: center;
-  gap: 4px; /* can be increased*/
-  margin: 10px 0;
-  font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 4px 0; /* Reduced top/bottom margin */
+    font-size: 0.9rem;
+    padding: 0;
 }
 
 .petCard .pet-age-display strong {
-  color: #6a5acd; /* Matches your tags */
+    color: #6a5acd;
 }
 
-.petCard .pet-age-display .fa-dog { color: #6a5acd; }
-.petCard .pet-age-display .fa-birthday-cake { color: #ff6b6b; }
+.petCard .pet-age-display .fa-dog { 
+    color: #6a5acd; 
+}
+.petCard .pet-age-display .fa-birthday-cake { 
+    color: #ff6b6b; 
+}
+
+/* Ensure all child elements are properly aligned */
+.petCard .pet-info > * {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    align-self: flex-start;
+}
 
 /*=======================*/
 /* 6. BIRTHDAY REMINDER */
 /*========================*/
 .petCard .profile-reminder-section {
-  margin: 1.5rem 0;
+  margin: 1rem 0;
+  padding: 0.8rem;
+  background-color: #f8f4ff; /* Soft purple tinted light background */
+  border-radius: 8px;
+  border-left: 4px solid #d4bff9; /* Unique left borderline */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
+
 .petCard .profile-reminder {
   text-align: left;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 5px;
+  gap: 8px;
+  margin: 0.4rem 0; /* Balanced vertical spacing */
   font-size: 0.9em;
-  color: #ff6b6b;
+  color: #7e5bef; /* More readable purple instead of bright red */
+  font-weight: 500;
 }
+
+/* Optional icon styling */
+.petCard .profile-reminder .fas {
+  color: #9c7df5; /* Matching purple for icons */
+  font-size: 1em;
+}
+
 /*====================*/
 /* 7. EMERGENCY INFO */
 /*=====================*/
