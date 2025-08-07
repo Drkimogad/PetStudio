@@ -96,7 +96,7 @@ const Utils = {
   return profile.moodHistory
     .slice(-7)
     .filter(entry => entry?.date && entry?.mood) // Filter invalid entries
-     .map(entry => `${entry.date}: ${Utils.getMoodEmoji(entry.mood)}`) // ✅
+     .map(entry => `${entry.date}: ${Utils.getMoodEmoji(entry.mood)}`) // ✅ instead of "this"
     .join('<br>');
 },
   
@@ -150,29 +150,6 @@ toggleCelebrateButton(dateInput) {
     window.petProfiles[currentEditIndex].birthday = dateInput.value;
   }
 },
-
-//====================================
-// CREATE COLLAGE HELPER FUNCTION
-//===================================
-  collage: {
-  let selectedImages = [];
-  let selectedLayout = '2x2';
-
-toggleImageSelection(e) {
-  const img = e.target;
-  img.classList.toggle('selected');
-  const index = parseInt(img.dataset.index);
-
-  if (img.classList.contains('selected')) {
-    selectedImages.push(index);
-  } else {
-    selectedImages = selectedImages.filter(i => i !== index);
-  }
-
-  // Enable/disable generate button
-  document.getElementById('generate-collage').disabled = selectedImages.length < 2;
- }
-};
 
 //=======================
 // show error to user
