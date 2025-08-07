@@ -80,9 +80,8 @@ const Utils = {
     const date = new Date(dateString);
     return date.toISOString().split('T')[0];
   },
-  
-//==========================================
-// AGE CALCULATION FUNCTION YEARS, MONTHS, DAYS USED FOR AGE REAL TIME PREVIEW ALONG THE LOGIC AT THE BOTTOM HERE
+  //==========================================
+// AGE CALCULATION FUNCTION YEARS, MONTHS, DAYS.
 calculateAge: function(dobString) {
   try {
     const birthDate = new Date(dobString);
@@ -111,13 +110,7 @@ calculateAge: function(dobString) {
     return 'N/A';
   }
 },
-
- //===formatDate function 
-formatDate: function(dateString) {
-  return new Date(dateString).toLocaleDateString(); // Simple version
-},
-  
-//=============================================
+  //=============================================
 showErrorToUser: function(message, isSuccess = false) {
     try {
       const errorDiv = document.getElementById('error-message');
@@ -136,6 +129,10 @@ showErrorToUser: function(message, isSuccess = false) {
     }
   },
   
+//===formatDate function 
+formatDate: function(dateString) {
+  return new Date(dateString).toLocaleDateString(); // Simple version
+},
 //===============================================
   disableUI: function() {
     document.body.innerHTML = `
@@ -143,21 +140,22 @@ showErrorToUser: function(message, isSuccess = false) {
         Critical Error: Failed to load application interface
       </h1>
     `;
-  },
+  }
+};
 
 //==============================================
+// ADDED OUTSIDE UTILS ()
 function showAuthForm() {
   const container = document.getElementById('authContainer') || document.getElementById('auth-container');
   if (container) container.classList.remove('hidden');
-},
-  
+}
+
 //==================================
 function showUserInfo(user) {
   const emailEl = document.getElementById('userEmail');
   if (emailEl && user?.email) {
     emailEl.textContent = user.email;
   }
- }  
 }
 
 //=====================================================
@@ -173,7 +171,6 @@ function showUserInfo(user) {
     agePreview.innerHTML = '<strong>Realtime Age:</strong> Will be calculated';
   }
 });
-
 
 //==============================================
 // Service worker registration
