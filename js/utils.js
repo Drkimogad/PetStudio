@@ -71,7 +71,9 @@ const Utils = {
     const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
     return `${diffDays} days until birthday! 🎉`;
   },
-//======================================================
+//=============================
+  // getmood emojies
+//==============================
   getMoodEmoji: function(mood) {
     return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
   },
@@ -80,6 +82,44 @@ const Utils = {
     const date = new Date(dateString);
     return date.toISOString().split('T')[0];
   },
+
+//=============================
+ // Render mood history
+//==========================
+function renderMoodHistory(profile) {
+  // Safely handle missing/undefined moodHistory
+  if (!profile.moodHistory || !Array.isArray(profile.moodHistory)) {
+    return "No mood logs yet";
+  }
+
+  // Process last 7 valid entries
+  return profile.moodHistory
+    .slice(-7)
+    .filter(entry => entry?.date && entry?.mood) // Filter invalid entries
+    .map(entry => `${entry.date}: ${Utils.getMoodEmoji(entry.mood)}`) // Use Utils version
+    .join('<br>');
+},
+  
+//==============  
+// Log mood
+//================
+function logMood(profileIndex, mood) {
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Safer initialization
+  if (!petProfiles[profileIndex].moodHistory || !Array.isArray(petProfiles[profileIndex].moodHistory)) {
+    petProfiles[profileIndex].moodHistory = [];
+  }
+  
+  petProfiles[profileIndex].moodHistory.push({
+    date: today,
+    mood: mood
+  });
+  
+  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  loadSavedProfiles();
+},
+  
   //==========================================
 // AGE CALCULATION FUNCTION YEARS, MONTHS, DAYS.
 calculateAge: function(dobString) {
@@ -110,7 +150,50 @@ calculateAge: function(dobString) {
     return 'N/A';
   }
 },
-  //=============================================
+
+//==========================================
+// Helper functions for theme togling
+//==========================================
+function toggleCelebrateButton(dateInput) {
+  const isValid = !!dateInput.value;
+
+  // Optional: update visual feedback (if you're previewing something)
+  if (isValid) {
+    dateInput.style.borderColor = "green";
+  } else {
+    dateInput.style.borderColor = "red";
+  }
+
+  // Optional: update internal temp data model if you're previewing live
+  if (isEditing && typeof currentEditIndex === 'number') {
+    window.petProfiles[currentEditIndex].birthday = dateInput.value;
+  }
+},
+
+//====================================
+// CREATE COLLAGE HELPER FUNCTION
+//===================================
+let selectedImages = [];
+let selectedLayout = '2x2';
+
+function toggleImageSelection(e) {
+  const img = e.target;
+  img.classList.toggle('selected');
+  const index = parseInt(img.dataset.index);
+
+  if (img.classList.contains('selected')) {
+    selectedImages.push(index);
+  } else {
+    selectedImages = selectedImages.filter(i => i !== index);
+  }
+
+  // Enable/disable generate button
+  document.getElementById('generate-collage').disabled = selectedImages.length < 2;
+},
+  
+//=======================
+// show error to user
+//====================
 showErrorToUser: function(message, isSuccess = false) {
     try {
       const errorDiv = document.getElementById('error-message');
@@ -128,8 +211,10 @@ showErrorToUser: function(message, isSuccess = false) {
       alert(message);
     }
   },
-  
-//===formatDate function 
+
+//==============================
+// formatDate function
+//==============================
 formatDate: function(dateString) {
   return new Date(dateString).toLocaleDateString(); // Simple version
 },
@@ -141,16 +226,22 @@ formatDate: function(dateString) {
       </h1>
     `;
   }
-};
+}; // IT CLOSES UTILS FUNCTION BRACE
+// END OF UTILS STACK OF FUNCTIONS
 
-//==============================================
+
 // ADDED OUTSIDE UTILS ()
+//=============================
+// SHOWAUTH FORM
+//==========================
 function showAuthForm() {
   const container = document.getElementById('authContainer') || document.getElementById('auth-container');
   if (container) container.classList.remove('hidden');
 }
 
 //==================================
+// SHOW USER INFO
+//===================
 function showUserInfo(user) {
   const emailEl = document.getElementById('userEmail');
   if (emailEl && user?.email) {
@@ -174,6 +265,7 @@ function showUserInfo(user) {
 
 //==============================================
 // Service worker registration
+//======================================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/PetStudio/service-worker.js', {
