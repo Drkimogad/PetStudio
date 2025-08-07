@@ -1341,7 +1341,6 @@ function attachFormListenerWhenReady() {
           
           birthdayReminder: document.getElementById("birthdayReminder").value,
           gallery: [], // Temporary empty array
-          moodHistory: document.getElementById("moodHistoryInput").value, // ✅ Get by ID
           emergencyContact: {
             name: document.getElementById("emergencyName").value.trim(),
             phone: document.getElementById("emergencyPhone").value.trim(),
@@ -1351,7 +1350,23 @@ function attachFormListenerWhenReady() {
           
           notes: document.getElementById("petNotes")?.value.trim() || "",
           tags: selectedTags, // ✅ Inserted properly now
-          coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0
+          coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
+          
+          // Fixed version (dashboard.js)
+          moodHistory: (() => {
+          const newMood = document.getElementById("moodHistoryInput")?.value?.trim();
+          const history = isEditing && Array.isArray(petProfiles[currentEditIndex]?.moodHistory) 
+          ? [...petProfiles[currentEditIndex].moodHistory] 
+          : [];
+    
+        if (newMood) {
+         history.push({
+         date: new Date().toISOString().split("T")[0],
+         mood: newMood
+         });
+          }
+        return history;
+         })() // END OF MOOD HISTORY 
         };
         // ✅ ADD THIS LINE IMMEDIATELY AFTER required for firestore saving
         newProfile.userId = userId;
