@@ -779,7 +779,7 @@ function createPetCollage(index) {
     const imgElement = document.createElement('img');
     imgElement.src = typeof img === 'string' ? img : img.url;
     imgElement.dataset.index = i;
-    imgElement.addEventListener('click', toggleImageSelection);
+    imgElement.addEventListener('click', toggleImageSelection); // maybe will need Utils before it
     grid.appendChild(imgElement);
   });
 
