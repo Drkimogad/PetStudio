@@ -256,15 +256,7 @@ ${profile.nextBirthday ? `
 //==============================
 // Calculate days until birthday
 //=================================
-function getCountdown(nextBirthday) {
-  const today = new Date();
-  const nextBirthday = new Date(nextBirthday);
-  nextBirthday.setFullYear(today.getFullYear());
-  if (nextBirthday < today) nextBirthday.setFullYear(today.getFullYear() + 1);
-  const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
-  return `${diffDays} days until birthday! 🎉`;
-}
-
+// IN UTILS.JS
 //=============================
 // Render mood history
 //==========================
