@@ -132,25 +132,6 @@ calculateAge(dobString) {
   }
 },
 
-//==========================================
-// Helper functions for theme togling
-//==========================================
-toggleCelebrateButton(dateInput) {
-  const isValid = !!dateInput.value;
-
-  // Optional: update visual feedback (if you're previewing something)
-  if (isValid) {
-    dateInput.style.borderColor = "green";
-  } else {
-    dateInput.style.borderColor = "red";
-  }
-
-  // Optional: update internal temp data model if you're previewing live
-  if (isEditing && typeof currentEditIndex === 'number') {
-    window.petProfiles[currentEditIndex].birthday = dateInput.value;
-  }
-},
-
 //=======================
 // show error to user
 //====================
