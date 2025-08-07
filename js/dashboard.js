@@ -1423,7 +1423,8 @@ function attachFormListenerWhenReady() {
           tags: selectedTags, // ✅ Inserted properly now
           coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0
         };
-
+        // ✅ ADD THIS LINE IMMEDIATELY AFTER required for firestore saving
+        newProfile.userId = userId;
 
         // 🖼️ Gallery Consolidation
         if (isEditing) {
