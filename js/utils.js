@@ -63,7 +63,7 @@ async function uploadToCloudinary(file, userId, petProfileId) {
 // OLD SECTION
 const Utils = {
   // ===============================
-  getCountdown: function(birthday) {
+  getCountdown(birthday) {
     const today = new Date();
     const nextBirthday = new Date(birthday);
     nextBirthday.setFullYear(today.getFullYear());
@@ -74,11 +74,11 @@ const Utils = {
 //=============================
   // getmood emojies
 //==============================
-  getMoodEmoji: function(mood) {
+  getMoodEmoji(mood) {
     return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
   },
 
-  formatFirestoreDate: function(dateString) {
+  formatFirestoreDate(dateString) {
     const date = new Date(dateString);
     return date.toISOString().split('T')[0];
   },
@@ -86,7 +86,7 @@ const Utils = {
 //=============================
  // Render mood history
 //==========================
-  renderMoodHistory: function(profile) {  // <-- Proper method syntax
+  renderMoodHistory(profile) {  // <-- Method shorthand syntax
   // Safely handle missing/undefined moodHistory
   if (!profile.moodHistory || !Array.isArray(profile.moodHistory)) {
     return "No mood logs yet";
@@ -96,14 +96,14 @@ const Utils = {
   return profile.moodHistory
     .slice(-7)
     .filter(entry => entry?.date && entry?.mood) // Filter invalid entries
-    .map(entry => `${entry.date}: ${this.getMoodEmoji(entry.mood)}`) // "this" refers to Utils
+     .map(entry => `${entry.date}: ${Utils.getMoodEmoji(entry.mood)}`) // ✅
     .join('<br>');
 },
   
   //==========================================
 // AGE CALCULATION FUNCTION YEARS, MONTHS, DAYS.
   //=============================================
-calculateAge: function(dobString) {
+calculateAge(dobString) {
   try {
     const birthDate = new Date(dobString);
     const today = new Date();
@@ -135,7 +135,7 @@ calculateAge: function(dobString) {
 //==========================================
 // Helper functions for theme togling
 //==========================================
-function toggleCelebrateButton(dateInput) {
+toggleCelebrateButton(dateInput) {
   const isValid = !!dateInput.value;
 
   // Optional: update visual feedback (if you're previewing something)
@@ -157,7 +157,7 @@ function toggleCelebrateButton(dateInput) {
 let selectedImages = [];
 let selectedLayout = '2x2';
 
-function toggleImageSelection(e) {
+toggleImageSelection(e) {
   const img = e.target;
   img.classList.toggle('selected');
   const index = parseInt(img.dataset.index);
@@ -175,7 +175,7 @@ function toggleImageSelection(e) {
 //=======================
 // show error to user
 //====================
-showErrorToUser: function(message, isSuccess = false) {
+showErrorToUser(message, isSuccess = false) {
     try {
       const errorDiv = document.getElementById('error-message');
       if (!errorDiv) {
@@ -196,11 +196,11 @@ showErrorToUser: function(message, isSuccess = false) {
 //==============================
 // formatDate function
 //==============================
-formatDate: function(dateString) {
+formatDate(dateString) {
   return new Date(dateString).toLocaleDateString(); // Simple version
 },
 //===============================================
-  disableUI: function() {
+  disableUI() {
     document.body.innerHTML = `
       <h1 style="color: red; padding: 2rem; text-align: center">
         Critical Error: Failed to load application interface
