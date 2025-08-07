@@ -283,13 +283,34 @@ function logMood(profileIndex, mood) {
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
   loadSavedProfiles();
 }
+
+//==========================================
+// Helper functions for theme togling
+//==========================================
+function toggleCelebrateButton(dateInput) {
+  const isValid = !!dateInput.value;
+
+  // Optional: update visual feedback (if you're previewing something)
+  if (isValid) {
+    dateInput.style.borderColor = "green";
+  } else {
+    dateInput.style.borderColor = "red";
+  }
+
+  // Optional: update internal temp data model if you're previewing live
+  if (isEditing && typeof currentEditIndex === 'number') {
+    window.petProfiles[currentEditIndex].birthday = dateInput.value;
+  }
+}
+
+
 //====================================
 // CREATE COLLAGE HELPER FUNCTION
 //===================================
-  let selectedImages = [];
-  let selectedLayout = '2x2';
+let selectedImages = [];
+let selectedLayout = '2x2';
 
-toggleImageSelection(e) {
+function toggleImageSelection(e) {
   const img = e.target;
   img.classList.toggle('selected');
   const index = parseInt(img.dataset.index);
@@ -302,7 +323,8 @@ toggleImageSelection(e) {
 
   // Enable/disable generate button
   document.getElementById('generate-collage').disabled = selectedImages.length < 2;
- }
+}
+
 
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 //======================================
