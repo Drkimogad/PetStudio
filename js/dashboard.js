@@ -178,12 +178,22 @@ petCard.innerHTML = `
   <!-- 4. DETAILS SECTION -->
   <!-- ==================== -->
   <div class="pet-info">
-    <p><strong>Breed:</strong> ${profile.breed || 'Not specified'}</p>
-    <p><strong>DOB:</strong> ${profile.dob || 'Unknown'}</p>
-    ${profile.nextBirthday ? `
+  <p><strong>Breed:</strong> ${profile.breed || 'Not specified'}</p>
+  <p><strong>DOB:</strong> ${profile.dob || 'Unknown'}</p>
+    <!-- ====ADDED RECENTLY AGE DISPLAY OR PREVIEW===== -->
+  ${profile.dob ? `
+    <p class="pet-age-display">
+      <i class="fas fa-dog"></i>
+      <span>Age: <strong>${Utils.calculateAge(profile.dob)}</strong></span>
+      <i class="fas fa-birthday-cake"></i>
+    </p>
+  ` : ''}
+    <!-- ==FOR UPCOMING BIRTHDAY== -->
+  ${profile.nextBirthday ? `
     <p><strong>Upcoming Birthday:</strong> ${formatDate(profile.nextBirthday)}</p>
-    ` : ''}
-  </div>
+  ` : ''}
+</div>
+
     <!-- ==================== -->
   <!-- A5. ge Display -->
     <!-- ==================== -->
