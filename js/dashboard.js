@@ -1194,7 +1194,10 @@ function setupPetProfileDelegation() {
     const docId = target.dataset.docId || null;
 
     if (isNaN(index)) {
+       // Only warn for elements that should have valid indices
+      if (!event.target.closest('.pet-age, .pet-info, .birthday-card')) { 
       console.warn("⚠️ Ignored click: Invalid or missing data-index", target);
+    }
       return;
     }
 
