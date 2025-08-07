@@ -86,7 +86,7 @@ const Utils = {
 //=============================
  // Render mood history
 //==========================
-function renderMoodHistory(profile) {
+  renderMoodHistory: function(profile) {  // <-- Proper method syntax
   // Safely handle missing/undefined moodHistory
   if (!profile.moodHistory || !Array.isArray(profile.moodHistory)) {
     return "No mood logs yet";
