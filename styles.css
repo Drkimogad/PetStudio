@@ -40,14 +40,14 @@ h1, h2, h3, p {
   border-radius: 8px;
   text-align: center; /* Optional: Center-align text */
 }
-
+/* PetStudio */
 .auth-header h1 {
   font-size: 4rem;
   color: #808080;
   margin: 0.3rem 0 0 0; /* Tight top margin like your original */
   line-height: 1.2; /* Better text breathing */
 }
-
+/* Why Just Take Photos When You Can Create Magic?*/
 .auth-header h2 {
   font-size: 1rem;    /* Subtitle size */
   color: #d4a017;       /* Mustard accent */
