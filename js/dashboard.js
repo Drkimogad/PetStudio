@@ -1406,12 +1406,13 @@ function attachFormListenerWhenReady() {
           id: newProfileId,
           name: document.getElementById("petName").value,
           nicknames: document.getElementById("petNicknames")?.value || "",
-          gallery: [], // Temporary empty array
           breed: document.getElementById("petBreed").value,
-          dob: document.getElementById("petDob").value,
-          nextBirthday: document.getElementById("nextBirthday").value,
-          age: Utils.calculateAge(document.getElementById('petDob').value), // Add this line for age calculation
+          
+          dob: document.getElementById("petDob").value, // needed for age calculation
+          nextBirthday: document.getElementById("nextBirthday").value, // needed for age calculation
+          
           birthdayReminder: document.getElementById("birthdayReminder").value,
+          gallery: [], // Temporary empty array
           moodHistory: document.getElementById("moodHistoryInput").value, // ✅ Get by ID
           emergencyContact: {
             name: document.getElementById("emergencyName").value.trim(),
@@ -1419,6 +1420,7 @@ function attachFormListenerWhenReady() {
             relationship: document.getElementById("emergencyRelationship").value.trim()
           },
           microchipNumber: document.getElementById("microchipNumber").value.trim(),
+          
           notes: document.getElementById("petNotes")?.value.trim() || "",
           tags: selectedTags, // ✅ Inserted properly now
           coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0
