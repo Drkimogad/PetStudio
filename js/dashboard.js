@@ -1303,22 +1303,21 @@ function attachFormListenerWhenReady() {
         // ========================
         // SECTION 5: MOOD HANDLING
         // ========================
-        console.log("😊 Processing mood data..."); // DEBUG LINE KEPT
-        // Fixed version (dashboard.js)
-        moodHistory: (() => {
-       const newMood = document.getElementById("moodHistoryInput")?.value?.trim();
-       const history = isEditing && Array.isArray(petProfiles[currentEditIndex]?.moodHistory) 
-       ? [...petProfiles[currentEditIndex].moodHistory] 
-        : [];
-    
-      if (newMood) {
-        history.push({
-         date: new Date().toISOString().split("T")[0],
-        mood: newMood
-       });
-       }
-      return history;
-    })(),
+          console.log("😊 Processing mood data..."); // DEBUG LINE KEPT
+        let moodHistory = [];
+         if (isEditing && Array.isArray(petProfiles[currentEditIndex]?.moodHistory)) {
+          moodHistory = [...petProfiles[currentEditIndex].moodHistory];
+           console.log("♻️ Loaded existing mood history"); // DEBUG LINE KEPT
+          }
+
+        const newMood = document.getElementById("moodHistoryInput")?.value?.trim();
+        if (newMood) {
+          moodHistory.push({
+            date: new Date().toISOString().split("T")[0],
+            mood: newMood
+          });
+          console.log("➕ Added new mood entry:", newMood); // DEBUG LINE KEPT
+        }
 
     // ========================
     // SECTION 6: PROFILE ASSEMBLY
