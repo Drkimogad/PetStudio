@@ -184,7 +184,7 @@ petCard.innerHTML = `
   ${profile.dob ? `
     <p class="pet-age-display">
       <i class="fas fa-dog"></i>
-      <span>Age: <strong>${Utils.calculateAge(profile.dob)}</strong></span>
+      <span>Today, ${profile.name} is <strong>${Utils.calculateAge(profile.dob)}</strong></span>
       <i class="fas fa-birthday-cake"></i>
     </p>
   ` : ''}
@@ -194,14 +194,7 @@ petCard.innerHTML = `
   ` : ''}
 </div>
 
-    <!-- ==================== -->
-  <!-- A5. ge Display -->
-    <!-- ==================== -->
-  <div class="pet-age">
-    <i class="fas fa-dog"></i>
-    <span>Today, ${profile.name} is <strong>${Utils.calculateAge(profile.dob)}</strong></span>
-    <i class="fas fa-birthday-cake"></i>
-  </div>
+<!-- ===5. Age display removed ============ -->
 
 <!-- ==================== -->
 <!-- 6. BIRTHDAY REMINDER -->
