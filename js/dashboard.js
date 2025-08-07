@@ -41,19 +41,29 @@ function initDashboardDOM() {
 // 🎨 previewTheme() - Live Theme Preview
 // ==============================
 function previewTheme(selectedTheme) {
-  const themeOptions = document.querySelectorAll('.theme-preview');
-
-  themeOptions.forEach(preview => {
-    preview.classList.remove('selected-theme');
+  // Visual selection
+  document.querySelectorAll('.theme-preview').forEach(el => {
+    el.classList.toggle('selected-theme', el.classList.contains(`${selectedTheme}-mini`));
   });
-
-  const selected = document.querySelector(`.theme-preview.${selectedTheme}-mini`);
-  if (selected) {
-    selected.classList.add('selected-theme');
+  
+  // Live card preview (if on edit screen)
+  if (isEditing) {
+    const previewCard = document.querySelector(`.petCard[data-index="${currentEditIndex}"]`);
+    if (previewCard) applyTheme(previewCard, selectedTheme);
   }
-
-  // Optional: Save for use in generateBirthdayCard()
-  localStorage.setItem('birthdayTheme', selectedTheme);
+}
+//======================================
+// Helper for theme-specific icons
+//=======================================
+function getThemeIcon(theme) {
+  const icons = {
+    balloons: '🎈',
+    paws: '🐾',
+    party: '🎊',
+    elegant: '✨',
+    minimal: '🎂'
+  };
+  return icons[theme] || '🎉';
 }
 
 // ======================
@@ -710,19 +720,22 @@ async function generateBirthdayCard(index) {
     // 1. Fetch the pet's profile
     const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
     const profile = window.petProfiles[index];
-    if (!profile || !profile.nextBirthday) return;
+    const theme = profile.theme || 'balloons'; // Fallback to balloons
 
+    if (!profile || !profile.nextBirthday) return;
+    
+   // ENSURE COVERPHOTO EXISTS AND VALIDATE IT
     const coverPhoto = profile.gallery?.[profile.coverPhotoIndex];
     const coverUrl = typeof coverPhoto === 'string'
      ? coverPhoto
      : coverPhoto?.url || '';
-   const validCover = coverUrl && !coverUrl.includes('{{');
+     const validCover = coverUrl && !coverUrl.includes('{{');
     
     // 2. Create a birthday-themed card container
     const card = document.createElement('div');
-    card.className = 'birthday-card';
+    card.className = `birthday-card theme-${theme}`; // Add theme class
     card.innerHTML = `
-      <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
+      <div class="birthday-header">${getThemeIcon(theme)} ${profile.name}'s Birthday! ${getThemeIcon(theme)}</div>      
       <div class="birthday-countdown">${Utils.getCountdown(profile.nextBirthday)}</div>
        ${
        validCover
@@ -1408,6 +1421,7 @@ function attachFormListenerWhenReady() {
             relationship: document.getElementById("emergencyRelationship").value.trim()
           },
           microchipNumber: document.getElementById("microchipNumber").value.trim(),
+          theme: document.querySelector('input[name="theme"]:checked').value || 'balloons', // default theme
           
           notes: document.getElementById("petNotes")?.value.trim() || "",
           tags: selectedTags, // ✅ Inserted properly now
