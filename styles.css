@@ -277,30 +277,6 @@ h1, h2, h3, p {
   color: #555;
 }
 
-/* AGE DISPLAY */
-#profileForm .age-display {
-  font-size: 0.95rem;
-  margin: 8px 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-#profileForm .age-highlight {
-  color: #6a5acd; /* Matches your tag accent color */
-  font-weight: 600;
-}
-
-#profileForm .fa-dog {
-  color: #6a5acd; /* Same as tags */
-  font-size: 0.9em;
-}
-
-#profileForm .fa-birthday-cake {
-  color: #ff6b6b; /* Soft red for contrast */
-  font-size: 0.9em;
-}
-
 #profileForm .petGallerySection {
   margin: 1.5rem 0;
   padding: 1rem;
@@ -581,6 +557,7 @@ h1, h2, h3, p {
     text-align: left !important; /* Forces text left alignment */
     justify-content: flex-start; /* Explicit vertical start (optional) */
     width: 100%; /* Ensures full container width */
+     gap: 4px;
 }
 
 /* Nuclear option if still not left-aligned */
@@ -588,11 +565,12 @@ h1, h2, h3, p {
     text-align: left !important;
     justify-content: flex-start !important;
 }
+
 /* FOR AGE PREVIEW  PART */
 .petCard .pet-age-display {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px; /* can be increased*/
   margin: 10px 0;
   font-size: 0.9rem;
 }
@@ -603,32 +581,6 @@ h1, h2, h3, p {
 
 .petCard .pet-age-display .fa-dog { color: #6a5acd; }
 .petCard .pet-age-display .fa-birthday-cake { color: #ff6b6b; }
-
-/* ==================== */
-/* 5. PETCARD AGE CALCULATION DISPLAY */
-/* ==================== */
-.petCard .pet-age {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 12px 0;
-  padding: 0 15px; /* Match your petCard content spacing */
-  font-size: 0.95rem;
-}
-
-.petCard .pet-age strong {
-  color: #6a5acd; /* Matches your tag accent color */
-}
-
-.petCard .pet-age .fa-dog {
-  color: #6a5acd;
-  font-size: 0.9em;
-}
-
-.petCard .pet-age .fa-birthday-cake {
-  color: #ff6b6b;
-  font-size: 0.9em;
-}
 
 /*=======================*/
 /* 6. BIRTHDAY REMINDER */
