@@ -182,20 +182,18 @@
     <!-- 🔥 Right after the DOB input  -->  
     <p class="age-preview" id="agePreview">
     <strong>Realtime Age:</strong> Will be calculated
-   </p>
-	  
+   </p> 
     <label for="nextBirthday">Upcoming Birthday:</label>
     <input type="date" id="nextBirthday" name="nextBirthday">
   </div>
-   
-	 <!-- NEW: Dedicated gallery section -->
-  <div class="petGallerySection">
-    <label for="petGallery">Upload Photos:</label>
-    <input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
-    <div id="galleryPreview" class="gallery-preview"></div>
+		 
+  <div class="birthday-reminder-section">
+      <label for="birthdayReminder">Birthday Reminder:</label>
+      <input type="text" id="birthdayReminder" name="birthdayReminder" 
+         placeholder="Actual birthdate or a few days before (MM/DD/YYYY)" 
+         onchange="toggleCelebrateButton(this)">
   </div>
-
-  <!-- MOOD SECTION -->
+		   <!-- MOOD SECTION -->
   <div class="moodHistoryInput">
     <label for="moodHistoryInput">Mood at Creation:</label>
     <select id="moodHistoryInput" name="moodHistoryInput">
@@ -207,18 +205,20 @@
       <option value="sick">🤒 Sick</option>
     </select>
   </div>
-        <div class="pet-notes">    
-        <label for="petNotes">Notes & Memories:</label>
-        <textarea id="petNotes" name="petNotes" rows="3" placeholder="Gift ideas, funny habits, favorite toys..."></textarea>
-       </div>
-	      
-<div class="birthday-reminder-section">
-      <label for="birthdayReminder">Birthday Reminder:</label>
-      <input type="text" id="birthdayReminder" name="birthdayReminder" 
-         placeholder="Actual birthdate or a few days before (MM/DD/YYYY)" 
-         onchange="toggleCelebrateButton(this)">
-</div>
-        <!-- Pet Tags Section with Icons -->
+                 <!-- Emergency Contact Section -->
+        <div class="emergency-contact-section">
+          <h3>Emergency Contact</h3>
+          <label for="emergencyName">Full Name:</label>
+          <input type="text" id="emergencyName" name="emergencyName">
+          <label for="emergencyPhone">Contact Number:</label>
+          <input type="tel" id="emergencyPhone" name="emergencyPhone">
+          <label for="emergencyRelationship">Relationship to Pet:</label>
+          <input type="text" id="emergencyRelationship" name="emergencyRelationship">
+          <label for="microchipNumber">Microchip Number:</label>
+          <input type="text" id="microchipNumber" name="microchipNumber">
+        </div>
+		 
+    <!-- Pet Tags Section with Icons -->
         <div class="pet-tags-container">
           <label>Tags:</label>
           <div class="pet-tags-options">
@@ -255,18 +255,19 @@
           </div>
           <small>Click to select multiple tags</small>
         </div>
-        <!-- Emergency Contact Section -->
-        <div class="emergency-contact-section">
-          <h3>Emergency Contact</h3>
-          <label for="emergencyName">Full Name:</label>
-          <input type="text" id="emergencyName" name="emergencyName">
-          <label for="emergencyPhone">Contact Number:</label>
-          <input type="tel" id="emergencyPhone" name="emergencyPhone">
-          <label for="emergencyRelationship">Relationship to Pet:</label>
-          <input type="text" id="emergencyRelationship" name="emergencyRelationship">
-          <label for="microchipNumber">Microchip Number:</label>
-          <input type="text" id="microchipNumber" name="microchipNumber">
-        </div>
+		 
+	 <!-- NEW: Dedicated gallery section -->
+  <div class="petGallerySection">
+    <label for="petGallery">Upload Photos:</label>
+    <input type="file" id="petGallery" name="petGallery" multiple accept="image/*">
+    <div id="galleryPreview" class="gallery-preview"></div>
+  </div>
+
+
+        <div class="pet-notes">    
+        <label for="petNotes">Notes & Memories:</label>
+        <textarea id="petNotes" name="petNotes" rows="3" placeholder="Gift ideas, funny habits, favorite toys..."></textarea>
+       </div>
 	      
         <div class="theme-selection">
           <h4>Card Theme</h4>
