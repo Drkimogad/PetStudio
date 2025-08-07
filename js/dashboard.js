@@ -231,8 +231,7 @@ ${profile.nextBirthday ? `
       <button class="mood-btn" data-mood="sick" data-index="${index}">🤒</button>
     </div>
     <div class="mood-history">
-      ${profile.moodHistory?.length ? ${Utils.renderMoodHistory(profile)} : 'No mood history yet'}
-    </div>
+     ${profile.moodHistory?.length ? Utils.renderMoodHistory(profile) : 'No mood history yet'}    </div>
   </div>
 
   <!-- ==================== -->
