@@ -594,11 +594,11 @@ h1, h2, h3, p {
 /* 6. BIRTHDAY REMINDER */
 /*========================*/
 .petCard .profile-reminder-section {
-  margin: 1rem 0;
-  padding: 0.8rem;
-  background-color: #f8f4ff; /* Soft purple tinted light background */
+  margin: 0.5rem 0;      /* Reduced vertical margin (external spacing) */
+  padding: 0.5rem;       /* Reduced padding (internal spacing) */
+  background-color: #f8f4ff;
   border-radius: 8px;
-  border-left: 4px solid #d4bff9; /* Unique left borderline */
+  border-left: 4px solid #d4bff9;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
@@ -606,8 +606,8 @@ h1, h2, h3, p {
   text-align: left;
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 0.4rem 0; /* Balanced vertical spacing */
+  margin: 0.3rem 0;      /* Reduced vertical spacing between lines */
+  gap: 6px;              /* Tighter gap between items */
   font-size: 0.9em;
   color: #7e5bef; /* More readable purple instead of bright red */
   font-weight: 500;
