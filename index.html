@@ -163,6 +163,7 @@
 	  
     <div id="profileSection" class="hidden">
       <h2>Create a Pet Profile</h2>
+	    
      <form id="profileForm" autocomplete="on">
    <!-- EVERYTHING IS NESTED UNDER PROFILEFORM -->
   <!-- BASIC INFO SECTION -->
@@ -178,10 +179,16 @@
     
     <label for="petDob">Date of Birth:</label>
     <input type="date" id="petDob" name="petDob" required>
-    
+	  
     <label for="nextBirthday">Upcoming Birthday:</label>
     <input type="date" id="nextBirthday" name="nextBirthday">
   </div>
+  <!-- NEW: GE CALCULATION Y,M,Ds -->
+    <p class="age-display">
+      <i class="fas fa-dog" style="color: #6a5acd; margin-right: 6px;"></i>
+      <span class="age-highlight">${Utils.calculateAge(profile.dob)}</span>
+      <i class="fas fa-birthday-cake" style="color: #ff6b6b; margin-left: 6px;"></i>
+   </p>    
 	 <!-- NEW: Dedicated gallery section -->
   <div class="petGallerySection">
     <label for="petGallery">Upload Photos:</label>
