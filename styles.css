@@ -398,7 +398,7 @@ h1, h2, h3, p {
 }
 
 /* ====================
-   PETCARD ALL STYLES  
+   RENDERED PETCARD ALL STYLES  
   DESIGNED FOR SAVEDPETPROFILES()
   ==================== */
 /* Can't be nested as # it is a class and not id */
@@ -440,7 +440,7 @@ h1, h2, h3, p {
   position: relative;
   z-index: 2;
 }
-
+/* h3 + nickname in same div in petcard header*/
 .petCard-header h3 {
   margin: 5px 0;
   color: #2c2730;
@@ -457,7 +457,7 @@ h1, h2, h3, p {
   text-align: left;
 }
 
-/* Countdown badge - now properly positioned */
+/* Countdown badge - now properly positioned IN ITS OWN DIV IN THE HEADER */
 .petCard-header .countdown-badge {
   position: absolute;
   right: 20px;
@@ -583,8 +583,34 @@ h1, h2, h3, p {
     justify-content: flex-start !important;
 }
 
+/* ==================== */
+/* 5. PETCARD AGE DISPLAY */
+/* ==================== */
+.petCard .pet-age {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+  padding: 0 15px; /* Match your petCard content spacing */
+  font-size: 0.95rem;
+}
+
+.petCard .pet-age strong {
+  color: #6a5acd; /* Matches your tag accent color */
+}
+
+.petCard .pet-age .fa-dog {
+  color: #6a5acd;
+  font-size: 0.9em;
+}
+
+.petCard .pet-age .fa-birthday-cake {
+  color: #ff6b6b;
+  font-size: 0.9em;
+}
+
 /*=======================*/
-/* 5. BIRTHDAY REMINDER */
+/* 6. BIRTHDAY REMINDER */
 /*========================*/
 .petCard .profile-reminder-section {
   margin: 1.5rem 0;
@@ -599,7 +625,7 @@ h1, h2, h3, p {
   color: #ff6b6b;
 }
 /*====================*/
-/* 6. EMERGENCY INFO */
+/* 7. EMERGENCY INFO */
 /*=====================*/
 /* Emergency Contact Section - inline appearance */
 .emergency-contact-section {
@@ -639,7 +665,7 @@ h1, h2, h3, p {
   display: inline;
 }
 /*==================*/
-/*7. MOOD TRACKER */
+/*8. MOOD TRACKER */
 */====================*/
 .mood-btn-group {
   display: flex;
@@ -665,7 +691,7 @@ h1, h2, h3, p {
   background-color: #e9d5ff;
 }
 /*==================*/
-/* 8. NOTES SECTION */
+/* 9. NOTES SECTION */
 /*==================*/
 /* Notes Section - inline appearance */
 .petCard .pet-notes {
@@ -696,7 +722,7 @@ h1, h2, h3, p {
 }
 
 /*=================================*/
-/* 9. Action buttons container==== */
+/* 10. Action buttons container==== */
 /*=================================*/
 .petCard .actions {
     display: flex;
