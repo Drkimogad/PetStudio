@@ -105,6 +105,7 @@ calculateAge: function(dobString) {
     return 'N/A';
   }
 },
+
   //=============================================
 showErrorToUser: function(message, isSuccess = false) {
     try {
@@ -145,6 +146,19 @@ function showUserInfo(user) {
     emailEl.textContent = user.email;
   }
 }
+//=====================================================
+// FOR REAL-TIME AGE PREVIEW PLACED AFTER DOB IN HTML
+  document.getElementById('petDob').addEventListener('change', function() {
+  const dob = this.value;
+  const agePreview = document.getElementById('agePreview');
+  
+  if (dob) {
+    agePreview.innerHTML = `<strong>Realtime Age:</strong> ${Utils.calculateAge(dob)}`;
+  } else {
+    agePreview.innerHTML = '<strong>Realtime Age:</strong> Will be calculated';
+  }
+});
+
 //==============================================
 // Service worker registration
 if ('serviceWorker' in navigator) {
