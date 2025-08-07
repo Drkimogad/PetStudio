@@ -283,6 +283,26 @@ function logMood(profileIndex, mood) {
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
   loadSavedProfiles();
 }
+//====================================
+// CREATE COLLAGE HELPER FUNCTION
+//===================================
+  let selectedImages = [];
+  let selectedLayout = '2x2';
+
+toggleImageSelection(e) {
+  const img = e.target;
+  img.classList.toggle('selected');
+  const index = parseInt(img.dataset.index);
+
+  if (img.classList.contains('selected')) {
+    selectedImages.push(index);
+  } else {
+    selectedImages = selectedImages.filter(i => i !== index);
+  }
+
+  // Enable/disable generate button
+  document.getElementById('generate-collage').disabled = selectedImages.length < 2;
+ }
 
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 //======================================
@@ -756,7 +776,6 @@ await new Promise((resolve, reject) => {
 //===============================
 // 1. CREATE COLLAGE FIRST
 function createPetCollage(index) {
-  Utils.collage.toggleSelection(event);
   const profile = window.petProfiles[index];
 
   if (!profile?.gallery?.length) {
