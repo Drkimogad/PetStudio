@@ -128,7 +128,7 @@ petCard.innerHTML = `
     ${profile.nicknames ? `<p class="nickname">"${profile.nicknames}"</p>` : ''}
   </div>
   ${profile.nextBirthday ? `
-    <div class="countdown-badge">🎂${getCountdown(profile.nextBirthday)}</div>
+    <div class="countdown-badge">🎂${Utils.getCountdown(profile.nextBirthday)}</div>
   ` : ''}
  </div>
 
@@ -720,7 +720,7 @@ async function generateBirthdayCard(index) {
     card.className = 'birthday-card';
     card.innerHTML = `
       <div class="birthday-header">🎉 ${profile.name}'s Birthday! 🎉</div>
-      <div class="birthday-countdown">${getCountdown(profile.nextBirthday)}</div>
+      <div class="birthday-countdown">${Utils.getCountdown(profile.nextBirthday)}</div>
        ${
        validCover
         ? `<img src="${coverUrl}" alt="${profile.name}" class="birthday-photo">`
@@ -1458,10 +1458,10 @@ function attachFormListenerWhenReady() {
         petName: newProfile.name,
         date: Utils.formatFirestoreDate(newProfile.nextBirthday),
         type: "birthday",
-        message: `${newProfile.name}'s birthday: ${getCountdown(newProfile.nextBirthday)}`, // "5 days until birthday! 🎉"
+        message: `${newProfile.name}'s birthday: ${Utils.getCountdown(newProfile.nextBirthday)}`, // "5 days until birthday! 🎉"
         createdAt: new Date().toISOString(),
         profileDocId: newProfile.docId,
-        countdownDays: parseInt(getCountdown(newProfile.nextBirthday).split(' ')[0]), // Stores "5" (number)
+        countdownDays: parseInt(Utils.getCountdown(newProfile.nextBirthday).split(' ')[0]), // Stores "5" (number)
         nickname: newProfile.nicknames || null
         };
 
