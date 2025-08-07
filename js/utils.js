@@ -57,6 +57,7 @@ async function uploadToCloudinary(file, userId, petProfileId) {
 
 // OLD SECTION
 const Utils = {
+  // ===============================
   getCountdown: function(birthday) {
     const today = new Date();
     const nextBirthday = new Date(birthday);
@@ -65,7 +66,7 @@ const Utils = {
     const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
     return `${diffDays} days until birthday! 🎉`;
   },
-
+//======================================================
   getMoodEmoji: function(mood) {
     return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
   },
@@ -74,22 +75,37 @@ const Utils = {
     const date = new Date(dateString);
     return date.toISOString().split('T')[0];
   },
-
-  calculateAge: function(dobString) {
-    try {
-      const birthDate = new Date(dobString);
-      const today = new Date();
-      let years = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        years--;
-      }
-      const months = (today.getMonth() + 12 - birthDate.getMonth()) % 12;
-      return `${years} years, ${months} months`;
-    } catch {
-      return 'N/A';
+  //==========================================
+// AGE CALCULATION FUNCTION YEARS, MONTHS, DAYS.
+calculateAge: function(dobString) {
+  try {
+    const birthDate = new Date(dobString);
+    const today = new Date();
+    
+    // Years
+    let years = today.getFullYear() - birthDate.getFullYear();
+    
+    // Months
+    let monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      years--;
+      monthDiff += 12; // Adjust negative month difference
     }
-  },
+    
+    // Days (new)
+    let dayDiff = today.getDate() - birthDate.getDate();
+    if (dayDiff < 0) {
+      const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+      dayDiff += lastMonth.getDate(); // Days from previous month
+      monthDiff--;
+    }
+
+    return `${years} years, ${monthDiff} months, ${dayDiff} days`;
+  } catch {
+    return 'N/A';
+  }
+},
+  //=============================================
 showErrorToUser: function(message, isSuccess = false) {
     try {
       const errorDiv = document.getElementById('error-message');
@@ -107,7 +123,7 @@ showErrorToUser: function(message, isSuccess = false) {
       alert(message);
     }
   },
-
+//===============================================
   disableUI: function() {
     document.body.innerHTML = `
       <h1 style="color: red; padding: 2rem; text-align: center">
@@ -116,18 +132,20 @@ showErrorToUser: function(message, isSuccess = false) {
     `;
   }
 };
-// added recently
+//==============================================
+// ADDED OUTSIDE UTILS ()
 function showAuthForm() {
   const container = document.getElementById('authContainer') || document.getElementById('auth-container');
   if (container) container.classList.remove('hidden');
 }
+//==================================
 function showUserInfo(user) {
   const emailEl = document.getElementById('userEmail');
   if (emailEl && user?.email) {
     emailEl.textContent = user.email;
   }
 }
-
+//==============================================
 // Service worker registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
