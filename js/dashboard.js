@@ -190,7 +190,7 @@ petCard.innerHTML = `
   ` : ''}
     <!-- ==FOR UPCOMING BIRTHDAY== -->
   ${profile.nextBirthday ? `
-    <p><strong>Upcoming Birthday:</strong> ${formatDate(profile.nextBirthday)}</p>
+    <p><strong>Upcoming Birthday:</strong> ${Utils.formatDate(profile.nextBirthday)}</p>
   ` : ''}
 </div>
 
