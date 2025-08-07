@@ -154,8 +154,9 @@ toggleCelebrateButton(dateInput) {
 //====================================
 // CREATE COLLAGE HELPER FUNCTION
 //===================================
-let selectedImages = [];
-let selectedLayout = '2x2';
+  collage: {
+  let selectedImages = [];
+  let selectedLayout = '2x2';
 
 toggleImageSelection(e) {
   const img = e.target;
@@ -170,8 +171,9 @@ toggleImageSelection(e) {
 
   // Enable/disable generate button
   document.getElementById('generate-collage').disabled = selectedImages.length < 2;
-},
-  
+ }
+};
+
 //=======================
 // show error to user
 //====================
