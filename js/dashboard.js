@@ -184,9 +184,17 @@ petCard.innerHTML = `
     <p><strong>Upcoming Birthday:</strong> ${formatDate(profile.nextBirthday)}</p>
     ` : ''}
   </div>
+    <!-- ==================== -->
+  <!-- A5. ge Display -->
+    <!-- ==================== -->
+  <div class="pet-age">
+    <i class="fas fa-dog"></i>
+    <span>Today, ${profile.name} is <strong>${Utils.calculateAge(profile.dob)}</strong></span>
+    <i class="fas fa-birthday-cake"></i>
+  </div>
 
 <!-- ==================== -->
-<!-- 5. BIRTHDAY REMINDER -->
+<!-- 6. BIRTHDAY REMINDER -->
 <!-- ==================== -->
 ${profile.nextBirthday ? `
   <div class="profile-reminder-section">
@@ -197,7 +205,7 @@ ${profile.nextBirthday ? `
 ` : ''}
 
   <!-- ==================== -->
-  <!--6. EMERGENCY INFO -->
+  <!--7. EMERGENCY INFO -->
   <!-- ==================== -->
   <div class="emergency-info">
     <h4>Emergency Contact</h4>
@@ -208,7 +216,7 @@ ${profile.nextBirthday ? `
   </div>
 
   <!-- ==================== -->
-  <!-- 7. MOOD TRACKER -->
+  <!-- 8. MOOD TRACKER -->
   <!-- ==================== -->
   <div class="mood-tracker">
     <div class="mood-buttons">
@@ -225,7 +233,7 @@ ${profile.nextBirthday ? `
   </div>
 
   <!-- ==================== -->
-  <!-- 8. NOTES SECTION -->
+  <!-- 9. NOTES SECTION -->
   <!-- ==================== -->
   <div class="pet-notes">
     <strong>Notes & Memories:</strong>
@@ -233,7 +241,7 @@ ${profile.nextBirthday ? `
   </div>
 
   <!-- ==================== -->
-  <!-- 9. ACTION BUTTONS -->
+  <!-- 10. ACTION BUTTONS -->
   <!-- ==================== -->
   <div class="pet-card" data-doc-id="${profile.docId}">
     <div class="action-buttons">
