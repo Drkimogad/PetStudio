@@ -1,5 +1,5 @@
 // image preview in new creation and open edit form to be fixed
-// QR code to be finalized.
+// QR code to be finalized. OTHER ADDED FIELDS TO BE IMPLEMENTED IN THE REST OF THE FUNCTIONS
 
 //🌟 Global declarations 🌟
 let currentQRProfile = null; // Only new declaration needed
