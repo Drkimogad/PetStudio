@@ -264,65 +264,6 @@ ${profile.nextBirthday ? `
   }
 }
 
-//==============================
-// Calculate days until birthday
-//=================================
-// IN UTILS.JS
-//=============================
-// Render mood history
-//==========================
-function renderMoodHistory(profile) {
-  if (!profile.moodHistory || profile.moodHistory.length === 0) return "No mood logs yet";
-  return profile.moodHistory
-    .slice(-7)
-    .map(entry => `${entry.date}: ${getMoodEmoji(entry.mood)}`)
-    .join('<br>');
-}
-
-function getMoodEmoji(mood) {
-  return mood === 'happy' ? '😊' : mood === 'sad' ? '😞' : '😐';
-}
-//==========================================
-// Helper functions for theme togling
-//==========================================
-function toggleCelebrateButton(dateInput) {
-  const isValid = !!dateInput.value;
-
-  // Optional: update visual feedback (if you're previewing something)
-  if (isValid) {
-    dateInput.style.borderColor = "green";
-  } else {
-    dateInput.style.borderColor = "red";
-  }
-
-  // Optional: update internal temp data model if you're previewing live
-  if (isEditing && typeof currentEditIndex === 'number') {
-    window.petProfiles[currentEditIndex].birthday = dateInput.value;
-  }
-}
-
-
-//====================================
-// CREATE COLLAGE HELPER FUNCTION
-//===================================
-let selectedImages = [];
-let selectedLayout = '2x2';
-
-function toggleImageSelection(e) {
-  const img = e.target;
-  img.classList.toggle('selected');
-  const index = parseInt(img.dataset.index);
-
-  if (img.classList.contains('selected')) {
-    selectedImages.push(index);
-  } else {
-    selectedImages = selectedImages.filter(i => i !== index);
-  }
-
-  // Enable/disable generate button
-  document.getElementById('generate-collage').disabled = selectedImages.length < 2;
-}
-
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 //======================================
 // 🌀 EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
@@ -1154,20 +1095,6 @@ function showQRStatus(message, isSuccess) {
   }, 3000);
 }
 
-
-//==============  
-// Log mood
-//================
-function logMood(profileIndex, mood) {
-  const today = new Date().toISOString().split('T')[0];
-  if (!petProfiles[profileIndex].moodHistory) petProfiles[profileIndex].moodHistory = [];
-  petProfiles[profileIndex].moodHistory.push({
-    date: today,
-    mood: mood
-  });
-  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  loadSavedProfiles();
-}
 //=================
 // Set cover photo
 //====================
@@ -1377,20 +1304,21 @@ function attachFormListenerWhenReady() {
         // SECTION 5: MOOD HANDLING
         // ========================
         console.log("😊 Processing mood data..."); // DEBUG LINE KEPT
-        let moodHistory = [];
-        if (isEditing && petProfiles[currentEditIndex]?.moodHistory) {
-          moodHistory = [...petProfiles[currentEditIndex].moodHistory];
-          console.log("♻️ Loaded existing mood history"); // DEBUG LINE KEPT
-        }
-
-        const newMood = document.getElementById("moodHistoryInput")?.value?.trim();
-        if (newMood) {
-          moodHistory.push({
-            date: new Date().toISOString().split("T")[0],
-            mood: newMood
-          });
-          console.log("➕ Added new mood entry:", newMood); // DEBUG LINE KEPT
-        }
+        // Fixed version (dashboard.js)
+        moodHistory: (() => {
+       const newMood = document.getElementById("moodHistoryInput")?.value?.trim();
+       const history = isEditing && Array.isArray(petProfiles[currentEditIndex]?.moodHistory) 
+       ? [...petProfiles[currentEditIndex].moodHistory] 
+        : [];
+    
+      if (newMood) {
+        history.push({
+         date: new Date().toISOString().split("T")[0],
+        mood: newMood
+       });
+       }
+      return history;
+    })(),
 
     // ========================
     // SECTION 6: PROFILE ASSEMBLY
