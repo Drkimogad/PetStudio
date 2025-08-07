@@ -756,6 +756,7 @@ await new Promise((resolve, reject) => {
 //===============================
 // 1. CREATE COLLAGE FIRST
 function createPetCollage(index) {
+  Utils.collage.toggleSelection(event);
   const profile = window.petProfiles[index];
 
   if (!profile?.gallery?.length) {
