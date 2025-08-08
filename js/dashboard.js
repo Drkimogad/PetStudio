@@ -149,7 +149,7 @@ petCard.innerHTML = `
   ${profile.gallery?.length > 0 
     ? profile.gallery.map((img, imgIndex) => `
       <div class="gallery-item ${!img?.url ? 'error' : ''}">
-        <img src="${validateImageUrl(typeof img === 'string' ? img : img?.url)}" 
+        <img src="${typeof img === 'string' ? img : img.url}" 
              alt="Pet photo ${imgIndex + 1}"
              onerror="this.classList.add('error'); this.src='placeholder.jpg';"
              loading="lazy">
@@ -167,7 +167,20 @@ petCard.innerHTML = `
   }
 </div>
 
-<div id="editGalleryPreview" class="gallery-preview"></div>
+<div id="editGalleryPreview" class="gallery-preview">
+  ${isEditing && profile.gallery?.length > 0 
+    ? profile.gallery.map((img, imgIndex) => `
+      <div class="gallery-item">
+        <img src="${typeof img === 'string' ? img : img.url}" 
+             class="preview-thumb"
+             data-index="${imgIndex}">
+        <button class="remove-btn" data-index="${imgIndex}">×</button>
+      </div>
+    `).join('')
+    : ''
+  }
+</div>
+
 <div id="galleryWarning" class="gallery-warning hidden">
   ⚠️ Duplicate image detected
 </div>
