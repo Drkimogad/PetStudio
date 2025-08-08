@@ -390,7 +390,7 @@ function openEditForm(index) {
     document.getElementById("microchipNumber").value = profile.microchipNumber || "";
 
     // Tags
-    const tagSelect = document.getElementById("petTags");
+    const tagSelect = document.querySelectorAll('input[name="petTags"]:checkbox');
     if (tagSelect) {
       Array.from(tagSelect.options).forEach(option => {
         option.selected = profile.tags?.includes(option.value);
