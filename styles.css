@@ -964,13 +964,16 @@ styled to show in petcard header plus nickname */
   position: relative;
   overflow: hidden;
 }
-
+/* Birthday card header*/
 .pet-name {
   font-size: 2em;
   margin: 10px 0;
   font-weight: bold;
 }
-
+.countdown {
+  font-weight: bold;
+  margin: 10px 0;
+}
 .pet-photo {
   width: 200px;
   height: 200px;
@@ -980,11 +983,14 @@ styled to show in petcard header plus nickname */
   display: block;
   border: 3px solid white;
 }
-
-.countdown {
-  font-weight: bold;
-  margin: 10px 0;
+.birthday-footer {
+  margin-top: 20px;
+  font-size: 1.1em;
+  color: #333;
+  font-weight: 500;
 }
+
+
 
 /* =Theme/Templates-Specific Styles 5= */
 /* Theme Selection */
