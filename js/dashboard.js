@@ -461,7 +461,10 @@ function openEditForm(index) {
       const submitBtn = DOM.profileForm.querySelector('button[type="submit"]');
       if (submitBtn) submitBtn.after(cancelBtn);
     }
-
+    // ALWAYS CALL AFTER RESET
+   // 🎯 INSERT HERE ▼ (after fields, before UI updates)
+    updateGalleryPreviews(); // Refresh gallery with existing images
+    
     // ======================
     // 6. UI STATE UPDATES & LOADER HANDLING
     // ======================
@@ -532,7 +535,11 @@ function openCreateForm() {
   // 2. CLEAR FORM FIELDS
   // ======================
   resetForm(); // Handles all field/gallery clearing
-
+  
+  //ALWAYS CALL IT AFTER RESET   
+  // 🎯 INSERT HERE ▼ (after reset, before handlers)
+  updateGalleryPreviews(); // Initialize empty gallery
+  
   // 3. INITIALIZE GALLERY HANDLERS
   // ======================
   initGalleryInteractions(); // Must come AFTER resetForm()
@@ -621,25 +628,52 @@ function resetForm(fullReset = true) {
 //=================================================
 //4. helper function for gallery preview in edit form
 //=====================================================
-// GALLERY INTERACTION HANDLERS
+// Update your initGalleryInteractions() function:
 function initGalleryInteractions() {
-  // Remove button functionality (keep your existing)
+  // Remove button functionality
   document.querySelectorAll('.remove-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const index = parseInt(e.target.dataset.index);
-      petProfiles[currentEditIndex].gallery.splice(index, 1);
-      openEditForm(currentEditIndex);
+      e.stopPropagation();
+      const index = parseInt(e.target.closest('.gallery-thumbnail').dataset.index);
+      if (isEditing) {
+        petProfiles[currentEditIndex].gallery.splice(index, 1);
+      } else {
+        uploadedImageUrls.splice(index, 1);
+      }
+      updateGalleryPreviews();
     });
   });
 
-  // Cover photo selection - USING YOUR EXISTING FUNCTION
+  // Cover photo selection
   document.querySelectorAll('.cover-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const profileIndex = currentEditIndex;
-      const imageIndex = parseInt(e.target.dataset.photoIndex);
-      setCoverPhoto(profileIndex, imageIndex); // Your working function
+      e.stopPropagation();
+      const index = parseInt(e.target.closest('.gallery-thumbnail').dataset.index);
+      setCoverPhoto(isEditing ? currentEditIndex : -1, index);
     });
   });
+}
+
+// Helper function to update both form previews
+function updateGalleryPreviews() {
+  const gallery = isEditing ? petProfiles[currentEditIndex].gallery : uploadedImageUrls;
+  const preview = document.getElementById('editGalleryPreview');
+  
+  if (preview) {
+    preview.innerHTML = gallery.map((img, idx) => `
+      <div class="gallery-thumbnail" data-index="${idx}">
+        <img src="${typeof img === 'string' ? img : img.url}" 
+             class="preview-thumb"
+             onerror="this.src='placeholder.jpg'">
+        <button class="remove-btn">×</button>
+        <button class="cover-btn ${idx === (isEditing ? petProfiles[currentEditIndex].coverPhotoIndex : 0) ? 'active' : ''}">
+          ★
+        </button>
+      </div>
+    `).join('');
+    
+    initGalleryInteractions();
+  }
 }
 
 
