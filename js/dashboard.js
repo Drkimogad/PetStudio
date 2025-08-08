@@ -145,6 +145,7 @@ petCard.innerHTML = `
 <!-- ==================== -->
 <!--2. GALLERY SECTION -->
 <!-- ==================== -->
+  <!-- Main Gallery Display (for viewing) -->
 <div class="gallery-grid">
   ${profile.gallery?.length > 0 
     ? profile.gallery.map((img, imgIndex) => `
@@ -153,12 +154,10 @@ petCard.innerHTML = `
              alt="Pet photo ${imgIndex + 1}"
              onerror="this.classList.add('error'); this.src='placeholder.jpg';"
              loading="lazy">
-        
         <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}" 
                 data-id="${profile.id}" 
                 data-index="${index}" 
-                data-photo-index="${imgIndex}"
-                aria-label="Set as cover photo">
+                data-photo-index="${imgIndex}">
           ★
         </button>
       </div>
@@ -167,25 +166,16 @@ petCard.innerHTML = `
   }
 </div>
 
-<div id="editGalleryPreview" class="gallery-preview">
-  ${isEditing && profile.gallery?.length > 0 
-    ? profile.gallery.map((img, imgIndex) => `
-      <div class="gallery-item">
-        <img src="${typeof img === 'string' ? img : img.url}" 
-             class="preview-thumb"
-             data-index="${imgIndex}">
-        <button class="remove-btn" data-index="${imgIndex}">×</button>
-      </div>
-    `).join('')
-    : ''
-  }
-</div>
+<!-- Edit Preview Container (empty until form interaction) -->
+<div id="editGalleryPreview" class="gallery-preview"></div>
 
+<!-- Status Messages -->
 <div id="galleryWarning" class="gallery-warning hidden">
   ⚠️ Duplicate image detected
 </div>
 <div id="errorBox" class="error-box"></div>
- 
+
+
   <!-- ==================== -->
   <!-- 3. TAGS SECTION -->
   <!-- ==================== -->
