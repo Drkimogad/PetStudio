@@ -401,29 +401,23 @@ function openEditForm(index) {
 // 3. GALLERY PREVIEW SETUP (CORRECTED)
 // ======================
 DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
-const galleryPreview = document.getElementById("editGalleryPreview");
+const galleryPreview = document.getElementById("galleryPreview");
 
 if (galleryPreview) {
-  galleryPreview.innerHTML = profile.gallery?.length
-    ? profile.gallery.map((img, idx) => {
-        const imgUrl = typeof img === "string" ? img : img?.url;
-        return `
-          <div class="gallery-thumbnail" data-index="${idx}">
-            <img src="${imgUrl}" 
-                 alt="Pet photo ${idx + 1}"
-                 class="preview-thumb"
-                 onerror="this.src='placeholder.jpg'">
-            <button class="remove-btn" data-index="${idx}">×</button>
-            <button class="cover-btn ${idx === profile.coverPhotoIndex ? 'active' : ''}" 
-                    data-photo-index="${idx}"
-                    aria-label="Set as cover photo">
-              ★
-            </button>
-          </div>`;
-      }).join('')
-    : '<p class="empty-gallery">No images yet</p>';
-
-  // Initialize handlers
+  // Store gallery in uploadedImageUrls for consistent handling
+  uploadedImageUrls = [...profile.gallery || []];
+  
+  galleryPreview.innerHTML = uploadedImageUrls.map((img, idx) => `
+    <div class="gallery-thumbnail" data-index="${idx}">
+      <img src="${typeof img === 'string' ? img : img.url}" 
+           class="preview-thumb"
+           onerror="this.src='placeholder.jpg'">
+      <button class="remove-btn">×</button>
+      <button class="cover-btn ${idx === profile.coverPhotoIndex ? 'active' : ''}">
+        ★
+      </button>
+    </div>
+  `).join('');
   initGalleryInteractions();
 }
      
@@ -593,7 +587,7 @@ function resetForm(fullReset = true) {
 
   // 3. GALLERY RESET
   // ======================
-  const galleryPreview = document.getElementById("editGalleryPreview");
+  const galleryPreview = document.getElementById("galleryPreview");
   if (galleryPreview) galleryPreview.innerHTML = "";
   DOM.profileForm.dataset.coverIndex = "0";
 
@@ -651,7 +645,7 @@ function initGalleryInteractions() {
 // Helper function to update both form previews
 function updateGalleryPreviews() {
   const gallery = isEditing ? petProfiles[currentEditIndex].gallery : uploadedImageUrls;
-  const preview = document.getElementById('editGalleryPreview');
+  const preview = document.getElementById('galleryPreview');
   
   if (preview) {
     preview.innerHTML = gallery.map((img, idx) => `
@@ -679,20 +673,22 @@ function cancelEdit() {
   const loader = document.getElementById('processing-loader');
   loader.style.display = 'block';
   loader.querySelector('p').textContent = 'Resetting editor...';
+  
+  resetForm(); // ← Clear all fields including gallery
 
   // 2. Core reset (sync)
   isEditing = false;
-  currentEditIndex = -1;
+  currentEditIndex = null;
   uploadedImageUrls = [];
-  document.getElementById('profileForm').reset();
-
-  // 3. UI cleanup
-  document.getElementById('editGalleryPreview').innerHTML = '';
-  document.getElementById('cancelEditBtn')?.remove();
+  
+  // Reset file input
+  const fileInput = document.getElementById('petGallery');
+  if (fileInput) fileInput.value = '';
   
   // 4. Switch views
   DOM.profileSection.classList.add('hidden');
   DOM.petList.classList.remove('hidden');
+  console.log("❌ Edit cancelled");
 
   // 5. Hide loader after minimal delay (UX polish)
   setTimeout(() => {
