@@ -343,6 +343,8 @@ function toggleImageSelection(e) {
 //======================================
 // 🌀 EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
 //======================================
+// 1. OPENEDITFORM FUNCTION
+//=========================
 function openEditForm(index) {
   const loader = document.getElementById('processing-loader');
   
@@ -365,6 +367,8 @@ function openEditForm(index) {
     if (!profile) {
       throw new Error("Profile not found");
     }
+   // Reset before populating
+    resetForm(false); // ← Keeps visual states
 
     // ======================
     // 2. FORM FIELD POPULATION
@@ -513,7 +517,110 @@ function openEditForm(index) {
   }
 } // ← End of openEditForm
 
-// helper function for gallery preview in edit form
+//====≈===================
+// 2. OPENCREATEFORM()
+//==========================
+function openCreateForm() {
+  console.log("➕ Opening form to create new pet profile");
+  
+  // 1. RESET STATE & FLAGS
+  // ======================
+  isEditing = false;
+  currentEditIndex = null;
+  uploadedImageUrls = [];
+
+  // 2. CLEAR FORM FIELDS
+  // ======================
+  resetForm(); // Handles all field/gallery clearing
+
+  // 3. INITIALIZE GALLERY HANDLERS
+  // ======================
+  initGalleryInteractions(); // Must come AFTER resetForm()
+
+  // 4. CANCEL BUTTON SETUP
+  // ======================
+  if (!document.getElementById("cancelEditBtn")) {
+    const cancelBtn = document.createElement("button");
+    cancelBtn.id = "cancelEditBtn";
+    cancelBtn.type = "button";
+    cancelBtn.className = "button cancel-btn pill";
+    cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+
+    cancelBtn.addEventListener("click", () => {
+      if (confirm("Discard this new profile?")) {
+        cancelEdit();
+      }
+    });
+
+    const submitBtn = DOM.profileForm.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.after(cancelBtn);
+  }
+
+  // 5. SHOW FORM / HIDE DASHBOARD
+  // ======================
+  DOM.profileSection.classList.remove("hidden");
+  DOM.petList.classList.add("hidden");
+  window.scrollTo(0, 0);
+
+  console.log("✅ Create form ready for new profile");
+}
+
+//=====================================================
+// 3. RESET FORM FOR BOTH OPENEDIT AND OPENCREATEFORMS
+/**
+ * Resets all form fields and UI states to default
+ * @param {boolean} fullReset - When true, also resets non-field states (default: true)
+ */
+function resetForm(fullReset = true) {
+  // 1. FORM FIELDS RESET
+  // ======================
+  DOM.profileForm.reset();
+  
+  // 2. SPECIAL INPUT CLEARING
+  // ======================
+  // Tags (multiselect)
+  const tagSelect = document.getElementById("petTags");
+  if (tagSelect) {
+    Array.from(tagSelect.options).forEach(opt => opt.selected = false);
+  }
+
+  // Emergency contact (if not caught by form.reset())
+  document.getElementById("emergencyName").value = "";
+  document.getElementById("emergencyPhone").value = "";
+  document.getElementById("emergencyRelationship").value = "";
+  document.getElementById("microchipNumber").value = "";
+
+  // 3. GALLERY RESET
+  // ======================
+  const galleryPreview = document.getElementById("editGalleryPreview");
+  if (galleryPreview) galleryPreview.innerHTML = "";
+  DOM.profileForm.dataset.coverIndex = "0";
+
+  // 4. MOOD INPUT
+  // ======================
+  const moodInput = document.getElementById("moodHistoryInput");
+  if (moodInput) {
+    moodInput.value = "";
+    moodInput.placeholder = "Add new mood...";
+  }
+
+  // 5. FULL STATE RESET (optional)
+  // ======================
+  if (fullReset) {
+    // Visual states
+    document.querySelectorAll('.cover-btn.active').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    
+    // Clear any temporary previews
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach(input => input.value = "");
+  }
+}
+
+//=================================================
+//4. helper function for gallery preview in edit form
+//=====================================================
 // GALLERY INTERACTION HANDLERS
 function initGalleryInteractions() {
   // Remove button functionality (keep your existing)
@@ -535,74 +642,10 @@ function initGalleryInteractions() {
   });
 }
 
-//====≈===================
-// OPENCREATEFORM()
-//==========================
-function openCreateForm() {
-  console.log("➕ Opening form to create new pet profile");
-  
-  // 1. RESET STATE & FLAGS
-  // ======================
-  isEditing = false;
-  currentEditIndex = null;
-  uploadedImageUrls = [];
 
-  // 2. CLEAR FORM FIELDS
-  // ======================
-  DOM.profileForm.reset(); // clears all standard inputs
-
-  // Clear any tags (if multiselect exists)
-  const tagSelect = document.getElementById("petTags");
-  if (tagSelect) {
-    Array.from(tagSelect.options).forEach(opt => opt.selected = false);
-  }
-
-  // Clear emergency contact manually (if not included in form.reset())
-  document.getElementById("emergencyName").value = "";
-  document.getElementById("emergencyPhone").value = "";
-  document.getElementById("emergencyRelationship").value = "";
-  document.getElementById("microchipNumber").value = "";
-
-  // Clear gallery preview and cover index
-  document.getElementById("editGalleryPreview").innerHTML = "";
-  DOM.profileForm.dataset.coverIndex = 0;
-
-  // Reset mood input (if exists)
-  const moodInput = document.getElementById("moodHistoryInput");
-  if (moodInput) {
-    moodInput.value = "";
-    moodInput.placeholder = "Add new mood...";
-  }
-
-  // 3. CANCEL BUTTON SETUP
-  // ======================
-  if (!document.getElementById("cancelEditBtn")) {
-    const cancelBtn = document.createElement("button");
-    cancelBtn.id = "cancelEditBtn";
-    cancelBtn.type = "button";
-    cancelBtn.className = "button cancel-btn pill";
-    cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
-
-    cancelBtn.addEventListener("click", () => {
-      if (confirm("Discard this new profile?")) {
-        cancelEdit(); // Hides form, shows dashboard
-      }
-    });
-
-    const submitBtn = DOM.profileForm.querySelector('button[type="submit"]');
-    if (submitBtn) submitBtn.after(cancelBtn);
-  }
-
-  // 4. SHOW FORM / HIDE DASHBOARD
-  // ======================
-  DOM.profileSection.classList.remove("hidden");
-  DOM.petList.classList.add("hidden");
-  window.scrollTo(0, 0);
-
-  console.log("✅ Create form ready for new profile");
-}
-
-//==function cancel edit recently added=============
+//================================
+//5. FUNCTION CANCEL EDIT
+//===============================
 function cancelEdit() {
   // 1. Show loader immediately
   const loader = document.getElementById('processing-loader');
