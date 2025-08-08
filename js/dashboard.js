@@ -1296,7 +1296,28 @@ function initializeDashboard() {
       openCreateForm();
     });
   }
-}
+
+  const galleryInput = document.getElementById("petGallery");
+if (galleryInput) {
+  galleryInput.addEventListener("change", function (e) {
+    const previewContainer = document.getElementById("galleryPreview");
+    if (!previewContainer) return;
+
+    previewContainer.innerHTML = '';
+
+    Array.from(e.target.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'preview-thumb';
+        previewContainer.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+ }
+} // closes the initializedashboard ()
 
  // ==================================================
 // ENHANCED FORM SUBMISSION HANDLER (PRODUCTION-READY)
