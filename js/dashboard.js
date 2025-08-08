@@ -396,43 +396,37 @@ function openEditForm(index) {
         option.selected = profile.tags?.includes(option.value);
       });
     }
+  
+  // ======================
+// 3. GALLERY PREVIEW SETUP (CORRECTED)
+// ======================
+DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
+const galleryPreview = document.getElementById("editGalleryPreview");
 
-    // ======================
-    // 3. GALLERY PREVIEW SETUP
-    // ======================
-    DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
-    const galleryPreview = document.getElementById("editGalleryPreview");
+if (galleryPreview) {
+  galleryPreview.innerHTML = profile.gallery?.length
+    ? profile.gallery.map((img, idx) => {
+        const imgUrl = typeof img === "string" ? img : img?.url;
+        return `
+          <div class="gallery-thumbnail" data-index="${idx}">
+            <img src="${imgUrl}" 
+                 alt="Pet photo ${idx + 1}"
+                 class="preview-thumb"
+                 onerror="this.src='placeholder.jpg'">
+            <button class="remove-btn" data-index="${idx}">×</button>
+            <button class="cover-btn ${idx === profile.coverPhotoIndex ? 'active' : ''}" 
+                    data-photo-index="${idx}"
+                    aria-label="Set as cover photo">
+              ★
+            </button>
+          </div>`;
+      }).join('')
+    : '<p class="empty-gallery">No images yet</p>';
 
-    if (galleryPreview) {
-      galleryPreview.innerHTML = profile.gallery?.length
-        ? profile.gallery.map((img, idx) => {
-            const imgUrl = typeof img === "string" ? img : img?.url;
-            return `
-              <div class="gallery-thumbnail" data-index="${idx}">
-                <img src="${imgUrl}" 
-                     alt="Pet photo ${idx + 1}"
-                     class="preview-thumb"
-                     onerror="this.src='placeholder.jpg'">
-                <button class="remove-btn" data-index="${idx}">×</button>
-                <button class="cover-btn ${idx === profile.coverPhotoIndex ? 'active' : ''}" 
-                
-             const coverBtn = document.createElement('button');
-             coverBtn.className = 'cover-btn';
-             coverBtn.dataset.photoIndex = idx;
-             coverBtn.onclick = () => setCoverPhoto(currentEditIndex, idx);
-             
-                        data-index="${idx}"
-                        aria-label="Set as cover photo">
-                  ★
-                </button>
-              </div>`;
-          }).join('')
-        : '<p class="empty-gallery">No images yet</p>';
-
-      // Initialize gallery interaction handlers
-      initGalleryInteractions(); // the handler is placed immediately after.
-    }
-    
+  // Initialize handlers
+  initGalleryInteractions();
+}
+     
     // ======================
     // 4. MOOD HISTORY UI
     // ======================
