@@ -729,6 +729,8 @@ async function generateBirthdayCard(index) {
     const coverUrl = typeof coverPhoto === 'string'
      ? coverPhoto
      : coverPhoto?.url || '';
+    const validCover = coverUrl && !coverUrl.includes('{{');
+
   // Add this debug line right after getting coverUrl:
      console.log("Cover Photo Debug:", {
      index: profile.coverPhotoIndex,
@@ -738,8 +740,6 @@ async function generateBirthdayCard(index) {
      validCover
      });
   
-     const validCover = coverUrl && !coverUrl.includes('{{');
-
     // Add this debugging lines RIGHT AFTER getting coverUrl but BEFORE creating the card
     const testImg = new Image();
     testImg.src = coverUrl;
