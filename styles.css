@@ -276,27 +276,63 @@ h1, h2, h3, p {
   font-size: 0.9em;
   color: #555;
 }
-
+/* Enhanced to support gallery preview*/
 #profileForm .petGallerySection {
   margin: 1.5rem 0;
   padding: 1rem;
   background: #f8f9fa;
   border-radius: 8px;
   border: 1px dashed #ccc;
+  transition: border-color 0.3s;
+}
+
+#profileForm .petGallerySection:hover {
+  border-color: #a0a0a0;
 }
 
 #profileForm .petGallerySection label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
+  color: #333;
 }
 
+/* Gallery Preview Grid */
 #profileForm .gallery-preview {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-template-columns: repeat(3, 1fr); /* 3 columns by default */
   gap: 0.8rem;
   margin-top: 1rem;
+  max-height: 400px; /* Scroll after ~6 images (adjust as needed) */
+  overflow-y: auto;
+  padding: 0.2rem;
 }
+
+/* Thumbnail Styles */
+#profileForm .gallery-preview .preview-thumb {
+  width: 100%;
+  aspect-ratio: 1; /* Ensures square */
+  object-fit: cover; /* Prevents distortion */
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#profileForm .gallery-preview .preview-thumb:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: #c0c0c0;
+}
+
+/* Responsive: Switch to vertical list on small screens */
+@media (max-width: 600px) {
+  #profileForm .gallery-preview {
+    grid-template-columns: 1fr; /* Single column */
+  }
+}
+
 /* ===== MOOD SECTION ===== */
 #profileForm .moodHistoryInput {
   padding: 1rem;
