@@ -740,15 +740,11 @@ async function generateBirthdayCard(index) {
   
      const validCover = coverUrl && !coverUrl.includes('{{');
 
-    // Add this RIGHT AFTER getting coverUrl but BEFORE creating the card
+    // Add this debugging lines RIGHT AFTER getting coverUrl but BEFORE creating the card
     const testImg = new Image();
     testImg.src = coverUrl;
     testImg.onload = () => console.log("✅ Image loads successfully:", coverUrl);
     testImg.onerror = () => console.log("❌ Image FAILED to load:", coverUrl);
-
-// Then proceed with your existing card creation...
-const card = document.createElement('div');
-// ...rest of your code
     
     // 2. Create a birthday-themed card container
     const card = document.createElement('div');
