@@ -346,6 +346,7 @@ h1, h2, h3, p {
 }
 
 /* ===== TAGS SECTION ===== */
+/* ===== TAGS SECTION ===== */
 #profileForm .pet-tags-container {
   margin-top: 1rem;
 }
@@ -362,9 +363,50 @@ h1, h2, h3, p {
   align-items: center;
   gap: 0.3rem;
   padding: 0.3rem 0.6rem;
-  background: #e8f4fc;
+  background: #80819e;
   border-radius: 20px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+/* Hover State */
+#profileForm .tag:hover {
+  background: #583666;
+  border-color: #a0d0ff;
+  transform: translateY(-1px);
+}
+
+/* Selected State */
+#profileForm input[type="checkbox"]:checked + .tag {
+  background: #4CAF50;
+  color: white;
+  border-color: #388E3C;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Focus State */
+#profileForm .tag:focus-within {
+  outline: 2px solid #2196F3;
+}
+
+/* Checkbox Visually Hidden */
+#profileForm .tag input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Icon Styling */
+#profileForm .tag .tag-icon {
+  font-size: 0.8em;
+  transition: transform 0.2s ease;
+}
+
+#profileForm input[type="checkbox"]:checked + .tag .tag-icon {
+  transform: scale(1.2);
+  color: #C8E6C9;
 }
 
 /* ===== EMERGENCY CONTACT ===== */
