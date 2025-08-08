@@ -633,14 +633,28 @@ function initGalleryInteractions() {
   });
 
   // Cover photo selection
-  document.querySelectorAll('.cover-btn').forEach(btn => {
+ document.querySelectorAll('.cover-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const index = parseInt(e.target.closest('.gallery-thumbnail').dataset.index);
-      setCoverPhoto(isEditing ? currentEditIndex : -1, index);
-    });
+    e.stopPropagation();
+    e.preventDefault(); // 🛠 Prevent form submission or unwanted navigation
+
+    const index = parseInt(
+      e.target.closest('.gallery-thumbnail').dataset.index
+    );
+
+    if (isEditing) {
+      // Just mark the new cover photo in memory
+      petProfiles[currentEditIndex].coverPhotoIndex = index;
+    } else {
+      // In create form, mark in temp array
+      DOM.profileForm.dataset.coverIndex = index;
+    }
+
+    // Refresh the preview to visually update the active star
+    updateGalleryPreviews();
   });
-}
+});
+} // closes the function 
 
 // Helper function to update both form previews
 function updateGalleryPreviews() {
