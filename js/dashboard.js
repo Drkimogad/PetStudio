@@ -768,7 +768,7 @@ async function generateBirthdayCard(index) {
     // 3. Convert to PNG (reuse your html2canvas logic)
     const canvas = await html2canvas(card, {
       scale: 2,
-      backgroundColor: '#fff8e6' // Light yellow
+      backgroundColor: '#fff8e6', // Light yellow
       useCORS: true, // Add this
       async: true // Add this so canvas await for image to load
     });
