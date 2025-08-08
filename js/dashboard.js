@@ -1296,7 +1296,8 @@ function initializeDashboard() {
       openCreateForm();
     });
   }
-
+  
+// for gallery preview
   const galleryInput = document.getElementById("petGallery");
 if (galleryInput) {
   galleryInput.addEventListener("change", function (e) {
@@ -1452,7 +1453,7 @@ function attachFormListenerWhenReady() {
           nextBirthday: document.getElementById("nextBirthday").value, // needed for age calculation
           
           birthdayReminder: document.getElementById("birthdayReminder").value,
-          gallery: [], // Temporary empty array
+          gallery: uploadedImageUrls, // ✅ Replace empty array with uploaded URLs
           emergencyContact: {
             name: document.getElementById("emergencyName").value.trim(),
             phone: document.getElementById("emergencyPhone").value.trim(),
@@ -1577,12 +1578,12 @@ setTimeout(() => {
         if (galleryInput) galleryInput.value = "";
 
         // ✅ Refresh gallery preview after submission/wrapped in an if block
-        if (typeof newProfile !== "undefined") {
-          const galleryPreview = document.getElementById("editGalleryPreview");
-          if (galleryPreview && newProfile.gallery?.length) {
-            galleryPreview.innerHTML = newProfile.gallery.map(img => {
-             `<img src="${typeof img === 'string' ? img : img.url}" class="preview-thumb">`
-           }).join('');
+          if (typeof newProfile !== "undefined") {
+        const galleryPreview = document.getElementById("editGalleryPreview");
+       if (galleryPreview && newProfile.gallery?.length) {
+        galleryPreview.innerHTML = newProfile.gallery.map(img => 
+        `<img src="${typeof img === 'string' ? img : img.url}" class="preview-thumb">`
+      ).join('');
           }
         } // closes if 
       } // ✅ closes finally
