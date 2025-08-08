@@ -855,8 +855,9 @@ h1, h2, h3, p {
   border: 2px solid #dc2626;
   color: #dc2626;
 } */
-
+/*======================*/
 /* Cover image button */
+/*=======================*/
 .cover-btn {
     position: absolute;
     top: 10px;
@@ -876,6 +877,37 @@ h1, h2, h3, p {
     background-color: #c9ba2c;
     border: #808080;  
     transform: scale(1.05);
+}
+/* ENHANCEMENTS ONLY (add below your existing styles) */
+/* Active cover state */
+.cover-btn.active {
+  background-color: #c9ba2c !important;
+  color: #000 !important;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #c9ba2c;
+}
+
+/* Loading transition */
+.cover-btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Error state */
+.cover-btn.error {
+  animation: pulse-red 0.5s 2;
+}
+
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0 rgba(255,0,0,0.3); }
+  100% { box-shadow: 0 0 0 6px rgba(255,0,0,0); }
+}
+
+/* Mobile touch targets */
+@media (max-width: 768px) {
+  .cover-btn {
+    padding: 8px 12px;
+    font-size: 1rem;
+  }
 }
 
 /* Countdown days indicator, keep it as is outside 
