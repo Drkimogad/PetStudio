@@ -1019,18 +1019,28 @@ function createPetCollage(index) {
 
 // 2. THEN GENERATE COLLAGE PNG
 async function generateCollagePNG(profile) {
-  if (selectedImages.length < 2) return;
+  // 1. Transform Cloudinary URLs for CORS
+  const getCloudinaryUrl = (url) => {
+    if (!url.includes('res.cloudinary.com')) return url;
+    return url.replace('/upload/', '/upload/fl_attachment/');
+  };
 
-  // Create collage container
+  // 2. Create collage with CORS-friendly URLs
   const collage = document.createElement('div');
   collage.className = `collage-layout-${selectedLayout}`;
 
-  // Add selected images
-  selectedImages.forEach(i => {
+  // 3. Load images safely
+  for (const index of selectedImages) {
     const img = document.createElement('img');
-    img.src = typeof profile.gallery[i] === 'string' ? profile.gallery[i] : profile.gallery[i].url;
+    img.crossOrigin = 'anonymous';
+    img.src = getCloudinaryUrl(
+      typeof profile.gallery[index] === 'string' 
+        ? profile.gallery[index] 
+        : profile.gallery[index].url
+    );
+    await new Promise(resolve => img.onload = resolve);
     collage.appendChild(img);
-  });
+  }
 
   // Apply layout-specific CSS
   const layoutStyles = {
