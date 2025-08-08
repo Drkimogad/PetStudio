@@ -636,7 +636,7 @@ h1, h2, h3, p {
     width: 100%;
     gap: 3px; /* Uniform gap between all elements it was 6*/
     padding: 0; /* Remove any default padding */
-    margin: 0 0 4px 0; /* Reduced bottom margin */
+    margin: 0 0 5px 0; /* Reduced bottom margin */
 }
 
 /* Age display section */
@@ -673,10 +673,11 @@ h1, h2, h3, p {
 /*========================*/
 .petCard .profile-reminder-section {
   margin: 0.5rem 0;      /* Reduced vertical margin (external spacing) */
-  padding: 0.5rem;       /* Reduced padding (internal spacing) */
-  background-color: #f8f4ff;
+  padding: 0.3rem;       /* Reduced padding (internal spacing) was 0.5 */
+  background-color: #c8c5d4;
   border-radius: 8px;
   border-left: 4px solid #d4bff9;
+  border: 1.5px solid #101112;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
@@ -703,14 +704,14 @@ h1, h2, h3, p {
 /* Emergency Contact Section - inline appearance */
 .emergency-contact-section {
   margin: 5px 0;
-  padding: 0;
+  padding: 2px; /*to be revisited*/
   background: none;
   border: none;
   border-radius: 0;
 }
 
 .emergency-contact-section h3 {
-  margin-top: 0;
+  margin-top: 1px;
   color: #dc3545;
   font-size: 1.1em;
   display: inline;
@@ -718,14 +719,14 @@ h1, h2, h3, p {
 }
 
 .emergency-info {
-  margin-top: 0;
+  margin-top: 1px;
   padding: 0;
   background: none;
   border: none;
 }
 
 .emergency-info h4 {
-  margin: 0;
+  margin: 1px;
   color: #dc3545;
   font-size: 1em;
   font-weight: bold;
@@ -737,6 +738,7 @@ h1, h2, h3, p {
   font-size: 0.9em;
   display: inline;
 }
+
 /*==================*/
 /*8. MOOD TRACKER */
 */====================*/
@@ -744,7 +746,7 @@ h1, h2, h3, p {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 10px;
+  margin: 5px; /* test it */
   justify-content: center;
 }
 
@@ -768,9 +770,10 @@ h1, h2, h3, p {
 /*==================*/
 /* Notes Section - inline appearance */
 .petCard .pet-notes {
-  width: 80%;
+  width: 100%;
   text-align: left;
-  padding: 0;
+  padding: 2px; /* was 0 */
+  margin: 2px; /* wasn't there*/
   border: none;
   border-radius: 0;
   font-family: inherit;
