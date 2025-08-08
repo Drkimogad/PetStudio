@@ -748,7 +748,7 @@ async function generateBirthdayCard(index) {
     
     // 2. Create a birthday-themed card container
     const card = document.createElement('div');
-    card.className = `birthday-card theme-${theme}`; // Add theme class
+    card.className = `birthday-card ${theme}`; // matches css theme class naming
     card.innerHTML = `
       <div class="birthday-header">${getThemeIcon(theme)} ${profile.name}'s Birthday! ${getThemeIcon(theme)}</div>      
       <div class="birthday-countdown">${Utils.getCountdown(profile.nextBirthday)}</div>
