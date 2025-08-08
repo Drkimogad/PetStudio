@@ -345,12 +345,12 @@ function toggleImageSelection(e) {
 //======================================
 function openEditForm(index) {
   const loader = document.getElementById('processing-loader');
-
+  
   try {
     // ======================
-    // 🔄 Loader ON
+    // 🔄 Loader ON (Improved visibility)
     // ======================
-    loader.style.display = 'block';
+    loader.style.display = 'flex'; // Changed to flex for better centering
     loader.querySelector('p').textContent = 'Loading pet profile...';
 
     // ======================
@@ -363,10 +363,7 @@ function openEditForm(index) {
 
     const profile = petProfiles[index];
     if (!profile) {
-      console.error("❌ Profile not found at index:", index);
-      Utils.showErrorToUser("Profile data failed to load");
-      loader.style.display = 'none';
-      return;
+      throw new Error("Profile not found");
     }
 
     // ======================
@@ -405,18 +402,33 @@ function openEditForm(index) {
     if (galleryPreview) {
       galleryPreview.innerHTML = profile.gallery?.length
         ? profile.gallery.map((img, idx) => {
-          const imgUrl = validateImageUrl(typeof img === "string" ? img : img?.url);
-          return `
-            <div class="gallery-thumbnail ${idx === profile.coverPhotoIndex ? 'active-cover' : ''}">
-              <img src="${imgUrl}" 
-                   alt="Pet photo ${idx + 1}"
-                   onerror="this.src='placeholder.jpg'">
-              ${idx === profile.coverPhotoIndex ? '<span class="cover-star">★</span>' : ''}
-            </div>`;
-        }).join('')
+            const imgUrl = typeof img === "string" ? img : img?.url;
+            return `
+              <div class="gallery-thumbnail" data-index="${idx}">
+                <img src="${imgUrl}" 
+                     alt="Pet photo ${idx + 1}"
+                     class="preview-thumb"
+                     onerror="this.src='placeholder.jpg'">
+                <button class="remove-btn" data-index="${idx}">×</button>
+                <button class="cover-btn ${idx === profile.coverPhotoIndex ? 'active' : ''}" 
+                
+             const coverBtn = document.createElement('button');
+             coverBtn.className = 'cover-btn';
+             coverBtn.dataset.photoIndex = idx;
+             coverBtn.onclick = () => setCoverPhoto(currentEditIndex, idx);
+             
+                        data-index="${idx}"
+                        aria-label="Set as cover photo">
+                  ★
+                </button>
+              </div>`;
+          }).join('')
         : '<p class="empty-gallery">No images yet</p>';
-    }
 
+      // Initialize gallery interaction handlers
+      initGalleryInteractions(); // the handler is placed immediately after.
+    }
+    
     // ======================
     // 4. MOOD HISTORY UI
     // ======================
@@ -447,30 +459,83 @@ function openEditForm(index) {
     }
 
     // ======================
-    // 6. UI STATE UPDATES
+    // 6. UI STATE UPDATES & LOADER HANDLING
     // ======================
-    DOM.profileSection.classList.remove("hidden");
-    DOM.petList.classList.add("hidden");
-    window.scrollTo(0, 0);
+    const transitionUI = () => {
+      // Smooth transition to form view
+      DOM.petList.classList.add('hidden');
+      DOM.profileSection.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Final loader state
+      loader.querySelector('p').textContent = 'Profile loaded successfully!';
+      loader.style.backgroundColor = '#4CAF50'; // Success green
+      
+      // Delay hide for better UX
+      setTimeout(() => {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+          loader.style.display = 'none';
+          loader.style.opacity = '1';
+          loader.style.backgroundColor = ''; // Reset color
+        }, 300);
+      }, 500);
+    };
 
+    transitionUI();
     console.log("✅ Edit form ready for:", profile.name);
-    loader.style.display = 'none'; // ✅ Hide loader
 
   } catch (error) {
     // ======================
-    // ❌ ERROR HANDLING
+    // ❌ ERROR HANDLING (ENHANCED)
     // ======================
     console.error("Edit form error:", error);
+    
+    // Visual error state
     loader.querySelector('p').textContent = 'Failed to load profile';
-    Utils.showErrorToUser("Failed to load profile");
-
+    loader.style.backgroundColor = '#f44336'; // Error red
+    
+    // Error animation
+    loader.classList.add('error-pulse');
+    Utils.showErrorToUser("Profile failed to load. Please try again.");
+    
+    // Reset after delay
     setTimeout(() => {
-      loader.style.display = 'none';
-      cancelEdit();
-    }, 1500);
+      loader.classList.remove('error-pulse');
+      loader.style.opacity = '0';
+      setTimeout(() => {
+        loader.style.display = 'none';
+        loader.style.opacity = '1';
+        loader.style.backgroundColor = '';
+        cancelEdit();
+      }, 300);
+    }, 2000);
   }
-} // ←✅ End of openEditForm
+} // ← End of openEditForm
 
+// helper function for gallery preview in edit form
+// GALLERY INTERACTION HANDLERS
+function initGalleryInteractions() {
+  // Remove button functionality (keep your existing)
+  document.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const index = parseInt(e.target.dataset.index);
+      petProfiles[currentEditIndex].gallery.splice(index, 1);
+      openEditForm(currentEditIndex);
+    });
+  });
+
+  // Cover photo selection - USING YOUR EXISTING FUNCTION
+  document.querySelectorAll('.cover-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const profileIndex = currentEditIndex;
+      const imageIndex = parseInt(e.target.dataset.photoIndex);
+      setCoverPhoto(profileIndex, imageIndex); // Your working function
+    });
+  });
+}
+
+//====≈===================
 // OPENCREATEFORM()
 //==========================
 function openCreateForm() {
