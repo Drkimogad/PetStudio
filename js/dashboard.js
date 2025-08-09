@@ -366,13 +366,11 @@ function openEditForm(index) {
     document.getElementById("emergencyRelationship").value = profile.emergencyContact?.relationship || "";
     document.getElementById("microchipNumber").value = profile.microchipNumber || "";
 
-    // Tags
-    const tagSelect = document.querySelectorAll('input[name="petTags"]:checkbox');
-    if (tagSelect) {
-      Array.from(tagSelect.options).forEach(option => {
-        option.selected = profile.tags?.includes(option.value);
-      });
-    }
+    // Tags - Corrected version
+  const tagCheckboxes = document.querySelectorAll('input[name="petTags"][type="checkbox"]');
+  tagCheckboxes.forEach(checkbox => {
+  checkbox.checked = profile.tags?.includes(checkbox.value) || false;
+  });
   
   // ======================
 // 3. GALLERY PREVIEW SETUP (CORRECTED)
@@ -1011,18 +1009,19 @@ console.log("Updated classes:", modal?.className);  // 👈 Optional verificatio
     grid.appendChild(imgElement);
   });
 
-  // Set up layout buttons
-  document.querySelectorAll('.layout-options button').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      selectedLayout = e.target.dataset.layout;
-    });
-  });
+  // Set up layout buttons event delegation/listener
+ document.body.addEventListener('click', (e) => {
+  if (e.target.closest('.layout-options button')) {
+    selectedLayout = e.target.dataset.layout;
+   }
+ });
 
-  // Generate collage
-  //No null check as the button is added to HTML NOW.It will always exist in DOM when called.
- document.getElementById('generate-collage').addEventListener('click', () => {
+  // Generate collage event delegation /listener
+  document.body.addEventListener('click', (e) => {
+  if (e.target.id === 'generate-collage') {
     generateCollagePNG(profile);
-  });
+  }
+});
 }
 
 //====================================
