@@ -176,12 +176,21 @@ h1, h2, h3, p {
 }
 
 /* =BUTTON BEFORE OPENING PETLIST STYLES=== */
+body > header, 
+body > div:first-child {  /* Targets common parent containers */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px; /* Modern alternative to margins */
+}
+
 .button {
   display: inline-block;
   background-color: #808080; /* it was deep purple #6a1b9a, charcoal grey now  */
   color: white;
   padding: 10px 20px;
-  border: #c9ba2c; /* it was none now mustard colour*/
+  border: none; /* it was none now mustard colour*/
   border-radius: 10px;
   font-size: 1rem;
   cursor: pointer;
@@ -199,6 +208,7 @@ h1, h2, h3, p {
   font-size: 1.1rem;
   padding: 10px 20px;
   margin-bottom: 20px;
+  margin-right: auto; /* Pushes logout to far right */
 }
 
 #addPetProfileBtn::before {
@@ -208,6 +218,7 @@ h1, h2, h3, p {
   background-color: #e74c3c;
   color: white;
   padding: 10px 16px;
+   margin-left: auto; /* Ensure right alignment */
   border-radius: 6px;
   position: absolute;
   bottom: 20px; /* Just above footer inside dashboard */
