@@ -1032,18 +1032,34 @@ let selectedLayout = '2x2';
 
 function toggleImageSelection(e) {
   const img = e.target;
+  if (!img.dataset.index) return; // 👈 Safety check
+  
   img.classList.toggle('selected');
   const index = parseInt(img.dataset.index);
 
   if (img.classList.contains('selected')) {
+    if (!selectedImages.includes(index)) selectedImages.push(index);
     selectedImages.push(index);
+    console.log("Selected images:",
   } else {
     selectedImages = selectedImages.filter(i => i !== index);
   }
-
-  // Enable/disable generate button
-  document.getElementById('generate-collage').disabled = selectedImages.length < 2;
+  
+  // Enable/disable generate button/updated the button safely
+ const genBtn = document.getElementById('generate-collage');
+    console.log("Generate button exists?", 
+  if (genBtn) genBtn.disabled = selectedImages.length < 2;
 }
+
+// 👇 Add this RIGHT HERE - after helper, before other functions
+// Handle layout selection (event delegation)
+document.body.addEventListener('click', (e) => {
+  const layoutBtn = e.target.closest('.layout-options button');
+  if (layoutBtn) {
+    selectedLayout = layoutBtn.dataset.layout;
+    console.log("DEBUG: Layout changed to", selectedLayout);
+  }
+});
 
 //==================================
 //  THEN GENERATE COLLAGE PNG
