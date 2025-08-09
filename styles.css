@@ -1063,12 +1063,18 @@ styled to show in petcard header plus nickname */
   max-height: 90%;
   overflow-y: auto;
 }
-
+/* important for grid layout in the modal*/
 .image-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
   margin: 15px 0;
+}
+.image-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* crop without distortion */
+  border-radius: 5px;
 }
 
 .layout-options {
@@ -1090,6 +1096,29 @@ styled to show in petcard header plus nickname */
   border: 3px solid #6a5acd !important; /* 👈 Ensure selection visibility */
   opacity: 0.8;
 }
+
+#generate-collage {
+  background-color: #f7e17b; /* light mustard */
+  color: black;
+  border: 2px solid black;
+  padding: 8px 16px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+   display: block;
+  margin: 0 auto; /* centers the button horizontally */
+  transition: background-color 0.2s ease;
+}
+
+#generate-collage:hover:enabled {
+  background-color: #f5d94d; /* slightly darker mustard on hover */
+}
+
+#generate-collage:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 
 /* Dynamic Elements */
 .pet-name {
