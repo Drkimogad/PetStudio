@@ -1064,6 +1064,13 @@ async function generateCollagePNG(profile) {
   for (const index of selectedImages) {
     const img = document.createElement('img');
     img.crossOrigin = 'anonymous';  // To bypass Cloudinary CORs.
+    
+  // Apply IMAGE scaling rules so PNG matches modal
+  img.style.width = '100%';
+  img.style.height = '100%';
+  img.style.objectFit = 'cover';
+  img.style.borderRadius = '5px';
+    
     img.src = getCloudinaryUrl(
       typeof profile.gallery[index] === 'string' 
         ? profile.gallery[index] 
@@ -1087,9 +1094,18 @@ async function generateCollagePNG(profile) {
   `;
 
   // Convert to PNG
-  try {
-    const canvas = await html2canvas(collage);
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+try {
+  // Append collage to DOM but hide it off-screen
+  collage.style.position = 'fixed';
+  collage.style.left = '-9999px';
+  document.body.appendChild(collage);
+
+  const canvas = await html2canvas(collage);
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+
+  // Clean up
+  collage.remove();
+
 
     // Share or download
     if (navigator.share && navigator.canShare({
