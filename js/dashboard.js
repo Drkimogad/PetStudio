@@ -1012,14 +1012,10 @@ function createPetCollage(index) {
   });
 
   // Generate collage
- const generateBtn = document.getElementById('generate-collage');
-if (generateBtn) {
-  generateBtn.addEventListener('click', () => {
+  //No null check as the button is added to HTML NOW.It will always exist in DOM when called.
+ document.getElementById('generate-collage').addEventListener('click', () => {
     generateCollagePNG(profile);
   });
-} else {
-  console.error("'Generate Collage' button not found in DOM");
-}
 }
 
 // 2. THEN GENERATE COLLAGE PNG
@@ -1027,7 +1023,7 @@ async function generateCollagePNG(profile) {
   // 1. Transform Cloudinary URLs for CORS
   const getCloudinaryUrl = (url) => {
     if (!url.includes('res.cloudinary.com')) return url;
-    return url.replace('/upload/', '/upload/fl_attachment/');
+   return url.replace('/upload/', '/upload/f_auto,q_auto/'); //to bypass Cloudinary CORs
   };
 
   // 2. Create collage with CORS-friendly URLs
@@ -1037,7 +1033,7 @@ async function generateCollagePNG(profile) {
   // 3. Load images safely
   for (const index of selectedImages) {
     const img = document.createElement('img');
-    img.crossOrigin = 'anonymous';
+    img.crossOrigin = 'anonymous';  // To bypass Cloudinary CORs.
     img.src = getCloudinaryUrl(
       typeof profile.gallery[index] === 'string' 
         ? profile.gallery[index] 
