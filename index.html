@@ -188,11 +188,14 @@
   </div>
 		 
   <div class="birthday-reminder-section">
-      <label for="birthdayReminder">Birthday Reminder:</label>
-      <input type="text" id="birthdayReminder" name="birthdayReminder" 
-         placeholder="Actual birthdate or a few days before (MM/DD/YYYY)" 
-         onchange="toggleCelebrateButton(this)">
+  <label for="birthdayReminder">Birthday Reminder:</label>
+  <div class="input-with-icon">
+    <i class="fas fa-calendar-alt"></i>
+    <input type="text" id="birthdayReminder" name="birthdayReminder" 
+           placeholder="Actual birthdate or a few days before (YYYY/MM/DD)" 
+           onchange="toggleCelebrateButton(this)">
   </div>
+
 		   <!-- MOOD SECTION -->
   <div class="moodHistoryInput">
     <label for="moodHistoryInput">Mood at Creation:</label>
