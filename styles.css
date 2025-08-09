@@ -1087,11 +1087,6 @@ styled to show in petcard header plus nickname */
   opacity: 0.8;
 }
 
-/* to be removed for testing only*/
-.hidden {
-  display: none !important; /* Force override */
-}
-
 /* Dynamic Elements */
 .pet-name {
   font-size: 2em;
