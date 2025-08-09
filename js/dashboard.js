@@ -316,29 +316,6 @@ function toggleCelebrateButton(dateInput) {
   }
 }
 
-
-//====================================
-// CREATE COLLAGE HELPER FUNCTION
-//===================================
-let selectedImages = [];
-let selectedLayout = '2x2';
-
-function toggleImageSelection(e) {
-  const img = e.target;
-  img.classList.toggle('selected');
-  const index = parseInt(img.dataset.index);
-
-  if (img.classList.contains('selected')) {
-    selectedImages.push(index);
-  } else {
-    selectedImages = selectedImages.filter(i => i !== index);
-  }
-
-  // Enable/disable generate button
-  document.getElementById('generate-collage').disabled = selectedImages.length < 2;
-}
-
-
 // CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 //======================================
 // 🌀 EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
@@ -860,7 +837,7 @@ ${profile.moodHistory.map(entry => `
 }
 
 //===============================
-// Generate Birthday card()
+// Generate Birthday card() WORKS
 //===============================
 async function generateBirthdayCard(index) {
   let blobUrl = null;
@@ -975,7 +952,8 @@ await new Promise((resolve, reject) => {
 //===============================
 //  Create  AND GENERATE collage Core functionS
 //===============================
-// 1. CREATE COLLAGE FIRST
+//  CREATE COLLAGE FIRST
+//======================================
 function createPetCollage(index) {
   const profile = window.petProfiles[index];
 
@@ -1018,7 +996,30 @@ function createPetCollage(index) {
   });
 }
 
-// 2. THEN GENERATE COLLAGE PNG
+//====================================
+// CREATE COLLAGE HELPER FUNCTION
+//===================================
+let selectedImages = [];
+let selectedLayout = '2x2';
+
+function toggleImageSelection(e) {
+  const img = e.target;
+  img.classList.toggle('selected');
+  const index = parseInt(img.dataset.index);
+
+  if (img.classList.contains('selected')) {
+    selectedImages.push(index);
+  } else {
+    selectedImages = selectedImages.filter(i => i !== index);
+  }
+
+  // Enable/disable generate button
+  document.getElementById('generate-collage').disabled = selectedImages.length < 2;
+}
+
+//==================================
+//  THEN GENERATE COLLAGE PNG
+//==================================
 async function generateCollagePNG(profile) {
   // 1. Transform Cloudinary URLs for CORS
   const getCloudinaryUrl = (url) => {
