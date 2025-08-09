@@ -85,6 +85,7 @@ function validateImageUrl(url) {
 }
 
 //========================
+// R 🎨 RENDERING ===================================
 // LOADSAVEDPROFILES()
 //==========================
 function loadSavedProfiles() {
@@ -316,9 +317,9 @@ function toggleCelebrateButton(dateInput) {
   }
 }
 
-// CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
+// 🌀🌀🌀 CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 //======================================
-// 🌀 EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
+// ✏️  EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
 //======================================
 // 1. OPENEDITFORM FUNCTION
 //=========================
@@ -686,7 +687,7 @@ function cancelEdit() {
 }
 
 //==========≈==============
-// 🌀 UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
+// 🛑  UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
 // DELET CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER
 //=========================
 async function deleteProfile(index) {
@@ -753,7 +754,7 @@ async function deleteProfile(index) {
 }
 
 //===========================================
-// 🌀 PRINT PROFILE BUTTON FUNCTION
+//  PRINT PROFILE BUTTON FUNCTION
 // OPTIMISED FOR TABLLET AND DESKTOIP
 //================================================
 function printProfile(profile) {
@@ -835,7 +836,7 @@ ${profile.moodHistory.map(entry => `
 }
 
 //===============================
-// Generate Birthday card() WORKS
+//  🎂 Generate Birthday card() WORKS
 //===============================
 async function generateBirthdayCard(index) {
   let blobUrl = null;
@@ -972,8 +973,10 @@ function ensureCollageModalExists() {
 }
 
 //===============================
-//  Create  AND GENERATE collage Core functionS
+//  EVERYTHING RELATED TO COLLAGE GENERATION, CREATE COLLAGE/HELPER FUNCTIONS(2) AND GENERATE COLLAGE AS PNG
+// CORS ISSUE IS STILL TO BE FIXED BUT FUNCTION IS WORKING
 //===============================
+
 //  CREATE COLLAGE FIRST
 //======================================
 function createPetCollage(index) {
@@ -1149,7 +1152,7 @@ try {
 
 // In your generateCollagePNG() function, modify JUST the html2canvas call:
 const canvas = await html2canvas(collage, {
-  useCORS: true,
+  useCORS: true,  // Required even with Cloudinary's fix
   allowTaint: false,
   scale: 1,
   logging: false, // Disable verbose logging
