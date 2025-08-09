@@ -995,8 +995,11 @@ function createPetCollage(index) {
     console.error('Collage modal not found');
     return;
   }
-  modal.classList.remove("hidden");
-
+  
+console.log("Current classes:", modal?.className); // 👈 Add this
+modal.classList.remove("hidden"); 
+console.log("Updated classes:", modal?.className);  // 👈 Optional verification
+  
   // Populate image grid
   const grid = document.getElementById("collage-image-grid");
   grid.innerHTML = '';
