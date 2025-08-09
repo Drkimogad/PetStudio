@@ -771,35 +771,61 @@ function printProfile(profile) {
       <body>
         <div class="print-header">
           <h1>${profile.name}'s Profile</h1>
+          <p><strong>Nicknames:</strong> ${profile.nicknames || 'None'}</p>
           <p>Generated on ${new Date().toLocaleDateString()}</p>
         </div>
+
         <div class="print-details">
           <p><strong>Breed:</strong> ${profile.breed}</p>
           <p><strong>Date of Birth:</strong> ${profile.dob}</p>
           <p><strong>Upcoming Birthday:</strong> ${profile.nextbirthday}</p>
           <p><strong>Birthday Reminder:</strong> ${profile.birthdayReminder}</p>
         </div>
+        
+        ${profile.tags?.length ? `
+        <div class="print-tags">
+           <h3>Tags</h3>
+           ${profile.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+        </div>
+        ` : ''}
+
+      </div>
+        <div class="print-moodlog">
+          <h3>Mood Log</h3>
+          <ul>
+          ${profile.moodHistory.map(entry => ` 
+           <li data-emoji="${
+               entry.mood === 'happy' ? '😊' : 
+               entry.mood === 'sad' ? '😞' : 
+               entry.mood === 'angry' ? '😠' : 
+               entry.mood === 'sick' ? '🤒' : '😐'
+               }">
+               ${entry.date}: ${entry.mood}
+            </li>
+          `).join('')}
+           </ul>
+        </div>
+        
+        <div class="emergency-contact">
+         <h3>Emergency Contact</h3>
+         <p><strong>Name:</strong> ${profile.emergencyContact?.name || 'Not set'}</p>
+         <p><strong>Phone:</strong> ${profile.emergencyContact?.phone || 'Not set'}</p>
+         <p><strong>Relationship:</strong> ${profile.emergencyContact?.relationship || 'Not set'}</p>
+         <p><strong>Microchip:</strong> ${profile.microchipNumber || 'Not registered'}</p>
+       </div>
+
+       <div class="print-notes">
+         <h3>Notes & Memories</h3>
+         <p>${profile.notes?.replace(/\n/g, '<br>') || 'No notes yet'}</p>
+        </div>
+
+      
         <h3>Gallery</h3>
         <div class="print-gallery">
-${profile.gallery.map(img => 
-  `<img src="${img.url}" alt="Pet photo" onload="this.style.opacity = '1'">`
-).join('')}
-        </div>
-        <div class="print-moodlog">
-  <h3>Mood Log</h3>
-  <ul>
-${profile.moodHistory.map(entry => ` 
-  <li data-emoji="${
-    entry.mood === 'happy' ? '😊' : 
-    entry.mood === 'sad' ? '😞' : 
-    entry.mood === 'angry' ? '😠' : 
-    entry.mood === 'sick' ? '🤒' : '😐'
-  }">
-    ${entry.date}: ${entry.mood}
-  </li>
-`).join('')}
-  </ul>
-</div>
+          ${profile.gallery.map(img => 
+           `<img src="${img.url}" alt="Pet photo" onload="this.style.opacity = '1'">`
+         ).join('')}
+
 
       <div class="print-actions">
         <button onclick="window.close()">Close</button>
