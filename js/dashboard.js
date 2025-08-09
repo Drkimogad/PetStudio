@@ -1037,18 +1037,22 @@ function toggleImageSelection(e) {
   img.classList.toggle('selected');
   const index = parseInt(img.dataset.index);
 
-  if (img.classList.contains('selected')) {
-    if (!selectedImages.includes(index)) selectedImages.push(index);
+ if (img.classList.contains('selected')) {
+  if (!selectedImages.includes(index)) {
     selectedImages.push(index);
-    console.log("Selected images:",
-  } else {
-    selectedImages = selectedImages.filter(i => i !== index);
+    console.log("Selected images:", selectedImages); // 👈 Moved inside the if-block
   }
+} else {
+  selectedImages = selectedImages.filter(i => i !== index);
+  console.log("Deselected image. Current:", selectedImages); // 👈 Optional tracking
+}
   
   // Enable/disable generate button/updated the button safely
  const genBtn = document.getElementById('generate-collage');
-    console.log("Generate button exists?", 
-  if (genBtn) genBtn.disabled = selectedImages.length < 2;
+console.log("Generate button exists?", !!genBtn); // Properly closed log
+if (genBtn) {
+  genBtn.disabled = selectedImages.length < 2;
+  console.log("Button disabled status:", genBtn.disabled); // Added debug
 }
 
 // 👇 Add this RIGHT HERE - after helper, before other functions
