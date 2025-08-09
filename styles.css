@@ -218,14 +218,17 @@ body > div:first-child {  /* Targets common parent containers */
   background-color: #e74c3c;
   color: white;
   padding: 10px 16px;
-   margin-left: auto; /* Ensure right alignment */
+  margin-left: auto; /* Ensure right alignment */
   border-radius: 6px;
-  position: absolute;
-  bottom: 20px; /* Just above footer inside dashboard */
+  position: fixed; /* Change from absolute */
+  top: 20px; /* Distance from top */
+  right: 20px; /* Distance from right */
+  bottom: auto; /* Remove bottom positioning */
   right: 20px;
   font-weight: bold;
   z-index: 10;
 }
+
 /* ==ONCE ADD PROFILE BUTTON CLICKED AND
        PETLIST OPENED===== */
 #profileSection {
