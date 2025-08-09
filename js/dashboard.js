@@ -1031,8 +1031,14 @@ let selectedImages = [];
 let selectedLayout = '2x2';
 
 function toggleImageSelection(e) {
-  const img = e.target;
-  if (!img.dataset.index) return; // 👈 Safety check
+    console.log("--- toggleImageSelection triggered ---"); // TRACE 1
+    console.log("Event target:", e.target); // TRACE 2
+
+   const img = e.target.closest('img');
+  if (!img) {
+    console.log("⚠️ Clicked element isn't an image"); // TRACE 3
+    return;
+  }
   
   img.classList.toggle('selected');
   const index = parseInt(img.dataset.index);
@@ -1049,22 +1055,25 @@ function toggleImageSelection(e) {
   
   // Enable/disable generate button/updated the button safely
  const genBtn = document.getElementById('generate-collage');
-console.log("Generate button exists?", !!genBtn); // Properly closed log
+console.log("🔘 Generate button element:", genBtn); // TRACE 7
+  
 if (genBtn) {
   genBtn.disabled = selectedImages.length < 2;
-  console.log("Button disabled status:", genBtn.disabled); // Added debug
+  console.log("🔄 Button state - Disabled:", genBtn.disabled, 
+              "Selected images:", selectedImages.length); // TRACE 8
+ }
 }
-
+  
 // 👇 Add this RIGHT HERE - after helper, before other functions
-// Handle layout selection (event delegation)
-document.body.addEventListener('click', (e) => {
-  const layoutBtn = e.target.closest('.layout-options button');
-  if (layoutBtn) {
-    selectedLayout = layoutBtn.dataset.layout;
-    console.log("DEBUG: Layout changed to", selectedLayout);
+// Handle layout button handler
+document.addEventListener('click', function(e) {
+  if (e.target.matches('.layout-options button')) {
+    console.log("--- Layout button clicked ---"); // TRACE 4
+    console.log("Button dataset:", e.target.dataset); // TRACE 5
+    selectedLayout = e.target.dataset.layout;
+    console.log("✅ Layout set to:", selectedLayout); // TRACE 6
   }
- });
-}
+});
 
 //==================================
 //  THEN GENERATE COLLAGE PNG
