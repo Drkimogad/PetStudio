@@ -1161,6 +1161,8 @@ if (!canvas) {
 
 
     // Share or download
+   const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.9)); // 0.9 = quality
+  
     if (navigator.share && navigator.canShare({
         files: [new File([blob], 'collage.png')]
       })) {
