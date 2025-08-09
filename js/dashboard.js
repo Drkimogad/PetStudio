@@ -1336,6 +1336,12 @@ function generateQRCode(profileIndex) {
     n: currentQRProfile.name,
     b: currentQRProfile.breed,
     d: currentQRProfile.nextBirthday,
+    tg: currentQRProfile.tags?.join(',') || '',              // Tags
+        // New fields (excluding gallery)
+    ecn: currentQRProfile.emergencyContact?.name || '',      // Emergency contact name
+    ecp: currentQRProfile.emergencyContact?.phone || '',     // Emergency contact phone
+    mcn: currentQRProfile.microchipNumber || '',             // Microchip
+    nt: (currentQRProfile.notes || '').substring(0, 100),    // Notes (truncated)
     l: "https://drkimogad.github.io/PetStudio/"
   });
 
@@ -1420,8 +1426,8 @@ async function shareQR() {
 
   try {
     const canvas = document.querySelector('#qrcode-container canvas');
-    const text = `Check out ${currentQRProfile.name}'s profile!\n\nBreed: ${currentQRProfile.breed}\nUpcoming Birthday: ${currentQRProfile.nextBirthday}\n\nView more: https://drkimogad.github.io/PetStudio/`;
-
+    const text = `Check out ${currentQRProfile.name}'s profile!\n\nBreed: ${currentQRProfile.breed}\nUpcoming Birthday: ${currentQRProfile.nextBirthday}\nEmergency: ${currentQRProfile.emergencyContact?.phone || 'None'}\nMicrochip: ${currentQRProfile.microchipNumber || 'Not registered'}\nTags: ${currentQRProfile.tags?.join(', ') || 'None'}\nNotes: ${(currentQRProfile.notes || 'None').substring(0, 50)}${currentQRProfile.notes?.length > 50 ? '...' : ''}\n\nView more: https://drkimogad.github.io/PetStudio/`;
+    
     // Priority: Share QR as PNG (mobile/tablets)
     if (canvas && navigator.share && navigator.canShare) {
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
