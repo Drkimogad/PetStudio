@@ -367,10 +367,10 @@ function openEditForm(index) {
     document.getElementById("microchipNumber").value = profile.microchipNumber || "";
 
     // Tags - Corrected version
-  const tagCheckboxes = document.querySelectorAll('input[name="petTags"][type="checkbox"]');
-  tagCheckboxes.forEach(checkbox => {
-  checkbox.checked = profile.tags?.includes(checkbox.value) || false;
-  });
+const tagCheckboxes = document.querySelectorAll('input[name="petTags"]');
+tagCheckboxes.forEach(checkbox => {
+  checkbox.checked = profile.tags?.includes(checkbox.value);
+});
   
   // ======================
 // 3. GALLERY PREVIEW SETUP (CORRECTED)
@@ -548,11 +548,11 @@ function resetForm(fullReset = true) {
   
   // 2. SPECIAL INPUT CLEARING
   // ======================
-  // Tags (multiselect)
-  const tagSelect = document.getElementById("petTags");
-  if (tagSelect) {
-    Array.from(tagSelect.options).forEach(opt => opt.selected = false);
-  }
+  // Tags - Corrected version
+const tagCheckboxes = document.querySelectorAll('input[name="petTags"]');
+tagCheckboxes.forEach(checkbox => {
+  checkbox.checked = false;
+});
 
   // Emergency contact (if not caught by form.reset())
   document.getElementById("emergencyName").value = "";
