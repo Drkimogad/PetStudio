@@ -256,7 +256,7 @@ h1, h2, h3, p {
   display: grid;
   gap: 1rem;
   padding: 1rem;
-  background: #f8f9fa;
+  background: #F4F2F0;
   border-radius: 8px;
 }
 
@@ -276,11 +276,55 @@ h1, h2, h3, p {
   font-size: 0.9em;
   color: #555;
 }
+
+#profileForm .birthday-reminder-section {
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0;
+}
+
+#profileForm .birthday-reminder-section label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 14px;
+}
+
+#profileForm .input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#profileForm .input-with-icon i {
+  position: absolute;
+  left: 10px;
+  color: #888;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+#profileForm .input-with-icon input[type="text"] {
+  padding: 10px 10px 10px 36px; /* Add left padding for icon */
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#profileForm .input-with-icon input[type="text"]:focus {
+  border-color: #007BFF;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  outline: none;
+}
+
+
 /* Enhanced to support gallery preview*/
 #profileForm .petGallerySection {
   margin: 1.5rem 0;
   padding: 1rem;
-  background: #f8f9fa;
+  background: #56566b;
   border-radius: 8px;
   border: 1px dashed #ccc;
   transition: border-color 0.3s;
@@ -336,7 +380,8 @@ h1, h2, h3, p {
 /* ===== MOOD SECTION ===== */
 #profileForm .moodHistoryInput {
   padding: 1rem;
-  background: #f0f7ff;
+  margin-top: 0.5rem;
+  background: #F4F2F0;
   border-radius: 8px;
 }
 
@@ -363,7 +408,7 @@ h1, h2, h3, p {
   align-items: center;
   gap: 0.3rem;
   padding: 0.3rem 0.6rem;
-  background: #80819e;
+  background: #bab9b6;
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -372,22 +417,22 @@ h1, h2, h3, p {
 
 /* Hover State */
 #profileForm .tag:hover {
-  background: #583666;
+  background: #8fbd3a;
   border-color: #a0d0ff;
   transform: translateY(-1px);
 }
 
 /* Selected State */
 #profileForm input[type="checkbox"]:checked + .tag {
-  background: #4CAF50;
-  color: white;
-  border-color: #388E3C;
+  background: #d9ba4c;
+  color: black; /* white it was*/
+  border-color: #635f57;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* Focus State */
 #profileForm .tag:focus-within {
-  outline: 2px solid #2196F3;
+  outline: 2px solid #d9ba4c;
 }
 
 /* Checkbox Visually Hidden */
@@ -406,13 +451,13 @@ h1, h2, h3, p {
 
 #profileForm input[type="checkbox"]:checked + .tag .tag-icon {
   transform: scale(1.2);
-  color: #C8E6C9;
+  color: #d9ba4c;
 }
 
 /* ===== EMERGENCY CONTACT ===== */
 #profileForm .emergency-contact-section {
   padding: 1rem;
-  background: #fff8f8;
+  background: #F4F2F0;
   border-radius: 8px;
   margin-top: 1rem;
 }
@@ -448,10 +493,10 @@ h1, h2, h3, p {
 }
 /* SUBMIT BUTTON ===== */
 #profileForm .button[type="submit"] {
-  background: #4CAF50;
+  background: #82828f;
   color: white;
   padding: 0.8rem;
-  border: none;
+  border: black;
   border-radius: 4px;
   cursor: pointer;
   font-size: 1rem;
