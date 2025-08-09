@@ -952,7 +952,7 @@ await new Promise((resolve, reject) => {
 
 //====================================================================================
 // FUNCTION TO ENSURE COLLAGE MODAL EXISTS/MOVED MODAL HTML FROM HTML TO DASHBOARD.JS
-/=========================================================================================
+//=========================================================================================
 function ensureCollageModalExists() {
   if (!document.getElementById('collage-modal')) {
     const modalHTML = `
