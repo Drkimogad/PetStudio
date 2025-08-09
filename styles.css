@@ -1595,3 +1595,18 @@ footer {
     padding: 8px 12px;
   }
 }
+
+
+
+
+#collage-modal {
+  top: 20px !important; 
+  left: 20px !important;
+  background: red !important; /* Make it obvious */
+}
+#collage-modal {
+  border: 5px solid red !important; /* Force visibility */
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+}
