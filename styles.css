@@ -748,8 +748,8 @@ h1, h2, h3, p {
 /*=====================*/
 /* Emergency Contact Section - inline appearance */
 .emergency-contact-section {
-  margin: 5px 0;
-  padding: 2px; /*to be revisited*/
+  margin: 10px 0;  /* to add more space increase this*/
+  padding: 6px; /*to be revisited*/
   background: none;
   border: none;
   border-radius: 0;
@@ -791,7 +791,7 @@ h1, h2, h3, p {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 5px; /* test it */
+  margin: 10px 0; /* adds 10px space on top and bottom to be adjusted */
   justify-content: center;
 }
 
@@ -817,8 +817,8 @@ h1, h2, h3, p {
 .petCard .pet-notes {
   width: 100%;
   text-align: left;
-  padding: 2px; /* was 0 */
-  margin: 2px; /* wasn't there*/
+  padding: 6px; /* was 0 */
+  margin: 10px 0; /* adds 10px space on top and bottom */
   border: none;
   border-radius: 0;
   font-family: inherit;
@@ -907,8 +907,8 @@ h1, h2, h3, p {
 /* STANDALONE button*/
 .cancel-edit-btn {
   /* Base Styles */
-  background-color: #dc2626;
-  color: #fff;
+  background-color: #d11d1d;
+  color: white;
   padding: 0.5rem 1.2rem;
   border: none;
   cursor: pointer;
@@ -923,28 +923,11 @@ h1, h2, h3, p {
 }
 
 .cancel-edit-btn:hover {
-  background-color: #b91c1c;
+  background-color: #ba5a0b;
+  border: black;
   transform: translateY(-1px); /* Slight lift */
   box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
-
-/* For a pill shape */
-.cancel-edit-btn.pill {
-  border-radius: 9999px; /* Fully rounded ends */
-  padding: 0.5rem 1.5rem;
-}
-
-/* For a sharp rectangular shape 
-.cancel-edit-btn.sharp {
-  border-radius: 0;
-}*/
-
-/* For an outline version 
-.cancel-edit-btn.outline {
-  background: transparent;
-  border: 2px solid #dc2626;
-  color: #dc2626;
-} */
 
 /*=======================*/
 /* ===GALLERY PREVIEW CONTROLS IN FORMEDIT AND FORM CREATE WITH COVER BTN AND X REMOVE  ===== */
