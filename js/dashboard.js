@@ -1095,20 +1095,20 @@ async function generateCollagePNG(profile) {
   for (const index of selectedImages) {
     const img = document.createElement('img');
     img.crossOrigin = 'anonymous';  // To bypass Cloudinary CORs.
-    
-  // Apply IMAGE scaling rules so PNG matches modal
-  img.style.width = '100%';
-  img.style.height = '100%';
-  img.style.objectFit = 'cover';
-  img.style.borderRadius = '5px';
+    // Apply IMAGE scaling rules so PNG matches modal
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '5px';
 
-    img.src = getCloudinaryUrl(
-      typeof profile.gallery[index] === 'string' 
-        ? profile.gallery[index] 
-        : profile.gallery[index].url
-    );
-    
-    img.src = cloudinaryUrl.replace('http://', 'https://') + '?_httpsfix'; // added for enforced HTTPS
+  const cloudinaryUrl = getCloudinaryUrl(
+  typeof profile.gallery[index] === 'string' 
+    ? profile.gallery[index] 
+    : profile.gallery[index].url
+   );
+  img.src = cloudinaryUrl.replace('http://', 'https://') + '?_httpsfix'; // for enforced HTTPs 
+    console.log("Final image URL:", img.src); 
+
     await new Promise(resolve => img.onload = resolve);
     collage.appendChild(img);
   }
