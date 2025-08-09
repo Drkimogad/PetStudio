@@ -1012,9 +1012,14 @@ function createPetCollage(index) {
   });
 
   // Generate collage
-  document.getElementById('generate-collage').addEventListener('click', () => {
+ const generateBtn = document.getElementById('generate-collage');
+if (generateBtn) {
+  generateBtn.addEventListener('click', () => {
     generateCollagePNG(profile);
   });
+} else {
+  console.error("'Generate Collage' button not found in DOM");
+}
 }
 
 // 2. THEN GENERATE COLLAGE PNG
