@@ -957,6 +957,7 @@ function ensureCollageModalExists() {
       <div id="collage-modal" class="modal hidden">
         <div class="modal-content">
           <h3>Create Collage</h3>
+            <h5>Please choose 2 images or more...</h5>
           <div class="image-grid" id="collage-image-grid"></div>
           <div class="layout-options">
             <button data-layout="2x2">2×2</button>
@@ -1079,6 +1080,7 @@ document.addEventListener('click', function(e) {
 //  THEN GENERATE COLLAGE PNG
 //==================================
 async function generateCollagePNG(profile) {
+     
   // 1. Transform Cloudinary URLs for CORS
   const getCloudinaryUrl = (url) => {
     if (!url.includes('res.cloudinary.com')) return url;
@@ -1099,12 +1101,14 @@ async function generateCollagePNG(profile) {
   img.style.height = '100%';
   img.style.objectFit = 'cover';
   img.style.borderRadius = '5px';
-    
+
     img.src = getCloudinaryUrl(
       typeof profile.gallery[index] === 'string' 
         ? profile.gallery[index] 
         : profile.gallery[index].url
     );
+    
+    img.src = cloudinaryUrl.replace('http://', 'https://') + '?_httpsfix'; // added for enforced HTTPS
     await new Promise(resolve => img.onload = resolve);
     collage.appendChild(img);
   }
