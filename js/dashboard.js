@@ -949,12 +949,38 @@ await new Promise((resolve, reject) => {
     throw error; // Re-throw if you want calling code to handle it
   }
 }
+
+//====================================================================================
+// FUNCTION TO ENSURE COLLAGE MODAL EXISTS/MOVED MODAL HTML FROM HTML TO DASHBOARD.JS
+/=========================================================================================
+function ensureCollageModalExists() {
+  if (!document.getElementById('collage-modal')) {
+    const modalHTML = `
+      <div id="collage-modal" class="modal hidden">
+        <div class="modal-content">
+          <h3>Create Collage</h3>
+          <div class="image-grid" id="collage-image-grid"></div>
+          <div class="layout-options">
+            <button data-layout="2x2">2×2</button>
+            <button data-layout="3x3">3×3</button>
+            <button data-layout="1x3">1×3</button>
+          </div>
+          <button id="generate-collage" disabled>Generate Collage</button>
+        </div>
+      </div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  }
+}
+
 //===============================
 //  Create  AND GENERATE collage Core functionS
 //===============================
 //  CREATE COLLAGE FIRST
 //======================================
 function createPetCollage(index) {
+  // NOW IMPORT MODAL HTML FUNCTION TO CREATE FUNCTION
+  ensureCollageModalExists();
+  
   const profile = window.petProfiles[index];
 
   if (!profile?.gallery?.length) {
@@ -978,7 +1004,7 @@ function createPetCollage(index) {
     const imgElement = document.createElement('img');
     imgElement.src = typeof img === 'string' ? img : img.url;
     imgElement.dataset.index = i;
-    imgElement.addEventListener('click', toggleImageSelection); // maybe will need Utils before it
+    imgElement.addEventListener('click', toggleImageSelection);
     grid.appendChild(imgElement);
   });
 
