@@ -906,28 +906,24 @@ h1, h2, h3, p {
 /* Cover Button (Star Icon)  ON IMAGE */
 /*======================*/
 .cover-btn {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  width: 24px;
-  height: 24px;
-  background: rgba(0,0,0,0.5);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #808080;
+    color: white;
+    border: #c9ba2c;  
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    z-index: 2;
+    transition: all 0.2s ease;
 }
 
-/* Active Cover Button (Gold State) */
-.cover-btn.active {
-  background: gold;
-  color: black;
-  box-shadow: 0 0 0 2px white;
+.cover-btn .active:hover {
+    background-color: #c9ba2c;
+    border: #808080;  
+    transform: scale(1.05);
 }
 
 /* Remove Button (X Mark) */
@@ -1037,6 +1033,14 @@ styled to show in petcard header plus nickname */
 /* END OF PETCARD CREATION STYLES*/
 
 /* =====COLLAGE BUTTON STYLES======= */
+/* Critical Fix: Force visibility for modal and its parent chain as it was hidden*/
+#collage-modal,
+#collage-modal ~ div {  /* 👈 Targets modal and potential hidden parents */
+  display: flex !important; /* 👈 Overrides any hidden states */
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
 /* Collage Modal */
 #collage-modal {
   position: fixed;
@@ -1048,7 +1052,7 @@ styled to show in petcard header plus nickname */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 1000; /* 👈 Ensure this is higher than other elements */
 }
 
 .modal-content {
@@ -1083,7 +1087,7 @@ styled to show in petcard header plus nickname */
 }
 
 .selected {
-  border: 3px solid #6a5acd;
+  border: 3px solid #6a5acd !important; /* 👈 Ensure selection visibility */
   opacity: 0.8;
 }
 
@@ -1596,17 +1600,3 @@ footer {
   }
 }
 
-
-
-
-#collage-modal {
-  top: 20px !important; 
-  left: 20px !important;
-  background: red !important; /* Make it obvious */
-}
-#collage-modal {
-  border: 5px solid red !important; /* Force visibility */
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: flex !important;
-}
