@@ -1133,9 +1133,29 @@ try {
   collage.style.left = '-9999px';
   document.body.appendChild(collage);
 
-  const canvas = await html2canvas(collage);
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+// In your generateCollagePNG() function, modify JUST the html2canvas call:
+const canvas = await html2canvas(collage, {
+  useCORS: true,
+  allowTaint: false,
+  scale: 1,
+  logging: false, // Disable verbose logging
+  ignoreElements: (el) => {
+    // Skip any problematic elements
+    return el.tagName === 'IFRAME'; 
+  }
+}).catch(e => {
+  console.error("Canvas capture failed:", e);
+  return null; // Continue even if fails
+});
 
+if (!canvas) {
+  // Fallback: Show HTML version
+  const preview = document.createElement('div');
+  preview.innerHTML = collage.innerHTML;
+  document.body.appendChild(preview);
+  return;
+}
+ 
   // Clean up
   collage.remove();
 
