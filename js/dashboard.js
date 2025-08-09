@@ -1063,7 +1063,8 @@ document.body.addEventListener('click', (e) => {
     selectedLayout = layoutBtn.dataset.layout;
     console.log("DEBUG: Layout changed to", selectedLayout);
   }
-});
+ });
+}
 
 //==================================
 //  THEN GENERATE COLLAGE PNG
