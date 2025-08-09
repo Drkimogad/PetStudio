@@ -1092,26 +1092,40 @@ async function generateCollagePNG(profile) {
   collage.className = `collage-layout-${selectedLayout}`;
 
   // 3. Load images safely
-  for (const index of selectedImages) {
-    const img = document.createElement('img');
-    img.crossOrigin = 'anonymous';  // To bypass Cloudinary CORs.
-    // Apply IMAGE scaling rules so PNG matches modal
-    img.style.width = '100%';
-    img.style.height = '100%';
-    img.style.objectFit = 'cover';
-    img.style.borderRadius = '5px';
+   // 3. Load images safely
+for (const index of selectedImages) {
+  const img = document.createElement('img');
+  img.crossOrigin = 'anonymous';  // Essential for CORS
+  
+  // Styling (keep your existing rules)
+  img.style.width = '100%';
+  img.style.height = '100%';
+  img.style.objectFit = 'cover';
+  img.style.borderRadius = '5px';
 
+  // Get and transform the URL
   const cloudinaryUrl = getCloudinaryUrl(
-  typeof profile.gallery[index] === 'string' 
-    ? profile.gallery[index] 
-    : profile.gallery[index].url
-   );
-  img.src = cloudinaryUrl.replace('http://', 'https://') + '?_httpsfix'; // for enforced HTTPs 
-    console.log("Final image URL:", img.src); 
+    typeof profile.gallery[index] === 'string' 
+      ? profile.gallery[index] 
+      : profile.gallery[index].url
+  );
 
-    await new Promise(resolve => img.onload = resolve);
-    collage.appendChild(img);
-  }
+  // Force HTTPS + CORS headers + cache busting
+  img.src = cloudinaryUrl
+    .replace('http://', 'https://')
+    .replace('/upload/', '/upload/f_auto,q_auto/') // Cloudinary optimizations
+    .split('?')[0] + // Remove existing params
+    '?_cors=1&_https=1&_cache=' + Date.now(); // Critical fixes
+
+  console.log("Final image URL:", img.src); // Verify in console
+
+  await new Promise((resolve, reject) => {
+    img.onload = resolve;
+    img.onerror = () => reject(new Error(`Failed to load ${img.src}`));
+  });
+  
+  collage.appendChild(img);
+}
 
   // Apply layout-specific CSS
   const layoutStyles = {
