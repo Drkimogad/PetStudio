@@ -317,6 +317,9 @@ function toggleCelebrateButton(dateInput) {
   }
 }
 
+
+
+
 // 🌀🌀🌀 CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
 //======================================
 // ✏️  EDIT PROFILE BUTTON FUNCTION IMAGE PREVIEW TO BE FIXED
@@ -538,6 +541,7 @@ function openCreateForm() {
 
 //=====================================================
 // 3. RESET FORM FOR BOTH OPENEDIT AND OPENCREATEFORMS
+//========================================================
 /**
  * Resets all form fields and UI states to default
  * @param {boolean} fullReset - When true, also resets non-field states (default: true)
@@ -686,6 +690,9 @@ function cancelEdit() {
   }, 300); // Just enough time to show the message
 }
 
+
+
+
 //==========≈==============
 // 🛑  UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
 // DELET CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER
@@ -752,6 +759,8 @@ async function deleteProfile(index) {
     loader.style.display = 'none';
   }
 }
+
+
 
 //===========================================
 //  PRINT PROFILE BUTTON FUNCTION
@@ -924,7 +933,6 @@ async function generateBirthdayCard(index) {
       async: true // Add this so canvas await for image to load
     });
 
-    // 4. Share or download
    // 4. Share or download
 await new Promise((resolve, reject) => {
   canvas.toBlob(async (blob) => {
@@ -975,6 +983,12 @@ await new Promise((resolve, reject) => {
   }
 }
 
+
+
+//===============================
+//  EVERYTHING RELATED TO COLLAGE GENERATION, CREATE COLLAGE/HELPER FUNCTIONS(2) AND GENERATE COLLAGE AS PNG
+// CORS ISSUE IS STILL TO BE FIXED BUT FUNCTION IS WORKING
+//===============================
 //====================================================================================
 // FUNCTION TO ENSURE COLLAGE MODAL EXISTS/MOVED MODAL HTML FROM HTML TO DASHBOARD.JS
 //=========================================================================================
@@ -998,10 +1012,6 @@ function ensureCollageModalExists() {
   }
 }
 
-//===============================
-//  EVERYTHING RELATED TO COLLAGE GENERATION, CREATE COLLAGE/HELPER FUNCTIONS(2) AND GENERATE COLLAGE AS PNG
-// CORS ISSUE IS STILL TO BE FIXED BUT FUNCTION IS WORKING
-//===============================
 
 //  CREATE COLLAGE FIRST
 //======================================
@@ -1108,7 +1118,9 @@ document.addEventListener('click', function(e) {
 //==================================
 //  THEN GENERATE COLLAGE PNG
 //==================================
+// THIS IS A VERY CRITICAL AREA FOR COLLAGE GENERATION. DO NOT ALTER
 async function generateCollagePNG(profile) {
+//===============================================================
   // 1. Helper to clean Cloudinary URLs
   const getCloudinaryUrl = (url) => {
     if (!url.includes('res.cloudinary.com')) return url;
@@ -1122,12 +1134,12 @@ async function generateCollagePNG(profile) {
   const collage = document.createElement('div');
   collage.className = `collage-layout-${selectedLayout}`;
 
-  // 3. Load images through Cloudflare Worker proxy
+  // 3. Load images through Cloudflare Worker proxy VERY ESSENTIAL LINE 
   const proxyBase = 'https://petstudio.dr-kimogad.workers.dev/?url=';
 
   for (const index of selectedImages) {
     const img = document.createElement('img');
-    img.crossOrigin = 'anonymous';
+    img.crossOrigin = 'anonymous'; // VERY ESSENTIAL LINE 
     img.style.cssText = `
       width: 100%;
       height: 100%;
@@ -1141,7 +1153,7 @@ async function generateCollagePNG(profile) {
         : profile.gallery[index].url
     );
 
-    img.src = proxyBase + encodeURIComponent(cloudinaryUrl) + '&_cache=' + Date.now();
+    img.src = proxyBase + encodeURIComponent(cloudinaryUrl) + '&_cache=' + Date.now(); // VERY ESSENTIAL LINE 
 
     await new Promise((resolve, reject) => {
       img.onload = resolve;
@@ -1150,8 +1162,8 @@ async function generateCollagePNG(profile) {
 
     collage.appendChild(img);
   }
-
-  // 4. Apply layout-specific CSS
+//===================================================================================
+  // 3. Apply layout-specific CSS
   const layoutStyles = {
     '2x2': 'grid-template-columns: repeat(2, 1fr);',
     '3x3': 'grid-template-columns: repeat(3, 1fr);',
@@ -1166,7 +1178,7 @@ async function generateCollagePNG(profile) {
     left: -9999px;
   `;
 
-  // 5. Render off-screen, then generate PNG
+  // 4. Render off-screen, then generate PNG
   document.body.appendChild(collage);
 
   try {
@@ -1204,6 +1216,7 @@ async function generateCollagePNG(profile) {
     selectedImages = [];
   }
 }
+
 
 //====================================================
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
