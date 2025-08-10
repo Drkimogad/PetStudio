@@ -156,11 +156,17 @@ h1, h2, h3, p {
 /* Dashboard: Hidden by default */
 #dashboard {
   display: none;
-  padding: 70px 1rem 2rem; /* top | horizontal | bottom */
+  padding: 20px;
+  background-color: #ffffff; /* white background*/
+}
+
+#dashboard {
+  padding: 2rem 1rem;
   background: #fafafa;
-  position: relative;
+  display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative; /* 🔧 this is the key */
 }
 
 #petList {
@@ -170,21 +176,12 @@ h1, h2, h3, p {
 }
 
 /* =BUTTON BEFORE OPENING PETLIST STYLES=== */
-body > header, 
-body > div:first-child {  /* Targets common parent containers */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px; /* Modern alternative to margins */
-}
-
 .button {
   display: inline-block;
   background-color: #808080; /* it was deep purple #6a1b9a, charcoal grey now  */
   color: white;
   padding: 10px 20px;
-  border: none; /* it was none now mustard colour*/
+  border: #c9ba2c; /* it was none now mustard colour*/
   border-radius: 10px;
   font-size: 1rem;
   cursor: pointer;
@@ -201,28 +198,19 @@ body > div:first-child {  /* Targets common parent containers */
   color: white;
   font-size: 1.1rem;
   padding: 10px 20px;
-  position: fixed;
-  top: 20px;
-  left: 20px;  /* for fixed positioning */
-  z-index: 10;
-  margin: 0; /* Remove all margins */
+  margin-bottom: 20px;
 }
 
 #addPetProfileBtn::before {
   content: '➕ ';
 }
-
 #logoutBtn {
   background-color: #e74c3c;
   color: white;
-  padding: 10px 20px;
+  padding: 10px 16px;
   border-radius: 6px;
-  font-size: 1.1rem; /* can be reduced */
-  position: fixed; /* Change from absolute */
-  margin: 0; /* Remove all margins */
-  top: 20px; /* Distance from top */
-  right: 20px; /* for fixed positioning*/
-  bottom: auto; /* Remove bottom positioning */
+  position: absolute;
+  bottom: 20px; /* Just above footer inside dashboard */
   right: 20px;
   font-weight: bold;
   z-index: 10;
