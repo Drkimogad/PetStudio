@@ -1109,51 +1109,49 @@ document.addEventListener('click', function(e) {
 //  THEN GENERATE COLLAGE PNG
 //==================================
 async function generateCollagePNG(profile) {
-     
   // 1. Transform Cloudinary URLs for CORS
   const getCloudinaryUrl = (url) => {
     if (!url.includes('res.cloudinary.com')) return url;
-   return url.replace('/upload/', '/upload/f_auto,q_auto/'); //to bypass Cloudinary CORs
+    return url
+      .replace('http://', 'https://')
+      .replace('/upload/', '/upload/f_auto,q_auto/')
+      .split('?')[0];
   };
 
-  // 2. Create collage with CORS-friendly URLs
+  // 2. Create collage container
   const collage = document.createElement('div');
   collage.className = `collage-layout-${selectedLayout}`;
 
-  // 3. Load images safely
-   // 3. Load images safely
-for (const index of selectedImages) {
-  const img = document.createElement('img');
-  img.crossOrigin = 'anonymous';  // Essential for CORS
-  
-  // Styling (keep your existing rules)
-  img.style.width = '100%';
-  img.style.height = '100%';
-  img.style.objectFit = 'cover';
-  img.style.borderRadius = '5px';
+  // 3. Load images
+  for (const index of selectedImages) {
+    const img = document.createElement('img');
+    img.crossOrigin = 'anonymous';
+    
+    // Apply consistent styling
+    img.style.cssText = `
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 5px;
+    `;
 
-  // Get and transform the URL
-  const cloudinaryUrl = getCloudinaryUrl(
-    typeof profile.gallery[index] === 'string' 
-      ? profile.gallery[index] 
-      : profile.gallery[index].url
-  );
+    // SET THE SRC ONLY ONCE (removed duplicate assignment)
+    const cloudinaryUrl = getCloudinaryUrl(
+      typeof profile.gallery[index] === 'string'
+        ? profile.gallery[index]
+        : profile.gallery[index].url
+    );
+    
+    img.src = `/proxy/${cloudinaryUrl}?_cache=${Date.now()}`;
+    console.log("Final image URL:", img.src);
 
-    // Force HTTPS + CORS headers + cache busting using cloudflare worker now
-  img.src = `/proxy/**/**${cloudinaryUrl  // <- ADDED MISSING SLASH HERE
-  .replace('http://', 'https://')
-  .replace('/upload/', '/upload/f_auto,q_auto/')
-  .split('?')[0]}?_cache=${Date.now()}`;
-  
-  console.log("Final image URL:", img.src); // Verify in console
-
-  await new Promise((resolve, reject) => {
-    img.onload = resolve;
-    img.onerror = () => reject(new Error(`Failed to load ${img.src}`));
-  });
-  
-  collage.appendChild(img);
-}
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = () => reject(new Error(`Failed to load ${img.src}`));
+    });
+    
+    collage.appendChild(img);
+  }
 
   // Apply layout-specific CSS
   const layoutStyles = {
