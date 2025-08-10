@@ -1210,8 +1210,53 @@ collage.style.cssText = `
   box-sizing: border-box;
 `;
 
+// to override css scaling restrictions before canvas rendering 
+       // 1. Clone images to avoid affecting original modal
+const clonedImages = Array.from(collage.querySelectorAll('img')).map(img => {
+  const clone = img.cloneNode(true);
+  clone.style.cssText = `
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important; /* Show full image */
+  `;
+  return clone;
+});
+
+// 2. Clear and repopulate collage with fixed-size containers
+collage.innerHTML = '';
+clonedImages.forEach(clone => {
+  const container = document.createElement('div');
+  container.style.cssText = `
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  `;
+  container.appendChild(clone);
+  collage.appendChild(container);
+});
+
+// 3. Adjust collage container sizing
+collage.style.cssText = `
+  display: grid;
+  grid-template-columns: ${gridTemplate};
+  gap: 10px;
+  width: ${selectedLayout === '1x3' ? '400px' : '600px'};
+  height: ${height};
+  background: white;
+  padding: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
+    
     // 5. Render with html2canvas
-    document.body.appendChild(collage);
+   document.body.appendChild(collage);
     
     const canvas = await html2canvas(collage, {
       useCORS: true,
