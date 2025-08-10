@@ -1180,43 +1180,35 @@ document.addEventListener('click', function(e) {
     ]);
 
     // 4. Apply layout
-    const layoutConfig = {
-      '2x2': { gridTemplate: 'repeat(2, 1fr)', height: '600px' },
-      '3x3': { gridTemplate: 'repeat(3, 1fr)', height: '600px' },
-      '1x3': { gridTemplate: 'repeat(3, 1fr)', height: '200px' }
-    };
+    // 1. Define layout config (keep this)
+const layoutConfig = {
+  '2x2': { gridTemplate: 'repeat(2, 1fr)', height: '600px' },
+  '3x3': { gridTemplate: 'repeat(3, 1fr)', height: '600px' },
+  '1x3': { gridTemplate: 'repeat(3, 1fr)', height: '200px' }
+};
 
+// 2. Validate layout (keep this)
+if (!['2x2', '3x3', '1x3'].includes(selectedLayout)) {
+  console.warn(`Unknown layout: ${selectedLayout}. Defaulting to 2x2`);
+  selectedLayout = '2x2';
+}
 
-    if (!['2x2', '3x3', '1x3'].includes(selectedLayout)) {
-    console.warn(`Unknown layout: ${selectedLayout}. Defaulting to 2x2`);
-    selectedLayout = '2x2';
-    }
-    // With this switch-case based on your selectedLayout:
-   switch (selectedLayout) {
-    case '1x3':
-    collage.style.gridTemplateColumns = 'repeat(3, 1fr)';
-    collage.style.height = '200px';  // Your specified height for 1x3
-    break;
-    case '3x3':
-    collage.style.gridTemplateColumns = 'repeat(3, 1fr)';
-    break;
-    case '2x2':  // Default fallback
-    default:
-    collage.style.gridTemplateColumns = 'repeat(2, 1fr)';
-      }
-    
-    collage.style.cssText = `
-      display: grid;
-      gap: 5px;
-      width: 600px;
-      height: ${height};
-      grid-template-columns: ${gridTemplate};
-      position: fixed;
-      left: -9999px;
-      background: white;
-      padding: 10px;
-      box-sizing: border-box;
-    `;
+// 3. Get the configured layout values
+const { gridTemplate, height } = layoutConfig[selectedLayout];
+
+// 4. Apply ALL styles at once (modified)
+collage.style.cssText = `
+  display: grid;
+  gap: 5px;
+  width: 600px;
+  height: ${height};
+  grid-template-columns: ${gridTemplate};
+  position: fixed;
+  left: -9999px;
+  background: white;
+  padding: 10px;
+  box-sizing: border-box;
+`;
 
     // 5. Render with html2canvas
     document.body.appendChild(collage);
