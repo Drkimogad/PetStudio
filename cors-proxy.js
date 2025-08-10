@@ -3,7 +3,6 @@ export default {
     // Handle CORS preflight
     if (request.method === "OPTIONS") {
       return new Response(null, {
-        status: 204,
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "GET, OPTIONS",
@@ -12,17 +11,33 @@ export default {
       });
     }
 
-    const CLOUDINARY_BASE = "https://res.cloudinary.com/dh7d6otgu";
     const url = new URL(request.url);
-    const cloudinaryPath = url.pathname.replace("/proxy", "");
+    // Extract everything after /proxy/
+    const targetUrl = url.pathname.slice('/proxy/'.length) + url.search;
+    
+    // Only allow Cloudinary URLs
+    if (!targetUrl.includes('res.cloudinary.com')) {
+      return new Response('Invalid URL', { status: 400 });
+    }
 
-    const response = await fetch(`${CLOUDINARY_BASE}${cloudinaryPath}${url.search}`);
-    const modified = new Response(response.body, response);
-
-    modified.headers.set("Access-Control-Allow-Origin", "*");
-    modified.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
-    modified.headers.set("Access-Control-Allow-Headers", "*");
-
-    return modified;
-  },
-};
+    try {
+      const response = await fetch(targetUrl, {
+        cf: {
+          cacheTtl: 86400, // Cache for 24 hours
+          cacheEverything: true,
+        }
+      });
+      
+      return new Response(response.body, {
+        status: response.status,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": response.headers.get("Content-Type"),
+          "Cache-Control": "public, max-age=86400"
+        }
+      });
+    } catch (err) {
+      return new Response(err.message, { status: 500 });
+    }
+  }
+}
