@@ -1170,12 +1170,13 @@ async function generateCollagePNG(profile) {
       collage.appendChild(img);
     }
 
+  
     // Wait for all images with timeout
     await Promise.race([
-      Promise.all(imagesToLoad),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Image loading timeout')), 15000)
-    ]);
+    Promise.all(imagesToLoad),
+    new Promise((_, reject) => 
+    setTimeout(() => reject(new Error('Image loading timeout')), 15000)
+   ]);
 
     // 4. Layout configuration with better defaults
     const layoutConfig = {
