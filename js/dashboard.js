@@ -1139,8 +1139,8 @@ for (const index of selectedImages) {
       : profile.gallery[index].url
   );
 
-  // Force HTTPS + CORS headers + cache busting using cloudflare worker now
-  img.src = `/proxy${cloudinaryUrl
+    // Force HTTPS + CORS headers + cache busting using cloudflare worker now
+  img.src = `/proxy/**/**${cloudinaryUrl  // <- ADDED MISSING SLASH HERE
   .replace('http://', 'https://')
   .replace('/upload/', '/upload/f_auto,q_auto/')
   .split('?')[0]}?_cache=${Date.now()}`;
