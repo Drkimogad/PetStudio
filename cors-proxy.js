@@ -1,16 +1,15 @@
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
+export default {
+  async fetch(request, env, ctx) {
+    const CLOUDINARY_BASE = 'https://res.cloudinary.com/my cloudinaryname here';
+    const url = new URL(request.url);
+    const cloudinaryPath = url.pathname.replace('/proxy', '');
 
-async function handleRequest(request) {
-  const CLOUDINARY_BASE = 'https://res.cloudinary.com/dh7d6otgu'
-  const url = new URL(request.url)
-  const cloudinaryPath = url.pathname.replace('/proxy', '')
-  
-  const response = await fetch(`${CLOUDINARY_BASE}${cloudinaryPath}${url.search}`)
-  const modified = new Response(response.body, response)
-  
-  modified.headers.set('Access-Control-Allow-Origin', '*')
-  modified.headers.set('Access-Control-Allow-Methods', 'GET')
-  return modified
-}
+    const response = await fetch(`${CLOUDINARY_BASE}${cloudinaryPath}${url.search}`);
+    const modified = new Response(response.body, response);
+
+    modified.headers.set('Access-Control-Allow-Origin', '*');
+    modified.headers.set('Access-Control-Allow-Methods', 'GET');
+
+    return modified;
+  }
+};
