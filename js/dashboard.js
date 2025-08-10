@@ -1118,7 +1118,7 @@ document.addEventListener('click', function(e) {
 //==================================
 //  THEN GENERATE COLLAGE PNG
 //==================================
-async function generateCollagePNG(profile) {
+ async function generateCollagePNG(profile) {
   try {
     // 1. Improved URL handling
     const getCloudinaryUrl = (url) => {
@@ -1186,7 +1186,24 @@ async function generateCollagePNG(profile) {
       '1x3': { gridTemplate: 'repeat(3, 1fr)', height: '200px' }
     };
 
-    const { gridTemplate, height } = layoutConfig[selectedLayout] || layoutConfig['2x2'];
+
+    if (!['2x2', '3x3', '1x3'].includes(selectedLayout)) {
+    console.warn(`Unknown layout: ${selectedLayout}. Defaulting to 2x2`);
+    selectedLayout = '2x2';
+    }
+    // With this switch-case based on your selectedLayout:
+   switch (selectedLayout) {
+    case '1x3':
+    collage.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    collage.style.height = '200px';  // Your specified height for 1x3
+    break;
+    case '3x3':
+    collage.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    break;
+    case '2x2':  // Default fallback
+    default:
+    collage.style.gridTemplateColumns = 'repeat(2, 1fr)';
+      }
     
     collage.style.cssText = `
       display: grid;
@@ -1258,7 +1275,8 @@ async function generateCollagePNG(profile) {
     modal?.classList.add('hidden');
     selectedImages = [];
   }
-}
+ }
+    
 
 //====================================================
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
