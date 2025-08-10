@@ -1118,101 +1118,142 @@ document.addEventListener('click', function(e) {
 //==================================
 //  THEN GENERATE COLLAGE PNG
 //==================================
-// THIS IS A VERY CRITICAL AREA FOR COLLAGE GENERATION. DO NOT ALTER
 async function generateCollagePNG(profile) {
-//===============================================================
-  // 1. Helper to clean Cloudinary URLs
-  const getCloudinaryUrl = (url) => {
-    if (!url.includes('res.cloudinary.com')) return url;
-    return url
-      .replace('http://', 'https://')
-      .replace('/upload/', '/upload/') // Remove f_auto,q_auto here if present
-      .split('?')[0];
-  };
+  try {
+    // 1. Improved Cloudinary URL cleaner
+    const getCloudinaryUrl = (url) => {
+      if (!url?.includes('res.cloudinary.com')) return url;
+      try {
+        const urlObj = new URL(url);
+        urlObj.protocol = 'https:';
+        urlObj.search = ''; // Remove any existing query params
+        return urlObj.toString();
+      } catch {
+        return url.replace('http://', 'https://').split('?')[0];
+      }
+    };
 
-  // 2. Create collage container
-  const collage = document.createElement('div');
-  collage.className = `collage-layout-${selectedLayout}`;
+    // 2. Create container with better isolation
+    const collage = document.createElement('div');
+    collage.className = `collage-layout-${selectedLayout}`;
+    
+    // 3. Configure proxy with error handling
+    const proxyBase = 'https://petstudio.dr-kimogad.workers.dev/?url=';
+    const imagesToLoad = [];
 
-  // 3. Load images through Cloudflare Worker proxy VERY ESSENTIAL LINE 
-  const proxyBase = 'https://petstudio.dr-kimogad.workers.dev/?url=';
+    for (const index of selectedImages) {
+      const img = document.createElement('img');
+      img.crossOrigin = 'anonymous';
+      img.loading = 'eager';
+      img.decoding = 'async';
+      img.style.cssText = `
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 5px;
+      `;
 
-  for (const index of selectedImages) {
-    const img = document.createElement('img');
-    img.crossOrigin = 'anonymous'; // VERY ESSENTIAL LINE 
-    img.style.cssText = `
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 5px;
+      const originalUrl = typeof profile.gallery[index] === 'string' 
+        ? profile.gallery[index] 
+        : profile.gallery[index]?.url;
+      
+      if (!originalUrl) continue;
+
+      const cloudinaryUrl = getCloudinaryUrl(originalUrl);
+      img.src = `${proxyBase}${encodeURIComponent(cloudinaryUrl)}&_cache=${Date.now()}`;
+      
+      imagesToLoad.push(new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = () => reject(new Error(`Image failed to load: ${img.src}`));
+      }));
+
+      collage.appendChild(img);
+    }
+
+    // Wait for all images with timeout
+    await Promise.race([
+      Promise.all(imagesToLoad),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Image loading timeout')), 15000)
+    ]);
+
+    // 4. Layout configuration with better defaults
+    const layoutConfig = {
+      '2x2': { gridTemplate: 'repeat(2, 1fr)', height: '600px' },
+      '3x3': { gridTemplate: 'repeat(3, 1fr)', height: '600px' },
+      '1x3': { gridTemplate: 'repeat(3, 1fr)', height: '200px' }
+    };
+
+    const { gridTemplate, height } = layoutConfig[selectedLayout] || layoutConfig['2x2'];
+    
+    collage.style.cssText = `
+      display: grid;
+      gap: 5px;
+      width: 600px;
+      height: ${height};
+      grid-template-columns: ${gridTemplate};
+      position: fixed;
+      left: -9999px;
+      background: white;
+      padding: 10px;
+      box-sizing: border-box;
     `;
 
-    const cloudinaryUrl = getCloudinaryUrl(
-      typeof profile.gallery[index] === 'string'
-        ? profile.gallery[index]
-        : profile.gallery[index].url
-    );
-
-    img.src = proxyBase + encodeURIComponent(cloudinaryUrl) + '&_cache=' + Date.now(); // VERY ESSENTIAL LINE 
-
-    await new Promise((resolve, reject) => {
-      img.onload = resolve;
-      img.onerror = () => reject(new Error(`Failed to load ${img.src}`));
-    });
-
-    collage.appendChild(img);
-  }
-//===================================================================================
-  // 3. Apply layout-specific CSS
-  const layoutStyles = {
-    '2x2': 'grid-template-columns: repeat(2, 1fr);',
-    '3x3': 'grid-template-columns: repeat(3, 1fr);',
-    '1x3': 'grid-template-columns: repeat(3, 1fr); height: 200px;'
-  };
-  collage.style.cssText = `
-    display: grid;
-    gap: 5px;
-    width: 600px;
-    ${layoutStyles[selectedLayout]}
-    position: fixed;
-    left: -9999px;
-  `;
-
-  // 4. Render off-screen, then generate PNG
-  document.body.appendChild(collage);
-
-  try {
+    // 5. Render with html2canvas
+    document.body.appendChild(collage);
+    
     const canvas = await html2canvas(collage, {
       useCORS: true,
       allowTaint: false,
       scale: 1,
-      backgroundColor: '#fff',
-      logging: false,
-      ignoreElements: (el) => el.tagName === 'IFRAME'
+      backgroundColor: '#ffffff',
+      logging: true,
+      onclone: (clonedDoc) => {
+        clonedDoc.body.style.background = 'white';
+      }
     });
 
-    // Clean up
-    collage.remove();
+    // 6. Handle the result with better error states
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob(
+        blob => blob ? resolve(blob) : reject(new Error('Canvas conversion failed')),
+        'image/png',
+        0.92
+      );
+    });
 
-    // Share or download
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.9));
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'collage.png')] })) {
+    // 7. Improved sharing/download flow
+    const fileName = `${profile.name.replace(/[^a-z0-9]/gi, '_')}_collage.png`;
+    const file = new File([blob], fileName, { type: 'image/png' });
+
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
       await navigator.share({
-        title: `${profile.name}'s Collage`,
-        files: [new File([blob], 'collage.png')]
+        title: `${profile.name}'s Pet Collage`,
+        files: [file]
       });
     } else {
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `${profile.name}_collage.png`;
+      link.download = fileName;
+      document.body.appendChild(link);
       link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      }, 100);
     }
+
   } catch (error) {
-    console.error("Collage generation failed:", error);
-    showQRStatus("Failed to create collage.", false);
+    console.error('Collage generation error:', error);
+    showQRStatus(`Failed: ${error.message}`, false);
+    throw error; // Re-throw for caller to handle
   } finally {
+    // Cleanup
+    const collageEl = document.querySelector('.collage-layout-' + selectedLayout);
+    if (collageEl) collageEl.remove();
+    
     const modal = document.getElementById('collage-modal');
-    if (modal) modal.classList.add('hidden');
+    modal?.classList.add('hidden');
     selectedImages = [];
   }
 }
