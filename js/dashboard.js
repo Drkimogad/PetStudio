@@ -1114,7 +1114,7 @@ async function generateCollagePNG(profile) {
     if (!url.includes('res.cloudinary.com')) return url;
     return url
       .replace('http://', 'https://')
-      .replace('/upload/', '/upload/f_auto,q_auto/')
+      .replace('/upload/', '/upload/') // Remove f_auto,q_auto here
       .split('?')[0];
   };
 
@@ -1142,7 +1142,7 @@ async function generateCollagePNG(profile) {
         : profile.gallery[index].url
     );
     
-    img.src = `/proxy/${cloudinaryUrl}?_cache=${Date.now()}`;
+    img.src = `/proxy/${cloudinaryUrl}?_cache=${Date.now()}`; // After remove transformation up
     console.log("Final image URL:", img.src);
 
     await new Promise((resolve, reject) => {
