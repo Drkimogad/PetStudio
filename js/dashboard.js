@@ -1120,20 +1120,20 @@ document.addEventListener('click', function(e) {
 //==================================
 async function generateCollagePNG(profile) {
   try {
-    // 1. Improved Cloudinary URL cleaner
+    // 1. Improved URL handling
     const getCloudinaryUrl = (url) => {
       if (!url?.includes('res.cloudinary.com')) return url;
       try {
         const urlObj = new URL(url);
         urlObj.protocol = 'https:';
-        urlObj.search = ''; // Remove any existing query params
+        urlObj.search = ''; // Remove query params
         return urlObj.toString();
       } catch {
         return url.replace('http://', 'https://').split('?')[0];
       }
     };
 
-    // 2. Create container with better isolation
+    // 2. Create container
     const collage = document.createElement('div');
     collage.className = `collage-layout-${selectedLayout}`;
     
@@ -1141,6 +1141,7 @@ async function generateCollagePNG(profile) {
     const proxyBase = 'https://petstudio.dr-kimogad.workers.dev/?url=';
     const imagesToLoad = [];
 
+    // Load all images first
     for (const index of selectedImages) {
       const img = document.createElement('img');
       img.crossOrigin = 'anonymous';
@@ -1163,22 +1164,22 @@ async function generateCollagePNG(profile) {
       img.src = `${proxyBase}${encodeURIComponent(cloudinaryUrl)}&_cache=${Date.now()}`;
       
       imagesToLoad.push(new Promise((resolve, reject) => {
-        img.onload = resolve;
+        img.onload = () => resolve(img);
         img.onerror = () => reject(new Error(`Image failed to load: ${img.src}`));
       }));
 
       collage.appendChild(img);
     }
 
-  
-    // Wait for all images with timeout
+    // Wait for images with timeout
     await Promise.race([
-    Promise.all(imagesToLoad),
-    new Promise((_, reject) => 
-    setTimeout(() => reject(new Error('Image loading timeout')), 15000)
-   ]);
+      Promise.all(imagesToLoad),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Image loading timeout (15s)')), 15000)
+      )
+    ]);
 
-    // 4. Layout configuration with better defaults
+    // 4. Apply layout
     const layoutConfig = {
       '2x2': { gridTemplate: 'repeat(2, 1fr)', height: '600px' },
       '3x3': { gridTemplate: 'repeat(3, 1fr)', height: '600px' },
@@ -1214,7 +1215,7 @@ async function generateCollagePNG(profile) {
       }
     });
 
-    // 6. Handle the result with better error states
+    // 6. Create blob
     const blob = await new Promise((resolve, reject) => {
       canvas.toBlob(
         blob => blob ? resolve(blob) : reject(new Error('Canvas conversion failed')),
@@ -1223,7 +1224,7 @@ async function generateCollagePNG(profile) {
       );
     });
 
-    // 7. Improved sharing/download flow
+    // 7. Handle output
     const fileName = `${profile.name.replace(/[^a-z0-9]/gi, '_')}_collage.png`;
     const file = new File([blob], fileName, { type: 'image/png' });
 
@@ -1247,10 +1248,10 @@ async function generateCollagePNG(profile) {
   } catch (error) {
     console.error('Collage generation error:', error);
     showQRStatus(`Failed: ${error.message}`, false);
-    throw error; // Re-throw for caller to handle
+    throw error;
   } finally {
     // Cleanup
-    const collageEl = document.querySelector('.collage-layout-' + selectedLayout);
+    const collageEl = document.querySelector(`.collage-layout-${selectedLayout}`);
     if (collageEl) collageEl.remove();
     
     const modal = document.getElementById('collage-modal');
@@ -1258,7 +1259,6 @@ async function generateCollagePNG(profile) {
     selectedImages = [];
   }
 }
-
 
 //====================================================
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
