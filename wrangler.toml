@@ -1,3 +1,17 @@
 name = "petstudio"
 compatibility_date = "2024-05-01"
 main = "cors-proxy.js"
+
+[observability.logs]
+enabled = true  # This enables Worker logs (helpful for debugging)
+
+[triggers]
+routes = [
+  # For your GitHub Pages deployment (drkimogad.github.io)
+  "https://drkimogad.github.io/proxy/*",
+  # For direct Worker access
+  "petstudio.workers.dev/proxy/*"
+]
+
+[vars]
+CLOUDINARY_BASE = "https://res.cloudinary.com/dh7d6otgu"
