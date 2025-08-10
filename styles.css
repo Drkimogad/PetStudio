@@ -154,6 +154,7 @@ h1, h2, h3, p {
    DASHBOARD & LAYOUT
 ==================== */
 /* Dashboard: Hidden by default */
+/* Dashboard: Hidden by default */
 #dashboard {
   display: none;
   padding: 20px;
