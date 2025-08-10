@@ -23,7 +23,7 @@ export default {
     
     const allowedDomains = [
       /^https:\/\/res\.cloudinary\.com\//,
-       /^https:\/\/drkimogad\.github\.io\//
+       /^https:\/\/drkimogad\.github\.io\//,
       /^https:\/\/petstudio\.dr-kimogad\.workers\.dev\//  // Worker URL
     ];
     
