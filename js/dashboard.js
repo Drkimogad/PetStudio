@@ -1139,13 +1139,12 @@ for (const index of selectedImages) {
       : profile.gallery[index].url
   );
 
-  // Force HTTPS + CORS headers + cache busting
-  img.src = cloudinaryUrl
-    .replace('http://', 'https://')
-    .replace('/upload/', '/upload/f_auto,q_auto/') // Cloudinary optimizations
-    .split('?')[0] + // Remove existing params
-    '?_cors=1&_https=1&_cache=' + Date.now(); // Critical fixes
-
+  // Force HTTPS + CORS headers + cache busting using cloudflare worker now
+  img.src = `/proxy${cloudinaryUrl
+  .replace('http://', 'https://')
+  .replace('/upload/', '/upload/f_auto,q_auto/')
+  .split('?')[0]}?_cache=${Date.now()}`;
+  
   console.log("Final image URL:", img.src); // Verify in console
 
   await new Promise((resolve, reject) => {
