@@ -1,6 +1,6 @@
 export default {
   async fetch(request, env, ctx) {
-    const CLOUDINARY_BASE = 'https://res.cloudinary.com/my cloudinaryname here';
+    const CLOUDINARY_BASE = 'https://res.cloudinary.com/my dh7d6otgu';
     const url = new URL(request.url);
     const cloudinaryPath = url.pathname.replace('/proxy', '');
 
