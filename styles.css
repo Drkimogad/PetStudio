@@ -156,17 +156,11 @@ h1, h2, h3, p {
 /* Dashboard: Hidden by default */
 #dashboard {
   display: none;
-  padding: 20px;
-  background-color: #ffffff; /* white background*/
-}
-
-#dashboard {
-  padding: 2rem 1rem;
+  padding: 70px 1rem 2rem; /* top | horizontal | bottom */
   background: #fafafa;
-  display: flex;
+  position: relative;
   flex-direction: column;
   align-items: center;
-  position: relative; /* 🔧 this is the key */
 }
 
 #petList {
@@ -207,8 +201,11 @@ body > div:first-child {  /* Targets common parent containers */
   color: white;
   font-size: 1.1rem;
   padding: 10px 20px;
-  margin-bottom: 20px;
-  margin-right: auto; /* Pushes logout to far right */
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  margin: 0; /* Remove all margins */
 }
 
 #addPetProfileBtn::before {
@@ -217,10 +214,11 @@ body > div:first-child {  /* Targets common parent containers */
 #logoutBtn {
   background-color: #e74c3c;
   color: white;
-  padding: 10px 16px;
-  margin-left: auto; /* Ensure right alignment */
+  padding: 10px 20px;
   border-radius: 6px;
+  font-size: 1.1rem; /* can be reduced */
   position: fixed; /* Change from absolute */
+  margin: 0; /* Remove all margins */
   top: 20px; /* Distance from top */
   right: 20px; /* Distance from right */
   bottom: auto; /* Remove bottom positioning */
