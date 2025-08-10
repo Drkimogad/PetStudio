@@ -1109,12 +1109,12 @@ document.addEventListener('click', function(e) {
 //  THEN GENERATE COLLAGE PNG
 //==================================
 async function generateCollagePNG(profile) {
-  // 1. Transform Cloudinary URLs for CORS
+  // 1. Helper to clean Cloudinary URLs
   const getCloudinaryUrl = (url) => {
     if (!url.includes('res.cloudinary.com')) return url;
     return url
       .replace('http://', 'https://')
-      .replace('/upload/', '/upload/') // Remove f_auto,q_auto here
+      .replace('/upload/', '/upload/') // Remove f_auto,q_auto here if present
       .split('?')[0];
   };
 
@@ -1122,12 +1122,12 @@ async function generateCollagePNG(profile) {
   const collage = document.createElement('div');
   collage.className = `collage-layout-${selectedLayout}`;
 
-  // 3. Load images
+  // 3. Load images through Cloudflare Worker proxy
+  const proxyBase = 'https://petstudio.dr-kimogad.workers.dev/?url=';
+
   for (const index of selectedImages) {
     const img = document.createElement('img');
     img.crossOrigin = 'anonymous';
-    
-    // Apply consistent styling
     img.style.cssText = `
       width: 100%;
       height: 100%;
@@ -1135,25 +1135,23 @@ async function generateCollagePNG(profile) {
       border-radius: 5px;
     `;
 
-    // SET THE SRC ONLY ONCE (removed duplicate assignment)
     const cloudinaryUrl = getCloudinaryUrl(
       typeof profile.gallery[index] === 'string'
         ? profile.gallery[index]
         : profile.gallery[index].url
     );
-    
-    img.src = `/proxy/${cloudinaryUrl}?_cache=${Date.now()}`; // After remove transformation up
-    console.log("Final image URL:", img.src);
+
+    img.src = proxyBase + encodeURIComponent(cloudinaryUrl) + '&_cache=' + Date.now();
 
     await new Promise((resolve, reject) => {
       img.onload = resolve;
       img.onerror = () => reject(new Error(`Failed to load ${img.src}`));
     });
-    
+
     collage.appendChild(img);
   }
 
-  // Apply layout-specific CSS
+  // 4. Apply layout-specific CSS
   const layoutStyles = {
     '2x2': 'grid-template-columns: repeat(2, 1fr);',
     '3x3': 'grid-template-columns: repeat(3, 1fr);',
@@ -1164,48 +1162,29 @@ async function generateCollagePNG(profile) {
     gap: 5px;
     width: 600px;
     ${layoutStyles[selectedLayout]}
+    position: fixed;
+    left: -9999px;
   `;
 
-  // Convert to PNG
-try {
-  // Append collage to DOM but hide it off-screen
-  collage.style.position = 'fixed';
-  collage.style.left = '-9999px';
+  // 5. Render off-screen, then generate PNG
   document.body.appendChild(collage);
 
-// In your generateCollagePNG() function, modify JUST the html2canvas call:
-const canvas = await html2canvas(collage, {
-  useCORS: true,  // Required even with Cloudinary's fix
-  allowTaint: false,
-  scale: 1,
-  logging: false, // Disable verbose logging
-  ignoreElements: (el) => {
-    // Skip any problematic elements
-    return el.tagName === 'IFRAME'; 
-  }
-}).catch(e => {
-  console.error("Canvas capture failed:", e);
-  return null; // Continue even if fails
-});
+  try {
+    const canvas = await html2canvas(collage, {
+      useCORS: true,
+      allowTaint: false,
+      scale: 1,
+      backgroundColor: '#fff',
+      logging: false,
+      ignoreElements: (el) => el.tagName === 'IFRAME'
+    });
 
-if (!canvas) {
-  // Fallback: Show HTML version
-  const preview = document.createElement('div');
-  preview.innerHTML = collage.innerHTML;
-  document.body.appendChild(preview);
-  return;
-}
- 
-  // Clean up
-  collage.remove();
-
+    // Clean up
+    collage.remove();
 
     // Share or download
-   const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.9)); // 0.9 = quality
-  
-    if (navigator.share && navigator.canShare({
-        files: [new File([blob], 'collage.png')]
-      })) {
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.9));
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'collage.png')] })) {
       await navigator.share({
         title: `${profile.name}'s Collage`,
         files: [new File([blob], 'collage.png')]
@@ -1220,7 +1199,8 @@ if (!canvas) {
     console.error("Collage generation failed:", error);
     showQRStatus("Failed to create collage.", false);
   } finally {
-    document.getElementById('collage-modal').classList.add('hidden');
+    const modal = document.getElementById('collage-modal');
+    if (modal) modal.classList.add('hidden');
     selectedImages = [];
   }
 }
