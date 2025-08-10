@@ -998,7 +998,7 @@ function ensureCollageModalExists() {
       <div id="collage-modal" class="modal hidden">
         <div class="modal-content">
           <h3>Create Collage</h3>
-            <h5>Please choose 2 images or more...</h5>
+            <h4>Please choose 2 images or more...</h4>
           <div class="image-grid" id="collage-image-grid"></div>
           <div class="layout-options">
             <button data-layout="2x2">2×2</button>
