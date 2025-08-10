@@ -1,3 +1,4 @@
 name = "petstudio"
 compatibility_date = "2024-05-01"
 main = "cors-proxy.js"
+compatibility_flags = ["nodejs_compat"] # only if you use Node APIs
