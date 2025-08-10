@@ -1,27 +1,6 @@
 name = "petstudio"
-main = "cors-proxy.js"          # This should match your source file (rename if needed)
+main = "cors-proxy.js"
 compatibility_date = "2024-08-10"
 
 [observability.logs]
 enabled = true
-
-[vars]
-CLOUDINARY_BASE = "https://res.cloudinary.com/dh7d6otgu"
-
-# You usually only need [triggers] if using cron jobs or queue triggers.
-# For HTTP Workers, use [routes] (see below).
-
-# Remove [triggers] block for routes; use top-level [routes] for custom domains or workers.dev.
-# Use the correct workers.dev URL and any custom domain you intend to bind.
-
-# If deploying to workers.dev and/or a custom domain:
-[[routes]]
-pattern = "petstudio.dr-kimogad.workers.dev/*"
-zone_id = ""   # (Optional) Only if using a custom domain
-
-# If you want to proxy from your GitHub Pages site (not typical unless you set up a custom domain):
-# [[routes]]
-# pattern = "drkimogad.github.io/proxy/*"
-# zone_id = ""   # Only if you have that domain on Cloudflare
-
-# For most setups, you only need the workers.dev route!
