@@ -203,7 +203,7 @@ body > div:first-child {  /* Targets common parent containers */
   padding: 10px 20px;
   position: fixed;
   top: 20px;
-  left: 20px;
+  left: 20px;  /* for fixed positioning */
   z-index: 10;
   margin: 0; /* Remove all margins */
 }
@@ -211,6 +211,7 @@ body > div:first-child {  /* Targets common parent containers */
 #addPetProfileBtn::before {
   content: '➕ ';
 }
+
 #logoutBtn {
   background-color: #e74c3c;
   color: white;
@@ -220,7 +221,7 @@ body > div:first-child {  /* Targets common parent containers */
   position: fixed; /* Change from absolute */
   margin: 0; /* Remove all margins */
   top: 20px; /* Distance from top */
-  right: 20px; /* Distance from right */
+  right: 20px; /* for fixed positioning*/
   bottom: auto; /* Remove bottom positioning */
   right: 20px;
   font-weight: bold;
