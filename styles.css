@@ -915,19 +915,6 @@ h1, h2, h3, p {
     border-color: #e74c3c; 
 }
 
-
-/* For a sharp rectangular shape 
-.cancel-edit-btn.sharp {
-  border-radius: 0;
-}*/
-
-/* For an outline version 
-.cancel-edit-btn.outline {
-  background: transparent;
-  border: 2px solid #dc2626;
-  color: #dc2626;
-} */
-
 /*=======================*/
 /* ===GALLERY PREVIEW CONTROLS IN FORMEDIT AND FORM CREATE WITH COVER BTN AND X REMOVE  ===== */
 /* Cover Button (Star Icon)  ON IMAGE */
@@ -946,11 +933,22 @@ h1, h2, h3, p {
     z-index: 2;
     transition: all 0.2s ease;
 }
-
-.petCard .cover-btn .active:hover {
+/* Highlighted state (when image is set as cover) */
+.cover-btn.active {
     background-color: #c9ba2c !important;
-    border: #808080 !important;
-    transform: scale(1.05);
+    border: 1px solid #808080 !important;
+    color: #000 !important;
+}
+/* Show active cover button in petCards */
+.pet-card .cover-btn.active {
+  display: flex !important; /* Force visibility */
+  background-color: #c9ba2c !important;
+}
+/* Hover state (applies to all cover buttons) */
+.cover-btn:hover {
+  background-color: #c9ba2c !important;
+  border: 1px solid #808080 !important;
+  transform: scale(1.05);
 }
 
 /* Remove Button (X Mark) */
@@ -1063,6 +1061,7 @@ styled to show in petcard header plus nickname */
   width: 90%;
   height: 90%;
   background: rgba(0, 0, 0, 0.8);
+  border: 2px solid purple;  /*added*/
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1073,22 +1072,23 @@ styled to show in petcard header plus nickname */
   font-size: 1.3rem;
   font-weight: normal;
   text-align: center;
-  margin: 8px 0 16px;
+  margin: 8px auto 16px; /* 👈 auto for horizontal centering */
   color: #333;
-  background-color: white; /* light mustard */
+  background-color: white;
   border: 2px solid purple;
   border-radius: 6px;
   padding: 6px 10px;
-  display: inline-block;
+  display: block; /* 👈 Changed from inline-block to block */
+  width: 80%; /* 👈 Added */
 }
 /*To proceed please choose 2 images or more...*/
 #collage-modal h4 {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: normal;
   text-align: center;
-  margin: 8px 0 16px;
+  margin: 8px auto 16px; /* 👈 auto for horizontal centering */
   color: #333;
-  background-color: #f7e17b; /* light mustard */
+  background-color: #FFE6FF; /* light mustard */
   border: 2px solid black;
   border-radius: 6px;
   padding: 6px 10px;
