@@ -1005,8 +1005,10 @@ function ensureCollageModalExists() {
             <button data-layout="3x3">3×3</button>
             <button data-layout="1x3">1×3</button>
           </div>
+          <div class="collage-buttons">
           <button id="generate-collage" disabled>Generate Collage</button>
           <button id="close-collage">Close</button> <!-- 👈 Added here -->
+          </div>
         </div>
       </div>`;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
@@ -1068,8 +1070,7 @@ document.body.addEventListener('click', (e) => {
   if (e.target.id === 'close-collage') {
     document.getElementById('collage-modal')?.classList.add('hidden');
   }
-});
-
+ });
 }
 
 //====================================
