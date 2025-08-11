@@ -1020,15 +1020,13 @@ function ensureCollageModalExists() {
 //======================================
 function createPetCollage(index) {
   // NOW IMPORT MODAL HTML FUNCTION TO CREATE FUNCTION
-  ensureCollageModalExists();
-  
+  ensureCollageModalExists(); 
   const profile = window.petProfiles[index];
 
   if (!profile?.gallery?.length) {
     showQRStatus("No photos available for collage.", false);
     return;
   }
-
   // Open modal
   const modal = document.getElementById("collage-modal");
   // Verify the modal exists in DOM before showing
@@ -1051,26 +1049,37 @@ console.log("Updated classes:", modal?.className);  // 👈 Optional verificatio
     imgElement.addEventListener('click', toggleImageSelection);
     grid.appendChild(imgElement);
   });
+// Eventlisteners are initialized globally in main initialization!!!!
+}
 
-  // Set up layout buttons event delegation/listener
- document.body.addEventListener('click', (e) => {
-  if (e.target.closest('.layout-options button')) {
-    selectedLayout = e.target.dataset.layout;
-   }
- });
-
-  // Generate collage event delegation /listener
+//==================================
+// setup collagemodal listeners
+//=========================================
+function setupCollageModalListeners() {
+  // Single listener for all modal buttons (efficient)
   document.body.addEventListener('click', (e) => {
-  if (e.target.id === 'generate-collage') {
-    generateCollagePNG(profile);
-  }
-});
-// Close collage modal listener
-document.body.addEventListener('click', (e) => {
-  if (e.target.id === 'close-collage') {
-    document.getElementById('collage-modal')?.classList.add('hidden');
-  }
- });
+    if (e.target.closest('.layout-options button')) {
+      selectedLayout = e.target.dataset.layout;
+      console.log("Layout set to:", selectedLayout);
+    }
+    else if (e.target.id === 'generate-collage') {
+      const profile = window.petProfiles[currentPetIndex]; // 👈 Define this if needed
+      generateCollagePNG(profile);
+    }
+    else if (e.target.id === 'close-collage') {
+      document.getElementById('collage-modal')?.classList.add('hidden');
+      resetCollageSelections(); // 👈 We'll define this next
+    }
+  });
+}
+//==========================================
+// resetcollageselections function
+//==========================================
+function resetCollageSelections() {
+  selectedImages = [];
+  selectedLayout = '2x2';
+  document.querySelectorAll('#collage-image-grid img.selected')
+    .forEach(img => img.classList.remove('selected'));
 }
 
 //====================================
@@ -2005,4 +2014,5 @@ setTimeout(() => {
 document.addEventListener('DOMContentLoaded', () => {
   initDashboardDOM(); // 🧠 Make sure DOM references are set
   initializeDashboard(); // ✅ Use the correct one
+  setupCollageModalListeners(); // added recently
 });
