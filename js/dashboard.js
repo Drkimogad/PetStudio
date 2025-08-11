@@ -1019,6 +1019,9 @@ function ensureCollageModalExists() {
 //  CREATE COLLAGE FIRST
 //======================================
 function createPetCollage(index) {
+    // Store the current pet index globally
+  window.currentPetIndex = index; // 👈 Add this line
+  
   // NOW IMPORT MODAL HTML FUNCTION TO CREATE FUNCTION
   ensureCollageModalExists(); 
   const profile = window.petProfiles[index];
@@ -1063,7 +1066,7 @@ function setupCollageModalListeners() {
       console.log("Layout set to:", selectedLayout);
     }
     else if (e.target.id === 'generate-collage') {
-      const profile = window.petProfiles[currentPetIndex]; // 👈 Define this if needed
+      const profile = window.petProfiles[currentPetIndex]; // 👈 index is Defined in creatPetCollageindex()
       generateCollagePNG(profile);
     }
     else if (e.target.id === 'close-collage') {
@@ -1227,7 +1230,7 @@ collage.style.cssText = `
   padding: 10px;
   box-sizing: border-box;
 `;
-
+//==================do not remove===================
 // to override css scaling restrictions before canvas rendering 
        // 1. Clone images to avoid affecting original modal
 const clonedImages = Array.from(collage.querySelectorAll('img')).map(img => {
@@ -1241,7 +1244,7 @@ const clonedImages = Array.from(collage.querySelectorAll('img')).map(img => {
   `;
   return clone;
 });
-
+//===================================================================
 // 2. Clear and repopulate collage with fixed-size containers
 collage.innerHTML = '';
 clonedImages.forEach(clone => {
