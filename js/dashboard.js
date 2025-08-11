@@ -1308,41 +1308,34 @@ collage.style.cssText = `
     });
      
 // 6.5 Display the generated collage preview    
-  // When generating preview - STEP 1: Activate preview mode FIRST
-const modalContent = document.querySelector('.modal-content'); 
-modalContent.classList.add('collage-preview-active'); // Hide elements FIRST by activating collage preview active as per css.
-    
-  // Then create the preview container
-// Create preview container
+// 1. Hide elements FIRST
+document.querySelector('.modal-content').classList.add('collage-preview-active');
+
+// 2. Create preview container
 const previewContainer = document.createElement('div');
 previewContainer.className = 'collage-preview';
-previewContainer.style.position = 'relative';
-previewContainer.style.margin = '20px auto';
-previewContainer.style.maxWidth = '90%';
 
-// Create name header (IMPROVED)
+// 3. Add name header (visible in preview only)
 const nameHeader = document.createElement('h3');
 nameHeader.textContent = profile.name;
 nameHeader.style.cssText = `
   text-align: center;
   margin: 0 0 10px 0;
-  color: black;
-  background: rgba(255,255,255,0.8);
-  padding: 8px;
-  border-radius: 5px;
+  color: white;
+  text-shadow: 1px 1px 2px black;
 `;
 previewContainer.appendChild(nameHeader);
 
-// Create image (FIXED ORDER)
+// 4. Add image
 const previewImg = document.createElement('img');
-previewImg.style.cssText = `
-  width: 100%;
-  border-radius: 8px;
-  border: 2px solid purple;
-  display: block; /* Fixes spacing issues */
-`;
 previewImg.src = canvas.toDataURL('image/png');
+previewImg.style.maxHeight = '70vh';
 previewContainer.appendChild(previewImg);
+
+// 5. Clear grid and show preview
+const grid = document.getElementById('collage-image-grid');
+grid.innerHTML = '';
+grid.appendChild(previewContainer);
 
 // Create buttons (OPTIMIZED)
 const btnContainer = document.createElement('div');
