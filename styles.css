@@ -1088,11 +1088,12 @@ styled to show in petcard header plus nickname */
   text-align: center;
   margin: 8px auto 16px; /* 👈 auto for horizontal centering */
   color: #333;
-  background-color: #FFE6FF; /* light mustard */
+  background-color: #F7E4F5; /* light mustard */
   border: 2px solid black;
   border-radius: 6px;
   padding: 6px 10px;
-  display: inline-block;
+  display: block;
+  width: 80%; /* Match h3 width */
 }
 
 .modal-content {
