@@ -1012,13 +1012,21 @@ function ensureCollageModalExists() {
         </div>
       </div>`;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-  }
-}
+      // Add direct listener JUST ONCE here
+    document.getElementById('close-collage')?.addEventListener('click', () => {
+      console.log("Direct close handler fired");
+      document.getElementById('collage-modal').classList.add('hidden');
+    }); 
+  }// closes if
+} // closes the function
 
 
 //  CREATE COLLAGE FIRST
 //======================================
 function createPetCollage(index) {
+  // Add this temporary debug code after opening the modal
+modal.classList.remove("hidden");
+console.log("Close button exists?", !!document.getElementById('close-collage')); // Should log 'true'
     // Store the current pet index globally
   window.currentPetIndex = index; // 👈 Add this line
   
@@ -1061,6 +1069,8 @@ console.log("Updated classes:", modal?.className);  // 👈 Optional verificatio
 function setupCollageModalListeners() {
   // Single listener for all modal buttons (efficient)
   document.body.addEventListener('click', (e) => {
+    console.log("Clicked element:", e.target); // Debug what's being clicked
+
     if (e.target.closest('.layout-options button')) {
       selectedLayout = e.target.dataset.layout;
       console.log("Layout set to:", selectedLayout);
@@ -1070,6 +1080,7 @@ function setupCollageModalListeners() {
       generateCollagePNG(profile);
     }
     else if (e.target.id === 'close-collage') {
+      console.log("Close button detected!"); // Confirm if this block executes
       document.getElementById('collage-modal')?.classList.add('hidden');
       resetCollageSelections(); // 👈 We'll define this next
     }
@@ -1246,7 +1257,7 @@ const clonedImages = Array.from(collage.querySelectorAll('img')).map(img => {
 });
 //===================================================================
 // 2. Clear and repopulate collage with fixed-size containers
-collage.innerHTML = '';
+collage.innerHTML = '';    
 clonedImages.forEach(clone => {
   const container = document.createElement('div');
   container.style.cssText = `
