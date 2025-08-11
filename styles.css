@@ -948,14 +948,11 @@ h1, h2, h3, p {
 }
 
 .petCard .cover-btn .active:hover {
-    background-color: #c9ba2c;
-    border: #808080;
+    background-color: #c9ba2c !important;
+    border: #808080 !important;
     transform: scale(1.05);
 }
 
-.gallery-thumbnail .cover-btn.active {
-  display: flex !important; /* it will keep cover-btn  active styles visible*/ 
-}
 /* Remove Button (X Mark) */
 .remove-btn {
   position: absolute;
@@ -992,19 +989,6 @@ h1, h2, h3, p {
   transform: translateY(-2px);
 }
 
-/* ===== STATE MODIFIERS ===== */
-/* Loading State */
-.cover-btn.loading {
-  pointer-events: none;
-  opacity: 0.7;
-  animation: pulse 1s infinite;
-}
-
-/* Error State */
-.cover-btn.error {
-  animation: pulse-red 0.5s 2;
-}
-
 /* ===== VISIBILITY RULES ===== */
 /* Show in Forms */
 #profileForm .gallery-thumbnail .cover-btn,
@@ -1013,10 +997,10 @@ h1, h2, h3, p {
 }
 
 /* Hide in Pet Cards */
-/*.pet-card .gallery-thumbnail .cover-btn,
+/*.pet-card .gallery-thumbnail .cover-btn,*/
 .pet-card .gallery-thumbnail .remove-btn {
   display: none;
-}*/
+}
 
 /* ===== ANIMATIONS ===== */
 @keyframes pulse {
@@ -1076,16 +1060,30 @@ styled to show in petcard header plus nickname */
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
   background: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000; /* 👈 Ensure this is higher than other elements */
 }
+/* create a collage*/
+#collage-modal h3 {
+  font-size: 1.3rem;
+  font-weight: normal;
+  text-align: center;
+  margin: 8px 0 16px;
+  color: #333;
+  background-color: white; /* light mustard */
+  border: 2px solid purple;
+  border-radius: 6px;
+  padding: 6px 10px;
+  display: inline-block;
+}
+/*To proceed please choose 2 images or more...*/
 #collage-modal h4 {
-  font-size: 1.1rem;
+  font-size: 0.8rem;
   font-weight: normal;
   text-align: center;
   margin: 8px 0 16px;
