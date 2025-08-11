@@ -206,18 +206,22 @@ h1, h2, h3, p {
   content: '➕ ';
 }
 #logoutBtn {
-  /* Keep existing styles */
+  /* Remove fixed/absolute positioning */
+  position: relative; /* 👈 Makes it flow in document */
+  float: right;      /* 👈 Pushes to right */
+  margin-right: 20px;
+  
+  /* Keep your existing styles */
   background-color: #e74c3c;
   color: white;
   padding: 10px 16px;
   border-radius: 6px;
   font-weight: bold;
   z-index: 10;
-
-  /* New positioning */
-  position: fixed;
-  bottom: 100px; /* 80px (petList margin) + 20px gap */
-  right: 20px;
+  
+  /* Positioning magic */
+  margin-top: -60px;    /* 👈 Pulls up into petList's margin space */
+  margin-bottom: 20px;  /* 👈 Ensures footer gap */
 }
 
 /* No changes needed to #petList - keep its 80px margin */
