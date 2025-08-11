@@ -210,6 +210,7 @@ h1, h2, h3, p {
   position: relative; /* 👈 Makes it flow in document */
   float: right;      /* 👈 Pushes to right */
   margin-right: 20px;
+  margin-left: auto !important; /* added*/
   
   /* Keep your existing styles */
   background-color: #e74c3c;
@@ -946,12 +947,15 @@ h1, h2, h3, p {
     transition: all 0.2s ease;
 }
 
-.cover-btn .active:hover {
+.petCard .cover-btn .active:hover {
     background-color: #c9ba2c;
-    border: #808080;  
+    border: #808080;
     transform: scale(1.05);
 }
 
+.gallery-thumbnail .cover-btn.active {
+  display: flex !important; /* it will keep cover-btn  active styles visible*/ 
+}
 /* Remove Button (X Mark) */
 .remove-btn {
   position: absolute;
@@ -1009,10 +1013,10 @@ h1, h2, h3, p {
 }
 
 /* Hide in Pet Cards */
-.pet-card .gallery-thumbnail .cover-btn,
+/*.pet-card .gallery-thumbnail .cover-btn,
 .pet-card .gallery-thumbnail .remove-btn {
   display: none;
-}
+}*/
 
 /* ===== ANIMATIONS ===== */
 @keyframes pulse {
@@ -1080,6 +1084,18 @@ styled to show in petcard header plus nickname */
   align-items: center;
   z-index: 1000; /* 👈 Ensure this is higher than other elements */
 }
+#collage-modal h4 {
+  font-size: 1.1rem;
+  font-weight: normal;
+  text-align: center;
+  margin: 8px 0 16px;
+  color: #333;
+  background-color: #f7e17b; /* light mustard */
+  border: 2px solid black;
+  border-radius: 6px;
+  padding: 6px 10px;
+  display: inline-block;
+}
 
 .modal-content {
   background: white;
@@ -1123,7 +1139,16 @@ styled to show in petcard header plus nickname */
   opacity: 0.8;
 }
 
-#generate-collage {
+/* collage buttons*/
+.collage-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* space between buttons */
+  margin-top: 10px;
+}
+
+#generate-collage,
+#close-collage {
   background-color: #f7e17b; /* light mustard */
   color: black;
   border: 2px solid black;
@@ -1131,30 +1156,17 @@ styled to show in petcard header plus nickname */
   font-size: 1rem;
   border-radius: 6px;
   cursor: pointer;
-   display: block;
-  margin: 0 auto; /* centers the button horizontally */
   transition: background-color 0.2s ease;
 }
 
-#generate-collage:hover:enabled {
+#generate-collage:hover:enabled,
+#close-collage:hover {
   background-color: #f5d94d; /* slightly darker mustard on hover */
 }
 
 #generate-collage:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-
-/* Dynamic Elements */
-.pet-name {
-  font-size: 2em;
-  margin: 10px 0;
-}
-
-.countdown {
-  font-weight: bold;
-  color: #6a5acd;
 }
 
 /*===================*/
