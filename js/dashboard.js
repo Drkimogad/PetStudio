@@ -1012,8 +1012,8 @@ function ensureCollageModalExists() {
         </div>
       </div>`;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-  }// closes if
-} // closes the function
+  }
+} 
 
 
 //  CREATE COLLAGE FIRST
