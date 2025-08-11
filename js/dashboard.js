@@ -1307,28 +1307,52 @@ collage.style.cssText = `
       );
     });
      
-// 6.5 Display the generated collage preview
+// 6.5 Display the generated collage preview    
   // When generating preview - STEP 1: Activate preview mode FIRST
-document.querySelector('.modal-content').classList.add('collage-preview-active');
+const modalContent = document.querySelector('.modal-content'); 
+modalContent.classList.add('collage-preview-active'); // Hide elements FIRST by activating collage preview active as per css.
+    
   // Then create the preview container
+// Create preview container
 const previewContainer = document.createElement('div');
 previewContainer.className = 'collage-preview';
 previewContainer.style.position = 'relative';
 previewContainer.style.margin = '20px auto';
 previewContainer.style.maxWidth = '90%';
 
-const previewImg = document.createElement('img');
-previewImg.src = canvas.toDataURL('image/png');
-previewImg.style.width = '100%';
-previewImg.style.borderRadius = '8px';
-previewImg.style.border = '2px solid purple';
+// Create name header (IMPROVED)
+const nameHeader = document.createElement('h3');
+nameHeader.textContent = profile.name;
+nameHeader.style.cssText = `
+  text-align: center;
+  margin: 0 0 10px 0;
+  color: black;
+  background: rgba(255,255,255,0.8);
+  padding: 8px;
+  border-radius: 5px;
+`;
+previewContainer.appendChild(nameHeader);
 
-// Add buttons
+// Create image (FIXED ORDER)
+const previewImg = document.createElement('img');
+previewImg.style.cssText = `
+  width: 100%;
+  border-radius: 8px;
+  border: 2px solid purple;
+  display: block; /* Fixes spacing issues */
+`;
+previewImg.src = canvas.toDataURL('image/png');
+previewContainer.appendChild(previewImg);
+
+// Create buttons (OPTIMIZED)
 const btnContainer = document.createElement('div');
-btnContainer.style.display = 'flex';
-btnContainer.style.gap = '10px';
-btnContainer.style.justifyContent = 'center';
-btnContainer.style.marginTop = '10px';
+btnContainer.style.cssText = `
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+`;
+previewContainer.appendChild(btnContainer);
     
 // Add this RIGHT BEFORE creating the save button:
 const fileName = `${profile.name.replace(/[^a-z0-9]/gi, '_')}_collage.png`; // DEFINE THE NAMING
