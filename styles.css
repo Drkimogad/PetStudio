@@ -206,16 +206,21 @@ h1, h2, h3, p {
   content: '➕ ';
 }
 #logoutBtn {
+  /* Keep existing styles */
   background-color: #e74c3c;
   color: white;
   padding: 10px 16px;
   border-radius: 6px;
-  position: absolute;
-  bottom: 20px; /* Just above footer inside dashboard */
-  right: 20px;
   font-weight: bold;
   z-index: 10;
+
+  /* New positioning */
+  position: fixed;
+  bottom: 100px; /* 80px (petList margin) + 20px gap */
+  right: 20px;
 }
+
+/* No changes needed to #petList - keep its 80px margin */
 
 /* ==ONCE ADD PROFILE BUTTON CLICKED AND
        PETLIST OPENED===== */
