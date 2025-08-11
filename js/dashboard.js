@@ -1303,26 +1303,71 @@ collage.style.cssText = `
       );
     });
 
-    // 7. Handle output
-    const fileName = `${profile.name.replace(/[^a-z0-9]/gi, '_')}_collage.png`;
-    const file = new File([blob], fileName, { type: 'image/png' });
 
-    if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      await navigator.share({
-        title: `${profile.name}'s Pet Collage`,
-        files: [file]
-      });
-    } else {
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      setTimeout(() => {
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-      }, 100);
-    }
+     
+// 6.5 Display the generated collage preview
+const previewContainer = document.createElement('div');
+previewContainer.className = 'collage-preview';
+previewContainer.style.position = 'relative';
+previewContainer.style.margin = '20px auto';
+previewContainer.style.maxWidth = '90%';
+
+const previewImg = document.createElement('img');
+previewImg.src = canvas.toDataURL('image/png');
+previewImg.style.width = '100%';
+previewImg.style.borderRadius = '8px';
+previewImg.style.border = '2px solid purple';
+
+// Add buttons
+const btnContainer = document.createElement('div');
+btnContainer.style.display = 'flex';
+btnContainer.style.gap = '10px';
+btnContainer.style.justifyContent = 'center';
+btnContainer.style.marginTop = '10px';
+
+const saveBtn = document.createElement('button');
+saveBtn.textContent = 'Save';
+saveBtn.className = 'collage-btn'; // Reuse your existing button styles
+saveBtn.onclick = () => {
+  const link = document.createElement('a');
+  link.href = previewImg.src;
+  link.download = fileName;
+  link.click();
+};
+
+const shareBtn = document.createElement('button');
+shareBtn.textContent = 'Share';
+shareBtn.className = 'collage-btn';
+shareBtn.onclick = async () => {
+  // Your existing share logic (unchanged)
+      // 7. Handle output
+const fileName = `${profile.name.replace(/[^a-z0-9]/gi, '_')}_collage.png`;
+const file = new File([blob], fileName, { type: 'image/png' });
+  
+  if (navigator.share && navigator.canShare?.({ files: [file] })) {
+    await navigator.share({
+      title: `${profile.name}'s Pet Collage`,
+      files: [file]
+    });
+  } else {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    }, 100);
+  }
+};
+
+btnContainer.append(saveBtn, shareBtn);
+previewContainer.append(previewImg, btnContainer);
+    
+// Insert preview into modal (replaces image grid temporarily)
+const grid = document.getElementById('collage-image-grid');
+grid.innerHTML = '';
+grid.appendChild(previewContainer);
 
   } catch (error) {
     console.error('Collage generation error:', error);
@@ -1334,7 +1379,7 @@ collage.style.cssText = `
     if (collageEl) collageEl.remove();
     
     const modal = document.getElementById('collage-modal');
-    modal?.classList.add('hidden');
+  // modal?.classList.add('hidden');
     selectedImages = [];
   }
  }
