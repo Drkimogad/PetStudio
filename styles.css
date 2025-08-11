@@ -1711,3 +1711,10 @@ footer {
   }
 }
 
+
+
+#close-collage {
+  position: relative;
+  z-index: 9999;
+  background: red !important; /* Make it visibly stand out */
+}
