@@ -1172,8 +1172,10 @@ styled to show in petcard header plus nickname */
 
 /* Collage Preview Styles (Add to your existing modal CSS) */
 .collage-preview {
+  width: 80%; /* Match your h3/h4 width */
   background: white;
   padding: 15px;
+  margin: 0 auto; /* Center horizontally */
   border-radius: 10px;
   border: 2px solid purple; /* Matches your h3 style */
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -1181,8 +1183,9 @@ styled to show in petcard header plus nickname */
 
 .collage-preview img {
   max-width: 100%;
+  width: 100%; /* Fill container */
   height: auto;
-  display: block;
+  display: block; /* Remove extra space */
   margin: 0 auto;
 }
 
