@@ -1038,9 +1038,8 @@ function createPetCollage(index) {
     return;
   }
   
-console.log("Current classes:", modal?.className); // 👈 Add this
-modal.classList.remove("hidden"); 
-console.log("Updated classes:", modal?.className);  // 👈 Optional verification
+modal.classList.remove("hidden");
+modal.style.pointerEvents = 'auto'; // Re-enable clicks
   
   // Populate image grid
   const grid = document.getElementById("collage-image-grid");
@@ -1073,7 +1072,9 @@ function setupCollageModalListeners() {
     }
     else if (e.target.id === 'close-collage') {
       console.log('Close button clicked - delegated listener');
-     document.getElementById('collage-modal')?.classList.add('hidden');
+    const modal = document.getElementById('collage-modal')?.classList.add('hidden');
+  // Optional: Disable pointer events when hidden
+  modal.style.pointerEvents = 'none';
       resetCollageSelections(); // 👈 We'll define this next
     }
   });
