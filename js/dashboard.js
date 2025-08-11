@@ -998,7 +998,7 @@ function ensureCollageModalExists() {
       <div id="collage-modal" class="modal hidden">
         <div class="modal-content">
           <h3>Create Collage</h3>
-            <h4>Please choose 2 images or more...</h4>
+        <h4>To proceed please choose 2 images or more...</h4>
           <div class="image-grid" id="collage-image-grid"></div>
           <div class="layout-options">
             <button data-layout="2x2">2×2</button>
@@ -1006,6 +1006,7 @@ function ensureCollageModalExists() {
             <button data-layout="1x3">1×3</button>
           </div>
           <button id="generate-collage" disabled>Generate Collage</button>
+          <button id="close-collage">Close</button> <!-- 👈 Added here -->
         </div>
       </div>`;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
@@ -1062,6 +1063,13 @@ console.log("Updated classes:", modal?.className);  // 👈 Optional verificatio
     generateCollagePNG(profile);
   }
 });
+// Close collage modal listener
+document.body.addEventListener('click', (e) => {
+  if (e.target.id === 'close-collage') {
+    document.getElementById('collage-modal')?.classList.add('hidden');
+  }
+});
+
 }
 
 //====================================
