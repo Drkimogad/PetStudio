@@ -1168,6 +1168,14 @@ styled to show in petcard header plus nickname */
   cursor: not-allowed;
 }
 
+/* this is very important for closing the modal*/
+#collage-modal.hidden {
+  display: none !important;  /* Force hide when needed */
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+
 /*===================*/
 /* NEW ENHANCEMENTS */
 /* BIRTHDAY CARD STYLE FOR CELEBRATE BUTTON==*/
