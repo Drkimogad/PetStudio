@@ -1016,6 +1016,7 @@ function ensureCollageModalExists() {
     document.getElementById('close-collage')?.addEventListener('click', () => {
       console.log("Direct close handler fired");
       document.getElementById('collage-modal').classList.add('hidden');
+      resetCollageSelections(); // moved here for now
     }); 
   }// closes if
 } // closes the function
@@ -1024,10 +1025,7 @@ function ensureCollageModalExists() {
 //  CREATE COLLAGE FIRST
 //======================================
 function createPetCollage(index) {
-  // Add this temporary debug code after opening the modal
-modal.classList.remove("hidden");
-console.log("Close button exists?", !!document.getElementById('close-collage')); // Should log 'true'
-    // Store the current pet index globally
+  // Store the current pet index globally
   window.currentPetIndex = index; // 👈 Add this line
   
   // NOW IMPORT MODAL HTML FUNCTION TO CREATE FUNCTION
@@ -1079,11 +1077,11 @@ function setupCollageModalListeners() {
       const profile = window.petProfiles[currentPetIndex]; // 👈 index is Defined in creatPetCollageindex()
       generateCollagePNG(profile);
     }
-    else if (e.target.id === 'close-collage') {
-      console.log("Close button detected!"); // Confirm if this block executes
-      document.getElementById('collage-modal')?.classList.add('hidden');
-      resetCollageSelections(); // 👈 We'll define this next
-    }
+   // else if (e.target.id === 'close-collage') {
+    //  console.log("Close button detected!"); // Confirm if this block executes
+   //   document.getElementById('collage-modal')?.classList.add('hidden');
+     // resetCollageSelections(); // 👈 We'll define this next
+   // }
   });
 }
 //==========================================
