@@ -1012,12 +1012,6 @@ function ensureCollageModalExists() {
         </div>
       </div>`;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-      // Add direct listener JUST ONCE here
-    document.getElementById('close-collage')?.addEventListener('click', () => {
-      console.log("Direct close handler fired");
-      document.getElementById('collage-modal').classList.add('hidden');
-      resetCollageSelections(); // moved here for now
-    }); 
   }// closes if
 } // closes the function
 
@@ -1077,11 +1071,11 @@ function setupCollageModalListeners() {
       const profile = window.petProfiles[currentPetIndex]; // 👈 index is Defined in creatPetCollageindex()
       generateCollagePNG(profile);
     }
-   // else if (e.target.id === 'close-collage') {
-    //  console.log("Close button detected!"); // Confirm if this block executes
-   //   document.getElementById('collage-modal')?.classList.add('hidden');
-     // resetCollageSelections(); // 👈 We'll define this next
-   // }
+    else if (e.target.id === 'close-collage') {
+      console.log('Close button clicked - delegated listener');
+     document.getElementById('collage-modal')?.classList.add('hidden');
+      resetCollageSelections(); // 👈 We'll define this next
+    }
   });
 }
 //==========================================
