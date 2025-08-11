@@ -1072,13 +1072,17 @@ function setupCollageModalListeners() {
     }
     else if (e.target.id === 'close-collage') {
       console.log('Close button clicked - delegated listener');
+        // 1. Remove preview-active class (shows headers again)
+  document.querySelector('.modal-content')?.classList.remove('collage-preview-active');
+      // 2. Hide the modal (your existing code)
     const modal = document.getElementById('collage-modal')?.classList.add('hidden');
-  // Optional: Disable pointer events when hidden
-  modal.style.pointerEvents = 'none';
-      resetCollageSelections(); // 👈 We'll define this next
+        // 3. Reset selections (your existing cleanup)
+      resetCollageSelections(); // 👈 
+      // 4. Remove pointer events (optional, as you had)
+      modal.style.pointerEvents = 'none';
     }
-  });
-}
+  }); // closes if
+} // closes function
 //==========================================
 // resetcollageselections function
 //==========================================
@@ -1304,6 +1308,9 @@ collage.style.cssText = `
     });
      
 // 6.5 Display the generated collage preview
+  // When generating preview - STEP 1: Activate preview mode FIRST
+document.querySelector('.modal-content').classList.add('collage-preview-active');
+  // Then create the preview container
 const previewContainer = document.createElement('div');
 previewContainer.className = 'collage-preview';
 previewContainer.style.position = 'relative';
