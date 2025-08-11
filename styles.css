@@ -1175,7 +1175,7 @@ styled to show in petcard header plus nickname */
 .collage-preview-active h3,
 .collage-preview-active h4,
 .collage-preview-active .layout-options {
-  display: none;
+  display: none !important;
 }
 
 .collage-preview {
@@ -1191,10 +1191,10 @@ styled to show in petcard header plus nickname */
 
 .collage-preview img {
   max-width: 100%;
+  margin: 0 auto;
   width: 100%; /* Fill container */
   height: auto;
   display: block; /* Remove extra space */
-  margin: 0 auto;
 }
 
 /* Buttons - Reusing your existing styles */
