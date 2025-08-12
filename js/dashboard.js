@@ -1307,45 +1307,28 @@ collage.style.cssText = `
       );
     });
      
-// 6.5 Display the generated collage preview    
-// 1. Hide elements FIRST
+// 6.5 Display the generated collage preview
+  // When generating preview - STEP 1: Activate preview mode FIRST
 document.querySelector('.modal-content').classList.add('collage-preview-active');
-
-// 2. Create preview container
+  // Then create the preview container
 const previewContainer = document.createElement('div');
 previewContainer.className = 'collage-preview';
+previewContainer.style.position = 'relative';
+previewContainer.style.margin = '20px auto';
+previewContainer.style.maxWidth = '90%';
 
-// 3. Add name header (visible in preview only)
-const nameHeader = document.createElement('h3');
-nameHeader.textContent = profile.name;
-nameHeader.style.cssText = `
-  text-align: center;
-  margin: 0 0 10px 0;
-  color: white;
-  text-shadow: 1px 1px 2px black;
-`;
-previewContainer.appendChild(nameHeader);
-
-// 4. Add image
 const previewImg = document.createElement('img');
 previewImg.src = canvas.toDataURL('image/png');
-previewImg.style.maxHeight = '70vh';
-previewContainer.appendChild(previewImg);
+previewImg.style.width = '100%';
+previewImg.style.borderRadius = '8px';
+previewImg.style.border = '2px solid purple';
 
-// 5. Clear grid and show preview
-const grid = document.getElementById('collage-image-grid');
-grid.innerHTML = '';
-grid.appendChild(previewContainer);
-
-// Create buttons (OPTIMIZED)
+// Add buttons
 const btnContainer = document.createElement('div');
-btnContainer.style.cssText = `
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 15px;
-`;
-previewContainer.appendChild(btnContainer);
+btnContainer.style.display = 'flex';
+btnContainer.style.gap = '10px';
+btnContainer.style.justifyContent = 'center';
+btnContainer.style.marginTop = '10px';
     
 // Add this RIGHT BEFORE creating the save button:
 const fileName = `${profile.name.replace(/[^a-z0-9]/gi, '_')}_collage.png`; // DEFINE THE NAMING
