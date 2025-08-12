@@ -1967,6 +1967,7 @@ function attachFormListenerWhenReady() {
          mood: newMood
          });
           }
+        console.log("Final moodHistory:", history); // Debug log
         return history;
          })() // END OF MOOD HISTORY 
         };
@@ -2041,17 +2042,17 @@ if (profile.moodHistory?.length) {
 
         localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
-
-        // Right before showDashboard():
+        // Refresh UI after saving to localstorage or firestore
 if (isEditing) {
-  const moodContainer = document.getElementById("moodTrackerContainer");
-  if (moodContainer) {
-    moodContainer.innerHTML = Utils.renderMoodTrackerUI(
-      petProfiles[currentEditIndex], 
-      currentEditIndex
-    );
+  const updatedProfile = petProfiles.find(p => p.id === newProfile.id);
+  if (updatedProfile) {
+    const moodContainer = document.getElementById("moodTrackerContainer");
+    if (moodContainer) {
+      moodContainer.innerHTML = Utils.renderMoodTrackerUI(updatedProfile, currentEditIndex);
+    }
   }
 }
+
 
        // ========================
 // SECTION 8: UI UPDATE
