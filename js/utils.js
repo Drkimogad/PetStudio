@@ -107,26 +107,26 @@ renderMoodTrackerUI(profile, index) {
   // Safely get mood history or default to empty array
   const moodHistory = profile.moodHistory || [];
 
-  // Map mood entries to HTML
-  const historyHTML = moodHistory.map(entry => `
-    <div class="mood-entry">
-      <span class="mood-emoji">${this.getMoodEmoji(entry.mood)}</span>
-      <span class="mood-date">${entry.date}</span>
-    </div>
-  `).join('');
+  // Convert mood history to HTML
+  const historyHTML = moodHistory.length > 0
+    ? moodHistory.map(entry => `
+        <div class="mood-entry">
+          <span class="mood-emoji">${this.getMoodEmoji(entry.mood)}</span>
+          <span class="mood-date">${entry.date}</span>
+        </div>
+      `).join('')
+    : '<p>No moods logged yet</p>';
 
   return `
     <div class="mood-tracker-edit">
-      <label>Log Mood:</label>
-      <select class="mood-dropdown" data-index="${index}">
-        <option value="">Select a mood</option>
-        <option value="happy">😊 Happy</option>
-        <option value="sad">😞 Sad</option>
-        <option value="angry">😠 Angry</option>
-        <option value="sick">🤒 Sick</option>
-      </select>
+      <div class="mood-btn-group">
+        <button class="mood-btn" data-mood="happy" data-index="${index}">😊 Happy</button>
+        <button class="mood-btn" data-mood="sad" data-index="${index}">😞 Sad</button>
+        <button class="mood-btn" data-mood="angry" data-index="${index}">😠 Angry</button>
+        <button class="mood-btn" data-mood="sick" data-index="${index}">🤒 Sick</button>
+      </div>
       <div class="mood-history-edit">
-        ${historyHTML || '<p>No moods logged yet</p>'}
+        ${historyHTML}
       </div>
     </div>
   `;
