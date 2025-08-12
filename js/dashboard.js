@@ -400,16 +400,26 @@ if (galleryPreview) {
   initGalleryInteractions();
 }
      
-    // ======================
-    // 4. MOOD HISTORY UI
-    // ======================
-    const moodInput = document.getElementById("moodHistoryInput");
-    if (moodInput) {
-      moodInput.value = "";
-      moodInput.placeholder = profile.moodHistory?.length
-        ? `Last mood: ${profile.moodHistory.slice(-1)[0]?.mood}`
-        : "Add new mood...";
-    }
+// ======================
+// 4. MOOD TRACKER UI// they have to be bult from loadsavedprofiles() to be poppulated
+// ======================
+const moodTrackerContainer = document.querySelector(".mood-tracker");
+if (moodTrackerContainer) {
+  moodTrackerContainer.innerHTML = `
+    <div class="mood-buttons">
+      <span>Log Mood:</span>
+      <button class="mood-btn" data-mood="happy" data-index="${index}">😊</button>
+      <button class="mood-btn" data-mood="depressed" data-index="${index}">😔</button>
+      <button class="mood-btn" data-mood="sad" data-index="${index}">😞</button>
+      <button class="mood-btn" data-mood="angry" data-index="${index}">😠</button>
+      <button class="mood-btn" data-mood="sick" data-index="${index}">🤒</button>
+    </div>
+    <div class="mood-history">
+      ${profile.moodHistory?.length ? Utils.renderMoodHistory(profile) : 'No mood history yet'}
+    </div>
+  `;
+}
+
 
     // ======================
     // 5. CANCEL BUTTON SETUP
