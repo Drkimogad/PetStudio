@@ -282,20 +282,36 @@ ${profile.nextBirthday ? `
 // MOST FUNCTIONS RELY ON IT 
 //================ UPDATED ===============
 function logMood(profileIndex, mood) {
-  const today = new Date().toISOString().split('T')[0];
-  
-  if (!petProfiles[profileIndex].moodHistory || !Array.isArray(petProfiles[profileIndex].moodHistory)) {
-    petProfiles[profileIndex].moodHistory = [];
+  if (!mood) return; // Exit if no mood selected
+
+  console.log(`Attempting to log mood: ${mood} for profile ${profileIndex}`);
+
+  // 1. Get current data
+  const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+  const profile = petProfiles[profileIndex];
+
+  if (!profile) {
+    console.error("Profile not found at index:", profileIndex);
+    return;
   }
 
-  petProfiles[profileIndex].moodHistory.push({ date: today, mood: mood });
-
-  // Keep only the last 3 moods
-  if (petProfiles[profileIndex].moodHistory.length > 3) {
-    petProfiles[profileIndex].moodHistory = petProfiles[profileIndex].moodHistory.slice(-3);
+  // 2. Initialize moodHistory if missing
+  if (!Array.isArray(profile.moodHistory)) {
+    console.warn("Initializing empty moodHistory array");
+    profile.moodHistory = [];
   }
 
+  // 3. Add new entry
+  profile.moodHistory.push({
+    date: new Date().toISOString().split('T')[0],
+    mood: mood
+  });
+
+  // 4. Save back to localStorage
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  console.log("Updated moodHistory:", profile.moodHistory);
+
+  // 5. Refresh UI
   loadSavedProfiles();
 }
 
