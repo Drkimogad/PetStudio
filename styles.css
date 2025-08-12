@@ -821,6 +821,28 @@ h1, h2, h3, p {
   border-color: #6a1b9a;
   background-color: #e9d5ff;
 }
+
+/* Mood history entries */
+.mood-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+}
+
+.mood-emoji {
+  font-size: 1.2em;
+}
+
+.mood-history-edit {
+  margin-top: 12px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
 /*==================*/
 /* 9. NOTES SECTION */
 /*==================*/
