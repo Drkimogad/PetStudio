@@ -280,23 +280,25 @@ ${profile.nextBirthday ? `
 //==============  
 // Log mood HAS TO STAY IN DASHBOARD.JS
 // MOST FUNCTIONS RELY ON IT 
-//================
+//================ UPDATED ===============
 function logMood(profileIndex, mood) {
   const today = new Date().toISOString().split('T')[0];
   
-  // Safer initialization
   if (!petProfiles[profileIndex].moodHistory || !Array.isArray(petProfiles[profileIndex].moodHistory)) {
     petProfiles[profileIndex].moodHistory = [];
   }
-  
-  petProfiles[profileIndex].moodHistory.push({
-    date: today,
-    mood: mood
-  });
-  
+
+  petProfiles[profileIndex].moodHistory.push({ date: today, mood: mood });
+
+  // Keep only the last 3 moods
+  if (petProfiles[profileIndex].moodHistory.length > 3) {
+    petProfiles[profileIndex].moodHistory = petProfiles[profileIndex].moodHistory.slice(-3);
+  }
+
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
   loadSavedProfiles();
 }
+
 
 //==========================================
 // Helper functions for theme togling
@@ -400,30 +402,18 @@ if (galleryPreview) {
   initGalleryInteractions();
 }
      
-// ======================
-// 4. MOOD TRACKER UI// they have to be bult from loadsavedprofiles() to be poppulated
-// ======================
-const moodTrackerContainer = document.querySelector(".mood-tracker");
-if (moodTrackerContainer) {
-  moodTrackerContainer.innerHTML = `
-    <div class="mood-buttons">
-      <span>Log Mood:</span>
-      <button class="mood-btn" data-mood="happy" data-index="${index}">😊</button>
-      <button class="mood-btn" data-mood="depressed" data-index="${index}">😔</button>
-      <button class="mood-btn" data-mood="sad" data-index="${index}">😞</button>
-      <button class="mood-btn" data-mood="angry" data-index="${index}">😠</button>
-      <button class="mood-btn" data-mood="sick" data-index="${index}">🤒</button>
-    </div>
-    <div class="mood-history">
-      ${profile.moodHistory?.length ? Utils.renderMoodHistory(profile) : 'No mood history yet'}
-    </div>
-  `;
+// ====================================================================================================
+// 4. MOOD TRACKER they have to be built from loadsavedprofiles() to be poppulated
+// FOR THAT WE UPDATED LOG MOOD AND CREATED ANOTHER HELPER IN UTILS.JS FOR POPPULATING MOOD HISTORY
+//==================================================================================================
+const moodContainer = document.getElementById("moodTrackerContainer"); // ensure you have a div in your form with this ID
+if (moodContainer) {
+  moodContainer.innerHTML = Utils.renderMoodTrackerUI(profile, index);
 }
 
-
-    // ======================
-    // 5. CANCEL BUTTON SETUP
-    // ======================
+// ======================
+  // 5. CANCEL BUTTON SETUP
+// ======================
     if (!document.getElementById("cancelEditBtn")) {
       const cancelBtn = document.createElement("button");
       cancelBtn.id = "cancelEditBtn";
