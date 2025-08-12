@@ -282,37 +282,36 @@ ${profile.nextBirthday ? `
 // MOST FUNCTIONS RELY ON IT 
 //================ UPDATED ===============
 function logMood(profileIndex, mood) {
-  if (!mood) return; // Exit if no mood selected
-
-  console.log(`Attempting to log mood: ${mood} for profile ${profileIndex}`);
-
-  // 1. Get current data
-  const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
-  const profile = petProfiles[profileIndex];
-
-  if (!profile) {
-    console.error("Profile not found at index:", profileIndex);
-    return;
+  const profiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+  
+  // Initialize array if missing
+  if (!Array.isArray(profiles[profileIndex]?.moodHistory)) {
+    profiles[profileIndex].moodHistory = [];
+    console.log("Initialized moodHistory array");
   }
 
-  // 2. Initialize moodHistory if missing
-  if (!Array.isArray(profile.moodHistory)) {
-    console.warn("Initializing empty moodHistory array");
-    profile.moodHistory = [];
-  }
-
-  // 3. Add new entry
-  profile.moodHistory.push({
+  profiles[profileIndex].moodHistory.push({
     date: new Date().toISOString().split('T')[0],
     mood: mood
   });
 
-  // 4. Save back to localStorage
-  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  console.log("Updated moodHistory:", profile.moodHistory);
+  // Update both storage and live data
+  localStorage.setItem('petProfiles', JSON.stringify(profiles));
+  window.petProfiles = profiles; // Critical sync point
 
-  // 5. Refresh UI
+  // Visual feedback
+  const moodBtn = document.querySelector(`.mood-btn[data-mood="${mood}"][data-index="${profileIndex}"]`);
+  if (moodBtn) {
+    moodBtn.classList.add('active');
+    setTimeout(() => moodBtn.classList.remove('active'), 300);
+  }
+
+  // Refresh ALL views
   loadSavedProfiles();
+  if (isEditing && currentEditIndex === profileIndex) {
+    document.getElementById("moodTrackerContainer").innerHTML = 
+      Utils.renderMoodTrackerUI(profiles[profileIndex], profileIndex);
+  }
 }
 
 
@@ -1974,6 +1973,15 @@ function attachFormListenerWhenReady() {
         // ✅ ADD THIS LINE IMMEDIATELY AFTER required for firestore saving
         newProfile.userId = userId;
 
+
+        // Force UI update for moods
+if (profile.moodHistory?.length) {
+  const moodContainer = document.getElementById("moodTrackerContainer");
+  if (moodContainer) {
+    moodContainer.innerHTML = Utils.renderMoodTrackerUI(profile, index);
+  }
+}
+        
         // 🖼️ Gallery Consolidation
         if (isEditing) {
           console.log("✏️ Merging with existing gallery..."); // DEBUG LINE KEPT
@@ -2032,6 +2040,18 @@ function attachFormListenerWhenReady() {
         }
 
         localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+
+
+        // Right before showDashboard():
+if (isEditing) {
+  const moodContainer = document.getElementById("moodTrackerContainer");
+  if (moodContainer) {
+    moodContainer.innerHTML = Utils.renderMoodTrackerUI(
+      petProfiles[currentEditIndex], 
+      currentEditIndex
+    );
+  }
+}
 
        // ========================
 // SECTION 8: UI UPDATE
