@@ -117,21 +117,29 @@ renderMoodTrackerUI(profile, index) {
       `).join('')
     : '<p>No moods logged yet</p>';
 
-  return `
-    <div class="mood-tracker-edit">
-      <div class="mood-btn-group">
-        <button class="mood-btn" data-mood="happy" data-index="${index}">😊 Happy</button>
-        <button class="mood-btn" data-mood="sad" data-index="${index}">😞 Sad</button>
-        <button class="mood-btn" data-mood="angry" data-index="${index}">😠 Angry</button>
-        <button class="mood-btn" data-mood="sick" data-index="${index}">🤒 Sick</button>
-      </div>
-      <div class="mood-history-edit">
-        ${historyHTML}
-      </div>
+ return `
+  <div class="mood-tracker">
+    <div class="mood-buttons">
+      ${['happy','sad','angry','sick'].map(m => `
+        <button class="mood-btn" 
+                data-mood="${m}" 
+                data-index="${index}"
+                title="Log ${m} mood">
+          ${this.getMoodEmoji(m)}
+        </button>
+      `).join('')}
     </div>
-  `;
-},
-  
+    <div class="mood-history">
+      ${moodHistory.map(m => `
+        <div class="mood-entry">
+          <span class="mood-emoji">${this.getMoodEmoji(m.mood)}</span>
+          <span class="mood-date">${m.date}</span>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+`;
+ }, 
   //==========================================
 // AGE CALCULATION FUNCTION YEARS, MONTHS, DAYS.
   //=============================================
