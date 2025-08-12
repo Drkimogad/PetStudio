@@ -99,6 +99,32 @@ const Utils = {
      .map(entry => `${entry.date}: ${Utils.getMoodEmoji(entry.mood)}`) // ✅ instead of "this"
     .join('<br>');
 },
+
+//===================================================================
+//New helper Utils.renderMoodTrackerUI(profile, index) for edit form.
+//================================================================
+renderMoodTrackerUI(profile, index) {
+  const historyHTML = profile.moodHistory?.length
+    ? profile.moodHistory
+        .slice(-3) // last 3 moods only
+        .map(entry => `<div>${entry.date}: ${Utils.getMoodEmoji(entry.mood)}</div>`)
+        .join("")
+    : "No mood history yet";
+
+  return `
+    <div class="mood-tracker">
+      <div class="mood-buttons">
+        <span>Log Mood:</span>
+        <button class="mood-btn" data-mood="happy" data-index="${index}">😊</button>
+        <button class="mood-btn" data-mood="depressed" data-index="${index}">😔</button>
+        <button class="mood-btn" data-mood="sad" data-index="${index}">😞</button>
+        <button class="mood-btn" data-mood="angry" data-index="${index}">😠</button>
+        <button class="mood-btn" data-mood="sick" data-index="${index}">🤒</button>
+      </div>
+      <div class="mood-history">${historyHTML}</div>
+    </div>
+  `;
+},
   
   //==========================================
 // AGE CALCULATION FUNCTION YEARS, MONTHS, DAYS.
