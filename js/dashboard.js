@@ -487,6 +487,8 @@ if (galleryPreview) {
   }
 } // ← End of openEditForm
 
+
+
 //====≈===================
 // 2. OPENCREATEFORM()
 //==========================
@@ -502,7 +504,9 @@ function openCreateForm() {
   // 2. CLEAR FORM FIELDS
   // ======================
   resetForm(); // Handles all field/gallery clearing
-  
+  //Add placeholder cover in openCreateForm()
+  DOM.profileForm.dataset.coverIndex = 0; // Default cover index for new profiles
+
   //ALWAYS CALL IT AFTER RESET   
   // 🎯 INSERT HERE ▼ (after reset, before handlers)
   updateGalleryPreviews(); // Initialize empty gallery
@@ -648,9 +652,11 @@ function updateGalleryPreviews() {
              class="preview-thumb"
              onerror="this.src='placeholder.jpg'">
         <button class="remove-btn">×</button>
-        <button class="cover-btn ${idx === (isEditing ? petProfiles[currentEditIndex].coverPhotoIndex : 0) ? 'active' : ''}">
+        <button class="cover-btn ${idx === profile.coverPhotoIndex ? 'active' : ''}"
+        data-photo-index="${idx}">
           ★
         </button>
+
       </div>
     `).join('');
     
@@ -1673,20 +1679,26 @@ function showQRStatus(message, isSuccess) {
 // Set cover photo
 //====================
 function setCoverPhoto(profileIndex, imageIndex) {
-  // Update model
-  petProfiles[profileIndex].coverPhotoIndex = imageIndex;
-  localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  // Update model if profileIndex is valid
+  if (profileIndex !== null && petProfiles[profileIndex]) {
+    petProfiles[profileIndex].coverPhotoIndex = imageIndex;
+    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  }
+
+  // Always update form dataset for current form state
+  DOM.profileForm.dataset.coverIndex = imageIndex;
 
   // Visually update ★ buttons
-  const galleryItems = document.querySelectorAll(`.gallery-item button[data-index="${profileIndex}"]`);
+  const galleryItems = document.querySelectorAll(`.gallery-item button.cover-btn`);
   galleryItems.forEach(btn => btn.classList.remove("active"));
 
-  const selectedBtn = document.querySelector(`.gallery-item button[data-index="${profileIndex}"][data-photo-index="${imageIndex}"]`);
+  const selectedBtn = document.querySelector(`.gallery-item button.cover-btn[data-photo-index="${imageIndex}"]`);
   if (selectedBtn) selectedBtn.classList.add("active");
 
-  // Re-render if needed
-  loadSavedProfiles();
+  // Live update Birthday Card preview
+  updateBirthdayCardPreview();
 }
+
 
 //==========================================
 // ✅ FINALIZED - setupPetProfileDelegation
