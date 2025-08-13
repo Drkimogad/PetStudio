@@ -367,21 +367,18 @@ function toggleCelebrateButton(dateInput) {
 // new function  apply theme preview 
 //=============================
 function previewTheme(selectedTheme) {
-  const theme = THEMES[selectedTheme] || THEMES[DEFAULT_THEME];
-
-  // 1. Update theme selector UI
+  // 1. Update radio buttons
   document.querySelectorAll('.theme-preview').forEach(el => {
-    el.classList.toggle('selected-theme', el.dataset.theme === selectedTheme);
+    el.classList.toggle('selected-theme', el.classList.contains(`${selectedTheme}-mini`));
   });
 
-  // 2. Live preview (both edit/create modes)
-  const previewCard = isEditing 
-    ? document.querySelector(`.petCard[data-index="${currentEditIndex}"]`)
-    : document.getElementById('birthday-card-preview');
-
+  // 2. Update live preview if available
+  const previewCard = document.getElementById('birthday-card-preview') || 
+                     (isEditing && document.querySelector(`.petCard[data-index="${currentEditIndex}"]`));
+  
   if (previewCard) {
-    previewCard.className = `petCard ${theme.class}`;
-    previewCard.style.backgroundColor = theme.bgColor;
+    previewCard.className = previewCard.className.replace(/\btheme-\w+/g, '');
+    previewCard.classList.add(`theme-${selectedTheme}`);
     
     // Optional: Update other theme-specific elements
     const headers = previewCard.querySelectorAll('.petCard-header, h3');
@@ -570,7 +567,11 @@ function openCreateForm() {
 //When creating, we want a placeholder image until a real one is set
   DOM.profileForm.dataset.coverIndex = 0; // Default cover index for new profiles
   // Add this after resetForm():
-  document.getElementById('default-theme-balloons').checked = true;
+  const themeRadios = document.querySelectorAll('input[name="theme"]');
+  if (themeRadios.length) themeRadios[0].checked = true; // First radio = balloons
+  // Initialize live preview (if container exists)
+  const previewContainer = document.getElementById('birthday-card-preview');
+  if (previewContainer) previewContainer.classList.add('visible');
     
   //ALWAYS CALL IT AFTER RESET   
   // 🎯 INSERT HERE ▼ (after reset, before handlers)
@@ -647,6 +648,13 @@ tagCheckboxes.forEach(checkbox => {
     moodInput.value = "";
     moodInput.placeholder = "Add new mood...";
   }
+  
+  // Ensure theme selection resets properly
+const themeRadios = document.querySelectorAll('input[name="theme"]');
+if (themeRadios.length) {
+  themeRadios[0].checked = true; // Balloons is first
+  if (typeof previewTheme === 'function') previewTheme('balloons');
+}
 
   // 5. FULL STATE RESET (optional)
   // ======================
