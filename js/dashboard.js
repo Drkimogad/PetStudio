@@ -891,7 +891,7 @@ function fallbackHtmlPrint(profile) {
           link.download = '${profile.name}_profile.html';
           link.click();
         ">
-          Save as HTML
+          Save as Image
         </button>
       </div>
       <script>
@@ -913,80 +913,72 @@ function openPrintWindow(canvas, profile) {
     <html>
       <head>
         <title>${profile.name}'s Profile</title>
-          <style>
-  /* ===== SCREEN STYLES (visible in browser) ===== */
-  @media screen {
-    body {
-      padding: 20px;
-      background: #f5f5f5;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    
-    .print-actions {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin: 25px 0;
-    }
-    
-    .print-actions button {
-      padding: 10px 20px;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-    
-    .print-actions button:hover {
-      background: #45a049;
-    }
-    
-    .print-footer {
-      margin-top: 20px;
-      font-size: 0.8em;
-      color: #666;
-      text-align: center;
-    }
-  }
+        <style>
+          @media screen {
+            body {
+              padding: 20px;
+              background: #f5f5f5;
+              max-width: 800px;
+              margin: 0 auto;
+            }
+            .print-actions {
+              display: flex;
+              justify-content: center;
+              gap: 15px;
+              margin: 25px 0;
+            }
+            .print-actions button {
+              padding: 10px 20px;
+              background: #4CAF50;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+              font-weight: bold;
+              transition: background 0.2s;
+            }
+            .print-actions button:hover {
+              background: #45a049;
+            }
+            .print-footer {
+              margin-top: 20px;
+              font-size: 0.8em;
+              color: #666;
+              text-align: center;
+            }
+          }
 
-  /* ===== PRINT STYLES (visible when printing) ===== */          
-  @media print {
-    body { 
-      margin: 0 !important;
-      padding: 5mm !important; /* Printer-safe units */
-    }
-    .print-container {
-      height: 100vh;
-      display: flex !important;
-      flex-direction: column !important;
-      justify-content: space-between !important;
-    }
-    .print-header {
-      flex-grow: 0;
-       page-break-after: avoid !important;  /* Blocks break after header */
-      text-align: center;
-      padding-top: 0 !important;
-      margin-top: 0 !important;
-    }
-    .print-image {
-      flex-grow: 1;
-      page-break-inside: avoid !important; /* Prevents card splitting */
-      object-fit: contain;
-      max-height: 85vh !important;
-    }
-     .print-footer {
-      display: none !important; /* Completely remove footer */
-    }
-    .print-actions {
-      display: none !important; /* Hide buttons when printing */
-    }
-  }
-</style>
+          /* ===== PRINT STYLES ===== */
+          @media print {
+            body { 
+              margin: 0 !important;
+              padding: 5mm !important;
+            }
 
+            /* This block keeps header, image, footer together */
+            .print-container {
+              display: block !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+              transform: scale(0.95);
+              transform-origin: top center;
+              height: auto !important;
+            }
+
+            .print-header,
+            .print-footer,
+            .print-image {
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+              page-break-before: avoid !important;
+              page-break-after: avoid !important;
+            }
+
+            .print-actions {
+              display: none !important;
+            }
+          }
+        </style>
       </head>
       <body>
         <div class="print-container">
@@ -998,31 +990,30 @@ function openPrintWindow(canvas, profile) {
           <img class="print-image" src="${canvas.toDataURL('image/png')}" 
                alt="${profile.name}'s Profile Card">
           
-          <div class="print-actions">
-            <button onclick="window.print()">Print</button>
-            <button onclick="window.close()">Close</button>
-            <button onclick="
-  const img = document.querySelector('.print-image');
-  if(img && img.src.startsWith('data:')) {
-    const a = document.createElement('a');
-    a.href = img.src;
-    a.download = '${profile.name.replace(/[^a-z0-9]/gi, '_')}_profile.png';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  } else {
-    alert('Please wait for image to load fully');
-  }
-">Save as Image</button>
-          </div>
-          
           <p class="print-footer">
             Printed from Pet Profile App • ${printDate}
           </p>
         </div>
-        
+
+        <div class="print-actions">
+          <button onclick="window.print()">Print</button>
+          <button onclick="window.close()">Close</button>
+          <button onclick="
+            const img = document.querySelector('.print-image');
+            if(img && img.src.startsWith('data:')) {
+              const a = document.createElement('a');
+              a.href = img.src;
+              a.download = '${profile.name.replace(/[^a-z0-9]/gi, '_')}_profile.png';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            } else {
+              alert('Please wait for image to load fully');
+            }
+          ">Save as Image</button>
+        </div>
+
         <script>
-          // Auto-focus print button for keyboard users
           window.onload = () => {
             const printBtn = document.querySelector('button');
             printBtn.focus();
