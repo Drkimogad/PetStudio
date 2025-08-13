@@ -787,7 +787,7 @@ async function printProfile(profile) {
   // Capture with html2canvas
   try {
     const canvas = await html2canvas(petCard, {
-      scale: 2,
+      scale: 1.8,
       logging: true, // Helpful for debugging
       useCORS: true,
       allowTaint: true,
@@ -936,7 +936,43 @@ function openPrintWindow(canvas, profile) {
     .print-actions {
       display: none !important; /* Hide buttons when printing */
     }
+    .print-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0 !important;
+      margin: 0 !important;
+      font-size: 0.7em !important;
+    }
+    body {
+      position: relative;
+      min-height: 100vh;
+    }
   }
+  }
+    /* Only for screen */
+  @media screen {
+    .print-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .print-actions button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .print-actions button:hover {
+      background: #45a049;
+    }
+  }
+
 </style>
           
       </head>
