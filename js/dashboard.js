@@ -957,13 +957,15 @@ function openPrintWindow(canvas, profile) {
   @media print {
     body { 
       margin: 0 !important;
-      padding: 5mm !important; /* Printer-safe units */
+      padding: 2mm !important; /* Printer-safe units */
     }
     .print-container {
       height: 100vh;
       display: flex !important;
       flex-direction: column !important;
       justify-content: space-between !important;
+      transform: scale(1.03); /* slightly enlarge content */
+     transform-origin: top center; /* keep enlargement aligned */
     }
     .print-header {
           display: none !important; /* Completely remove header */
@@ -972,7 +974,7 @@ function openPrintWindow(canvas, profile) {
       flex-grow: 1;
       page-break-inside: avoid !important; /* Prevents card splitting */
       object-fit: contain;
-      max-height: 85vh !important;
+      max-height: 92vh !important; /* was ~85vh — more vertical stretch */
     }
      .print-footer {
       display: none !important; /* Completely remove footer */
