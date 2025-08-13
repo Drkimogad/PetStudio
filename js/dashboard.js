@@ -573,7 +573,6 @@ function openCreateForm() {
   // Add this after resetForm():
   document.querySelector(`input[name="theme"][value="balloons"]`).checked = true;
   applyThemePreview('balloons'); // New helper function
-}
   
   //ALWAYS CALL IT AFTER RESET   
   // 🎯 INSERT HERE ▼ (after reset, before handlers)
