@@ -955,29 +955,24 @@ function openPrintWindow(canvas, profile) {
 
   /* ===== PRINT STYLES (visible when printing) ===== */
   @media print {
-    body {
+      body {
       margin: 0 !important;
       padding: 0 !important;
-      position: relative;
-      min-height: 95vh;  /* it was 100*/
-    }
-    
-    .print-container {
-      height: calc(100vh - 10mm); /* Account for padding */
       display: flex !important;
       flex-direction: column !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      min-height: 100vh;
     }
     
     .print-header {
       text-align: center;
       margin-top: 20mm !important;
       margin-bottom: 10mm !important;
-      width: 80%;
+      width: 100%;
     }
     
     .print-image {
-      flex-grow: 1;
-      object-fit: contain;
       max-height: 82vh !important; /* Slightly reduced for footer space */
       width: auto !important;
       margin: 0 auto !important;
@@ -988,14 +983,7 @@ function openPrintWindow(canvas, profile) {
     }
     
     .print-footer {
-      position: absolute;
-      bottom: 2mm;
-      left: 0;
-      right: 0;
-      margin: 0 !important;
-      padding: 0 !important;
-      font-size: 0.7em !important;
-      color: #333 !important;
+     displa y: none !important; /* Completely remove footer */
     }
   }
 </style>
