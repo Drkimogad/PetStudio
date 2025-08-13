@@ -976,6 +976,9 @@ function openPrintWindow(canvas, profile) {
       object-fit: contain;
       max-height: 85vh !important;
     }
+     .print-footer {
+      display: none !important; /* Completely remove footer */
+    }
     .print-actions {
       display: none !important; /* Hide buttons when printing */
     }
