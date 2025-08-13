@@ -787,7 +787,7 @@ async function printProfile(profile) {
   // Capture with html2canvas
   try {
     const canvas = await html2canvas(petCard, {
-      scale: 1.8,
+      scale: 2,
       logging: true, // Helpful for debugging
       useCORS: true,
       allowTaint: true,
