@@ -570,9 +570,8 @@ function openCreateForm() {
 //When creating, we want a placeholder image until a real one is set
   DOM.profileForm.dataset.coverIndex = 0; // Default cover index for new profiles
   // Add this after resetForm():
-  document.querySelector(`input[name="theme"][value="balloons"]`).checked = true;
-  applyThemePreview('balloons'); // New helper function
-  
+  document.getElementById('default-theme-balloons').checked = true;
+    
   //ALWAYS CALL IT AFTER RESET   
   // 🎯 INSERT HERE ▼ (after reset, before handlers)
   updateGalleryPreviews(); // Initialize empty gallery
