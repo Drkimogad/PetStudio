@@ -7,6 +7,7 @@ let currentQRProfile = null; // Only new declaration needed
 let generatingQR = false; // <== global scope
 setupPetProfileDelegation();
 
+
 // 🌍 Load from localStorage only on initial boot
 if (!window.petProfiles || !Array.isArray(window.petProfiles) || window.petProfiles.length === 0) {
   let savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
@@ -37,6 +38,22 @@ function initDashboardDOM() {
   if (!DOM.petList) console.error("petList element missing");
   if (!DOM.profileSection) console.error("profileSection element missing");
 }
+
+// Add to top of dashboard.js (global config)
+const THEMES = {
+  balloons: { 
+    emoji: '🎈',
+    class: 'theme-balloons',
+    bgColor: '#ffebee'
+  },
+  paws: {
+    emoji: '🐾',
+    class: 'theme-paws',
+    bgColor: '#e8f5e9'
+  },
+  // ... other themes
+};
+
 
 // ==============================
 // 🎨 previewTheme() - Live Theme Preview
@@ -317,8 +334,16 @@ function toggleCelebrateButton(dateInput) {
     window.petProfiles[currentEditIndex].birthday = dateInput.value;
   }
 }
-
-
+//=============================
+// new function  apply theme preview 
+//=============================
+function applyThemePreview(theme) {
+  const previewCard = document.getElementById('birthday-card-preview');
+  if (previewCard) {
+    previewCard.className = `birthday-preview ${THEMES[theme].class}`;
+    previewCard.style.backgroundColor = THEMES[theme].bgColor;
+  }
+}
 
 
 // 🌀🌀🌀 CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
@@ -497,7 +522,10 @@ function openCreateForm() {
 // Add placeholder cover in openCreateForm()
 //When creating, we want a placeholder image until a real one is set
   DOM.profileForm.dataset.coverIndex = 0; // Default cover index for new profiles
-
+  // Add this after resetForm():
+  document.querySelector(`input[name="theme"][value="balloons"]`).checked = true;
+  applyThemePreview('balloons'); // New helper function
+}
   
   //ALWAYS CALL IT AFTER RESET   
   // 🎯 INSERT HERE ▼ (after reset, before handlers)
@@ -1076,8 +1104,10 @@ async function generateBirthdayCard(index) {
     // 2. Create a birthday-themed card container
     const card = document.createElement('div');
     card.className = `birthday-card ${theme}`; // matches css theme class naming
+      // Update card generation to use centralized config:  
     card.innerHTML = `
-      <div class="birthday-header">${getThemeIcon(theme)} ${profile.name}'s Birthday! ${getThemeIcon(theme)}</div>      
+          <div class="birthday-header" style="background:${theme.bgColor}">
+      ${theme.emoji} ${profile.name}'s Birthday! ${theme.emoji}</div>
       <div class="birthday-countdown">${Utils.getCountdown(profile.nextBirthday)}</div>
        ${
        validCover
