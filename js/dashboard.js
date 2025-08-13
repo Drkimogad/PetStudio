@@ -957,9 +957,9 @@ function openPrintWindow(canvas, profile) {
   @media print {
     body {
       margin: 0 !important;
-      padding: 5mm !important;
+      padding: 0 !important;
       position: relative;
-      min-height: 100vh;
+      min-height: 95vh;  /* it was 100*/
     }
     
     .print-container {
@@ -969,9 +969,10 @@ function openPrintWindow(canvas, profile) {
     }
     
     .print-header {
-      flex-grow: 0;
-      padding-top: 0 !important;
-      margin-top: 0 !important;
+      text-align: center;
+      margin-top: 20mm !important;
+      margin-bottom: 10mm !important;
+      width: 80%;
     }
     
     .print-image {
