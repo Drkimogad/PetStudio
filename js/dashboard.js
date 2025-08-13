@@ -363,14 +363,33 @@ function toggleCelebrateButton(dateInput) {
     window.petProfiles[currentEditIndex].birthday = dateInput.value;
   }
 }
+
 //=============================
 // new function  apply theme preview 
 //=============================
-function applyThemePreview(theme) {
-  const previewCard = document.getElementById('birthday-card-preview');
+function previewTheme(selectedTheme) {
+  const theme = THEMES[selectedTheme] || THEMES[DEFAULT_THEME];
+
+  // 1. Update theme selector UI
+  document.querySelectorAll('.theme-preview').forEach(el => {
+    el.classList.toggle('selected-theme', el.dataset.theme === selectedTheme);
+  });
+
+  // 2. Live preview (both edit/create modes)
+  const previewCard = isEditing 
+    ? document.querySelector(`.petCard[data-index="${currentEditIndex}"]`)
+    : document.getElementById('birthday-card-preview');
+
   if (previewCard) {
-    previewCard.className = `birthday-preview ${THEMES[theme].class}`;
-    previewCard.style.backgroundColor = THEMES[theme].bgColor;
+    previewCard.className = `petCard ${theme.class}`;
+    previewCard.style.backgroundColor = theme.bgColor;
+    
+    // Optional: Update other theme-specific elements
+    const headers = previewCard.querySelectorAll('.petCard-header, h3');
+    headers.forEach(el => {
+      el.style.color = theme.textColor;
+      el.style.borderBottom = theme.border;
+    });
   }
 }
 
