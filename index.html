@@ -278,51 +278,65 @@
         <textarea id="petNotes" name="petNotes" rows="3" placeholder="Gift ideas, funny habits, favorite toys..."></textarea>
        </div>
 
-	 <div id="birthday-card-preview" class="birthday-preview">
-         <h4>Live Preview</h4>
-           <!-- Dynamically updated -->
-      </div>
 	      
-        <div class="theme-selection">
-          <h4>Card Theme</h4>
-          <div class="theme-options">
-            <label class="theme-option">
-              <input type="radio" name="theme" value="balloons" checked onchange="previewTheme(this.value)">
-              <div class="theme-preview balloons-mini">
-                <span class="theme-icon">🎈</span>
-              </div>
-              <span>Balloons</span>
-            </label>
-            <label class="theme-option">
-              <input type="radio" name="theme" value="paws" onchange="previewTheme(this.value)">
-              <div class="theme-preview paws-mini">
-                <span class="theme-icon">🐾</span>
-              </div>
-              <span>Paw Prints</span>
-            </label>
-            <label class="theme-option">
-              <input type="radio" name="theme" value="minimal" onchange="previewTheme(this.value)">
-              <div class="theme-preview minimal-mini">
-                <span class="theme-icon">M</span>
-              </div>
-              <span>Minimal</span>
-            </label>
-            <label class="theme-option">
-              <input type="radio" name="theme" value="party" onchange="previewTheme(this.value)">
-              <div class="theme-preview party-mini">
-                <span class="theme-icon">🎊</span>
-              </div>
-              <span>Party</span>
-            </label>
-            <label class="theme-option">
-              <input type="radio" name="theme" value="elegant" onchange="previewTheme(this.value)">
-              <div class="theme-preview elegant-mini">
-                <span class="theme-icon">E</span>
-              </div>
-              <span>Elegant</span>
-            </label>
-          </div>
-        </div>
+<div class="theme-selection">
+  <h4>Card Theme</h4>
+  <div class="theme-options">
+    <!-- Balloons Theme -->
+    <label class="theme-option">
+      <input type="radio" name="theme" value="balloons" checked onchange="previewTheme(this.value)">
+      <div class="theme-preview balloons-mini" data-theme="balloons" style="background-color: #ffebee; border-color: #f44336">
+        <span class="theme-icon">🎈</span>
+      </div>
+      <span>Balloons</span>
+    </label>
+    
+    <!-- Paws Theme -->
+    <label class="theme-option">
+      <input type="radio" name="theme" value="paws" onchange="previewTheme(this.value)">
+      <div class="theme-preview paws-mini" data-theme="paws" style="background-color: #e8f5e9; border-color: #4caf50">
+        <span class="theme-icon">🐾</span>
+      </div>
+      <span>Paw Prints</span>
+    </label>
+    
+    <!-- Minimal Theme -->
+    <label class="theme-option">
+      <input type="radio" name="theme" value="minimal" onchange="previewTheme(this.value)">
+      <div class="theme-preview minimal-mini" data-theme="minimal" style="background-color: #ffffff; border-color: #bdbdbd">
+        <span class="theme-icon">🎂</span> <!-- Changed from 'M' to cake emoji -->
+      </div>
+      <span>Minimal</span>
+    </label>
+    
+    <!-- Party Theme -->
+    <label class="theme-option">
+      <input type="radio" name="theme" value="party" onchange="previewTheme(this.value)">
+      <div class="theme-preview party-mini" data-theme="party" style="background-color: #fff3e0; border-color: #ff9800">
+        <span class="theme-icon">🎊</span>
+      </div>
+      <span>Party</span>
+    </label>
+    
+    <!-- Elegant Theme -->
+    <label class="theme-option">
+      <input type="radio" name="theme" value="elegant" onchange="previewTheme(this.value)">
+      <div class="theme-preview elegant-mini" data-theme="elegant" style="background-color: #f3e5f5; border-color: #9c27b0">
+        <span class="theme-icon">✨</span> <!-- Changed from 'E' to sparkle emoji -->
+      </div>
+      <span>Elegant</span>
+    </label>
+  </div>
+</div>
+
+<!-- Add this for create/edit form preview -->
+<div id="birthday-card-preview" class="petCard hidden" style="margin: 15px 0; padding: 15px; border-radius: 8px;">
+  <div class="petCard-header">
+    <h3 style="margin: 0">Live Theme Preview</h3>
+  </div>
+	    <!-- contents will be dynamically injected -->
+  <p style="margin: 10px 0">This shows how your card will look</p>
+</div>
 		 
 	     <button type="submit" class="button">Save Profile</button>
       </form>
