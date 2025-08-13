@@ -771,9 +771,14 @@ async function deleteProfile(index) {
 // OPTIMISED FOR TABLLET AND DESKTOIP
 //================================================
 async function printProfile(profile) {
-  // Try both the class and ID selector for maximum reliability
-  const petCard = document.querySelector(`.petCard, #pet-card-${profile.id}`);
-
+     // Add this validation FIRST
+  if (!profile?.id) {
+    console.error("Invalid profile data:", profile);
+    return;
+  }
+  
+  // Change selector to use the specific card ID
+  const petCard = document.getElementById(`pet-card-${profile.id}`);
     // Fallback to old method if no card found
   if (!petCard) {
     console.warn('Pet card not found, using fallback method');
@@ -1889,7 +1894,7 @@ function setupPetProfileDelegation() {
     } else if (target.classList.contains("delete-profile")) {
       deleteProfile(index, docId);
     } else if (target.classList.contains("print-profile")) {
-      printProfile(window.petProfiles?.[index]);
+      printProfile(window.petProfiles[index]);
     } else if (target.classList.contains("share-profile")) {
       sharePetCard(window.petProfiles?.[index]);
     } else if (target.classList.contains("generate-qr")) {
