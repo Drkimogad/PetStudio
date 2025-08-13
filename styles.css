@@ -1508,71 +1508,44 @@ footer {
 /*=====================================
 printing atyles
 ===========================*/
-/* ===== SCREEN STYLES (visible in browser) ===== */
-@media screen {
-  body {
-    padding: 20px;
-    background: #f5f5f5;
-    max-width: 800px;
-    margin: 0 auto;
+  /* ===== SCREEN STYLES (visible in browser) ===== */
+  @media screen {
+    body {
+      padding: 20px;
+      background: #f5f5f5;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .print-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 25px 0;
+    }
+    
+    .print-actions button {
+      padding: 10px 20px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    
+    .print-actions button:hover {
+      background: #45a049;
+    }
+    
+    .print-footer {
+      margin-top: 20px;
+      font-size: 0.8em;
+      color: #666;
+      text-align: center;
+    }
   }
-
-  .print-actions {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin: 25px 0;
-    flex-wrap: wrap; /* Allows wrapping on smaller screens */
-  }
-
-  .print-actions button {
-    padding: 10px 20px;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
-    min-width: 120px;
-  }
-
-  .print-actions button:hover {
-    background: #45a049;
-  }
-
-  .print-footer {
-    margin-top: 20px;
-    font-size: 0.8em;
-    color: #666;
-    text-align: center;
-  }
-}
-
-/* Tablet adjustments */
-@media screen and (max-width: 1024px) {
-  body {
-    padding: 15px;
-  }
-}
-
-/* Mobile adjustments */
-@media screen and (max-width: 600px) {
-  body {
-    padding: 10px;
-  }
-
-  .print-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  .print-actions button {
-    width: 100%;
-  }
-}
-
 
   /* ===== PRINT STYLES (visible when printing) ===== */          
   @media print {
@@ -1604,7 +1577,6 @@ printing atyles
       display: none !important; /* Hide buttons when printing */
     }
   }
-
 
 
 /* ======= QR CODE RULES ========== */
