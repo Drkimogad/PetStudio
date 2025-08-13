@@ -951,6 +951,24 @@ function openPrintWindow(canvas, profile) {
             font-size: 0.8em;
             color: #666;
           }
+          @media print {
+  body {
+    margin: 0 !important;
+    padding: 10px !important;
+  }
+  .print-image {
+    max-height: 90vh !important;
+    width: auto !important;
+    margin: 0 auto !important;
+    display: block !important;
+  }
+  .print-header, 
+  .print-footer {
+    page-break-after: avoid !important;
+    page-break-before: avoid !important;
+  }
+}
+    
         </style>
       </head>
       <body>
