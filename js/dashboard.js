@@ -769,8 +769,52 @@ async function deleteProfile(index) {
 //  PRINT PROFILE BUTTON FUNCTION
 // OPTIMISED FOR TABLLET AND DESKTOIP
 //================================================
-function printProfile(profile) {
+async function printProfile(profile) {
+  // Try both the class and ID selector for maximum reliability
+  const petCard = document.querySelector(`.petCard, #pet-card-${profile.id}`);
 
+    // Fallback to old method if no card found
+  if (!petCard) {
+    console.warn('Pet card not found, using fallback method');
+    return fallbackHtmlPrint(profile);
+  }
+
+  // Add temporary styling for print capture
+  petCard.style.boxShadow = '0 0 0 10px white'; // Adds white border for print
+  const originalTransition = petCard.style.transition;
+  petCard.style.transition = 'none'; // Disable transitions during capture
+
+  // Capture with html2canvas
+  try {
+    const canvas = await html2canvas(petCard, {
+      scale: 2,
+      logging: true, // Helpful for debugging
+      useCORS: true,
+      allowTaint: true,
+      onclone: (clonedDoc) => {
+        // Ensure any hidden elements are visible for printing
+        clonedDoc.querySelectorAll('[style*="display:none"]').forEach(el => {
+          el.style.display = 'block';
+        });
+      }
+    });
+
+    openPrintWindow(canvas, profile);
+    
+  } catch (error) {
+    console.error('Canvas capture failed:', error);
+    alert('Advanced print failed, using standard version instead');
+    fallbackHtmlPrint(profile);
+  } finally {
+    // Restore original styles
+    petCard.style.boxShadow = '';
+    petCard.style.transition = originalTransition;
+  }
+}
+
+
+// Fallback to original HTML method
+function fallbackHtmlPrint(profile) {
   const printWindow = window.open('', '_blank');
   const printDocument = printWindow.document;
 
@@ -857,21 +901,98 @@ function printProfile(profile) {
       </body>
     </html>
   `);
-
-  printWindow.document.close();
-
-  const images = printDocument.querySelectorAll('img');
-  let loaded = 0;
-  const checkPrint = () => {
-    if (++loaded === images.length) {
-      printWindow.print();
-    }
-  };
-  images.forEach(img => {
-    if (img.complete) checkPrint();
-    else img.addEventListener('load', checkPrint);
-  });
 }
+
+// Handle the print window creation
+function openPrintWindow(canvas, profile) {
+  const printWindow = window.open('', '_blank');
+  const printDate = new Date().toLocaleDateString();
+  
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>${profile.name}'s Profile</title>
+        <style>
+          body { 
+            margin: 0; 
+            padding: 20px; 
+            font-family: Arial, sans-serif;
+            text-align: center; 
+          }
+          .print-container {
+            max-width: 100%;
+            margin: 0 auto;
+          }
+          .print-header {
+            margin-bottom: 15px;
+          }
+          .print-image {
+            max-width: 100%;
+            height: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 10px 0;
+          }
+          .print-actions {
+            margin: 20px 0;
+            text-align: center;
+          }
+          button {
+            padding: 10px 15px;
+            margin: 0 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+          }
+          .print-footer {
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #666;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="print-container">
+          <div class="print-header">
+            <h1>${profile.name}'s Profile</h1>
+            <p>Generated on ${printDate}</p>
+          </div>
+          
+          <img class="print-image" src="${canvas.toDataURL('image/png')}" 
+               alt="${profile.name}'s Profile Card">
+          
+          <div class="print-actions">
+            <button onclick="window.print()">Print</button>
+            <button onclick="window.close()">Close</button>
+            <button onclick="
+              const link = document.createElement('a');
+              link.href = this.previousElementSibling.previousElementSibling.src;
+              link.download = '${profile.name.replace(/[^a-z0-9]/gi, '_')}_profile.png';
+              link.click();
+            ">Save as Image</button>
+          </div>
+          
+          <p class="print-footer">
+            Printed from Pet Profile App • ${printDate}
+          </p>
+        </div>
+        
+        <script>
+          // Auto-focus print button for keyboard users
+          window.onload = () => {
+            const printBtn = document.querySelector('button');
+            printBtn.focus();
+          };
+        </script>
+      </body>
+    </html>
+  `);
+  
+  printWindow.document.close();
+}
+
 
 //===============================
 //  🎂 Generate Birthday card() WORKS
