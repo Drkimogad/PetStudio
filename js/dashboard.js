@@ -913,28 +913,88 @@ function openPrintWindow(canvas, profile) {
     <html>
       <head>
         <title>${profile.name}'s Profile</title>
-          <style>
-  @media print {
-    body { 
-      margin: 0 !important;
-      padding: 5mm !important; /* Printer-safe units */
+        <style>
+  /* ===== SCREEN STYLES (visible in browser) ===== */
+  @media screen {
+    body {
+      padding: 20px;
+      background: #f5f5f5;
+      max-width: 800px;
+      margin: 0 auto;
     }
+    
+    .print-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 25px 0;
+    }
+    
+    .print-actions button {
+      padding: 10px 20px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    
+    .print-actions button:hover {
+      background: #45a049;
+    }
+    
+    .print-footer {
+      margin-top: 20px;
+      font-size: 0.8em;
+      color: #666;
+      text-align: center;
+    }
+  }
+
+  /* ===== PRINT STYLES (visible when printing) ===== */
+  @media print {
+    body {
+      margin: 0 !important;
+      padding: 5mm !important;
+      position: relative;
+      min-height: 100vh;
+    }
+    
     .print-container {
-      height: 100vh;
+      height: calc(100vh - 10mm); /* Account for padding */
       display: flex !important;
       flex-direction: column !important;
-      justify-content: space-between !important;
     }
+    
     .print-header {
       flex-grow: 0;
+      padding-top: 0 !important;
+      margin-top: 0 !important;
     }
+    
     .print-image {
       flex-grow: 1;
       object-fit: contain;
-      max-height: 85vh !important;
+      max-height: 82vh !important; /* Slightly reduced for footer space */
+      width: auto !important;
+      margin: 0 auto !important;
     }
+    
     .print-actions {
-      display: none !important; /* Hide buttons when printing */
+      display: none !important;
+    }
+    
+    .print-footer {
+      position: absolute;
+      bottom: 2mm;
+      left: 0;
+      right: 0;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-size: 0.7em !important;
+      color: #333 !important;
     }
   }
 </style>
