@@ -376,29 +376,44 @@ tagCheckboxes.forEach(checkbox => {
   checkbox.checked = profile.tags?.includes(checkbox.value);
 });
   
-  // ======================
-// 3. GALLERY PREVIEW SETUP (CORRECTED)
+// ======================
+// 3. GALLERY PREVIEW SETUP (UPDATED)
 // ======================
 DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
+
 const galleryPreview = document.getElementById("galleryPreview");
 
 if (galleryPreview) {
   // Store gallery in uploadedImageUrls for consistent handling
   uploadedImageUrls = [...profile.gallery || []];
-  
+
   galleryPreview.innerHTML = uploadedImageUrls.map((img, idx) => `
     <div class="gallery-thumbnail" data-index="${idx}">
       <img src="${typeof img === 'string' ? img : img.url}" 
            class="preview-thumb"
            onerror="this.src='placeholder.jpg'">
       <button class="remove-btn">×</button>
-      <button class="cover-btn ${idx === profile.coverPhotoIndex ? 'active' : ''}">
+      <button 
+        class="cover-btn ${idx === profile.coverPhotoIndex ? 'active' : ''}" 
+        data-photo-index="${idx}" 
+        data-index="${currentEditIndex}"
+      >
         ★
       </button>
     </div>
   `).join('');
+
   initGalleryInteractions();
+
+  // 🔹 NEW: Sync cover button clicks with form dataset
+  galleryPreview.querySelectorAll('.cover-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const newCoverIndex = parseInt(btn.dataset.photoIndex, 10);
+      DOM.profileForm.dataset.coverIndex = newCoverIndex; // 🔹 Added
+    });
+  });
 }
+
      
     // ======================
     // 4. MOOD HISTORY UI
@@ -502,6 +517,11 @@ function openCreateForm() {
   // 2. CLEAR FORM FIELDS
   // ======================
   resetForm(); // Handles all field/gallery clearing
+  
+// Add placeholder cover in openCreateForm()
+//When creating, we want a placeholder image until a real one is set
+  DOM.profileForm.dataset.coverIndex = 0; // Default cover index for new profiles
+
   
   //ALWAYS CALL IT AFTER RESET   
   // 🎯 INSERT HERE ▼ (after reset, before handlers)
@@ -1671,6 +1691,9 @@ function showQRStatus(message, isSuccess) {
 //=================
 // Set cover photo
 //====================
+//=================
+// Set cover photo
+//====================
 function setCoverPhoto(profileIndex, imageIndex) {
   // Update model
   petProfiles[profileIndex].coverPhotoIndex = imageIndex;
@@ -1683,9 +1706,21 @@ function setCoverPhoto(profileIndex, imageIndex) {
   const selectedBtn = document.querySelector(`.gallery-item button[data-index="${profileIndex}"][data-photo-index="${imageIndex}"]`);
   if (selectedBtn) selectedBtn.classList.add("active");
 
+  // 🔹 NEW: Update current form state if inside create/edit form
+  if (DOM && DOM.profileForm) {
+    DOM.profileForm.dataset.coverIndex = imageIndex; // 🔹 Added line
+  }
+
+  // 🔹 NEW: If we are editing, keep in-memory consistency
+  if (typeof uploadedImageUrls !== "undefined" && uploadedImageUrls.length) {
+    // No need to reorder array — just ensure previews match active star
+    // This keeps the cover photo choice visible in birthday card preview
+  }
+
   // Re-render if needed
   loadSavedProfiles();
 }
+
 
 //==========================================
 // ✅ FINALIZED - setupPetProfileDelegation
