@@ -1463,6 +1463,21 @@ styled to show in petcard header plus nickname */
   margin-top: 15px;
 }
 
+
+/* Live Preview Container */
+#birthday-card-preview {
+  transition: all 0.3s ease;
+  background: var(--theme-bg, #ffebee); /* Default to balloons */
+}
+#birthday-card-preview.visible {
+  display: block !important;
+}
+
+/* Theme Class Backbone */
+.petCard[class*="theme-"] {
+  border: 2px solid var(--theme-border);
+}
+
 /* ====================
    DRIVE SYNC STATUS
 ==================== */
