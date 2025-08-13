@@ -913,72 +913,75 @@ function openPrintWindow(canvas, profile) {
     <html>
       <head>
         <title>${profile.name}'s Profile</title>
-        <style>
-          @media screen {
-            body {
-              padding: 20px;
-              background: #f5f5f5;
-              max-width: 800px;
-              margin: 0 auto;
-            }
-            .print-actions {
-              display: flex;
-              justify-content: center;
-              gap: 15px;
-              margin: 25px 0;
-            }
-            .print-actions button {
-              padding: 10px 20px;
-              background: #4CAF50;
-              color: white;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-              font-weight: bold;
-              transition: background 0.2s;
-            }
-            .print-actions button:hover {
-              background: #45a049;
-            }
-            .print-footer {
-              margin-top: 20px;
-              font-size: 0.8em;
-              color: #666;
-              text-align: center;
-            }
-          }
+                  <style>
+  /* ===== SCREEN STYLES (visible in browser) ===== */
+  @media screen {
+    body {
+      padding: 20px;
+      background: #f5f5f5;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .print-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 25px 0;
+    }
+    
+    .print-actions button {
+      padding: 10px 20px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    
+    .print-actions button:hover {
+      background: #45a049;
+    }
+    
+    .print-footer {
+      margin-top: 20px;
+      font-size: 0.8em;
+      color: #666;
+      text-align: center;
+    }
+  }
 
-          /* ===== PRINT STYLES ===== */
-          @media print {
-            body { 
-              margin: 0 !important;
-              padding: 5mm !important;
-            }
-
-            /* This block keeps header, image, footer together */
-            .print-container {
-              display: block !important;
-              page-break-inside: avoid !important;
-              break-inside: avoid !important;
-              transform: scale(0.95);
-              transform-origin: top center;
-              height: auto !important;
-            }
-
-            .print-header,
-            .print-footer,
-            .print-image {
-              page-break-inside: avoid !important;
-              break-inside: avoid !important;
-              page-break-before: avoid !important;
-              page-break-after: avoid !important;
-            }
-
-            .print-actions {
-              display: none !important;
-            }
-          }
-        </style>
+  /* ===== PRINT STYLES (visible when printing) ===== */          
+  @media print {
+    body { 
+      margin: 0 !important;
+      padding: 5mm !important; /* Printer-safe units */
+    }
+    .print-container {
+      height: 100vh;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+    }
+    .print-header {
+          display: none !important; /* Completely remove header */
+    }
+    .print-image {
+      flex-grow: 1;
+      page-break-inside: avoid !important; /* Prevents card splitting */
+      object-fit: contain;
+      max-height: 85vh !important;
+    }
+     .print-footer {
+      display: none !important; /* Completely remove footer */
+    }
+    .print-actions {
+      display: none !important; /* Hide buttons when printing */
+    }
+  }
+</style>
       </head>
       <body>
         <div class="print-container">
