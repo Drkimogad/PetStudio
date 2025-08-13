@@ -39,20 +39,49 @@ function initDashboardDOM() {
   if (!DOM.profileSection) console.error("profileSection element missing");
 }
 
-// Add to top of dashboard.js (global config)
+// ======================
+// 🎨 THEME CONFIGURATION (Global)
+// ======================
 const THEMES = {
   balloons: { 
     emoji: '🎈',
     class: 'theme-balloons',
-    bgColor: '#ffebee'
+    bgColor: '#ffebee',  // Light red
+    textColor: '#d32f2f',
+    border: '2px dashed #f44336'
   },
   paws: {
     emoji: '🐾',
     class: 'theme-paws',
-    bgColor: '#e8f5e9'
+    bgColor: '#e8f5e9',  // Light green
+    textColor: '#2e7d32',
+    border: '2px dotted #4caf50'
   },
-  // ... other themes
+  party: {
+    emoji: '🎊',
+    class: 'theme-party',
+    bgColor: '#fff3e0',  // Light orange
+    textColor: '#e65100',
+    border: '2px solid #ff9800'
+  },
+  elegant: {
+    emoji: '✨',
+    class: 'theme-elegant',
+    bgColor: '#f3e5f5',  // Light purple
+    textColor: '#7b1fa2',
+    border: '1px solid #9c27b0'
+  },
+  minimal: {
+    emoji: '🎂',
+    class: 'theme-minimal',
+    bgColor: '#ffffff',  // Pure white
+    textColor: '#212121',
+    border: '1px solid #bdbdbd'
+  }
 };
+
+// Optional: Default theme fallback
+const DEFAULT_THEME = 'balloons';
 
 
 // ==============================
