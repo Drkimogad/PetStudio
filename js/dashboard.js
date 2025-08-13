@@ -377,42 +377,17 @@ tagCheckboxes.forEach(checkbox => {
 });
   
 // ======================
-// 3. GALLERY PREVIEW SETUP (UPDATED)
+// 3. GALLERY PREVIEW SETUP (UPDATED TO USE updateGalleryPreviews now)
 // ======================
+
+// ✅ Store cover index from profile
 DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
-const galleryPreview = document.getElementById("galleryPreview");
+// ✅ Ensure gallery is in memory for editing mode
+petProfiles[currentEditIndex].gallery = [...(profile.gallery || [])];
 
-if (galleryPreview) {
-  // Store gallery in uploadedImageUrls for consistent handling
-  uploadedImageUrls = [...profile.gallery || []];
-
-  galleryPreview.innerHTML = uploadedImageUrls.map((img, idx) => `
-    <div class="gallery-thumbnail" data-index="${idx}">
-      <img src="${typeof img === 'string' ? img : img.url}" 
-           class="preview-thumb"
-           onerror="this.src='placeholder.jpg'">
-      <button class="remove-btn">×</button>
-      <button 
-        class="cover-btn ${idx === profile.coverPhotoIndex ? 'active' : ''}" 
-        data-photo-index="${idx}" 
-        data-index="${currentEditIndex}"
-      >
-        ★
-      </button>
-    </div>
-  `).join('');
-
-  initGalleryInteractions();
-
-  // 🔹 NEW: Sync cover button clicks with form dataset
-  galleryPreview.querySelectorAll('.cover-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const newCoverIndex = parseInt(btn.dataset.photoIndex, 10);
-      DOM.profileForm.dataset.coverIndex = newCoverIndex; // 🔹 Added
-    });
-  });
-}
+// ✅ Render using the same function as openCreateForm
+updateGalleryPreviews(); // This will handle cover-btn highlights automatically
 
      
     // ======================
@@ -668,7 +643,15 @@ function updateGalleryPreviews() {
              class="preview-thumb"
              onerror="this.src='placeholder.jpg'">
         <button class="remove-btn">×</button>
-        <button class="cover-btn ${idx === (isEditing ? petProfiles[currentEditIndex].coverPhotoIndex : 0) ? 'active' : ''}">
+        <button class="cover-btn ${
+          idx === (
+            isEditing 
+              ? petProfiles[currentEditIndex].coverPhotoIndex 
+              : parseInt(DOM.profileForm.dataset.coverIndex || 0, 10) // 🔹 FIXED: use dataset value instead of hardcoded 0
+          ) 
+          ? 'active' 
+          : ''
+        }">
           ★
         </button>
       </div>
