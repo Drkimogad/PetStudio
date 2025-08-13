@@ -913,7 +913,7 @@ function openPrintWindow(canvas, profile) {
     <html>
       <head>
         <title>${profile.name}'s Profile</title>
-        <style>
+          <style>
   /* ===== SCREEN STYLES (visible in browser) ===== */
   @media screen {
     body {
@@ -953,37 +953,31 @@ function openPrintWindow(canvas, profile) {
     }
   }
 
-  /* ===== PRINT STYLES (visible when printing) ===== */
+  /* ===== PRINT STYLES (visible when printing) ===== */          
   @media print {
-      body {
+    body { 
       margin: 0 !important;
-      padding: 0 !important;
+      padding: 5mm !important; /* Printer-safe units */
+    }
+    .print-container {
+      height: 100vh;
       display: flex !important;
       flex-direction: column !important;
-      align-items: center !important;
-      justify-content: flex-start !important;
-      min-height: 100vh;
+      justify-content: space-between !important;
     }
-    
     .print-header {
+      flex-grow: 0;
       text-align: center;
-      margin-top: 20mm !important;
-      margin-bottom: 10mm !important;
-      width: 100%;
+      padding-top: 0 !important;
+      margin-top: 0 !important;
     }
-    
     .print-image {
-      max-height: 82vh !important; /* Slightly reduced for footer space */
-      width: auto !important;
-      margin: 0 auto !important;
+      flex-grow: 1;
+      object-fit: contain;
+      max-height: 85vh !important;
     }
-    
     .print-actions {
-      display: none !important;
-    }
-    
-    .print-footer {
-     displa y: none !important; /* Completely remove footer */
+      display: none !important; /* Hide buttons when printing */
     }
   }
 </style>
