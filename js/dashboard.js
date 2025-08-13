@@ -914,62 +914,31 @@ function openPrintWindow(canvas, profile) {
       <head>
         <title>${profile.name}'s Profile</title>
         <style>
-          body { 
-            margin: 0; 
-            padding: 20px; 
-            font-family: Arial, sans-serif;
-            text-align: center; 
-          }
-          .print-container {
-            max-width: 100%;
-            margin: 0 auto;
-          }
-          .print-header {
-            margin-bottom: 15px;
-          }
-          .print-image {
-            max-width: 100%;
-            height: auto;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            margin: 10px 0;
-          }
-          .print-actions {
-            margin: 20px 0;
-            text-align: center;
-          }
-          button {
-            padding: 10px 15px;
-            margin: 0 10px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-          }
-          .print-footer {
-            margin-top: 20px;
-            font-size: 0.8em;
-            color: #666;
-          }
-          @media print {
-  body {
-    margin: 0 !important;
-    padding: 10px !important;
+  @media print {
+    body { 
+      margin: 0 !important;
+      padding: 5mm !important; /* Printer-safe units */
+    }
+    .print-container {
+      height: 100vh;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+    }
+    .print-header {
+      flex-grow: 0;
+    }
+    .print-image {
+      flex-grow: 1;
+      object-fit: contain;
+      max-height: 85vh !important;
+    }
+    .print-actions {
+      display: none !important; /* Hide buttons when printing */
+    }
   }
-  .print-image {
-    max-height: 90vh !important;
-    width: auto !important;
-    margin: 0 auto !important;
-    display: block !important;
-  }
-  .print-header, 
-  .print-footer {
-    page-break-after: avoid !important;
-    page-break-before: avoid !important;
-  }
-}
-    
-        </style>
+</style>
+          
       </head>
       <body>
         <div class="print-container">
@@ -985,11 +954,18 @@ function openPrintWindow(canvas, profile) {
             <button onclick="window.print()">Print</button>
             <button onclick="window.close()">Close</button>
             <button onclick="
-              const link = document.createElement('a');
-              link.href = this.previousElementSibling.previousElementSibling.src;
-              link.download = '${profile.name.replace(/[^a-z0-9]/gi, '_')}_profile.png';
-              link.click();
-            ">Save as Image</button>
+  const img = document.querySelector('.print-image');
+  if(img && img.src.startsWith('data:')) {
+    const a = document.createElement('a');
+    a.href = img.src;
+    a.download = '${profile.name.replace(/[^a-z0-9]/gi, '_')}_profile.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  } else {
+    alert('Please wait for image to load fully');
+  }
+">Save as Image</button>
           </div>
           
           <p class="print-footer">
