@@ -967,12 +967,14 @@ function openPrintWindow(canvas, profile) {
     }
     .print-header {
       flex-grow: 0;
+       page-break-after: avoid !important;  /* Blocks break after header */
       text-align: center;
       padding-top: 0 !important;
       margin-top: 0 !important;
     }
     .print-image {
       flex-grow: 1;
+      page-break-inside: avoid !important; /* Prevents card splitting */
       object-fit: contain;
       max-height: 85vh !important;
     }
