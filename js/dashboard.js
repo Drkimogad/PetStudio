@@ -1462,20 +1462,16 @@ function setupCollageModalListeners() {
       const profile = window.petProfiles[currentPetIndex]; // 👈 index is Defined in creatPetCollageindex()
       generateCollagePNG(profile);
     }
-    else if (e.target.id === 'close-collage') {
-  console.log('Close button clicked');
-  
-  // 1. Get modal WITHOUT optional chaining
-  const modal = document.getElementById('collage-modal');
-  if (!modal) return; // Safety check
-  
-  // 2. Update modal
+        else if (e.target.id === 'close-collage') {
+      console.log('Close button clicked - delegated listener');
+        // 1. Remove preview-active class (shows headers again)
   document.querySelector('.modal-content')?.classList.remove('collage-preview-active');
-  modal.classList.add('hidden');
-  modal.style.pointerEvents = 'none'; // Now safe
-  
-  // 3. Cleanup
-  resetCollageSelections();
+      // 2. Hide the modal (your existing code)
+    const modal = document.getElementById('collage-modal')?.classList.add('hidden');
+        // 3. Reset selections (your existing cleanup)
+      resetCollageSelections(); // 👈 
+      // 4. Remove pointer events (optional, as you had)
+      modal.style.pointerEvents = 'none';
     }
   }); // closes if
 } // closes function
