@@ -1726,7 +1726,6 @@ collage.style.cssText = `
     selectedImages = [];
   }
  }
-} // let's see if this is the one
 
 // ========================
 // Collage Preview Modal
@@ -1783,7 +1782,8 @@ function showCollagePreview(canvas, profile) {
     console.error("Sharing failed:", error);
     downloadCollage(canvas, profile.name);
   }
-};
+ };
+}
 
      // Download Button
     document.getElementById('download-collage').onclick = () => {
