@@ -1716,12 +1716,10 @@ showCollagePreview(canvas, profile);
     selectedImages = [];
   }
  }
-//=============showcollage preview========
-//====create collage preview above gennerate collage PNG ()
-function showCollagePreview(canvas, profile) {
-  // ========================
-// create Collage Preview Modal
-// ========================
+
+//=======================================
+//  show collage preview function
+//=========================================
 function createCollagePreview(canvas, profile) {
   // A. Create modal if it doesn't exist
   if (!document.getElementById('collage-preview-modal')) {
