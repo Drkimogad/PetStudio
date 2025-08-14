@@ -1285,6 +1285,7 @@ function showBirthdayCardModal(canvas, profile) {
   if (!document.getElementById('birthday-card-modal')) {
     const modalHTML = `
       <div id="birthday-card-modal" class="modal hidden">
+        <div class="modal-backdrop"></div> <!-- NEW: Backdrop element -->
         <div class="modal-content">
           <span class="close-modal">&times;</span>
           <h3>${profile.name}'s Birthday Card!</h3>
@@ -1308,28 +1309,44 @@ function showBirthdayCardModal(canvas, profile) {
   const modal = document.getElementById('birthday-card-modal');
   modal.classList.remove('hidden');
 
-  // Add event listeners
-  document.getElementById('share-birthday-btn').onclick = () => {
+  // Update these event listeners:
+  document.getElementById('share-birthday-btn').onclick = async () => {
     canvas.toBlob(async (blob) => {
-      const file = new File([blob], `${profile.name}_birthday.png`);
+      const file = new File([blob], `${profile.name}_birthday.png`, {
+        type: 'image/png'
+      });
+      
       try {
-        await navigator.share({
-          title: `${profile.name}'s Birthday`,
-          files: [file]
-        });
-      } catch {
-        // Fallback to download if sharing fails
-        downloadCard(canvas, profile.name);
+        // First try native sharing
+        if (navigator.share && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: `${profile.name}'s Birthday Card`,
+            files: [file],
+            text: `Celebrate ${profile.name}'s birthday!` 
+          });
+        } 
+        // Fallback for desktop browsers
+        else {
+          // Create temporary share link
+          const shareUrl = URL.createObjectURL(blob);
+          const tempInput = document.createElement('input');
+          tempInput.value = shareUrl;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+          
+          alert('Image link copied to clipboard! Paste it anywhere to share.');
+        }
+      } catch (error) {
+        console.error('Sharing failed:', error);
+        downloadCard(canvas, profile.name); // Fallback to download
       }
     });
   };
 
   document.getElementById('download-birthday-btn').onclick = () => {
     downloadCard(canvas, profile.name);
-  };
-
-  document.querySelector('#birthday-card-modal .close-modal').onclick = () => {
-    modal.classList.add('hidden');
   };
 }
 
