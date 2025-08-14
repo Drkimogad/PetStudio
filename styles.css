@@ -1304,6 +1304,15 @@ styled to show in petcard header plus nickname */
   pointer-events: none;
 }
 
+.modal {
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+
 /*===================*/
 /* NEW ENHANCEMENTS */
 /* BIRTHDAY CARD STYLE FOR CELEBRATE BUTTON==*/
