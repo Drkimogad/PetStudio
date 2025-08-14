@@ -1287,7 +1287,7 @@ function showBirthdayCardModal(canvas, profile) {
       <div id="birthday-card-modal" class="modal hidden">
         <div class="modal-backdrop"></div> <!-- NEW: Backdrop element -->
         <div class="modal-content">
-          <span class="close-modal">&times;</span>
+        <span class="modal-close">&times;</span>  <!-- Close button -->
           <h3>${profile.name}'s Birthday Card!</h3>
           <div class="card-preview-container">
             <img id="birthday-card-preview-img" src="${canvas.toDataURL()}" alt="Birthday Card">
@@ -1303,7 +1303,7 @@ function showBirthdayCardModal(canvas, profile) {
         </div>
       </div>`;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-  }
+  }   // closes the if 
 
   // Show modal
   const modal = document.getElementById('birthday-card-modal');
@@ -1348,7 +1348,15 @@ function showBirthdayCardModal(canvas, profile) {
   document.getElementById('download-birthday-btn').onclick = () => {
     downloadCard(canvas, profile.name);
   };
-}
+  // Close when clicking [X] button
+document.querySelector('#birthday-card-modal .modal-close').onclick = closeModal;
+// Close when clicking backdrop
+document.querySelector('#birthday-card-modal .modal-backdrop').onclick = closeModal;
+// Close with ESC key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+ });
+} // closes the modal
 
 //6. ADD HELPER FUNCTION
 function downloadCard(canvas, petName) {
@@ -1358,6 +1366,15 @@ function downloadCard(canvas, petName) {
   link.click();
 }
 
+// The close function
+function closeModal() {
+  const modal = document.getElementById('birthday-card-modal');
+  modal.classList.add('hidden');
+  
+  // Cleanup (important for memory)
+  const img = document.getElementById('birthday-card-preview-img');
+  if (img) URL.revokeObjectURL(img.src);
+}
 
 
 //===============================
