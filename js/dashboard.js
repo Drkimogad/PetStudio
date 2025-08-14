@@ -475,29 +475,32 @@ tagCheckboxes.forEach(checkbox => {
 // ======================
 // 3. GALLERY PREVIEW SETUP (UPDATED TO USE updateGalleryPreviews now)
 // ======================
+    // after resetForm before poppulating fields.
+  // Copy gallery to memory
+  petProfiles[currentEditIndex].gallery = [...(profile.gallery || [])];
 
-// ✅ Store cover index from profile
-DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
+  // Set current cover index in form dataset
+  DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
-// ✅ Ensure gallery is in memory for editing mode
-petProfiles[currentEditIndex].gallery = [...(profile.gallery || [])];
+  // 1. Update gallery preview
+  updateGalleryPreviews();
 
-// ✅ Render using the same function as openCreateForm
-// 1️⃣ ALWAYS call after resetting fields
-updateGalleryPreviews(); // Refresh gallery with existing images
+  // 2. Set radio buttons & preview selected theme
+  if (profile.theme) {
+    const matchingRadio = document.querySelector(`input[name="theme"][value="${profile.theme}"]`);
+    if (matchingRadio) matchingRadio.checked = true;
+    previewTheme(profile.theme);
+  } else {
+    previewTheme(DEFAULT_THEME);
+  }
 
-// 2️⃣ Theme preview setup
-const selectedTheme = profile.theme || 'balloons'; // fallback to balloons
-const matchingRadio = document.querySelector(`input[name="theme"][value="${selectedTheme}"]`);
-if (matchingRadio) matchingRadio.checked = true;
+  // 3. Force live preview container visible
+  const previewContainer = document.getElementById('birthday-card-preview');
+  if (previewContainer) previewContainer.classList.add('visible');
 
-// 3️⃣ Live preview container
-const previewContainer = document.getElementById('birthday-card-preview');
-if (previewContainer) {
-  previewContainer.classList.remove('hidden'); // make visible
-  previewContainer.classList.add('visible');
-  previewTheme(selectedTheme); // inject the live theme preview
-}
+  // 4. Initialize gallery interactions
+  initGalleryInteractions();
+
      
     // ======================
     // 4. MOOD HISTORY UI
@@ -601,30 +604,28 @@ function openCreateForm() {
   // ======================
   resetForm(); // Handles all field/gallery clearing
   
-// Add placeholder cover in openCreateForm()
-//When creating, we want a placeholder image until a real one is set
-  DOM.profileForm.dataset.coverIndex = 0; // Default cover index for new profiles
-  
-  // Add this after resetForm():
-  const themeRadios = document.querySelectorAll('input[name="theme"]');
-  if (themeRadios.length) themeRadios[0].checked = true; // First radio = balloons
-  previewTheme('balloons'); // immediately apply default theme
+  // Right after restform
+  // Default cover index for new profiles
+  DOM.profileForm.dataset.coverIndex = 0;
 
-  
-  // Initialize live preview (if container exists)
-const previewContainer = document.getElementById('birthday-card-preview');
-// Replace this in `openCreateForm()`:
-const previewContainer = document.getElementById('birthday-card-preview');
-if (previewContainer) {
-  previewContainer.innerHTML = `<div style="padding:1rem; background:#f0f0f0; border-radius:8px;">
-    <p>Preview will appear here</p>
-  </div>`;
-  previewContainer.classList.add('visible'); // Force visibility
+  // 1. Set first theme radio as default
+  const themeRadios = document.querySelectorAll('input[name="theme"]');
+  if (themeRadios.length) themeRadios[0].checked = true;
+
+  // 2. Initialize gallery previews
+  updateGalleryPreviews();
+
+  // 3. Initialize live card preview
+  const previewContainer = document.getElementById('birthday-card-preview');
+  if (previewContainer) previewContainer.classList.add('visible');
+
+  // 4. Preview default theme
+  previewTheme(themeRadios[0]?.value || DEFAULT_THEME);
+
+  // 5. Initialize gallery interactions
+  initGalleryInteractions();
 }
-    
-  //ALWAYS CALL IT AFTER RESET   
-  // 🎯 INSERT HERE ▼ (after reset, before handlers)
-  updateGalleryPreviews(); // Initialize empty gallery
+
   
   // 3. INITIALIZE GALLERY HANDLERS
   // ======================
