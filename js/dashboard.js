@@ -638,7 +638,6 @@ document.querySelectorAll('input[name="theme"]').forEach(radio => {
 
   // 6. Initialize gallery interactions
   initGalleryInteractions();
-}
 
   // 4. CANCEL BUTTON SETUP
   // ======================
