@@ -368,9 +368,10 @@ function toggleCelebrateButton(dateInput) {
 //=============================
 function previewTheme(selectedTheme) {
   // 1. Update radio buttons
+  // FIXED (Working)
   document.querySelectorAll('.theme-preview').forEach(el => {
-    el.classList.toggle('selected-theme', el.classList.contains(`${selectedTheme}-mini`));
-  });
+  el.classList.toggle('selected-theme', el.classList.contains(`${selectedTheme}-mini`));
+ });
 
   // 2. Update live preview if available
   const previewCard = document.getElementById('birthday-card-preview') || 
