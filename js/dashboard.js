@@ -1447,34 +1447,52 @@ modal.style.pointerEvents = 'auto'; // Re-enable clicks
 }
 
 //==================================
-// setup collagemodal listeners
+// setup collagemodal listeners UPDATED 
 //=========================================
 function setupCollageModalListeners() {
-  // Single listener for all modal buttons (efficient)
-  document.body.addEventListener('click', (e) => {
-    console.log("Clicked element:", e.target); // Debug what's being clicked
-
+  document.body.addEventListener("click", (e) => {
     if (e.target.closest('.layout-options button')) {
       selectedLayout = e.target.dataset.layout;
-      console.log("Layout set to:", selectedLayout);
     }
     else if (e.target.id === 'generate-collage') {
-      const profile = window.petProfiles[currentPetIndex]; // 👈 index is Defined in creatPetCollageindex()
+      const profile = window.petProfiles[currentPetIndex];
       generateCollagePNG(profile);
     }
-        else if (e.target.id === 'close-collage') {
+    else if (e.target.id === 'close-collage') {
       console.log('Close button clicked - delegated listener');
-        // 1. Remove preview-active class (shows headers again)
-  document.querySelector('.modal-content')?.classList.remove('collage-preview-active');
-      // 2. Hide the modal (your existing code)
-    const modal = document.getElementById('collage-modal')?.classList.add('hidden');
-        // 3. Reset selections (your existing cleanup)
-      resetCollageSelections(); // 👈 
-      // 4. Remove pointer events (optional, as you had)
-      modal.style.pointerEvents = 'none';
+      
+      // 1. Remove preview-active class 
+      document.querySelector('.modal-content')?.classList.remove('collage-preview-active');
+      
+      // 2. Hide the modal (updated timing)
+      const modal = document.getElementById('collage-modal');
+      modal.classList.add('hidden');
+      
+      // OLD: modal.style.pointerEvents = 'none'; // ❌ Removed - caused stuck state
+      // NEW: Delayed pointerEvents disable (safe after close starts)
+      setTimeout(() => {
+        if (modal.classList.contains('hidden')) {
+          modal.style.pointerEvents = 'none';
+        }
+      }, 0);
+      
+      // 3. Reset selections
+      resetCollageSelections();
     }
-  }); // closes if
-} // closes function
+  });
+
+  // NEW: Ensure modal is always interactive when opened
+  const ensureModalInteractive = () => {
+    const modal = document.getElementById('collage-modal');
+    if (modal && !modal.classList.contains('hidden')) {
+      modal.style.pointerEvents = 'auto';
+    }
+  };
+  
+  // Call this whenever opening the modal
+  // Add to your createPetCollage() function:
+  // ensureModalInteractive();
+}
 //==========================================
 // resetcollageselections function
 //==========================================
