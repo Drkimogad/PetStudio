@@ -1726,6 +1726,7 @@ collage.style.cssText = `
     selectedImages = [];
   }
  }
+} // let's see if this is the one
 
 // ========================
 // Collage Preview Modal
