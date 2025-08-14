@@ -1698,83 +1698,9 @@ collage.style.cssText = `
         0.92
       );
     });
-     
-// 6.5 Display the generated collage preview
-  // When generating preview - STEP 1: Activate preview mode FIRST
-document.querySelector('.modal-content').classList.add('collage-preview-active');
-  // Then create the preview container where save and share buttons are
-const previewContainer = document.createElement('div');
-previewContainer.className = 'collage-preview';
-previewContainer.style.position = 'relative';
-previewContainer.style.margin = '20px auto';
-previewContainer.style.width = '100%'; // Full width
-previewContainer.style.maxWidth = 'none'; // Remove constraint
-previewContainer.style.overflowX = 'auto'; // Add horizontal scroll if needed
-
-
-const previewImg = document.createElement('img');
-previewImg.src = canvas.toDataURL('image/png');
-previewImg.style.width = '100%';
-previewImg.style.borderRadius = '8px';
-previewImg.style.border = '2px solid purple';
-
-// Add buttons
-const btnContainer = document.createElement('div');
-btnContainer.style.display = 'flex';
-btnContainer.style.gap = '10px';
-btnContainer.style.justifyContent = 'center';
-btnContainer.style.marginTop = '10px';
+// this is where collage preview was 
+  showCollagePreview(canvas, profile);  
     
-// Add this RIGHT BEFORE creating the save button:
-const fileName = `${profile.name.replace(/[^a-z0-9]/gi, '_')}_collage.png`; // DEFINE THE NAMING
-    
-const saveBtn = document.createElement('button');
-saveBtn.textContent = 'Save';
-saveBtn.className = 'collage-btn'; // Reuse your existing button styles
-saveBtn.onclick = () => {
-  const link = document.createElement('a');
-  link.href = previewImg.src;
-  link.download = fileName; // NOW DEFINED
-  link.click();
-};
-
-const shareBtn = document.createElement('button');
-shareBtn.textContent = 'Share';
-shareBtn.className = 'collage-btn';
-shareBtn.onclick = async () => {
-  
-  // Your existing share logic (unchanged)
-      // 7. Handle output  
-  if (navigator.share && navigator.canShare?.({ files: [file] })) {
-    await navigator.share({
-      title: `${profile.name}'s Pet Collage`,
-      files: [file]
-    });
-  } else {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = fileName;
-    link.click();
-    setTimeout(() => {
-      document.body.removeChild(link);
-      URL.revokeObjectURL(link.href);
-    }, 100);
-  }
-};
-
-btnContainer.append(saveBtn, shareBtn);
-previewContainer.append(previewImg, btnContainer);
-    
-// Now, time to Insert preview into modal (replaces image grid temporarily)
-const grid = document.getElementById('collage-image-grid');
-// Updated:
-grid.innerHTML = `
-  <h3 style="text-align: center; margin-bottom: 15px;">
-    ${profile.name}'s Collage
-  </h3>
-`;
-grid.appendChild(previewContainer);
-
   } catch (error) {
     console.error('Collage generation error:', error);
     showQRStatus(`Failed: ${error.message}`, false);
@@ -1789,7 +1715,79 @@ grid.appendChild(previewContainer);
     selectedImages = [];
   }
  }
-    
+//======================
+// ========================
+// 6.5 - Updated Collage Preview Modal
+// ========================
+function showCollagePreview(canvas, profile) {
+  // A. Create modal if it doesn't exist
+  if (!document.getElementById('collage-preview-modal')) {
+    const modalHTML = `
+    <div id="collage-preview-modal" class="modal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>${profile.name}'s Collage</h3>
+          <span class="modal-close">&times;</span>
+        </div>
+        <div class="collage-preview-container">
+          <img id="collage-preview-image" src="${canvas.toDataURL()}">
+        </div>
+        <div class="modal-actions">
+          <button id="share-collage" class="btn-share">
+            <i class="fas fa-share-alt"></i> Share
+          </button>
+          <button id="download-collage" class="btn-download">
+            <i class="fas fa-download"></i> Download
+          </button>
+        </div>
+      </div>
+    </div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  }
+
+  // B. Show modal
+  const modal = document.getElementById('collage-preview-modal');
+  modal.classList.remove('hidden');
+
+  // C. Event listeners (safely scoped)
+  const setupListeners = () => {
+    // Share
+    document.getElementById('share-collage').onclick = async () => {
+      try {
+        const blob = await new Promise(resolve => canvas.toBlob(resolve));
+        const file = new File([blob], `${profile.name}_collage.png`);
+        if (navigator.share) {
+          await navigator.share({
+            title: `${profile.name}'s Collage`,
+            files: [file]
+          });
+        } else {
+          // Fallback download
+          downloadCollage(canvas, profile.name);
+        }
+      } catch (err) {
+        console.error("Sharing failed:", err);
+        downloadCollage(canvas, profile.name);
+      }
+    };
+
+    // Download
+    document.getElementById('download-collage').onclick = () => {
+      downloadCollage(canvas, profile.name);
+    };
+
+    // Close handlers (reusable)
+    const closeModal = () => modal.classList.add('hidden');
+    document.querySelector('#collage-preview-modal .modal-close').onclick = closeModal;
+    document.querySelector('#collage-preview-modal .modal-backdrop').onclick = closeModal;
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && closeModal());
+  };
+
+  // Initialize listeners
+  setupListeners();
+}
+
 
 //====================================================
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
