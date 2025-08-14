@@ -368,51 +368,48 @@ function toggleCelebrateButton(dateInput) {
 // 🎨 previewTheme() - Unified Live Theme Preview
 // ==============================
 function previewTheme(selectedTheme) {
-  // 0. Ensure we have a valid theme fallback
-  if (!THEMES[selectedTheme]) selectedTheme = DEFAULT_THEME;
+    console.log("previewTheme called with:", selectedTheme);
 
-  // 1. Visual selection for radio buttons
-  document.querySelectorAll('.theme-preview').forEach(el => {
-    el.classList.toggle('selected-theme', el.classList.contains(`${selectedTheme}-mini`));
-  });
+    if (!THEMES[selectedTheme]) selectedTheme = DEFAULT_THEME;
 
-  // 2. Live preview container (create form)
-  const previewContainer = document.getElementById('birthday-card-preview');
-  if (previewContainer) {
-    // Remove any placeholder content
-    const placeholder = previewContainer.querySelector('.preview-placeholder');
-    if (placeholder) placeholder.remove();
+    // Update radio button visuals
+    document.querySelectorAll('.theme-preview').forEach(el => {
+        el.classList.toggle('selected-theme', el.classList.contains(`${selectedTheme}-mini`));
+    });
 
-    // Apply theme class
+    // Live preview container
+    const previewContainer = document.getElementById('birthday-card-preview');
+    if (!previewContainer) {
+        console.warn("Preview container not found!");
+        return;
+    }
+
+    previewContainer.classList.remove('hidden');
     previewContainer.className = previewContainer.className.replace(/\btheme-\w+/g, '');
-    previewContainer.classList.add(`theme-${selectedTheme}`);
-    previewContainer.classList.add('visible'); // make sure it's visible
+    previewContainer.classList.add(`theme-${selectedTheme}`, 'visible');
 
-    // Apply theme-specific styles to headers
+    // Apply header styles
     const headers = previewContainer.querySelectorAll('.petCard-header, h3');
     headers.forEach(el => {
-      el.style.color = THEMES[selectedTheme].textColor;
-      el.style.borderBottom = THEMES[selectedTheme].border;
-    });
-  }
-
-  // 3. Live preview for edit form cards
-  if (isEditing) {
-    const editCard = document.querySelector(`.petCard[data-index="${currentEditIndex}"]`);
-    if (editCard) {
-      // Apply theme class
-      editCard.className = editCard.className.replace(/\btheme-\w+/g, '');
-      editCard.classList.add(`theme-${selectedTheme}`);
-
-      // Apply theme-specific styles to headers
-      const headers = editCard.querySelectorAll('.petCard-header, h3');
-      headers.forEach(el => {
         el.style.color = THEMES[selectedTheme].textColor;
         el.style.borderBottom = THEMES[selectedTheme].border;
-      });
+    });
+
+    // Edit form live preview
+    if (isEditing) {
+        const editCard = document.querySelector(`.petCard[data-index="${currentEditIndex}"]`);
+        if (editCard) {
+            editCard.className = editCard.className.replace(/\btheme-\w+/g, '');
+            editCard.classList.add(`theme-${selectedTheme}`);
+            const headers = editCard.querySelectorAll('.petCard-header, h3');
+            headers.forEach(el => {
+                el.style.color = THEMES[selectedTheme].textColor;
+                el.style.borderBottom = THEMES[selectedTheme].border;
+            });
+        }
     }
-  }
 }
+
 
 
 
