@@ -458,8 +458,21 @@ DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 petProfiles[currentEditIndex].gallery = [...(profile.gallery || [])];
 
 // ✅ Render using the same function as openCreateForm
-updateGalleryPreviews(); // This will handle cover-btn highlights automatically
+// 1️⃣ ALWAYS call after resetting fields
+updateGalleryPreviews(); // Refresh gallery with existing images
 
+// 2️⃣ Theme preview setup
+const selectedTheme = profile.theme || 'balloons'; // fallback to balloons
+const matchingRadio = document.querySelector(`input[name="theme"][value="${selectedTheme}"]`);
+if (matchingRadio) matchingRadio.checked = true;
+
+// 3️⃣ Live preview container
+const previewContainer = document.getElementById('birthday-card-preview');
+if (previewContainer) {
+  previewContainer.classList.remove('hidden'); // make visible
+  previewContainer.classList.add('visible');
+  previewTheme(selectedTheme); // inject the live theme preview
+}
      
     // ======================
     // 4. MOOD HISTORY UI
@@ -489,25 +502,8 @@ updateGalleryPreviews(); // This will handle cover-btn highlights automatically
       const submitBtn = DOM.profileForm.querySelector('button[type="submit"]');
       if (submitBtn) submitBtn.after(cancelBtn);
     }
- // ALWAYS CALL AFTER RESET
-// 🎯 INSERT HERE ▼ (after fields, before UI updates)
-updateGalleryPreviews(); // Refresh gallery with existing images
 
-// === Theme preview setup after calling updateGalleryPreviews ===
-const chosenTheme = profile.theme || 'balloons';
-
-// Set correct radio button
-const matchingRadio = document.querySelector(`input[name="theme"][value="${chosenTheme}"]`);
-if (matchingRadio) matchingRadio.checked = true;
-
-// Make preview visible + show correct theme
-const previewContainer = document.getElementById('birthday-card-preview');
-if (previewContainer) {
-  previewContainer.classList.add('visible');
-  previewTheme(chosenTheme);
-}
-
-    
+ // to check if updategallerypreview function was called here in that area 
     // ======================
     // 6. UI STATE UPDATES & LOADER HANDLING
     // ======================
