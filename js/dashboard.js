@@ -1,10 +1,89 @@
-// image preview in new creation and open edit form to be fixed
-// QR code to be finalized. OTHER ADDED FIELDS TO BE IMPLEMENTED IN THE REST OF THE FUNCTIONS
-
-//🌟 Global declarations 🌟
-let currentQRProfile = null; // Only new declaration needed
-let generatingQR = false; // <== global scope
+// 🌟 Global declarations 🌟
+let currentQRProfile = null;
+let generatingQR = false;
+let sessionExpiryTimer = null; // Add this for session timeout tracking
+const SESSION_EXPIRY_MINUTES = 30; // Session expires after 30 minutes of inactivity
 setupPetProfileDelegation();
+
+// ===== SESSION RECOVERY WITH EXPIRY =====
+function initSessionRecovery() {
+  // Check for existing session
+  const sessionData = JSON.parse(sessionStorage.getItem('petStudioSession'));
+  
+  if (sessionData) {
+    // Check if session is expired
+    const now = new Date();
+    const expiry = new Date(sessionData.expiry);
+    
+    if (now < expiry) {
+      // Session is valid - restore state
+      isEditing = sessionData.isEditing;
+      currentEditIndex = sessionData.currentEditIndex;
+      uploadedImageUrls = sessionData.uploadedImageUrls || [];
+      
+      // Reset expiry timer
+      resetSessionTimer();
+      
+      // If we were editing, reopen the form
+      if (isEditing) {
+        setTimeout(() => {
+          openEditForm(currentEditIndex);
+        }, 500); // Small delay to allow DOM to initialize
+      }
+      
+      console.log("Session restored successfully");
+    } else {
+      // Session expired - clear it
+      clearSession();
+      console.log("Expired session cleared");
+    }
+  }
+}
+
+function saveSession() {
+  const now = new Date();
+  const expiry = new Date(now.getTime() + SESSION_EXPIRY_MINUTES * 60000);
+  
+  const sessionData = {
+    isEditing,
+    currentEditIndex,
+    uploadedImageUrls,
+    expiry: expiry.toISOString()
+  };
+  
+  sessionStorage.setItem('petStudioSession', JSON.stringify(sessionData));
+  resetSessionTimer();
+  console.log("Session saved");
+}
+
+function clearSession() {
+  sessionStorage.removeItem('petStudioSession');
+  if (sessionExpiryTimer) {
+    clearTimeout(sessionExpiryTimer);
+    sessionExpiryTimer = null;
+  }
+  console.log("Session cleared");
+}
+
+function resetSessionTimer() {
+  if (sessionExpiryTimer) {
+    clearTimeout(sessionExpiryTimer);
+  }
+  
+  sessionExpiryTimer = setTimeout(() => {
+    clearSession();
+    if (isEditing) {
+      // If session expires while editing, cancel the edit
+      cancelEdit();
+      Utils.showErrorToUser("Your session has expired. Please start again.");
+    }
+  }, SESSION_EXPIRY_MINUTES * 60000);
+}
+
+// Add activity listeners to reset timer on user interaction
+['click', 'keydown', 'mousemove', 'scroll'].forEach(event => {
+  document.addEventListener(event, resetSessionTimer, { passive: true });
+});
 
 
 // 🌍 Load from localStorage only on initial boot
@@ -2559,4 +2638,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initDashboardDOM(); // 🧠 Make sure DOM references are set
   initializeDashboard(); // ✅ Use the correct one
   setupCollageModalListeners(); // added recently
+  initSessionRecovery(); // Initialize session recovery when DOM is ready
 });
+
