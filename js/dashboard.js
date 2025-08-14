@@ -1265,55 +1265,108 @@ card.innerHTML = `
       useCORS: true, // Add this
       async: true // Add this so canvas await for image to load
     });
+       // 5. ADD NEW PREVIEW MODAL LOGIC]
+    showBirthdayCardModal(canvas, profile); // New function call
 
-   // 4. Share or download
-await new Promise((resolve, reject) => {
-  canvas.toBlob(async (blob) => {
-    try {
-      const file = new File([blob], `${profile.name}_birthday.png`, {
-        type: 'image/png'
-      });
-      blobUrl = URL.createObjectURL(blob);
-
-      if (navigator.share?.canShare({ files: [file] })) {
-        await navigator.share({
-          title: `${profile.name}'s Birthday Card`,
-          files: [file]
-        });
-      } else {
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = `${profile.name}_birthday.png`;
-        link.click();
-      }
-
-      resolve(); // ✅ Resolve success
-
-    } catch (error) {
-      console.error("Sharing failed:", error);
-
-      if (blobUrl) {
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = `${profile.name}_birthday.png`;
-        link.click();
-      }
-
-      reject(error); // ❌ Important: reject so outer catch runs if needed
-
-    } finally {
-      // ✅ Always clean up card and blobUrl once done
-      document.body.removeChild(card);
-      if (blobUrl) {
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-      }
-    }
-  });
-});
+    // 6. CLEANUP]
+    document.body.removeChild(card);
+    
   } catch (error) {
     console.error("Generation failed:", error);
-    throw error; // Re-throw if you want calling code to handle it
+    Utils.showErrorToUser("Couldn't generate card. Please try again.");
   }
+ } //TRY
+} // FUNCTION
+//===============================
+//  🎂 Updated Generate Birthday Card
+//===============================
+async function generateBirthdayCard(index) {
+  try {
+    // [1. KEEP EXISTING CODE UNTIL CANVAS GENERATION]
+    // ... (all your current code until html2canvas part stays the same) ...
+    const canvas = await html2canvas(card, {
+      scale: 2,
+      backgroundColor: '#fff8e6',
+      useCORS: true,
+      async: true
+    });
+
+    // [2. REMOVE THE ENTIRE SHARE/DOWNLOAD PROMISE BLOCK]
+    // ❌ DELETE from "await new Promise..." to the closing brace before "} catch..."
+
+    // [3. ADD NEW PREVIEW MODAL LOGIC]
+    showBirthdayCardModal(canvas, profile); // New function call
+
+    // [4. CLEANUP]
+    document.body.removeChild(card);
+    
+  } catch (error) {
+    console.error("Generation failed:", error);
+    Utils.showErrorToUser("Couldn't generate card. Please try again.");
+  }
+}
+//================================================================================================
+// [ADD NEW FUNCTION FOR SHARING&DOWNLOADING BIRTHDAYCARD (place near your collage modal code)]
+//================================================================================================
+function showBirthdayCardModal(canvas, profile) {
+  // Create modal if it doesn't exist
+  if (!document.getElementById('birthday-card-modal')) {
+    const modalHTML = `
+      <div id="birthday-card-modal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close-modal">&times;</span>
+          <h3>${profile.name}'s Birthday Card!</h3>
+          <div class="card-preview-container">
+            <img id="birthday-card-preview-img" src="${canvas.toDataURL()}" alt="Birthday Card">
+          </div>
+          <div class="modal-actions">
+            <button id="share-birthday-btn" class="button share-btn">
+              <i class="fas fa-share-alt"></i> Share
+            </button>
+            <button id="download-birthday-btn" class="button download-btn">
+              <i class="fas fa-download"></i> Download
+            </button>
+          </div>
+        </div>
+      </div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  }
+
+  // Show modal
+  const modal = document.getElementById('birthday-card-modal');
+  modal.classList.remove('hidden');
+
+  // Add event listeners
+  document.getElementById('share-birthday-btn').onclick = () => {
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], `${profile.name}_birthday.png`);
+      try {
+        await navigator.share({
+          title: `${profile.name}'s Birthday`,
+          files: [file]
+        });
+      } catch {
+        // Fallback to download if sharing fails
+        downloadCard(canvas, profile.name);
+      }
+    });
+  };
+
+  document.getElementById('download-birthday-btn').onclick = () => {
+    downloadCard(canvas, profile.name);
+  };
+
+  document.querySelector('#birthday-card-modal .close-modal').onclick = () => {
+    modal.classList.add('hidden');
+  };
+}
+
+//6. ADD HELPER FUNCTION
+function downloadCard(canvas, petName) {
+  const link = document.createElement('a');
+  link.download = `${petName}_birthday.png`;
+  link.href = canvas.toDataURL();
+  link.click();
 }
 
 
@@ -2147,6 +2200,16 @@ if (galleryInput) {
     });
   });
  }
+  
+// Add this:
+setInterval(() => {
+  const now = new Date();
+  console.log("Midnight check at:", now.toLocaleTimeString()); // Debug line
+  if (now.getHours() === 0 && now.getMinutes() === 0) {
+    console.log("Triggering midnight refresh..."); 
+    loadSavedProfiles();
+  }
+}, 60000);
 } // closes the initializedashboard ()
 
  // ==================================================
