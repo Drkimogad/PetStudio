@@ -1240,7 +1240,7 @@ async function generateBirthdayCard(index) {
     document.body.appendChild(card);
 
     // 3. Create a birthday-themed card container
-   const profile = window.petProfiles[index];
+ //  const profile = window.petProfiles[index];
    const themeKey = profile.theme || 'balloons'; // e.g., 'balloons', 'stars'
    const themeConfig = THEMES[themeKey] || THEMES['balloons'];
 
