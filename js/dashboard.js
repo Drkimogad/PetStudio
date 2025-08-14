@@ -1717,79 +1717,71 @@ showCollagePreview(canvas, profile);
   }
  }
 
-//=======================================
-//  show collage preview function
-//=========================================
+//==========================
+// SHOWCOLLAGEPREVIEW ()
+//==========================
 function showCollagePreview(canvas, profile) {
-  // 1. Modal creation/update
-  let modal = document.getElementById('collage-preview-modal');
-  if (!modal) {
-    document.body.insertAdjacentHTML('beforeend', `
-      <div id="collage-preview-modal" class="modal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3>${profile.name}'s Collage</h3>
-            <span class="modal-close">&times;</span>
-          </div>
-          <div class="collage-preview-container">
-            <img id="collage-preview-image">
-          </div>
-          <div class="modal-actions">
-            <button id="share-collage" class="btn-share">
-              <i class="fas fa-share-alt"></i> Share
-            </button>
-            <button id="download-collage" class="btn-download">
-              <i class="fas fa-download"></i> Download
-            </button>
-          </div>
+  // Remove any existing preview modal to avoid duplicates/leaks
+  const existingModal = document.getElementById('collage-preview-modal');
+  if (existingModal) existingModal.remove();
+
+  // Create modal
+  document.body.insertAdjacentHTML('beforeend', `
+    <div id="collage-preview-modal" class="modal" style="pointer-events:auto;">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>${profile.name}'s Collage</h3>
+          <span class="modal-close" role="button" tabindex="0">&times;</span>
+        </div>
+        <div class="collage-preview-container">
+          <img id="collage-preview-image" alt="Collage Preview">
+        </div>
+        <div class="modal-actions">
+          <button id="share-collage" class="btn-share">
+            <i class="fas fa-share-alt"></i> Share
+          </button>
+          <button id="download-collage" class="btn-download">
+            <i class="fas fa-download"></i> Download
+          </button>
         </div>
       </div>
-    `);
-    modal = document.getElementById('collage-preview-modal');
-  }
+    </div>
+  `);
 
-  // 2. Update image
+  const modal = document.getElementById('collage-preview-modal');
   const img = modal.querySelector('#collage-preview-image');
   img.src = canvas.toDataURL();
 
-  // 3. Modal control
+  // === Helper to close and cleanup ===
   const closeModal = () => {
-    modal.classList.add('hidden');
-    setTimeout(() => {
-      modal.remove();
-      URL.revokeObjectURL(img.src);
-    }, 300); // Match CSS transition
+    // Immediate removal (no leftover backdrop)
+    modal.remove();
+    URL.revokeObjectURL(img.src);
+    removeListeners();
   };
 
-  // 4. Event listeners
+  // === Listener cleanup ===
   const removeListeners = () => {
     modal.querySelector('.modal-close').onclick = null;
     modal.querySelector('.modal-backdrop').onclick = null;
     document.removeEventListener('keydown', handleKeyDown);
   };
 
-  const handleKeyDown = (e) => e.key === 'Escape' && closeModal();
-
-  modal.querySelector('.modal-close').onclick = () => {
-    closeModal();
-    removeListeners();
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') closeModal();
   };
 
-  modal.querySelector('.modal-backdrop').onclick = () => {
-    closeModal();
-    removeListeners();
-  };
-
+  // === Bind listeners ===
+  modal.querySelector('.modal-close').onclick = closeModal;
+  modal.querySelector('.modal-backdrop').onclick = closeModal;
   document.addEventListener('keydown', handleKeyDown);
 
-  // 5. Button handlers
-  document.getElementById('share-collage').onclick = async () => {
+  // === Button: Share ===
+  modal.querySelector('#share-collage').onclick = async () => {
     try {
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-      const file = new File([blob], `${profile.name}_collage.png`, {
-        type: 'image/png'
-      });
+      const file = new File([blob], `${profile.name}_collage.png`, { type: 'image/png' });
 
       if (navigator.share && navigator.canShare({ files: [file] })) {
         await navigator.share({
@@ -1809,16 +1801,19 @@ function showCollagePreview(canvas, profile) {
     }
   };
 
-  document.getElementById('download-collage').onclick = () => {
+  // === Button: Download ===
+  modal.querySelector('#download-collage').onclick = () => {
     const link = document.createElement('a');
     link.href = canvas.toDataURL();
     link.download = `${profile.name}_collage.png`;
     link.click();
   };
 
-  // Show modal
+  // === Show modal ===
   modal.classList.remove('hidden');
 }
+
+
 
 //====================================================
 // HELPER FUNCTION DOWNLOAD COLLAGE FOR createCollagePreview Modal 
