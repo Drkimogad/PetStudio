@@ -63,14 +63,31 @@ async function uploadToCloudinary(file, userId, petProfileId) {
 // OLD SECTION
 const Utils = {
   // ===============================
-  getCountdown(birthday) {
-    const today = new Date();
-    const nextBirthday = new Date(birthday);
-    nextBirthday.setFullYear(today.getFullYear());
-    if (nextBirthday < today) nextBirthday.setFullYear(today.getFullYear() + 1);
-    const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
-    return `${diffDays} days until birthday! 🎉`;
-  },
+getCountdown(birthday) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize to midnight
+  
+  const nextBirthday = new Date(birthday);
+  nextBirthday.setFullYear(today.getFullYear());
+  nextBirthday.setHours(0, 0, 0, 0);
+  
+  // Handle past birthdays this year
+  if (nextBirthday < today) {
+    nextBirthday.setFullYear(today.getFullYear() + 1);
+  }
+
+  const diffDays = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
+  
+  // New: Special cases
+  switch (diffDays) {
+    case 0:
+      return "TODAY! 🎉🎂"; // Birthday is today
+    case 1:
+      return "Tomorrow! 🎉"; // More exciting for 1 day left
+    default:
+      return `${diffDays} days until birthday! 🎉`;
+  }
+},
 //=============================
   // getmood emojies
 //==============================
