@@ -559,7 +559,8 @@ function openCreateForm() {
   isEditing = false;
   currentEditIndex = null;
   uploadedImageUrls = [];
-
+  
+  // Initialize live preview (if container exists)
   // 2. CLEAR FORM FIELDS
   // ======================
   resetForm(); // Handles all field/gallery clearing
@@ -567,20 +568,20 @@ function openCreateForm() {
 // Add placeholder cover in openCreateForm()
 //When creating, we want a placeholder image until a real one is set
   DOM.profileForm.dataset.coverIndex = 0; // Default cover index for new profiles
+  
   // Add this after resetForm():
   const themeRadios = document.querySelectorAll('input[name="theme"]');
   if (themeRadios.length) themeRadios[0].checked = true; // First radio = balloons
   
   // Initialize live preview (if container exists)
 const previewContainer = document.getElementById('birthday-card-preview');
+// Replace this in `openCreateForm()`:
+const previewContainer = document.getElementById('birthday-card-preview');
 if (previewContainer) {
-  previewContainer.innerHTML = `
-    <div class="petCard-header" style="background:#f0f0f0">
-      <h3>Preview Loading...</h3>
-    </div>
-    <div class="countdown-badge">🎂 Select a cover photo</div>
-  `;
-  previewContainer.classList.add('visible');
+  previewContainer.innerHTML = `<div style="padding:1rem; background:#f0f0f0; border-radius:8px;">
+    <p>Preview will appear here</p>
+  </div>`;
+  previewContainer.classList.add('visible'); // Force visibility
 }
     
   //ALWAYS CALL IT AFTER RESET   
