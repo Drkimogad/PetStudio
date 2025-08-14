@@ -489,9 +489,24 @@ updateGalleryPreviews(); // This will handle cover-btn highlights automatically
       const submitBtn = DOM.profileForm.querySelector('button[type="submit"]');
       if (submitBtn) submitBtn.after(cancelBtn);
     }
-    // ALWAYS CALL AFTER RESET
-   // 🎯 INSERT HERE ▼ (after fields, before UI updates)
-    updateGalleryPreviews(); // Refresh gallery with existing images
+ // ALWAYS CALL AFTER RESET
+// 🎯 INSERT HERE ▼ (after fields, before UI updates)
+updateGalleryPreviews(); // Refresh gallery with existing images
+
+// === Theme preview setup after calling updateGalleryPreviews ===
+const chosenTheme = profile.theme || 'balloons';
+
+// Set correct radio button
+const matchingRadio = document.querySelector(`input[name="theme"][value="${chosenTheme}"]`);
+if (matchingRadio) matchingRadio.checked = true;
+
+// Make preview visible + show correct theme
+const previewContainer = document.getElementById('birthday-card-preview');
+if (previewContainer) {
+  previewContainer.classList.add('visible');
+  previewTheme(chosenTheme);
+}
+
     
     // ======================
     // 6. UI STATE UPDATES & LOADER HANDLING
@@ -572,6 +587,8 @@ function openCreateForm() {
   // Add this after resetForm():
   const themeRadios = document.querySelectorAll('input[name="theme"]');
   if (themeRadios.length) themeRadios[0].checked = true; // First radio = balloons
+  previewTheme('balloons'); // immediately apply default theme
+
   
   // Initialize live preview (if container exists)
 const previewContainer = document.getElementById('birthday-card-preview');
@@ -1167,20 +1184,23 @@ async function generateBirthdayCard(index) {
     testImg.onerror = () => console.log("❌ Image FAILED to load:", coverUrl);
     
     // 2. Create a birthday-themed card container
-    const card = document.createElement('div');
-    card.className = `birthday-card ${theme}`; // matches css theme class naming
-      // Update card generation to use centralized config:  
-    card.innerHTML = `
-          <div class="birthday-header" style="background:${theme.bgColor}">
-      ${theme.emoji} ${profile.name}'s Birthday! ${theme.emoji}</div>
-      <div class="birthday-countdown">${Utils.getCountdown(profile.nextBirthday)}</div>
-       ${
-       validCover
-        ? `<img src="${coverUrl}" alt="${profile.name}" class="birthday-photo">`
-        : `<div class="birthday-photo-placeholder">No valid cover image</div>`
-       }
-      <div class="birthday-footer">Celebrate on ${new Date(profile.nextBirthday).toLocaleDateString()}</div>
-        `;
+   const themeKey = profile.theme || 'balloons'; // e.g., 'balloons', 'stars'
+const themeConfig = THEMES[themeKey] || THEMES['balloons'];
+
+card.className = `birthday-card theme-${themeKey}`; // matches css theme class naming
+card.innerHTML = `
+  <div class="birthday-header" style="background:${themeConfig.bgColor}">
+    ${themeConfig.emoji} ${profile.name}'s Birthday! ${themeConfig.emoji}
+  </div>
+  <div class="birthday-countdown">${Utils.getCountdown(profile.nextBirthday)}</div>
+  ${
+    validCover
+      ? `<img src="${coverUrl}" alt="${profile.name}" class="birthday-photo">`
+      : `<div class="birthday-photo-placeholder">No valid cover image</div>`
+  }
+  <div class="birthday-footer">Celebrate on ${new Date(profile.nextBirthday).toLocaleDateString()}</div>
+`;
+
 
     // ✅ Append temporarily (hidden)
     card.style.position = "fixed";
