@@ -460,62 +460,63 @@ h1, h2, h3, p {
   padding: 0.5rem;
   background: white;
 }
-/* ===== FORM BUTTON CONTAINER ===== */
+
+
+/* ===== FORM BUTTON CONTAINER (REQUIRED) ===== */
 #profileForm .button-container {
   display: flex;
-  justify-content: space-between;
   gap: 1rem;
   width: 100%;
+  max-width: 800px; /* Match your form width */
   margin: 1.5rem 0;
 }
 
-/* ===== SUBMIT BUTTON (Matches addPetProfileBtn) ===== */
-#profileForm button[type="submit"] {
-  background-color: #808080; /* Charcoal grey */
-  color: white;
+/* ===== BASE BUTTON STYLES (APPLIES TO BOTH) ===== */
+#profileForm button[type="submit"],
+#profileForm .cancel-btn.pill {
+  flex: 1; /* Equal width */
+  max-width: 300px; /* Same as addPetProfileBtn */
   padding: 10px 20px;
-  border: 1px solid #c9ba2c; /* Mustard border */
-  border-radius: 10px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s;
-  flex: 1;
-  max-width: 300px;
-  margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px; /* Space between icon and text */
+  gap: 8px; /* Space between icon/text */
+  transition: all 0.3s;
 }
 
+/* ===== SAVE BUTTON (CHARCOAL + MUSTARD BORDER) ===== */
+#profileForm button[type="submit"] {
+  background-color: #808080;
+  color: white;
+  border: 1px solid #c9ba2c;
+  border-radius: 10px;
+}
 #profileForm button[type="submit"]:hover {
   background-color: #6a6a6a;
 }
 
-/* ===== CANCEL BUTTON (Keeps your pill style + FA icon) ===== */
+/* ===== CANCEL BUTTON (RED PILL) ===== */
 #profileForm .cancel-btn.pill {
-  background-color: #e74c3c; /* Red */
+  background-color: #e74c3c;
   color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 9999px; /* Fully rounded (pill) */
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s;
-  flex: 1;
-  max-width: 300px;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px; /* Space between icon and text */
+  border-radius: 9999px; /* Full pill */
 }
-
 #profileForm .cancel-btn.pill:hover {
   background-color: #c0392b;
-  transform: translateY(-1px);
 }
 
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 600px) {
+  #profileForm .button-container {
+    flex-direction: column;
+  }
+  #profileForm button[type="submit"],
+  #profileForm .cancel-btn.pill {
+    max-width: 100%; /* Full width on mobile */
+  }
+}
 
 /*sorted out*/
 /* ====================
