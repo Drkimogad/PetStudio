@@ -1720,7 +1720,7 @@ showCollagePreview(canvas, profile);
 //=======================================
 //  show collage preview function
 //=========================================
-function createCollagePreview(canvas, profile) {
+function showCollagePreview(canvas, profile) {
   // A. Create modal if it doesn't exist
   if (!document.getElementById('collage-preview-modal')) {
     const modalHTML = `
