@@ -476,29 +476,31 @@ tagCheckboxes.forEach(checkbox => {
 // 3. GALLERY PREVIEW SETUP (UPDATED TO USE updateGalleryPreviews now)
 // ======================
     // after resetForm before poppulating fields.
-  // Copy gallery to memory
+  // 1.Copy gallery to memory
   petProfiles[currentEditIndex].gallery = [...(profile.gallery || [])];
 
-  // Set current cover index in form dataset
+  // 2.Set current cover index in form dataset
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
-  // 1. Update gallery preview
-  updateGalleryPreviews();
+  //3.Update gallery preview
+updateGalleryPreviews(); // refresh gallery,– populates thumbnails with remove and cover buttons.
+  //highlights the chosen theme and applies it to the live card preview.   
+const matchingRadio = document.querySelector(`input[name="theme"][value="${profile.theme}"]`);
+if (matchingRadio) matchingRadio.checked = true;
+previewTheme(profile.theme || DEFAULT_THEME); 
 
-  // 2. Set radio buttons & preview selected theme
-  if (profile.theme) {
-    const matchingRadio = document.querySelector(`input[name="theme"][value="${profile.theme}"]`);
-    if (matchingRadio) matchingRadio.checked = true;
-    previewTheme(profile.theme);
-  } else {
-    previewTheme(DEFAULT_THEME);
-  }
+// 5.Add live change listener to radios
+  document.querySelectorAll('input[name="theme"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    if (e.target.checked) previewTheme(e.target.value);
+  });
+});
 
-  // 3. Force live preview container visible
+// 6. Make live preview container visible
   const previewContainer = document.getElementById('birthday-card-preview');
   if (previewContainer) previewContainer.classList.add('visible');
 
-  // 4. Initialize gallery interactions
+  // 7. Initialize gallery interactions
   initGalleryInteractions();
 
      
@@ -530,8 +532,10 @@ tagCheckboxes.forEach(checkbox => {
       const submitBtn = DOM.profileForm.querySelector('button[type="submit"]');
       if (submitBtn) submitBtn.after(cancelBtn);
     }
+       // 🎯 INSERT HERE ▼ (after fields, before UI updates)
+    updateGalleryPreviews(); // Refresh gallery with existing images
+    
 
- // to check if updategallerypreview function was called here in that area 
     // ======================
     // 6. UI STATE UPDATES & LOADER HANDLING
     // ======================
@@ -622,7 +626,17 @@ function openCreateForm() {
   // 4. Preview default theme
   previewTheme(themeRadios[0]?.value || DEFAULT_THEME);
 
-  // 5. Initialize gallery interactions
+  // 5. 🎯 Live theme preview on radio change
+ // after reset,updategallerypreview and before initgalleryinteractions called
+document.querySelectorAll('input[name="theme"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    if (e.target.checked) {
+      previewTheme(e.target.value);
+    }
+  });
+});
+
+  // 6. Initialize gallery interactions
   initGalleryInteractions();
 }
 
