@@ -1855,3 +1855,55 @@ body {
 .hidden {
   display: none !important;
 }
+/* ===== OPTION 1: FULL-BLEED HERO ===== */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.2), 
+    url('../banner/image.jpg') center/cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#authContainer {
+  background: rgba(255, 255, 255, 0.95);
+  width: 90%;
+  max-width: 400px;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.auth-header {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+}
+
+.auth-header h1 {
+  color: #808080;
+  font-size: 3rem;
+  margin: 0.3rem 0;
+}
+
+.auth-header h2 {
+  color: #d4a017;
+  font-size: 1.5rem;
+}
+
+.google-btn {
+  background: white;
+  border: 1px solid #ddd;
+  color: #444;
+  max-width: 100%;
+  margin: 15px auto;
+}
+
+/* Keep existing hidden/visible classes intact */
+.hidden {
+  display: none !important;
+}
