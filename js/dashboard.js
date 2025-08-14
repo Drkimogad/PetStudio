@@ -1535,16 +1535,37 @@ document.addEventListener('click', function(e) {
   }
 });
 
-//====================================================
-// FUNCTION DOWNLOAD COLLAGE FOR COLLAGE PREVIEW MODAL
-//=====================================================
-function downloadCollage(canvas, petName) {
-  const link = document.createElement('a');
-  link.download = `${petName.replace(/[^a-z0-9]/gi, '_')}_collage.png`;
-  link.href = canvas.toDataURL();
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(link.href), 100);
-}
+// ========================
+// create Collage Preview Modal
+// ========================
+function createCollagePreview(canvas, profile) {
+  // A. Create modal if it doesn't exist
+  if (!document.getElementById('collage-preview-modal')) {
+    const modalHTML = `
+    <div id="collage-preview-modal" class="modal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>${profile.name}'s Collage</h3>
+          <span class="modal-close">&times;</span>
+        </div>
+        <div class="collage-preview-container">
+          <img id="collage-preview-image" src="${canvas.toDataURL()}">
+        </div>
+        <div class="modal-actions">
+          <button id="share-collage" class="btn-share">
+            <i class="fas fa-share-alt"></i> Share
+          </button>
+          <button id="download-collage" class="btn-download">
+            <i class="fas fa-download"></i> Download
+          </button>
+        </div>
+      </div>
+    </div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  } // closes if
+  } // closes FUNCTION
+
 
 //==================================
 //  THEN GENERATE COLLAGE PNG
@@ -1709,8 +1730,8 @@ collage.style.cssText = `
       );
     });
     
-// this is where 6.5 - Updated Collage Preview Modal was
-  showCollagePreview(canvas, profile);  
+// Inside generateCollagePNG(), after canvas generation:
+showCollagePreview(canvas, profile);
     
   } catch (error) {
     console.error('Collage generation error:', error);
@@ -1726,83 +1747,73 @@ collage.style.cssText = `
     selectedImages = [];
   }
  }
-
-// ========================
-// Collage Preview Modal
-// ========================
+//=============showcollage preview========
+//====create collage preview above gennerate collage PNG ()
 function showCollagePreview(canvas, profile) {
-  // A. Create modal if it doesn't exist
-  if (!document.getElementById('collage-preview-modal')) {
-    const modalHTML = `
-    <div id="collage-preview-modal" class="modal">
-      <div class="modal-backdrop"></div>
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>${profile.name}'s Collage</h3>
-          <span class="modal-close">&times;</span>
-        </div>
-        <div class="collage-preview-container">
-          <img id="collage-preview-image" src="${canvas.toDataURL()}">
-        </div>
-        <div class="modal-actions">
-          <button id="share-collage" class="btn-share">
-            <i class="fas fa-share-alt"></i> Share
-          </button>
-          <button id="download-collage" class="btn-download">
-            <i class="fas fa-download"></i> Download
-          </button>
-        </div>
-      </div>
-    </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-  } // closes if
+  // Call create modal if it doesn't exist
+  createCollagePreviewModal();
 
-  // B. Show modal
   const modal = document.getElementById('collage-preview-modal');
+  const previewContainer = modal.querySelector('.collage-preview-container');
+
+  // Clear previous content and add new canvas
+  previewContainer.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = canvas.toDataURL();
+  previewContainer.appendChild(img);
+  
+  // Show modal
   modal.classList.remove('hidden');
 
-  // C. Event listeners (safely scoped)
-  const setupListeners = () => {
-    // Share
-   document.getElementById('share-collage').onclick = async () => {
-  try {
-    const blob = await new Promise(resolve => canvas.toBlob(resolve));
-    const file = new File([blob], `${profile.name}_collage.png`);
-    
-    if (navigator.share) {
-      await navigator.share({
-        title: `${profile.name}'s Collage`,
-        files: [file],
-        text: `Created with PetStudio`
-      }).catch(() => downloadCollage(canvas, profile.name));
-    } else {
-      downloadCollage(canvas, profile.name); // Fallback
-    }
-  } catch (error) {
-    console.error("Sharing failed:", error);
-    downloadCollage(canvas, profile.name);
-  }
- };
-}
-
-     // Download Button
-    document.getElementById('download-collage').onclick = () => {
-      downloadCollage(canvas, profile.name);
-    };
-    
-    // Close handlers (reusable)
-    const closeModal = () => {
-    document.getElementById('collage-preview-modal').classList.add('hidden');
-
-    document.querySelector('#collage-preview-modal .modal-close').onclick = closeModal;
-    document.querySelector('#collage-preview-modal .modal-backdrop').onclick = closeModal;
-    document.addEventListener('keydown', (e) => e.key === 'Escape' && closeModal());
+  // Setup event listeners
+  const closeModal = () => {
+    modal.classList.add('hidden');
+    previewContainer.innerHTML = ''; // Cleanup
   };
 
-  // Initialize listeners
-  setupListeners();
-} // <-- THIS closes showCollagePreview()
+  // Close handlers
+  modal.querySelector('.modal-close').onclick = closeModal;
+  modal.querySelector('.modal-backdrop').onclick = closeModal;
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
 
+  // Share button
+  document.getElementById('share-collage').onclick = async () => {
+    try {
+      const blob = await new Promise(resolve => canvas.toBlob(resolve));
+      const file = new File([blob], `${profile.name}_collage.png`);
+      
+      if (navigator.share && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: `${profile.name}'s Collage`,
+          files: [file]
+        });
+      } else {
+        downloadCollage(canvas, profile.name);
+      }
+    } catch (error) {
+      console.error('Sharing failed:', error);
+      downloadCollage(canvas, profile.name);
+    }
+  };
+
+  // Download button
+  document.getElementById('download-collage').onclick = () => {
+    downloadCollage(canvas, profile.name);
+  };
+}
+
+//====================================================
+// HELPER FUNCTION DOWNLOAD COLLAGE FOR createCollagePreview Modal 
+//=====================================================
+function downloadCollage(canvas, petName) {
+  const link = document.createElement('a');
+  link.download = `${petName.replace(/[^a-z0-9]/gi, '_')}_collage.png`;
+  link.href = canvas.toDataURL();
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 100);
+}
 
 //====================================================
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
