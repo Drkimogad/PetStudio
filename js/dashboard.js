@@ -363,32 +363,57 @@ function toggleCelebrateButton(dateInput) {
   }
 }
 
-//=============================
-// new function  apply theme preview 
-//=============================
-function previewTheme(selectedTheme) {
-  // 1. Update radio buttons
-  // FIXED (Working)
-  document.querySelectorAll('.theme-preview').forEach(el => {
-  el.classList.toggle('selected-theme', el.classList.contains(`${selectedTheme}-mini`));
- });
 
-  // 2. Update live preview if available
-  const previewCard = document.getElementById('birthday-card-preview') || 
-                     (isEditing && document.querySelector(`.petCard[data-index="${currentEditIndex}"]`));
-  
-  if (previewCard) {
-    previewCard.className = previewCard.className.replace(/\btheme-\w+/g, '');
-    previewCard.classList.add(`theme-${selectedTheme}`);
-    
-    // Optional: Update other theme-specific elements
-    const headers = previewCard.querySelectorAll('.petCard-header, h3');
+// ==============================
+// 🎨 previewTheme() - Unified Live Theme Preview
+// ==============================
+function previewTheme(selectedTheme) {
+  // 0. Ensure we have a valid theme fallback
+  if (!THEMES[selectedTheme]) selectedTheme = DEFAULT_THEME;
+
+  // 1. Visual selection for radio buttons
+  document.querySelectorAll('.theme-preview').forEach(el => {
+    el.classList.toggle('selected-theme', el.classList.contains(`${selectedTheme}-mini`));
+  });
+
+  // 2. Live preview container (create form)
+  const previewContainer = document.getElementById('birthday-card-preview');
+  if (previewContainer) {
+    // Remove any placeholder content
+    const placeholder = previewContainer.querySelector('.preview-placeholder');
+    if (placeholder) placeholder.remove();
+
+    // Apply theme class
+    previewContainer.className = previewContainer.className.replace(/\btheme-\w+/g, '');
+    previewContainer.classList.add(`theme-${selectedTheme}`);
+    previewContainer.classList.add('visible'); // make sure it's visible
+
+    // Apply theme-specific styles to headers
+    const headers = previewContainer.querySelectorAll('.petCard-header, h3');
     headers.forEach(el => {
       el.style.color = THEMES[selectedTheme].textColor;
       el.style.borderBottom = THEMES[selectedTheme].border;
     });
   }
+
+  // 3. Live preview for edit form cards
+  if (isEditing) {
+    const editCard = document.querySelector(`.petCard[data-index="${currentEditIndex}"]`);
+    if (editCard) {
+      // Apply theme class
+      editCard.className = editCard.className.replace(/\btheme-\w+/g, '');
+      editCard.classList.add(`theme-${selectedTheme}`);
+
+      // Apply theme-specific styles to headers
+      const headers = editCard.querySelectorAll('.petCard-header, h3');
+      headers.forEach(el => {
+        el.style.color = THEMES[selectedTheme].textColor;
+        el.style.borderBottom = THEMES[selectedTheme].border;
+      });
+    }
+  }
 }
+
 
 
 // 🌀🌀🌀 CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
