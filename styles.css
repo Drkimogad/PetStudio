@@ -1373,7 +1373,7 @@ styled to show in petcard header plus nickname */
   border: 2px solid #eee;
 }
 
-*/ for download and share buttons*/
+/* for download and share buttons*/
 #birthday-card-modal .modal-actions {
   display: flex;
   gap: 10px;
