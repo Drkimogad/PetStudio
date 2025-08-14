@@ -1525,8 +1525,7 @@ if (genBtn) {
  }
 }
   
-// 👇 Add this RIGHT HERE - after helper, before other functions
-// Handle layout button handler
+//👇 Handle layout button handler
 document.addEventListener('click', function(e) {
   if (e.target.matches('.layout-options button')) {
     console.log("--- Layout button clicked ---"); // TRACE 4
@@ -1756,7 +1755,7 @@ function showCollagePreview(canvas, profile) {
       </div>
     </div>`;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-  }
+  } // closes if
 
   // B. Show modal
   const modal = document.getElementById('collage-preview-modal');
@@ -1785,6 +1784,11 @@ function showCollagePreview(canvas, profile) {
   }
 };
 
+     // Download Button
+    document.getElementById('download-collage').onclick = () => {
+      downloadCollage(canvas, profile.name);
+    };
+    
     // Close handlers (reusable)
     const closeModal = () => {
     document.getElementById('collage-preview-modal').classList.add('hidden');
@@ -1796,7 +1800,7 @@ function showCollagePreview(canvas, profile) {
 
   // Initialize listeners
   setupListeners();
-}
+} // <-- THIS closes showCollagePreview()
 
 
 //====================================================
