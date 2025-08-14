@@ -368,46 +368,53 @@ function toggleCelebrateButton(dateInput) {
 // 🎨 previewTheme() - Unified Live Theme Preview
 // ==============================
 function previewTheme(selectedTheme) {
-    console.log("previewTheme called with:", selectedTheme);
+  const preview = document.getElementById('birthday-card-preview');
+  if (!preview) return;
 
-    if (!THEMES[selectedTheme]) selectedTheme = DEFAULT_THEME;
+  const theme = THEMES[selectedTheme] || THEMES[DEFAULT_THEME];
+  
+  // Build preview using live form data or fallbacks
+  let name, coverPhoto, ageText;
+  
+  if (isEditing && currentEditIndex !== null) {
+    // EDIT MODE: Use actual profile data
+    const profile = petProfiles[currentEditIndex];
+    name = document.getElementById('petName').value || profile.name || "Unnamed Pet";
+    
+    const coverImg = profile.gallery?.[profile.coverPhotoIndex];
+    coverPhoto = typeof coverImg === 'string' ? coverImg : coverImg?.url;
+    
+    ageText = profile.dob ? `Age: ${Utils.calculateAge(profile.dob)}` : "";
+  } else {
+    // CREATE MODE: Use form inputs or fallbacks
+    name = document.getElementById('petName')?.value || "Your Pet's Name";
+    coverPhoto = null; // Will trigger fallback
+    ageText = "";
+  }
 
-    // Update radio button visuals
-    document.querySelectorAll('.theme-preview').forEach(el => {
-        el.classList.toggle('selected-theme', el.classList.contains(`${selectedTheme}-mini`));
-    });
+  // Apply theme styles
+  preview.className = `petCard theme-${selectedTheme}`;
+  preview.style.backgroundColor = theme.bgColor;
+  preview.style.border = theme.border;
 
-    // Live preview container
-    const previewContainer = document.getElementById('birthday-card-preview');
-    if (!previewContainer) {
-        console.warn("Preview container not found!");
-        return;
-    }
+  // Build HTML (with fallback for missing cover photo)
+  preview.innerHTML = `
+    <div class="petCard-header" style="
+      ${coverPhoto ? `background-image: url('${coverPhoto}')` : ''};
+      color: ${theme.textColor};
+      border-bottom: ${theme.border};
+    ">
+      <h3>${name}</h3>
+      ${!coverPhoto ? `<div class="theme-emoji">${theme.emoji}</div>` : ''}
+    </div>
+    <div class="preview-content" style="color: ${theme.textColor}">
+      ${ageText ? `<p>${ageText}</p>` : ''}
+      <p>Theme: <strong>${selectedTheme}</strong></p>
+    </div>
+  `;
 
-    previewContainer.classList.remove('hidden');
-    previewContainer.className = previewContainer.className.replace(/\btheme-\w+/g, '');
-    previewContainer.classList.add(`theme-${selectedTheme}`, 'visible');
-
-    // Apply header styles
-    const headers = previewContainer.querySelectorAll('.petCard-header, h3');
-    headers.forEach(el => {
-        el.style.color = THEMES[selectedTheme].textColor;
-        el.style.borderBottom = THEMES[selectedTheme].border;
-    });
-
-    // Edit form live preview
-    if (isEditing) {
-        const editCard = document.querySelector(`.petCard[data-index="${currentEditIndex}"]`);
-        if (editCard) {
-            editCard.className = editCard.className.replace(/\btheme-\w+/g, '');
-            editCard.classList.add(`theme-${selectedTheme}`);
-            const headers = editCard.querySelectorAll('.petCard-header, h3');
-            headers.forEach(el => {
-                el.style.color = THEMES[selectedTheme].textColor;
-                el.style.borderBottom = THEMES[selectedTheme].border;
-            });
-        }
-    }
+  // Always make visible (remove 'hidden' class)
+  preview.classList.remove('hidden');
 }
 
 
@@ -621,9 +628,19 @@ function openCreateForm() {
   // 2. Initialize gallery previews
   updateGalleryPreviews();
 
-  // 3. Initialize live card preview
-  const previewContainer = document.getElementById('birthday-card-preview');
-  if (previewContainer) previewContainer.classList.add('visible');
+  //3. Initialize preview with empty state
+  const preview = document.getElementById('birthday-card-preview');
+  if (preview) {
+    preview.innerHTML = `
+      <div class="petCard-header" style="text-align: center">
+        <h3>New Pet Profile</h3>
+      </div>
+      <div class="preview-content">
+        <p>Add details to see live preview</p>
+      </div>
+    `;
+    preview.classList.remove('hidden');
+  }
 
   // 4. Preview default theme
   previewTheme(themeRadios[0]?.value || DEFAULT_THEME);
