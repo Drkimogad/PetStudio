@@ -1322,9 +1322,36 @@ styled to show in petcard header plus nickname */
   font-weight: 500;
 }
 
+/* BIRTHDAY CARD MODAL ALL styles */
+#birthday-card-modal .modal-content {
+  max-width: 90%;
+  width: 500px;
+}
+
+#birthday-card-modal .card-preview-container {
+  margin: 15px 0;
+  text-align: center;
+}
+
+#birthday-card-modal .card-preview-container img {
+  max-width: 100%;
+  border-radius: 8px;
+  border: 2px solid #eee;
+}
+
+#birthday-card-modal .modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
 
 
+
+
+/*============================================*/
 /* =Theme/Templates-Specific Styles 5= */
+/*===========================================*/
 /* Theme Selection */
 .theme-selection {
   margin: 1.5rem 0;
@@ -1484,6 +1511,12 @@ styled to show in petcard header plus nickname */
   margin: 10px 0;
   opacity: 0.8;
 }
+
+
+
+
+
+
 /* ====================
    DRIVE SYNC STATUS
 ==================== */
