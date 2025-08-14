@@ -1194,33 +1194,76 @@ styled to show in petcard header plus nickname */
   cursor: not-allowed;
 }
 
-/* Collage Preview Styles (Add to your existing modal CSS) */
+/* ====================== */
+/* Collage Preview All Styles */
 /* Hide headers & layout buttons during preview */
+/* NEW PREVIEW MODAL STYLES */
+/* ====================== */
+#collage-preview-modal.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#collage-preview-modal .modal-content {
+  background: white;
+  width: 95%;
+  max-width: 800px;
+  max-height: 90vh;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+#collage-preview-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+#collage-preview-modal .modal-close {
+  font-size: 28px;
+  cursor: pointer;
+}
+
+#collage-preview-modal .collage-preview-container {
+  flex-grow: 1;
+  overflow: auto;
+  margin: 10px 0;
+}
+
+#collage-preview-modal .collage-preview-container img {
+  width: 100%;
+  height: auto;
+  max-height: calc(100% - 100px); /* Reserve space for header/buttons */
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+#collage-preview-modal .modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
 .collage-preview-active h3,
 .collage-preview-active h4,
 .collage-preview-active .layout-options {
   display: none !important;
+  pointer-events: none; /* Prevent interaction with hidden elements */
 }
 
-/* Replace your existing .collage-preview styles with: */
-.collage-preview {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  box-sizing: border-box;
-}
-
-.collage-preview img {
-  max-width: 100%;
-  max-height: calc(100% - 100px); /* Reserve space for header/buttons */
-  object-fit: contain;
-}
-
-/* Buttons - Reusing your existing styles */
+/* Buttons */
 .collage-preview .collage-btn {
   background-color: #f7e17b; /* Your mustard color */
   color: black;
@@ -1230,6 +1273,8 @@ styled to show in petcard header plus nickname */
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+   min-width: 120px; /* Added for consistency */
+  text-align: center;
 }
 
 .collage-preview .collage-btn:hover {
@@ -1248,11 +1293,15 @@ styled to show in petcard header plus nickname */
   margin-top: 15px;
 }
 
-/* this is very important for closing the modal*/
-#collage-modal.hidden {
-  display: none !important;  /* Force hide when needed */
-  visibility: hidden !important;
-  opacity: 0 !important;
+/* Modal hide/show transition */
+#collage-modal, 
+#collage-preview-modal {
+  transition: opacity 0.3s ease;
+}
+#collage-modal.hidden,
+#collage-preview-modal.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 /*===================*/
