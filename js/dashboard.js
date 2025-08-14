@@ -1274,37 +1274,9 @@ card.innerHTML = `
   } catch (error) {
     console.error("Generation failed:", error);
     Utils.showErrorToUser("Couldn't generate card. Please try again.");
-  }
- } //TRY
+ } 
 } // FUNCTION
-//===============================
-//  🎂 Updated Generate Birthday Card
-//===============================
-async function generateBirthdayCard(index) {
-  try {
-    // [1. KEEP EXISTING CODE UNTIL CANVAS GENERATION]
-    // ... (all your current code until html2canvas part stays the same) ...
-    const canvas = await html2canvas(card, {
-      scale: 2,
-      backgroundColor: '#fff8e6',
-      useCORS: true,
-      async: true
-    });
 
-    // [2. REMOVE THE ENTIRE SHARE/DOWNLOAD PROMISE BLOCK]
-    // ❌ DELETE from "await new Promise..." to the closing brace before "} catch..."
-
-    // [3. ADD NEW PREVIEW MODAL LOGIC]
-    showBirthdayCardModal(canvas, profile); // New function call
-
-    // [4. CLEANUP]
-    document.body.removeChild(card);
-    
-  } catch (error) {
-    console.error("Generation failed:", error);
-    Utils.showErrorToUser("Couldn't generate card. Please try again.");
-  }
-}
 //================================================================================================
 // [ADD NEW FUNCTION FOR SHARING&DOWNLOADING BIRTHDAYCARD (place near your collage modal code)]
 //================================================================================================
