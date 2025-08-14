@@ -1702,12 +1702,15 @@ collage.style.cssText = `
 // 6.5 Display the generated collage preview
   // When generating preview - STEP 1: Activate preview mode FIRST
 document.querySelector('.modal-content').classList.add('collage-preview-active');
-  // Then create the preview container
+  // Then create the preview container where save and share buttons are
 const previewContainer = document.createElement('div');
 previewContainer.className = 'collage-preview';
 previewContainer.style.position = 'relative';
 previewContainer.style.margin = '20px auto';
-previewContainer.style.maxWidth = '90%';
+previewContainer.style.width = '100%'; // Full width
+previewContainer.style.maxWidth = 'none'; // Remove constraint
+previewContainer.style.overflowX = 'auto'; // Add horizontal scroll if needed
+
 
 const previewImg = document.createElement('img');
 previewImg.src = canvas.toDataURL('image/png');
@@ -1762,9 +1765,14 @@ shareBtn.onclick = async () => {
 btnContainer.append(saveBtn, shareBtn);
 previewContainer.append(previewImg, btnContainer);
     
-// Insert preview into modal (replaces image grid temporarily)
+// Now, time to Insert preview into modal (replaces image grid temporarily)
 const grid = document.getElementById('collage-image-grid');
-grid.innerHTML = '';
+// Updated:
+grid.innerHTML = `
+  <h3 style="text-align: center; margin-bottom: 15px;">
+    ${profile.name}'s Collage
+  </h3>
+`;
 grid.appendChild(previewContainer);
 
   } catch (error) {
