@@ -447,6 +447,11 @@ function openEditForm(index) {
    // Reset before populating
     resetForm(false); // ← Keeps visual states
 
+  // 1️⃣ Make sure the section and form are visible to be used for theme live preview container
+  DOM.profileSection.classList.remove('hidden');   // unhide the outer section
+  DOM.profileForm.style.display = 'block';         // show the form itself if it was display:none
+
+
     // ======================
     // 2. FORM FIELD POPULATION
     // ======================
