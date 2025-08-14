@@ -570,9 +570,18 @@ function openCreateForm() {
   // Add this after resetForm():
   const themeRadios = document.querySelectorAll('input[name="theme"]');
   if (themeRadios.length) themeRadios[0].checked = true; // First radio = balloons
+  
   // Initialize live preview (if container exists)
-  const previewContainer = document.getElementById('birthday-card-preview');
-  if (previewContainer) previewContainer.classList.add('visible');
+const previewContainer = document.getElementById('birthday-card-preview');
+if (previewContainer) {
+  previewContainer.innerHTML = `
+    <div class="petCard-header" style="background:#f0f0f0">
+      <h3>Preview Loading...</h3>
+    </div>
+    <div class="countdown-badge">🎂 Select a cover photo</div>
+  `;
+  previewContainer.classList.add('visible');
+}
     
   //ALWAYS CALL IT AFTER RESET   
   // 🎯 INSERT HERE ▼ (after reset, before handlers)
