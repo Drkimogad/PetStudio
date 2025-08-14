@@ -1231,12 +1231,20 @@ async function generateBirthdayCard(index) {
     testImg.src = coverUrl;
     testImg.onload = () => console.log("✅ Image loads successfully:", coverUrl);
     testImg.onerror = () => console.log("❌ Image FAILED to load:", coverUrl);
-    
-    // 2. Create a birthday-themed card container
-   const themeKey = profile.theme || 'balloons'; // e.g., 'balloons', 'stars'
-const themeConfig = THEMES[themeKey] || THEMES['balloons'];
 
-card.className = `birthday-card theme-${themeKey}`; // matches css theme class naming
+        // ✅ Append temporarily (hidden)
+    // 2. Create card container FIRST (this was missing)
+    const card = document.createElement('div');
+    card.style.position = "fixed";
+    card.style.left = "-9999px";
+    document.body.appendChild(card);
+
+    // 3. Create a birthday-themed card container
+   const profile = window.petProfiles[index];
+   const themeKey = profile.theme || 'balloons'; // e.g., 'balloons', 'stars'
+   const themeConfig = THEMES[themeKey] || THEMES['balloons'];
+
+card.className = `birthday-card theme-${themeKey}`; // Now works, card is defined
 card.innerHTML = `
   <div class="birthday-header" style="background:${themeConfig.bgColor}">
     ${themeConfig.emoji} ${profile.name}'s Birthday! ${themeConfig.emoji}
@@ -1250,13 +1258,7 @@ card.innerHTML = `
   <div class="birthday-footer">Celebrate on ${new Date(profile.nextBirthday).toLocaleDateString()}</div>
 `;
 
-
-    // ✅ Append temporarily (hidden)
-    card.style.position = "fixed";
-    card.style.left = "-9999px";
-    document.body.appendChild(card);
-
-    // 3. Convert to PNG (reuse your html2canvas logic)
+   // 4. Convert to PNG (reuse your html2canvas logic)
     const canvas = await html2canvas(card, {
       scale: 2,
       backgroundColor: '#fff8e6', // Light yellow
