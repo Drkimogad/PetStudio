@@ -154,7 +154,6 @@ h1, h2, h3, p {
    DASHBOARD & LAYOUT
 ==================== */
 /* Dashboard: Hidden by default */
-/* Dashboard: Hidden by default */
 #dashboard {
   display: none;
   padding: 20px;
@@ -176,56 +175,59 @@ h1, h2, h3, p {
   margin-bottom: 80px; /* Space so logout button isn't hidden */
 }
 
-/* =BUTTON BEFORE OPENING PETLIST STYLES=== */
-.button {
-  display: inline-block;
-  background-color: #808080; /* it was deep purple #6a1b9a, charcoal grey now  */
-  color: white;
-  padding: 10px 20px;
-  border: #c9ba2c; /* it was none now mustard colour*/
-  border-radius: 10px;
-  font-size: 1rem;
-  cursor: pointer;
-  text-align: center;
-  transition: background 0.3s;
+/* DASHBOARD ACTIONS BUTTONS CONTAINER */
+.dashboard-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin: 1rem 0 2rem;
+  gap: 1rem; /* Space between buttons */
 }
 
-.button:hover {
-  background-color: #4a0c7a;
-}
-
+/* UPDATE EXISTING BUTTON STYLES */
 #addPetProfileBtn {
-  background-color: #808080; /*was deep purple #6a1b9a now charcoal grey*/
+  background-color: #808080;
   color: white;
   font-size: 1.1rem;
   padding: 10px 20px;
-  margin-bottom: 20px;
+  margin: 0; /* Remove previous margin */
+  flex: 1; /* Allow button to grow */
+  max-width: 300px; /* But not too wide */
 }
 
 #addPetProfileBtn::before {
   content: '➕ ';
 }
+
 #logoutBtn {
-  /* Remove fixed/absolute positioning */
-  position: relative; /* 👈 Makes it flow in document */
-  float: right;      /* 👈 Pushes to right */
-  margin-right: 20px;
-  margin-left: auto !important; /* added*/
-  
-  /* Keep your existing styles */
   background-color: #e74c3c;
   color: white;
   padding: 10px 16px;
   border-radius: 6px;
   font-weight: bold;
-  z-index: 10;
-  
-  /* Positioning magic */
-  margin-top: -60px;    /* 👈 Pulls up into petList's margin space */
-  margin-bottom: 20px;  /* 👈 Ensures footer gap */
+  margin: 0; /* Remove previous margins */
+  flex: 1; /* Match add button */
+  max-width: 300px; /* Consistent width */
+  text-align: center;
 }
 
-/* No changes needed to #petList - keep its 80px margin */
+/* RESPONSIVE ADJUSTMENT */
+@media (max-width: 600px) {
+  .dashboard-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  #addPetProfileBtn,
+  #logoutBtn {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+
 
 /* ==ONCE ADD PROFILE BUTTON CLICKED AND
        PETLIST OPENED===== */
