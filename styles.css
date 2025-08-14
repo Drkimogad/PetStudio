@@ -1373,6 +1373,7 @@ styled to show in petcard header plus nickname */
   border: 2px solid #eee;
 }
 
+*/ for download and share buttons*/
 #birthday-card-modal .modal-actions {
   display: flex;
   gap: 10px;
@@ -1380,6 +1381,36 @@ styled to show in petcard header plus nickname */
   margin-top: 15px;
 }
 
+/* for close button*/ 
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.modal-close:hover {
+  color: #f44336; /* Red color on hover */
+}
+
+/* Add animation optional */
+.modal {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal.hidden {
+  opacity: 0;
+}
+
+.modal:not(.hidden) {
+  opacity: 1;
+  pointer-events: all;
+}
 
 
 
