@@ -1535,37 +1535,6 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// ========================
-// create Collage Preview Modal
-// ========================
-function createCollagePreview(canvas, profile) {
-  // A. Create modal if it doesn't exist
-  if (!document.getElementById('collage-preview-modal')) {
-    const modalHTML = `
-    <div id="collage-preview-modal" class="modal">
-      <div class="modal-backdrop"></div>
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>${profile.name}'s Collage</h3>
-          <span class="modal-close">&times;</span>
-        </div>
-        <div class="collage-preview-container">
-          <img id="collage-preview-image" src="${canvas.toDataURL()}">
-        </div>
-        <div class="modal-actions">
-          <button id="share-collage" class="btn-share">
-            <i class="fas fa-share-alt"></i> Share
-          </button>
-          <button id="download-collage" class="btn-download">
-            <i class="fas fa-download"></i> Download
-          </button>
-        </div>
-      </div>
-    </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-  } // closes if
-  } // closes FUNCTION
-
 
 //==================================
 //  THEN GENERATE COLLAGE PNG
@@ -1750,8 +1719,36 @@ showCollagePreview(canvas, profile);
 //=============showcollage preview========
 //====create collage preview above gennerate collage PNG ()
 function showCollagePreview(canvas, profile) {
-  // Call create modal if it doesn't exist
-  createCollagePreviewModal();
+  // ========================
+// create Collage Preview Modal
+// ========================
+function createCollagePreview(canvas, profile) {
+  // A. Create modal if it doesn't exist
+  if (!document.getElementById('collage-preview-modal')) {
+    const modalHTML = `
+    <div id="collage-preview-modal" class="modal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>${profile.name}'s Collage</h3>
+          <span class="modal-close">&times;</span>
+        </div>
+        <div class="collage-preview-container">
+          <img id="collage-preview-image" src="${canvas.toDataURL()}">
+        </div>
+        <div class="modal-actions">
+          <button id="share-collage" class="btn-share">
+            <i class="fas fa-share-alt"></i> Share
+          </button>
+          <button id="download-collage" class="btn-download">
+            <i class="fas fa-download"></i> Download
+          </button>
+        </div>
+      </div>
+    </div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  } // closes if
+  
 
   const modal = document.getElementById('collage-preview-modal');
   const previewContainer = modal.querySelector('.collage-preview-container');
