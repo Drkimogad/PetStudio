@@ -384,8 +384,8 @@ function previewTheme(selectedTheme) {
     // Optional: Update other theme-specific elements
     const headers = previewCard.querySelectorAll('.petCard-header, h3');
     headers.forEach(el => {
-      el.style.color = theme.textColor;
-      el.style.borderBottom = theme.border;
+      el.style.color = THEMES[selectedTheme].textColor;
+      el.style.borderBottom = THEMES[selectedTheme].border;
     });
   }
 }
@@ -654,7 +654,8 @@ tagCheckboxes.forEach(checkbox => {
 const themeRadios = document.querySelectorAll('input[name="theme"]');
 if (themeRadios.length) {
   themeRadios[0].checked = true; // Balloons is first
-  if (typeof previewTheme === 'function') previewTheme('balloons');
+ previewTheme('balloons');
+
 }
 
   // 5. FULL STATE RESET (optional)
