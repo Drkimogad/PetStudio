@@ -640,11 +640,6 @@ document.querySelectorAll('input[name="theme"]').forEach(radio => {
   initGalleryInteractions();
 }
 
-  
-  // 3. INITIALIZE GALLERY HANDLERS
-  // ======================
-  initGalleryInteractions(); // Must come AFTER resetForm()
-
   // 4. CANCEL BUTTON SETUP
   // ======================
   if (!document.getElementById("cancelEditBtn")) {
