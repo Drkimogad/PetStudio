@@ -1459,77 +1459,74 @@ function closeModal() {
 //===============================
 //  EVERYTHING RELATED TO COLLAGE GENERATION, CREATE COLLAGE/HELPER FUNCTIONS(2) AND GENERATE COLLAGE AS PNG
 // CORS ISSUE IS STILL TO BE FIXED BUT FUNCTION IS WORKING
-//===============================
 //====================================================================================
 // FUNCTION TO ENSURE COLLAGE MODAL EXISTS/MOVED MODAL HTML FROM HTML TO DASHBOARD.JS
 //=========================================================================================
+// PHASE 1
+// ===============================
 function ensureCollageModalExists() {
   if (!document.getElementById('collage-modal')) {
     const modalHTML = `
       <div id="collage-modal" class="modal hidden">
         <div class="modal-content">
           <h3>Create Collage</h3>
-        <h4>To proceed please choose 2 images or more...</h4>
+          <h4>To proceed please choose 2 images or more...</h4>
           <div class="image-grid" id="collage-image-grid"></div>
+          
           <div class="layout-options">
             <button data-layout="2x2">2×2</button>
             <button data-layout="3x3">3×3</button>
             <button data-layout="1x3">1×3</button>
           </div>
+          
           <div class="collage-buttons">
-          <button id="generate-collage" disabled>Generate Collage</button>
-          <button id="close-collage">Close</button> <!-- 👈 Added here -->
+            <button id="generate-collage" disabled>Generate Collage</button>
+            <button id="close-collage">Close</button>
           </div>
         </div>
       </div>`;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
   }
-} 
+}
 
-//=======================
+// ===============================
+// Modal Show/Hide Helpers
+// ===============================
 function hideModal(modal) {
+  if (!modal) return;
   modal.classList.add('hidden');
   setTimeout(() => {
     modal.style.display = 'none';
-  }, 300); // matches CSS transition
+    modal.style.pointerEvents = 'none';
+  }, 300); // match CSS transition
 }
 
 function showModal(modal) {
-  modal.style.display = 'flex'; // or 'block'
-  modal.style.pointerEvents = 'auto'; // Re-enable clicks
+  if (!modal) return;
+  modal.style.display = 'flex';
+  modal.style.pointerEvents = 'auto';
   setTimeout(() => modal.classList.remove('hidden'), 10);
 }
 
-
-
-
-//  CREATE COLLAGE FIRST
-//======================================
+// ===============================
+// Create Collage Modal Logic
+// ===============================
 function createPetCollage(index) {
-  // Store the current pet index globally
-  window.currentPetIndex = index; // 👈 Add this line
-  
-  // NOW IMPORT MODAL HTML FUNCTION TO CREATE FUNCTION
-  ensureCollageModalExists(); 
-  const profile = window.petProfiles[index];
+  window.currentPetIndex = index;
+  ensureCollageModalExists();
 
+  const profile = window.petProfiles[index];
   if (!profile?.gallery?.length) {
     showQRStatus("No photos available for collage.", false);
     return;
   }
-  // Open modal
-  const modal = document.getElementById("collage-modal");
-  // Verify the modal exists in DOM before showing
-  if (!modal) {
-    console.error('Collage modal not found');
-    return;
-  }
 
+  const modal = document.getElementById('collage-modal');
   showModal(modal);
-  
-  // Populate image grid
-  const grid = document.getElementById("collage-image-grid");
+
+  const grid = document.getElementById('collage-image-grid');
   grid.innerHTML = '';
+
   profile.gallery.forEach((img, i) => {
     const imgElement = document.createElement('img');
     imgElement.src = typeof img === 'string' ? img : img.url;
@@ -1537,106 +1534,62 @@ function createPetCollage(index) {
     imgElement.addEventListener('click', toggleImageSelection);
     grid.appendChild(imgElement);
   });
-// Eventlisteners are initialized globally in main initialization!!!!
 }
 
-//==================================
-// setup collagemodal listeners UPDATED 
-//=========================================
-function setupCollageModalListeners() {
-  document.body.addEventListener("click", (e) => {
-    if (e.target.closest('.layout-options button')) {
-      selectedLayout = e.target.dataset.layout;
-    }
-    else if (e.target.id === 'generate-collage') {
-      const profile = window.petProfiles[currentPetIndex];
-      generateCollagePNG(profile);
-    }
-    else if (e.target.id === 'close-collage') {
-      console.log('Close button clicked - delegated listener');
-      
-      // 1. Remove preview-active class 
-      document.querySelector('.modal-content')?.classList.remove('collage-preview-active');
-      
-      // 2. Hide the modal (updated timing)
-      hideModal(modal);
-
-      // 3. Reset selections
-      resetCollageSelections();
-    }
-  });
-
-  // NEW: Ensure modal is always interactive when opened
-  const ensureModalInteractive = () => {
-    const modal = document.getElementById('collage-modal');
-    if (modal && !modal.classList.contains('hidden')) {
-      modal.style.pointerEvents = 'auto';
-    }
-  };
-  
-  // Call this whenever opening the modal
-  // Add to your createPetCollage() function:
-  // ensureModalInteractive();
-}
-//==========================================
-// resetcollageselections function
-//==========================================
+// ===============================
+// Reset Collage Selections
+// ===============================
 function resetCollageSelections() {
   selectedImages = [];
   selectedLayout = '2x2';
   document.querySelectorAll('#collage-image-grid img.selected')
     .forEach(img => img.classList.remove('selected'));
+  
+  const genBtn = document.getElementById('generate-collage');
+  if (genBtn) genBtn.disabled = true;
 }
 
-//====================================
-// CREATE COLLAGE HELPER FUNCTION
-//===================================
+// ===============================
+// Toggle Image Selection
+// ===============================
 let selectedImages = [];
 let selectedLayout = '2x2';
 
 function toggleImageSelection(e) {
-    console.log("--- toggleImageSelection triggered ---"); // TRACE 1
-    console.log("Event target:", e.target); // TRACE 2
+  const img = e.target.closest('img');
+  if (!img) return;
 
-   const img = e.target.closest('img');
-  if (!img) {
-    console.log("⚠️ Clicked element isn't an image"); // TRACE 3
-    return;
-  }
-  
   img.classList.toggle('selected');
   const index = parseInt(img.dataset.index);
 
- if (img.classList.contains('selected')) {
-  if (!selectedImages.includes(index)) {
-    selectedImages.push(index);
-    console.log("Selected images:", selectedImages); // 👈 Moved inside the if-block
+  if (img.classList.contains('selected')) {
+    if (!selectedImages.includes(index)) selectedImages.push(index);
+  } else {
+    selectedImages = selectedImages.filter(i => i !== index);
   }
-} else {
-  selectedImages = selectedImages.filter(i => i !== index);
-  console.log("Deselected image. Current:", selectedImages); // 👈 Optional tracking
+
+  const genBtn = document.getElementById('generate-collage');
+  if (genBtn) genBtn.disabled = selectedImages.length < 2;
 }
-  
-  // Enable/disable generate button/updated the button safely
- const genBtn = document.getElementById('generate-collage');
-console.log("🔘 Generate button element:", genBtn); // TRACE 7
-  
-if (genBtn) {
-  genBtn.disabled = selectedImages.length < 2;
-  console.log("🔄 Button state - Disabled:", genBtn.disabled, 
-              "Selected images:", selectedImages.length); // TRACE 8
- }
-}
-  
-//👇 Handle layout button handler
-document.addEventListener('click', function(e) {
-  if (e.target.matches('.layout-options button')) {
-    console.log("--- Layout button clicked ---"); // TRACE 4
-    console.log("Button dataset:", e.target.dataset); // TRACE 5
+
+// ===============================
+// Global Delegated Listeners
+// ===============================
+document.body.addEventListener('click', (e) => {
+  if (e.target.closest('.layout-options button')) {
     selectedLayout = e.target.dataset.layout;
-    console.log("✅ Layout set to:", selectedLayout); // TRACE 6
+  }
+  else if (e.target.id === 'generate-collage') {
+    const profile = window.petProfiles[currentPetIndex];
+    generateCollagePNG(profile); // Phase 2 hook
+  }
+  else if (e.target.id === 'close-collage') {
+    const modal = document.getElementById('collage-modal');
+    hideModal(modal);
+    resetCollageSelections();
   }
 });
+
 
 
 //==================================
