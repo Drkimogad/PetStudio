@@ -75,10 +75,16 @@ body {
 .banner-wrapper {
   height: 60vh; /* ⬆️⬇️ ADJUST HEIGHT (Current: 60vh) */
   margin: 0 auto;
-  width: 80%; /* ⬆️⬇️ ADJUST WIDTH (Current: 80%) */
+  width: 75%; /* ⬆️⬇️ ADJUST WIDTH (Current: 80%) */
   position: relative;
   border: 3px solid #e1b12c; /* Mustard curtain border */
   box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+/*when scaling down. it leaves a space, hide it*/
+.banner-wrapper {
+  overflow: hidden; /* Clips any border artifacts */
+  border: 2px solid transparent; /* Maintains spacing without visible border */
 }
 
 /* Banner zoom control */
@@ -87,7 +93,7 @@ body {
   height: 100%;
   object-fit: cover;
   object-position: center;
-  transform: scale(0.9); /* ⬆️⬇️ ZOOM LEVEL (Current: 0.9) */
+  transform: scale(0.85); /* ⬆️⬇️ ZOOM LEVEL (Current: 0.9) */
   transition: transform 0.5s ease;
 }
 
@@ -113,8 +119,8 @@ body {
   width: 10%; /* Match left curtain width */
   height: 100vh;
   background: linear-gradient(to left, 
-              #e1b12c 0%, 
-              #d4a017 100%); /* Mustard curtain */
+              #6a0dad 0%, 
+              #4b0082 100%); /* Purple curtain */
   z-index: -1;
 }
 
