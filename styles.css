@@ -1863,3 +1863,88 @@ styled to show in petcard header plus nickname */
   }
 }
 
+
+
+
+/* ====================
+   PET WINDOW RESPONSIVE ADDITIONS
+   (Add to end of your CSS file)
+==================== */
+
+/* Mobile (Portrait) */
+@media (max-width: 600px) {
+  .auth-header {
+    padding: 1rem; /* ⬆️⬇️ Header padding */
+    width: 95%; /* ⬆️⬇️ Header width */
+  }
+  
+  .auth-header h1 {
+    font-size: 2.2rem !important; /* ⬆️⬇️ Main title */
+  }
+  
+  .auth-header h2 {
+    font-size: 1.1rem !important; /* ⬆️⬇️ Subtitle */
+  }
+  
+  .banner-wrapper {
+    height: 50vh !important; /* ⬆️⬇️ Window height */
+    width: 95% !important; /* ⬆️⬇️ Window width */
+  }
+  
+  #googleSignInWrapper {
+    width: 260px !important; /* ⬆️⬇️ Button width */
+    top: 65% !important; /* ⬆️⬇️ Vertical position */
+    padding: 20px !important; /* ⬆️⬇️ Inner spacing */
+    animation: none !important; /* Disable bounce on small screens */
+  }
+  
+  .quote {
+    max-width: 80% !important; /* ⬆️⬇️ Bubble width */
+    padding: 12px 15px !important; /* ⬆️⬇️ Bubble padding */
+    bottom: 70px !important; /* ⬆️⬇️ Bubble position */
+    font-size: 1rem !important; /* ⬆️⬇️ Text size */
+  }
+}
+
+/* Tablet (Portrait) */
+@media (min-width: 601px) and (max-width: 900px) {
+  #googleSignInWrapper {
+    width: 280px !important; /* ⬆️⬇️ Button width */
+    top: 60% !important; /* ⬆️⬇️ Vertical position */
+  }
+  
+  .quote {
+    max-width: 75% !important; /* ⬆️⬇️ Bubble width */
+  }
+}
+
+/* Landscape Adjustments */
+@media (orientation: landscape) {
+  .banner-wrapper {
+    height: 75vh !important; /* ⬆️⬇️ Taller window */
+  }
+  
+  #googleSignInWrapper {
+    top: 55% !important; /* ⬆️⬇️ Raise button */
+  }
+  
+  .quote {
+    right: 20px !important; /* ⬆️⬇️ Move bubble left */
+    bottom: 60px !important; /* ⬆️⬇️ Raise bubble */
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1200px) {
+  .auth-header {
+    width: 85%; /* ⬆️⬇️ Narrower header */
+  }
+  
+  .banner-wrapper {
+    width: 85%; /* ⬆️⬇️ Narrower window */
+  }
+  
+  #googleSignInWrapper {
+    animation-duration: 3s !important; /* ⬆️⬇️ Slower bounce */
+  }
+}
