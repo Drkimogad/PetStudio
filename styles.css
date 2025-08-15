@@ -1087,20 +1087,48 @@ styled to show in petcard header plus nickname */
 /* Collage Modal /container or window*/
 #collage-modal {
   position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 90%;
+  max-width: 1200px; /* Optional: prevents modal from being too wide */
+  max-height: 90vh; /* Optional: prevents modal from being too tall */
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid purple;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  margin: auto; /* Extra centering assurance */
+  border-radius: 12px; /* Added to match inner content */
+  overflow: hidden; /* Prevents content from bleeding outside */
+}
+/* Blur effect on the 10% surrounding space */
+#collage-modal::before {
+  content: "";
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid purple;  /*added*/
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* 👈 Ensure this is higher than other elements */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: -1; /* Place behind the modal */
+  pointer-events: none; /* Allows clicking through the blur */
 }
 
-/* collage creation window/modal*/
-/* create a collage*/
+/* Collage creation window/modal */
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px; /* Slightly smaller than container */
+  width: calc(100% - 40px); /* Accounts for padding */
+  height: calc(100% - 40px); /* Accounts for padding */
+  overflow-y: auto;
+  box-sizing: border-box; /* Ensures padding is included in dimensions */
+}
+/* create a collage window*/
 #collage-modal h3 {
   font-size: 1.3rem;
   font-weight: normal;
@@ -1112,7 +1140,7 @@ styled to show in petcard header plus nickname */
   border-radius: 6px;
   padding: 6px 10px;
   display: block; /* 👈 Changed from inline-block to block */
-  width: 80%; /* 👈 Added */
+  width: 60%; /* 👈 Added for the box width*/
 }
 /*To proceed please choose 2 images or more...*/
 #collage-modal h4 {
@@ -1128,15 +1156,7 @@ styled to show in petcard header plus nickname */
   display: inline-block;
   width: 80%; /* Match h3 width */
 }
-/* modal conten tbox*/
-.modal-content {
-  background: white;
-  padding: 20px; /* adjust the padding so content won't touch the edges*/
-  border-radius: 10px;
-  max-width: 100%;
-  max-height: 100%;
-  overflow-y: auto;
-}
+
 /* important for grid layout in the modal*/
 .image-grid {
   display: grid;
@@ -1208,14 +1228,18 @@ styled to show in petcard header plus nickname */
 /* ====================== */
 #collage-preview-modal.modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 80%; /*it was 100*/
-  height: 80%; /* it was 100*/
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 90%;
+  max-width: 1200px; /* optional: prevents modal from being too wide on large screens */
+  max-height: 90vh; /* optional: prevents modal from being too tall */
   z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: auto; /* extra safety for centering */
 }
 
 #collage-preview-modal .modal-content {
@@ -1225,7 +1249,7 @@ styled to show in petcard header plus nickname */
   height: 100%;
   max-height: none;
   border-radius: 12px;
-  padding: 10px;
+  padding: 10px;  /* see this padding*/
   display: flex;
   flex-direction: column;
   box-sizing: border-box; /* prevents padding from shrinking inner area */
@@ -1233,7 +1257,7 @@ styled to show in petcard header plus nickname */
 
 #collage-preview-modal .modal-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 15px;
 }
@@ -1302,6 +1326,28 @@ styled to show in petcard header plus nickname */
   margin-top: 15px;
 }
 
+/* Improved blurring backdrop with fading effect */
+#collage-preview-modal {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); /* For Safari */
+  background-color: rgba(0, 0, 0, 0.4);
+  
+  /* Transition effects */
+  opacity: 0;
+  visibility: hidden;
+  transition: 
+    opacity 0.3s ease,
+    visibility 0.3s ease,
+    backdrop-filter 0.3s ease;
+}
+
+/* When modal is active */
+#collage-preview-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+
 /* Modal hide/show transition */
 #collage-modal.hidden,
 #collage-preview-modal.hidden {
@@ -1310,14 +1356,6 @@ styled to show in petcard header plus nickname */
   visibility: hidden;
   z-index: -1;
 }
-
-/* for blurring backdrop and fading effect*/
-#collage-preview-modal {
-  backdrop-filter: blur(8px);
-  background-color: rgba(0, 0, 0, 0.4);
-  transition: opacity 0.3s ease, visibility 0.3s ease, backdrop-filter 0.3s ease;
-}
-
 /* Ensure this is set for both mosals*/
 .hidden {
   opacity: 0;
