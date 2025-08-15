@@ -2,6 +2,38 @@
 /* ====================
    THEATRE CURTAIN AUTH LAYOUT
 ==================== */
+/* ====================
+   THEATRE FOOTER STYLES
+==================== */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 20px;
+  background: rgba(106, 13, 173, 0.9); /* Semi-transparent purple */
+  color: white;
+  text-align: center;
+  z-index: 10;
+  border-top: 3px solid #e1b12c; /* Gold curtain tie-back */
+  box-shadow: 0 -5px 25px rgba(0,0,0,0.3);
+  backdrop-filter: blur(5px);
+}
+
+/* Curtain fold effect */
+footer::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: linear-gradient(to bottom, 
+              transparent 0%, 
+              rgba(139, 69, 19, 0.4) 100%);
+}
+
+
 body {
   background: #111 url('../banner/image.png') no-repeat center center;
   background-size: cover;
@@ -37,35 +69,56 @@ body {
 }
 
 /* Curtain Banner Effect */
+/* ====================
+   ADJUSTABLE THEATRE BANNER 
+==================== */
 .banner-wrapper {
-  height: 55vh;
-  margin: -2px 0 0;
+  height: 60vh; /* ⬆️⬇️ ADJUST HEIGHT (Current: 60vh) */
+  margin: 0 auto;
+  width: 80%; /* ⬆️⬇️ ADJUST WIDTH (Current: 80%) */
   position: relative;
-  overflow: hidden;
-  border: none;
-  transform-style: preserve-3d;
+  border: 3px solid #e1b12c; /* Mustard curtain border */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
-.banner-wrapper::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 40%;
-  background: linear-gradient(to bottom, 
-              rgba(0,0,0,0.7) 0%, 
-              transparent 100%);
-  z-index: 1;
-}
-
+/* Banner zoom control */
 .banner-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.05);
-  transition: transform 0.8s ease-out;
+  object-position: center;
+  transform: scale(0.9); /* ⬆️⬇️ ZOOM LEVEL (Current: 0.9) */
+  transition: transform 0.5s ease;
 }
+
+/* Side Curtains */
+.banner-wrapper::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10%; /* ⬆️⬇️ CURTAIN WIDTH (Current: 10%) */
+  height: 100vh;
+  background: linear-gradient(to right, 
+              #6a0dad 0%, 
+              #4b0082 100%); /* Purple curtain */
+  z-index: -1;
+}
+
+.banner-wrapper::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 10%; /* Match left curtain width */
+  height: 100vh;
+  background: linear-gradient(to left, 
+              #e1b12c 0%, 
+              #d4a017 100%); /* Mustard curtain */
+  z-index: -1;
+}
+
+
 
 /* Center Stage Sign-In */
 #googleSignInWrapper {
@@ -1757,19 +1810,7 @@ styled to show in petcard header plus nickname */
     transition: opacity 0.3s ease;
 }
 
-/* ====================
-   FOOTER STYLES
-==================== */
-footer {
-    position: relative;
-    padding: 20px;
-    background-color: #6a0dad;
-    color: white;
-    text-align: center;
-    width: 100%;
-    bottom: 0;
-    margin-top: 20px;
-}
+
 
 
 /* ======= QR CODE RULES ========== */
