@@ -1,9 +1,8 @@
-
 /* ====================
-   THEATRE CURTAIN AUTH LAYOUT
+ THEATRE CURTAIN AUTH LAYOUT
+it's responsive designs are st the bottom 
 ==================== */
-/* ====================
-   THEATRE FOOTER STYLES
+/*   THEATRE FOOTER STYLES
 ==================== */
 footer {
   position: fixed;
@@ -1921,3 +1920,55 @@ styled to show in petcard header plus nickname */
   }
 }
 
+
+
+/* ====================
+   THEATER STYLE AUTHENTICATION RESPONSIVE ADDITIONS (Place at end of file)
+====================*/
+/* If anything breaks, remove the added responsive block and your original styles will remain intact*/
+/* Mobile First Adjustments */
+@media (max-width: 600px) {
+  .auth-header h1 { font-size: 2.5rem; }
+  .auth-header h2 { font-size: 1.2rem; }
+  .banner-wrapper { 
+    height: 40vh;
+    width: 85%;
+    border-width: 2px;
+  }
+  #googleSignInWrapper {
+    width: 280px;
+    padding: 1rem;
+    animation: none;
+  }
+  .quote {
+    width: 85%;
+    margin-top: 20px;
+    background: rgba(245, 231, 236, 0.95);
+  }
+}
+
+/* Tablet Optimizations */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .auth-header { margin-top: 3vh; }
+  .banner-wrapper { height: 55vh; }
+}
+
+/* Desktop Enhancements */
+@media (min-width: 1025px) {
+  .banner-wrapper { height: 70vh; }
+  .banner-wrapper::before, 
+  .banner-wrapper::after {
+    width: 15%;
+    background-attachment: fixed;
+  }
+  #googleSignInWrapper {
+    width: 380px;
+    animation-duration: 8s;
+  }
+}
+
+/* Landscape Mobile Fixes */
+@media (orientation: landscape) and (max-height: 600px) {
+  .banner-wrapper { height: 80vh; }
+  #googleSignInWrapper { top: 45%; }
+}
