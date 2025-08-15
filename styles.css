@@ -1,11 +1,13 @@
 /* ====================
-   PET WINDOW AUTH LAYOUT
+   PET WINDOW AUTH STYLE 
+   (Modified from your original auth styles)
 ==================== */
-body {
+
+/* Main Container */
+#authContainer {
   background: #f8f4e8 url('../banner/image.png') no-repeat center center/cover;
   min-height: 100vh;
-  overflow: hidden;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  padding-bottom: 0;
 }
 
 /* Window Frame Header */
@@ -27,17 +29,15 @@ body {
 .auth-header h1 {
   font-size: 3.5rem;
   color: #6a0dad;
-  margin-bottom: 0.5rem;
   text-shadow: 2px 2px 0 #f5e7ec;
 }
 
 .auth-header h2 {
   font-size: 1.5rem;
   color: #d4a017;
-  margin-top: 0;
 }
 
-/* Window Pane Effect */
+/* Window Pane */
 .banner-wrapper {
   height: 55vh;
   width: 90%;
@@ -50,10 +50,9 @@ body {
     inset 0 0 30px rgba(0,0,0,0.1),
     0 15px 40px rgba(0,0,0,0.2);
   position: relative;
-  overflow: hidden;
 }
 
-/* Cat/Dog Nose Window Handle */
+/* Window Handle */
 .banner-wrapper::before {
   content: "🐾";
   position: absolute;
@@ -64,7 +63,6 @@ body {
   z-index: 11;
 }
 
-/* Pet Looking Through Window */
 .banner-image {
   width: 100%;
   height: 100%;
@@ -99,24 +97,10 @@ body {
   background: #6a0dad !important;
   color: white !important;
   border: none !important;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: bold;
-  box-shadow: 0 4px 0 #4b0082;
-  transition: all 0.2s;
+  box-shadow: 0 4px 0 #4b0082 !important;
 }
 
-.google-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 0 #4b0082;
-}
-
-.google-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 #4b0082;
-}
-
-/* Paw Prints Leading to Button */
+/* Paw Prints */
 #googleSignInWrapper::before {
   content: "🐾 🐾 🐾";
   position: absolute;
@@ -125,30 +109,6 @@ body {
   transform: translateX(-50%);
   font-size: 1.2rem;
   letter-spacing: 5px;
-}
-
-/* Window Sill (Footer) */
-footer {
-  position: fixed;
-  bottom: 0;
-  left: 5%;
-  right: 5%;
-  height: 60px;
-  background: #8b5a2b;
-  border-radius: 0 0 15px 15px;
-  box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
-  z-index: 8;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Cat Paws Dangling */
-footer::before {
-  content: "🐾 🐾";
-  position: absolute;
-  top: -15px;
-  font-size: 1.5rem;
 }
 
 /* Thought Bubble Quote */
@@ -175,18 +135,12 @@ footer::before {
   border-color: white transparent transparent;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .auth-header h1 { font-size: 2.5rem; }
-  .banner-wrapper { height: 50vh; width: 95%; }
-  #googleSignInWrapper { width: 260px; }
-  .quote { max-width: 70%; bottom: 70px; }
-}
-
-@media (max-width: 480px) {
-  .auth-header { padding: 1rem; }
-  #googleSignInWrapper { width: 220px; padding: 15px; }
-  .quote { display: none; } /* Hide quote on smallest screens */
+/* Tablet Responsive */
+@media (max-width: 1024px) {
+  .auth-header h1 { font-size: 3rem; }
+  .banner-wrapper { height: 50vh; }
+  #googleSignInWrapper { width: 280px; }
+  .quote { max-width: 70%; }
 }
 
 
