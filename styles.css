@@ -176,9 +176,9 @@ under the stage
 ==================== */
 .quote {
   position: relative; /* Changed from absolute */
-  width: 70%; /* ⬆️⬇️ Adjust width percentage */
-  margin: 30px auto 0; /* ⬆️⬇️ First value = top margin in pixels */
-  padding: 20px;
+  width: 90%; /* ⬆️⬇️ Adjust width percentage */
+  margin: 100px auto 0; /* ⬆️⬇️ First value = 30 it was,top margin in pixels */
+  padding: 30px;
   background:  #F5E7EC;
   color: black;
   border-radius: 8px;
