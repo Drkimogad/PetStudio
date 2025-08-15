@@ -1486,6 +1486,22 @@ function ensureCollageModalExists() {
   }
 } 
 
+//=======================
+function hideModal(modal) {
+  modal.classList.add('hidden');
+  setTimeout(() => {
+    modal.style.display = 'none';
+  }, 300); // matches CSS transition
+}
+
+function showModal(modal) {
+  modal.style.display = 'flex'; // or 'block'
+  modal.style.pointerEvents = 'auto'; // Re-enable clicks
+  setTimeout(() => modal.classList.remove('hidden'), 10);
+}
+
+
+
 
 //  CREATE COLLAGE FIRST
 //======================================
@@ -1508,9 +1524,8 @@ function createPetCollage(index) {
     console.error('Collage modal not found');
     return;
   }
-  
-modal.classList.remove("hidden");
-modal.style.pointerEvents = 'auto'; // Re-enable clicks
+
+  showModal(modal);
   
   // Populate image grid
   const grid = document.getElementById("collage-image-grid");
@@ -1544,17 +1559,8 @@ function setupCollageModalListeners() {
       document.querySelector('.modal-content')?.classList.remove('collage-preview-active');
       
       // 2. Hide the modal (updated timing)
-      const modal = document.getElementById('collage-modal');
-      modal.classList.add('hidden');
-      
-      // OLD: modal.style.pointerEvents = 'none'; // ❌ Removed - caused stuck state
-      // NEW: Delayed pointerEvents disable (safe after close starts)
-      setTimeout(() => {
-        if (modal.classList.contains('hidden')) {
-          modal.style.pointerEvents = 'none';
-        }
-      }, 0);
-      
+      hideModal(modal);
+
       // 3. Reset selections
       resetCollageSelections();
     }
