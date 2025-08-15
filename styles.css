@@ -84,7 +84,6 @@ body {
 /*when scaling down. it leaves a space, hide it*/
 .banner-wrapper {
   overflow: hidden; /* Clips any border artifacts */
-  border: 2px solid transparent; /* Maintains spacing without visible border */
 }
 
 /* Banner zoom control */
