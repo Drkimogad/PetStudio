@@ -2596,7 +2596,6 @@ setTimeout(() => {
 document.addEventListener('DOMContentLoaded', () => {
   initDashboardDOM(); // 🧠 Make sure DOM references are set
   initializeDashboard(); // ✅ Use the correct one
-  setupCollageModalListeners(); // added recently
   initSessionRecovery(); // Initialize session recovery when DOM is ready
 });
 
