@@ -1706,7 +1706,7 @@ body {
   min-height: 100vh;
   background: 
     linear-gradient(rgba(0, 0, 0, 0.3), /* Darker overlay for better contrast */
-    url('../banner/image.jpg') center/cover no-repeat;
+    url('../banner/image.png') center/cover no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
