@@ -179,13 +179,13 @@ under the stage
   width: 70%; /* ⬆️⬇️ Adjust width percentage */
   margin: 30px auto 0; /* ⬆️⬇️ First value = top margin in pixels */
   padding: 20px;
-  background: rgba(0,0,0,0.75);
-  color: #f5f5dc;
+  background:  #F5E7EC;
+  color: black;
   border-radius: 8px;
   text-align: center;
   font-size: clamp(1rem, 2vw, 1.4rem); /* Responsive text */
   backdrop-filter: blur(3px);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 3px solid #e1b12c; /* Mustard */
   z-index: 2;
   transform: none; /* Removed translate */
   left: auto; /* Reset positioning */
