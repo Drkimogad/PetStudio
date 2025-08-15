@@ -1454,11 +1454,11 @@ styled to show in petcard header plus nickname */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Higher than everything else */
+  z-index: 1001; /* Higher than everything else */
 }
 
 /* BLURRED BACKDROP */
-.modal-backdrop {
+#birthday-card-modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -1501,32 +1501,33 @@ styled to show in petcard header plus nickname */
 }
 
 /* for close button*/ 
-.modal-close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
+#birthday-card-modal .modal-close {
+  position: absolute !important;
+  top: 10px !important;
+  right: 15px !important;
+  font-size: 28px !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  z-index: 1002 !important;
 }
 
-.modal-close:hover {
+#birthday-card-modal .modal-close:hover {
   color: #f44336; /* Red color on hover */
 }
 
 /* Add animation optional */
-.modal {
+#birthday-card-modal {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
 
-.modal.hidden {
+#birthday-card-modal.hidden {
   opacity: 0;
+  pointer-events: none;
 }
 
-.modal:not(.hidden) {
+#birthday-card-modal:not(.hidden) {
   opacity: 1;
   pointer-events: all;
 }
