@@ -73,68 +73,96 @@
 
 
 /* ====================
-FLOATING AUTH WRAPPER (ADJUSTABLE)
+   INTERACTIVE PET HEALTH METER
+   (Add to your auth styles)
 ==================== */
-/*Tuning Guide:
-To Move Down:
-Increase top value (e.g., 65%)
-Decrease bounce transform Y value (e.g., -40%)
-To Move Up:
-Decrease top value (e.g., 55%)
-Increase bounce transform Y value (e.g., -50%)
 
-Paw Prints:
-Make more negative (e.g., -50px) to raise paws higher above button
-Less negative (e.g., -30px) to bring paws closer to button
-
-Important: The transform: translate(-50%, -50%) keeps it centered horizontally while your top value controls vertical placement. 
-Adjust in 5% increments for smooth changes.*/
-
-/* Treat Box Sign-In */
-#googleSignInWrapper {
-  position: absolute;
-  top: 80%; /* ⬆️⬇️ VERTICAL POSITION (Current: 60%) */
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 300px;
-  padding: 25px;
-  background: #f7e17b;
-  border: 4px dashed #6a0dad;
-  border-radius: 15px;
-  box-shadow: 
-    0 10px 25px rgba(0,0,0,0.3),
-    inset 0 0 15px rgba(255,255,255,0.5);
-  z-index: 5;
-  animation: bounce 2s infinite alternate;
+/* Health Meter Container */
+#googleSignInWrapper::after {
+  content: "Pet Health Check";
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  color: #6a0dad;
+  margin-top: 25px;
+  position: relative;
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translate(-50%, -50%); } 
-  50% { transform: translate(-50%, -45%); } /* ⬆️⬇️ BOUNCE HEIGHT (Current: -45%) */
-}
-
-/* Paw Prints Positioning */
+/* Vital Stats Bars */
 #googleSignInWrapper::before {
-  top: -40px; /* ⬆️⬇️ PAW PRINTS DISTANCE (Current: -40px) */
-}
-
-
-.google-btn {
-  background: #6a0dad !important;
-  color: white !important;
-  border: none !important;
-  box-shadow: 0 4px 0 #4b0082 !important;
-}
-
-/* Paw Prints */
-#googleSignInWrapper::before {
-  content: "🐾 🐾 🐾";
+  content: "";
   position: absolute;
-  top: -40px;
+  bottom: -80px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 1.2rem;
-  letter-spacing: 5px;
+  width: 80%;
+  background: rgba(255,255,255,0.9);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Individual Health Metrics */
+#googleSignInWrapper::before {
+  background: 
+    /* Hydration */
+    linear-gradient(90deg, 
+      #f5e7ec 0%, 
+      #f5e7ec calc(85% - 2px), 
+      #6a0dad calc(85% - 1px), 
+      #6a0dad 85%, 
+      transparent 85%),
+    /* Energy */
+    linear-gradient(90deg, 
+      #f5e7ec 0%, 
+      #f5e7ec calc(70% - 2px), 
+      #d4a017 calc(70% - 1px), 
+      #d4a017 70%, 
+      transparent 70%),
+    /* Happiness */
+    linear-gradient(90deg, 
+      #f5e7ec 0%, 
+      #f5e7ec calc(90% - 2px), 
+      #e1b12c calc(90% - 1px), 
+      #e1b12c 90%, 
+      transparent 90%),
+    /* Base */
+    white;
+  background-repeat: no-repeat;
+  background-position: 
+    0 15px,  /* Hydration position */
+    0 40px,  /* Energy position */
+    0 65px;  /* Happiness position */
+  background-size: 
+    100% 15px, 
+    100% 15px, 
+    100% 15px;
+}
+
+/* Labels */
+#googleSignInWrapper::before {
+  padding-top: 50px;
+}
+
+#googleSignInWrapper::before::after {
+  content: "Hydration\A Energy\A Happiness";
+  white-space: pre;
+  position: absolute;
+  left: 10px;
+  top: 15px;
+  color: #6a0dad;
+  font-size: 0.8rem;
+  line-height: 1.8;
+}
+
+/* Interactive Pulse */
+#googleSignInWrapper:hover::before {
+  animation: health-pulse 0.5s ease;
+}
+
+@keyframes health-pulse {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.02); }
 }
 
 /* Thought Bubble Quote */
