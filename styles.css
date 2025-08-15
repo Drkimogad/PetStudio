@@ -71,10 +71,26 @@
   filter: brightness(1.05) contrast(1.1);
 }
 
+
+/* ====================
+FLOATING AUTH WRAPPER (ADJUSTABLE)
+==================== */
+/*Tuning Guide:
+To Move Down:
+Increase top value (e.g., 65%)
+Decrease bounce transform Y value (e.g., -40%)
+To Move Up:
+Decrease top value (e.g., 55%)
+Increase bounce transform Y value (e.g., -50%)
+
+Paw Prints:
+Make more negative (e.g., -50px) to raise paws higher above button
+Less negative (e.g., -30px) to bring paws closer to button*/
+
 /* Treat Box Sign-In */
 #googleSignInWrapper {
   position: absolute;
-  top: 50%;
+  top: 80%; /* ⬆️⬇️ VERTICAL POSITION (Current: 60%) */
   left: 50%;
   transform: translate(-50%, -50%);
   width: 300px;
@@ -90,8 +106,15 @@
 }
 
 @keyframes bounce {
-  to { transform: translate(-50%, -45%); }
+  0%, 100% { transform: translate(-50%, -50%); } 
+  50% { transform: translate(-50%, -45%); } /* ⬆️⬇️ BOUNCE HEIGHT (Current: -45%) */
 }
+
+/* Paw Prints Positioning */
+#googleSignInWrapper::before {
+  top: -40px; /* ⬆️⬇️ PAW PRINTS DISTANCE (Current: -40px) */
+}
+
 
 .google-btn {
   background: #6a0dad !important;
@@ -142,9 +165,6 @@
   #googleSignInWrapper { width: 280px; }
   .quote { max-width: 70%; }
 }
-
-
-
 
 /* Preserve Existing Hidden States */
 .hidden {
