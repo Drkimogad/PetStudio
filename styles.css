@@ -170,23 +170,25 @@ body {
   pointer-events: none;
 }
 
-/* Quote on Stage Floor */
+/* ====================
+   ADJUSTABLE QUOTE STYLING
+under the stage
+==================== */
 .quote {
-  position: absolute;
-  bottom: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  max-width: 600px;
+  position: relative; /* Changed from absolute */
+  width: 70%; /* ⬆️⬇️ Adjust width percentage */
+  margin: 30px auto 0; /* ⬆️⬇️ First value = top margin in pixels */
+  padding: 20px;
   background: rgba(0,0,0,0.75);
   color: #f5f5dc;
-  padding: 18px;
   border-radius: 8px;
   text-align: center;
-  font-size: 1.3rem;
+  font-size: clamp(1rem, 2vw, 1.4rem); /* Responsive text */
   backdrop-filter: blur(3px);
   border: 1px solid rgba(255,255,255,0.1);
   z-index: 2;
+  transform: none; /* Removed translate */
+  left: auto; /* Reset positioning */
 }
 
 /* Velvet Rope Footer Space */
