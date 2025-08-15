@@ -1148,22 +1148,17 @@ styled to show in petcard header plus nickname */
 }
 
 /* Modal hide/show transition */
-#collage-modal, 
-#collage-preview-modal {
-  transition: opacity 0.3s ease;
-}
 #collage-modal.hidden,
 #collage-preview-modal.hidden {
   opacity: 0;
   pointer-events: none;
+  visibility: hidden;
+  z-index: -1;
 }
 
-.modal {
+#collage-modal,
+#collage-preview-modal {
   transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-.modal.hidden {
-  opacity: 0;
-  visibility: hidden;
 }
 
 
