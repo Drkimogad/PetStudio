@@ -1084,13 +1084,13 @@ styled to show in petcard header plus nickname */
   opacity: 1 !important;
 }
 
-/* Collage Modal */
+/* Collage Modal /container or window*/
 #collage-modal {
   position: fixed;
   top: 0;
   left: 0;
-  width: 90%;
-  height: 90%;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.8);
   border: 2px solid purple;  /*added*/
   display: flex;
@@ -1128,13 +1128,13 @@ styled to show in petcard header plus nickname */
   display: inline-block;
   width: 80%; /* Match h3 width */
 }
-
+/* modal conten tbox*/
 .modal-content {
   background: white;
-  padding: 20px;
+  padding: 20px; /* adjust the padding so content won't touch the edges*/
   border-radius: 10px;
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 100%;
+  max-height: 100%;
   overflow-y: auto;
 }
 /* important for grid layout in the modal*/
@@ -1210,8 +1210,8 @@ styled to show in petcard header plus nickname */
   position: fixed;
   top: 0;
   left: 0;
-  width: 85%; /*it was 100*/
-  height: 85%; /* it was 100*/
+  width: 80%; /*it was 100*/
+  height: 80%; /* it was 100*/
   z-index: 1000;
   display: flex;
   justify-content: center;
@@ -1221,12 +1221,14 @@ styled to show in petcard header plus nickname */
 #collage-preview-modal .modal-content {
   background: white;
   width: 100%;
-  max-width: 800px;
-  max-height: 90vh;
+  max-width: none;
+  height: 100%;
+  max-height: none;
   border-radius: 12px;
   padding: 10px;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box; /* prevents padding from shrinking inner area */
 }
 
 #collage-preview-modal .modal-header {
@@ -1309,9 +1311,11 @@ styled to show in petcard header plus nickname */
   z-index: -1;
 }
 
-#collage-modal,
+/* for blurring backdrop and fading effect*/
 #collage-preview-modal {
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.4);
+  transition: opacity 0.3s ease, visibility 0.3s ease, backdrop-filter 0.3s ease;
 }
 
 /* Ensure this is set for both mosals*/
