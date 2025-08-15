@@ -85,7 +85,10 @@ Increase bounce transform Y value (e.g., -50%)
 
 Paw Prints:
 Make more negative (e.g., -50px) to raise paws higher above button
-Less negative (e.g., -30px) to bring paws closer to button*/
+Less negative (e.g., -30px) to bring paws closer to button
+
+Important: The transform: translate(-50%, -50%) keeps it centered horizontally while your top value controls vertical placement. 
+Adjust in 5% increments for smooth changes.*/
 
 /* Treat Box Sign-In */
 #googleSignInWrapper {
