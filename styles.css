@@ -1722,11 +1722,6 @@ styled to show in petcard header plus nickname */
   opacity: 0.8;
 }
 
-
-
-
-
-
 /* ====================
    DRIVE SYNC STATUS
 ==================== */
@@ -1807,6 +1802,63 @@ styled to show in petcard header plus nickname */
 #qr-controls button:hover {
   background-color: #2980b9;
 }
+
+/* =====PRINT SCREEN-ONLY RESPONSIVE STYLES ===== */
+@media screen {
+  body {
+    padding: 2vh;
+    background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+  
+  .print-container {
+    width: 90vw; /* Responsive width */
+    max-width: 800px; /* Maximum desktop size */
+    min-width: 280px; /* Minimum mobile size */
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin: auto;
+  }
+
+  .print-image {
+    width: 100%;
+    height: auto;
+    max-height: 70vh; /* Prevents overflow */
+    object-fit: contain;
+    border: 1px solid #eee;
+  }
+
+  .print-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap; /* Allows buttons to stack on small screens */
+    margin-top: 20px;
+  }
+
+  .print-actions button {
+    padding: 10px 20px;
+    min-width: 120px; /* Better touch targets */
+    font-size: clamp(14px, 2vw, 16px); /* Responsive text */
+  }
+
+  /* Mobile tweaks */
+  @media (max-width: 480px) {
+    .print-container {
+      padding: 15px;
+      width: 95vw;
+    }
+    .print-actions {
+      gap: 8px;
+    }
+  }
+}
+
 
 /* ====================
    MEDIA QUERIES/EIGNS
