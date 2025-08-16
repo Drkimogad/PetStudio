@@ -4,6 +4,10 @@ let generatingQR = false;
 let sessionExpiryTimer = null; // Add this for session timeout tracking
 const SESSION_EXPIRY_MINUTES = 30; // Session expires after 30 minutes of inactivity
 setupPetProfileDelegation();
+// Add this:
+const handleKeyDown = (e) => {
+  if (e.key === 'Escape') closeModal();
+};
 
 // ===== SESSION RECOVERY WITH EXPIRY =====
 function initSessionRecovery() {
@@ -1367,19 +1371,23 @@ card.innerHTML = `
 // [ADD NEW FUNCTION FOR SHARING&DOWNLOADING BIRTHDAYCARD (place near your collage modal code)]
 //================================================================================================
 function showBirthdayCardModal(canvas, profile) {
-  // Add this at the TOP of showBirthdayCardModal()
-const existingModal = document.getElementById('birthday-card-modal');
-if (existingModal) {
-  existingModal.remove();
-  URL.revokeObjectURL(existingModal.querySelector('img')?.src);
-}
-  // Create modal if it doesn't exist
-  if (!document.getElementById('birthday-card-modal')) {
+  // ===== [CLEANUP SECTION - NEW] =====
+  // 1. Check for existing modal and clean up
+  const existingModal = document.getElementById('birthday-card-modal');
+  if (existingModal) {
+    // Clean up previous listeners to prevent duplicates
+    document.removeEventListener('keydown', handleKeyDown);
+    existingModal.querySelector('.modal-close').onclick = null;
+    existingModal.querySelector('.modal-backdrop').onclick = null;
+  }
+
+  // ===== [MODAL CREATION - EXISTING CODE] ===== 
+  if (!existingModal) {
     const modalHTML = `
       <div id="birthday-card-modal" class="modal hidden">
-        <div class="modal-backdrop"></div> <!-- NEW: Backdrop element -->
+        <div class="modal-backdrop"></div>
         <div class="modal-content">
-        <span class="modal-close">&times;</span>  <!-- Close button -->
+          <span class="modal-close">&times;</span>
           <h3>${profile.name}'s Birthday Card!</h3>
           <div class="card-preview-container">
             <img id="birthday-card-preview-img" src="${canvas.toDataURL()}" alt="Birthday Card">
@@ -1395,11 +1403,12 @@ if (existingModal) {
         </div>
       </div>`;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-  }   // closes the if 
+  }
 
-  // Show modal
+  // ===== [MODAL SHOW - EXISTING CODE] =====
   const modal = document.getElementById('birthday-card-modal');
   modal.classList.remove('hidden');
+
 
   // Update these event listeners:
   document.getElementById('share-birthday-btn').onclick = async () => {
@@ -1440,50 +1449,62 @@ if (existingModal) {
   document.getElementById('download-birthday-btn').onclick = () => {
     downloadCard(canvas, profile.name);
   };
-  // Close when clicking [X] button
-document.querySelector('#birthday-card-modal .modal-close').onclick = closeModal;
-// Close when clicking backdrop
-document.querySelector('#birthday-card-modal .modal-backdrop').onclick = closeModal;
-// Close with ESC key
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeModal();
- });
+  // ===== [CLEAN LISTENER SETUP - NEW] =====
+  // 3. Close handlers (now using single references)
+  const closeBtn = modal.querySelector('.modal-close');
+  const backdrop = modal.querySelector('.modal-backdrop');
+  
+  closeBtn.onclick = closeModal;
+  backdrop.onclick = closeModal;
+  document.addEventListener('keydown', handleKeyDown);
 } // closes the modal
 
-//6. ADD HELPER FUNCTION
-function downloadCard(canvas, petName) {
-  const link = document.createElement('a');
-  link.download = `${petName}_birthday.png`;
-  link.href = canvas.toDataURL();
-  link.click();
-}
+//======================================
+// HANDLE KEY DOWN FUNCTION FOR CLOSE BUTTON
+//Add this RIGHT BEFORE closeModal()
+//======================================
+const handleKeyDown = (e) => {
+  if (e.key === 'Escape') closeModal();
+};
 
-// The close function
+//=============================
+// CLOSE MODAL FUNCTION
+//==================================
+//Keep the modal in DOM but add proper state cleanup:
 function closeModal() {
   const modal = document.getElementById('birthday-card-modal');
-  if (!modal) return;
-  // 1. Revoke object URLs first
-  const img = modal.querySelector('#birthday-card-preview-img');
+  if (!modal || modal.classList.contains('hidden')) return;
+
+  // 1. Cleanup canvas references
+  const img = document.getElementById('birthday-card-preview-img');
   if (img && img.src.startsWith('blob:')) {
     URL.revokeObjectURL(img.src);
+    img.removeAttribute('src'); // Important for memory cleanup
   }
-  // 2. Remove event listeners
-  modal.querySelector('.modal-close').onclick = null;
-  modal.querySelector('.modal-backdrop').onclick = null;
-  document.removeEventListener('keydown', handleKeyDown); // Add this line
-  // 3. Remove modal from DOM
-  modal.remove();
-  // 4. Clean canvas reference
-  if (window.currentBirthdayCanvas) {
-    try {
-      URL.revokeObjectURL(window.currentBirthdayCanvas.toDataURL());
-    } catch(e) {
-      console.warn('Canvas cleanup error:', e);
-    }
-    delete window.currentBirthdayCanvas;
-  }
+
+  // 2. Reset any interactive elements
+  const downloadBtn = document.getElementById('download-birthday-btn');
+  if (downloadBtn) downloadBtn.onclick = null;
+
+  // 3. Hide the modal
+  modal.classList.add('hidden');
 }
 
+// ========================
+// BIRTHDAY CARD DOWNLOAD FUNCTION (updated)
+// ========================
+function downloadCard(canvas, petName) {
+  const sanitizedName = petName.replace(/[^a-z0-9]/gi, '_'); // Added sanitization
+  const link = document.createElement('a');
+  link.download = `${sanitizedName}_birthday.png`;
+  link.href = canvas.toDataURL();
+  document.body.appendChild(link); // More reliable for some browsers
+  link.click();
+  setTimeout(() => {
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href); // Added cleanup
+  }, 100);
+}
 
 //===============================
 //  EVERYTHING RELATED TO COLLAGE GENERATION, CREATE COLLAGE/HELPER FUNCTIONS(2) AND GENERATE COLLAGE AS PNG
@@ -1622,7 +1643,7 @@ document.body.addEventListener('click', (e) => {
 
 
 //==================================
-//  THEN GENERATE COLLAGE PNG
+// PHASE 2. THEN GENERATE COLLAGE PNG
 //==================================
  async function generateCollagePNG(profile) {
   try {
@@ -1803,7 +1824,7 @@ showCollagePreview(canvas, profile);
  }
 
 //==========================
-// SHOWCOLLAGEPREVIEW ()
+// PHASE 3. SHOW COLLAGE PREVIEW ()
 //==========================
 function showCollagePreview(canvas, profile) {
   // Remove any existing preview modal to avoid duplicates/leaks
@@ -1898,17 +1919,20 @@ function showCollagePreview(canvas, profile) {
   modal.classList.remove('hidden');
 }
 
-
-
-//====================================================
-// HELPER FUNCTION DOWNLOAD COLLAGE FOR createCollagePreview Modal 
-//=====================================================
+// ========================
+//  COLLAGE DOWNLOAD (updated)
+// ========================
 function downloadCollage(canvas, petName) {
+  const sanitizedName = petName.replace(/[^a-z0-9]/gi, '_');
   const link = document.createElement('a');
-  link.download = `${petName.replace(/[^a-z0-9]/gi, '_')}_collage.png`;
+  link.download = `${sanitizedName}_collage.png`;
   link.href = canvas.toDataURL();
+  document.body.appendChild(link); // More reliable
   link.click();
-  setTimeout(() => URL.revokeObjectURL(link.href), 100);
+  setTimeout(() => {
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  }, 100);
 }
 
 //====================================================
