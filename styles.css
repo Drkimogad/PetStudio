@@ -5,7 +5,7 @@
 
 /* Main Container */
 #authContainer {
-  background: #f8f4e8 url('../banner/image.png') no-repeat center center/cover;
+  background: #f8f4e8 url('https://drkimogad.github.io/PetStudio/banner/image.png') no-repeat center center/cover;
   min-height: 100vh;
   padding-bottom: 0;
 }
