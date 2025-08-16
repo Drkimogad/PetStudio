@@ -1344,6 +1344,13 @@ card.innerHTML = `
       useCORS: true, // Add this
       async: true // Add this so canvas await for image to load
     });
+
+   // Add this right before showBirthdayCardModal() call
+   if (window.currentBirthdayCanvas) {
+   URL.revokeObjectURL(window.currentBirthdayCanvas.toDataURL());
+   }
+   window.currentBirthdayCanvas = canvas; // Store reference
+    
        // 5. ADD NEW PREVIEW MODAL LOGIC]
     showBirthdayCardModal(canvas, profile); // New function call
 
@@ -1360,6 +1367,12 @@ card.innerHTML = `
 // [ADD NEW FUNCTION FOR SHARING&DOWNLOADING BIRTHDAYCARD (place near your collage modal code)]
 //================================================================================================
 function showBirthdayCardModal(canvas, profile) {
+  // Add this at the TOP of showBirthdayCardModal()
+const existingModal = document.getElementById('birthday-card-modal');
+if (existingModal) {
+  existingModal.remove();
+  URL.revokeObjectURL(existingModal.querySelector('img')?.src);
+}
   // Create modal if it doesn't exist
   if (!document.getElementById('birthday-card-modal')) {
     const modalHTML = `
@@ -1448,11 +1461,27 @@ function downloadCard(canvas, petName) {
 // The close function
 function closeModal() {
   const modal = document.getElementById('birthday-card-modal');
-  modal.classList.add('hidden');
-  
-  // Cleanup (important for memory)
-  const img = document.getElementById('birthday-card-preview-img');
-  if (img) URL.revokeObjectURL(img.src);
+  if (!modal) return;
+  // 1. Revoke object URLs first
+  const img = modal.querySelector('#birthday-card-preview-img');
+  if (img && img.src.startsWith('blob:')) {
+    URL.revokeObjectURL(img.src);
+  }
+  // 2. Remove event listeners
+  modal.querySelector('.modal-close').onclick = null;
+  modal.querySelector('.modal-backdrop').onclick = null;
+  document.removeEventListener('keydown', handleKeyDown); // Add this line
+  // 3. Remove modal from DOM
+  modal.remove();
+  // 4. Clean canvas reference
+  if (window.currentBirthdayCanvas) {
+    try {
+      URL.revokeObjectURL(window.currentBirthdayCanvas.toDataURL());
+    } catch(e) {
+      console.warn('Canvas cleanup error:', e);
+    }
+    delete window.currentBirthdayCanvas;
+  }
 }
 
 
