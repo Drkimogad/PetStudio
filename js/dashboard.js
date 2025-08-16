@@ -1461,11 +1461,8 @@ function showBirthdayCardModal(canvas, profile) {
 
 //======================================
 // HANDLE KEY DOWN FUNCTION FOR CLOSE BUTTON
-//Add this RIGHT BEFORE closeModal()
+// IT HAS BEEN DECLARED GLOBALLY
 //======================================
-const handleKeyDown = (e) => {
-  if (e.key === 'Escape') closeModal();
-};
 
 //=============================
 // CLOSE MODAL FUNCTION
