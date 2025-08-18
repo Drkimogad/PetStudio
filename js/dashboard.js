@@ -863,6 +863,7 @@ function initGalleryInteractions() {
     if (isEditing) {
       // Just mark the new cover photo in memory
       petProfiles[currentEditIndex].coverPhotoIndex = index;
+      DOM.profileForm.dataset.coverIndex = index;
     } else {
       // In create form, mark in temp array
       DOM.profileForm.dataset.coverIndex = index;
@@ -876,7 +877,9 @@ function initGalleryInteractions() {
 
 // Helper function to update both form previews
 function updateGalleryPreviews() {
-  const gallery = isEditing ? petProfiles[currentEditIndex].gallery : uploadedImageUrls;
+const gallery = isEditing 
+  ? [...(petProfiles[currentEditIndex].gallery || []), ...(uploadedImageUrls || [])] 
+  : uploadedImageUrls;
   const preview = document.getElementById('galleryPreview');
   
   if (preview) {
