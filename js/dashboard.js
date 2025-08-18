@@ -851,25 +851,28 @@ function initGalleryInteractions() {
   });
 
   // Cover photo selection
- document.querySelectorAll('.cover-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+// Cover photo selection
+document.querySelectorAll('.cover-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
     e.stopPropagation();
-    e.preventDefault(); // 🛠 Prevent form submission or unwanted navigation
+    e.preventDefault(); // prevents accidental form submission
 
     const index = parseInt(
       e.target.closest('.gallery-thumbnail').dataset.index
     );
 
     if (isEditing) {
-      // Just mark the new cover photo in memory
+      // Update temporary memory in petProfiles
       petProfiles[currentEditIndex].coverPhotoIndex = index;
+
+      // Keep form dataset consistent
       DOM.profileForm.dataset.coverIndex = index;
     } else {
-      // In create form, mark in temp array
+      // For create form
       DOM.profileForm.dataset.coverIndex = index;
     }
 
-    // Refresh the preview to visually update the active star
+    // Refresh previews to highlight the selected star
     updateGalleryPreviews();
   });
 });
@@ -890,16 +893,17 @@ const gallery = isEditing
              onerror="this.src='placeholder.jpg'">
         <button class="remove-btn">×</button>
         <button class="cover-btn ${
-          idx === (
-            isEditing 
-              ? petProfiles[currentEditIndex].coverPhotoIndex 
-              : parseInt(DOM.profileForm.dataset.coverIndex || 0, 10) // 🔹 FIXED: use dataset value instead of hardcoded 0
-          ) 
-          ? 'active' 
-          : ''
-        }">
-          ★
-        </button>
+  idx === (
+    isEditing 
+      ? petProfiles[currentEditIndex].coverPhotoIndex 
+      : parseInt(DOM.profileForm.dataset.coverIndex || 0, 10)
+  ) 
+  ? 'active' 
+  : ''
+}">
+  ★
+</button>
+
       </div>
     `).join('');
     
@@ -2241,8 +2245,10 @@ function setCoverPhoto(profileIndex, imageIndex) {
     // This keeps the cover photo choice visible in birthday card preview
   }
 
-  // Re-render if needed
+  // Re-render only if not inside a form
+if (!isEditing) {
   loadSavedProfiles();
+}
 }
 
 
@@ -2591,6 +2597,11 @@ function attachFormListenerWhenReady() {
         } else {
           petProfiles.push(newProfile);
         }
+
+        // Commit the final cover photo choice
+        petProfiles[currentEditIndex].coverPhotoIndex =
+        parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0;
+
 
         localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
