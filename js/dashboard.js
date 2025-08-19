@@ -694,7 +694,7 @@ previewTheme(profile.theme || DEFAULT_THEME);
       if (submitBtn) submitBtn.after(cancelBtn);
     }
        // 🎯 INSERT HERE ▼ (after fields, before UI updates)
-      updateGalleryPreviews(gallery); // ✅ Refresh gallery with existing images
+      updateGalleryPreviews(profile.gallery || []); // ✅ Refresh gallery with existing images
     
 
     // ======================
