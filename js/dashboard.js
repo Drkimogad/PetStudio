@@ -276,22 +276,28 @@ petCard.innerHTML = `
 <!--2. GALLERY SECTION -->
 <!-- ==================== -->
   <!-- Main Gallery Display (for viewing) -->
+// ====================
+//2. GALLERY SECTION (FIXED)
+// ====================
 <div class="gallery-grid">
-  ${profile.gallery?.length > 0 
-    ? profile.gallery.map((img, imgIndex) => `
-      <div class="gallery-item ${!img?.url ? 'error' : ''}">
-        <img src="${typeof img === 'string' ? img : img.url}" 
-             alt="Pet photo ${imgIndex + 1}"
-             onerror="this.classList.add('error'); this.src='placeholder.jpg';"
-             loading="lazy">
-        <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}" 
-                data-id="${profile.id}" 
-                data-index="${index}" 
-                data-photo-index="${imgIndex}">
-          ★
-        </button>
-      </div>
-    `).join('') 
+  ${profile.gallery && profile.gallery.length > 0 
+    ? profile.gallery.map((img, imgIndex) => {
+        const imgUrl = typeof img === 'string' ? img : (img?.url || '');
+        return `
+          <div class="gallery-item ${!imgUrl ? 'error' : ''}">
+            <img src="${imgUrl}" 
+                 alt="Pet photo ${imgIndex + 1}"
+                 onerror="this.classList.add('error'); this.src='placeholder.jpg';"
+                 loading="lazy">
+            <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}" 
+                    data-id="${profile.id}" 
+                    data-index="${index}" 
+                    data-photo-index="${imgIndex}">
+              ★
+            </button>
+          </div>
+        `;
+      }).join('') 
     : '<div class="empty-gallery-msg">No photos yet</div>'
   }
 </div>
