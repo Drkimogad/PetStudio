@@ -902,10 +902,10 @@ function updateGalleryPreviews(galleryArray) {
   const gallery = Array.isArray(galleryArray) ? galleryArray : []; // ✅ always an array
   const preview = document.getElementById('editGalleryPreview');
   if (!preview) return;
-
+// gallery is always passed as an array of objects.
   preview.innerHTML = gallery.map((img, idx) => `
     <div class="gallery-thumbnail" data-index="${idx}">
-      <img src="${typeof img === 'string' ? img : img.url}" 
+      <img src="${img.url || img}" 
            class="preview-thumb"
            onerror="this.src='placeholder.jpg'">
       <button class="remove-btn">×</button>
