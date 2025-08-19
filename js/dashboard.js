@@ -2444,14 +2444,22 @@ document.getElementById("petGallery").addEventListener("change", function() {
               console.log("⬆️ Uploading:", file.name); // DEBUG LINE KEPT
               const result = await uploadToCloudinary(file, userId, newProfileId);
               
-              if (result?.url) {
-                console.log("✅ Upload success:", result.url); // DEBUG LINE KEPT
-            // ADD THIS: Store both URL and public_id for proper image management
-                  uploadedImageUrls.push({
-                 url: result.url,
-              public_id: result.public_id // ← THIS IS WHAT YOU NEED TO ADD
-              });
-              }
+              // In the upload section, add validation:
+if (result?.url) {
+  console.log("✅ Upload success:", result.url);
+  
+  // NEW CODE: Validate public_id exists before adding
+  if (!result.public_id) {
+    console.warn("⚠️ Cloudinary response missing public_id:", result);
+    // Fallback: generate a unique ID locally if Cloudinary doesn't provide one
+    result.public_id = `manual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+  
+  uploadedImageUrls.push({
+    url: result.url,
+    public_id: result.public_id
+  });
+}
             } catch (uploadError) {
               console.error('❌ Upload failed:', uploadError); // DEBUG LINE KEPT
               Utils.showErrorToUser(`Failed to upload ${file.name}`);
@@ -2530,14 +2538,47 @@ document.getElementById("petGallery").addEventListener("change", function() {
         // ✅ ADD THIS LINE IMMEDIATELY AFTER required for firestore saving
         newProfile.userId = userId;
 
-        // 🖼️ Gallery Consolidation
-        if (isEditing) {
-          console.log("✏️ Merging with existing gallery..."); // DEBUG LINE KEPT
-          const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
-          newProfile.gallery = [...oldGallery, ...uploadedImageUrls];
-        } else {
-          newProfile.gallery = uploadedImageUrls;
-        }
+       // 🖼️ Gallery Consolidation and clean up after profile generation
+if (isEditing) {
+  console.log("✏️ Merging with existing gallery...");
+  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
+  newProfile.gallery = [...oldGallery, ...uploadedImageUrls];
+} else {
+  newProfile.gallery = uploadedImageUrls;
+}
+
+// ========================
+// 🆕 NEW: CLEANUP SECTION (ADD THIS RIGHT HERE)
+// ========================
+console.log("🧹 Cleaning undefined values before saving...");
+// Remove any undefined values from the entire profile object
+Object.keys(newProfile).forEach(key => {
+  if (newProfile[key] === undefined) {
+    console.warn(`⚠️ Removing undefined field: ${key}`);
+    delete newProfile[key];
+  }
+});
+
+// Also clean nested objects
+if (newProfile.emergencyContact) {
+  Object.keys(newProfile.emergencyContact).forEach(key => {
+    if (newProfile.emergencyContact[key] === undefined) {
+      delete newProfile.emergencyContact[key];
+    }
+  });
+}
+
+// Clean gallery items (remove any invalid images)
+if (newProfile.gallery) {
+  newProfile.gallery = newProfile.gallery.filter(img => img && img.url);
+  newProfile.gallery.forEach(img => {
+    Object.keys(img).forEach(key => {
+      if (img[key] === undefined) {
+        delete img[key];
+      }
+    });
+  });
+}
         
 
        // ========================
