@@ -638,7 +638,7 @@ tagCheckboxes.forEach(checkbox => {
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
   //3.Update gallery preview
-updateGalleryPreviews(); // refresh gallery,– populates thumbnails with remove and cover buttons.
+updateGalleryPreviews(petProfiles[currentEditIndex].gallery); // refresh gallery,– populates thumbnails with remove and cover buttons.
   //highlights the chosen theme and applies it to the live card preview.   
 const matchingRadio = document.querySelector(`input[name="theme"][value="${profile.theme}"]`);
 if (matchingRadio) matchingRadio.checked = true;
