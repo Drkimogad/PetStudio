@@ -879,22 +879,18 @@ function updateGalleryPreviews() {
   const gallery = isEditing ? petProfiles[currentEditIndex].gallery : uploadedImageUrls;
   const preview = document.getElementById('galleryPreview');
   
-  if (preview) {
+  // replaced if preview
+   const currentCoverIndex = isEditing 
+      ? petProfiles[currentEditIndex].coverPhotoIndex 
+      : parseInt(DOM.profileForm.dataset.coverIndex || 0, 10);
+    
     preview.innerHTML = gallery.map((img, idx) => `
       <div class="gallery-thumbnail" data-index="${idx}">
-        <img src="${typeof img === 'string' ? img : img.url}" 
+        <img src="${typeof img === 'string' ? img : img?.url || 'placeholder.jpg'}" 
              class="preview-thumb"
              onerror="this.src='placeholder.jpg'">
         <button class="remove-btn">×</button>
-        <button class="cover-btn ${
-          idx === (
-            isEditing 
-              ? petProfiles[currentEditIndex].coverPhotoIndex 
-              : parseInt(DOM.profileForm.dataset.coverIndex || 0, 10) // 🔹 FIXED: use dataset value instead of hardcoded 0
-          ) 
-          ? 'active' 
-          : ''
-        }">
+        <button class="cover-btn ${idx === currentCoverIndex ? 'active' : ''}">
           ★
         </button>
       </div>
