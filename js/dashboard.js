@@ -568,9 +568,10 @@ tagCheckboxes.forEach(checkbox => {
 // 3. GALLERY PREVIEW SETUP (UPDATED TO USE updateGalleryPreviews now)
 // ======================
     // after resetForm before poppulating fields.
-  // 1.Copy gallery to memory
-  petProfiles[currentEditIndex].gallery = [...(profile.gallery || [])];
-
+  // 1. Copy existing gallery to uploadedImageUrls so both show together
+ uploadedImageUrls = [...(profile.gallery || [])];
+  petProfiles[currentEditIndex].gallery = uploadedImageUrls;
+    
   // 2.Set current cover index in form dataset
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
