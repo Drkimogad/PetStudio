@@ -644,7 +644,7 @@ tagCheckboxes.forEach(checkbox => {
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
   //3.Update gallery preview
-updateGalleryPreviews(); // refresh gallery,– populates thumbnails with remove and cover buttons.
+updateGalleryPreviews(profile.gallery || []);
   //highlights the chosen theme and applies it to the live card preview.   
 const matchingRadio = document.querySelector(`input[name="theme"][value="${profile.theme}"]`);
 if (matchingRadio) matchingRadio.checked = true;
@@ -693,8 +693,6 @@ previewTheme(profile.theme || DEFAULT_THEME);
       const submitBtn = DOM.profileForm.querySelector('button[type="submit"]');
       if (submitBtn) submitBtn.after(cancelBtn);
     }
-       // 🎯 INSERT HERE ▼ (after fields, before UI updates)
-      updateGalleryPreviews(profile.gallery || []); // ✅ Refresh gallery with existing images
     
 
     // ======================
