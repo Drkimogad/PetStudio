@@ -2361,15 +2361,26 @@ document.getElementById("petGallery").addEventListener("change", function() {
   console.log("📸 Gallery input changed");
   const preview = document.getElementById("editGalleryPreview");
   const files = Array.from(this.files);
+  
   if (!preview) {
     console.warn("⚠️ Preview container not found");
     return;
   }
+  
+    if (files.length === 0) return;
+
   // REMOVED: preview.innerHTML = ""; // ← THIS LINE CLEARS EXISTING IMAGES
   files.forEach(file => {
     const reader = new FileReader();
     reader.onload = function(e) {
-      // CHANGED FROM: preview.innerHTML += 
+
+       // Add to uploadedImageUrls as temporary object
+      uploadedImageUrls.push({
+        url: e.target.result, // temporary data URL
+        isTemp: true // mark as temporary
+      });
+      
+      // KEEP BOTH: Direct DOM update AND global refresh
       // TO: Create proper thumbnail with buttons
       const thumbnailDiv = document.createElement('div');
       thumbnailDiv.className = 'gallery-thumbnail';
@@ -2379,6 +2390,8 @@ document.getElementById("petGallery").addEventListener("change", function() {
         <button class="cover-btn">★</button>
       `;
       preview.appendChild(thumbnailDiv);
+      // ALSO refresh the entire gallery to ensure consistency
+      updateGalleryPreviews(); // ← CRITICAL: This ensures buttons work
     };
     reader.readAsDataURL(file);
   });
