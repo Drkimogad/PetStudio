@@ -638,7 +638,7 @@ tagCheckboxes.forEach(checkbox => {
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
 
   //3.Update gallery preview
-updateGalleryPreviews(petProfiles[currentEditIndex].gallery); // refresh gallery,– populates thumbnails with remove and cover buttons.
+updateGalleryPreviews(); // refresh gallery,– populates thumbnails with remove and cover buttons.
   //highlights the chosen theme and applies it to the live card preview.   
 const matchingRadio = document.querySelector(`input[name="theme"][value="${profile.theme}"]`);
 if (matchingRadio) matchingRadio.checked = true;
@@ -897,13 +897,13 @@ if (themeRadios.length) {
 //=================================================
 //4. helper function for gallery preview in edit form
 //=====================================================
-// Helper function to update previews in both create/edit forms
+// Helper function to update previews in both create/edit forms SELF CONTAINED
 function updateGalleryPreviews(galleryArray) {
   const gallery = Array.isArray(galleryArray) ? galleryArray : []; // ✅ always an array
   const preview = document.getElementById('editGalleryPreview');
   if (!preview) return;
 
-  preview.innerHTML = galleryArray.map((img, idx) => `
+  preview.innerHTML = gallery.map((img, idx) => `
     <div class="gallery-thumbnail" data-index="${idx}">
       <img src="${typeof img === 'string' ? img : img.url}" 
            class="preview-thumb"
@@ -916,17 +916,21 @@ function updateGalleryPreviews(galleryArray) {
   `).join('');
 
   // Re-hook events for new DOM elements
-  initGalleryInteractions(galleryArray);
+  initGalleryInteractions();
 }
 
 // Hook remove and cover button events
-function initGalleryInteractions(galleryArray) {
+function initGalleryInteractions() {
   // Remove image
   document.querySelectorAll('.remove-btn').forEach(btn => {
     btn.onclick = (e) => {
       e.stopPropagation();
-      const idx = parseInt(e.target.closest('.gallery-thumbnail').dataset.index);
-      galleryArray.splice(idx, 1); // remove from gallery
+      const idx = parseInt(e.target.closest('.gallery-thumbnail').dataset.index, 10);
+
+      const gallery = isEditing 
+        ? petProfiles[currentEditIndex].gallery 
+        : uploadedImageUrls;
+      gallery.splice(idx, 1);
 
       // Adjust coverIndex if necessary
       let coverIndex = parseInt(DOM.profileForm.dataset.coverIndex || 0, 10);
@@ -934,7 +938,7 @@ function initGalleryInteractions(galleryArray) {
       else if (coverIndex > idx) coverIndex -= 1;
       DOM.profileForm.dataset.coverIndex = coverIndex;
 
-      updateGalleryPreviews(galleryArray);
+      updateGalleryPreviews(gallery);
     };
   });
 
@@ -942,7 +946,7 @@ function initGalleryInteractions(galleryArray) {
   document.querySelectorAll('.cover-btn').forEach(btn => {
     btn.onclick = (e) => {
       e.stopPropagation();
-      const idx = parseInt(e.target.closest('.gallery-thumbnail').dataset.index);
+      const idx = parseInt(e.target.closest('.gallery-thumbnail').dataset.index, 10);
       DOM.profileForm.dataset.coverIndex = idx;
 
       // If editing, update memory immediately for live preview
@@ -950,27 +954,31 @@ function initGalleryInteractions(galleryArray) {
         petProfiles[currentEditIndex].coverPhotoIndex = idx;
       }
 
-      updateGalleryPreviews(galleryArray);
+      const gallery = isEditing 
+        ? petProfiles[currentEditIndex].gallery 
+        : uploadedImageUrls;
+      updateGalleryPreviews(gallery);
     };
   });
 }
 
+
+// Gallery input change (add new images)
 // Gallery input change (add new images)
 document.getElementById("petGallery").addEventListener("change", function() {
   const files = Array.from(this.files);
-  const preview = document.getElementById("editGalleryPreview");
-  if (!preview) return;
+  if (!files.length) return;
 
-  // Start with existing gallery
-  const currentGallery = preview.querySelectorAll('img') 
-    ? Array.from(preview.querySelectorAll('img')).map(img => img.src) 
-    : [];
+  // Decide which gallery array to update
+  const gallery = isEditing 
+    ? petProfiles[currentEditIndex].gallery 
+    : uploadedImageUrls;
 
   files.forEach(file => {
     const reader = new FileReader();
     reader.onload = function(e) {
-      currentGallery.push(e.target.result);
-      updateGalleryPreviews(currentGallery);
+      gallery.push(e.target.result); // directly update the correct memory array
+      updateGalleryPreviews(gallery); // pass it to the preview function
     };
     reader.readAsDataURL(file);
   });
@@ -978,6 +986,8 @@ document.getElementById("petGallery").addEventListener("change", function() {
   // Clear input to allow re-adding same files if needed
   this.value = "";
 });
+
+
 
 
 
