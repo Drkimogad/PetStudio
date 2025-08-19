@@ -2380,23 +2380,23 @@ document.getElementById("petGallery").addEventListener("change", function() {
         isTemp: true // mark as temporary
       });
       
-      // KEEP BOTH: Direct DOM update AND global refresh
-      // TO: Create proper thumbnail with buttons
-      const thumbnailDiv = document.createElement('div');
-      thumbnailDiv.className = 'gallery-thumbnail';
-      thumbnailDiv.innerHTML = `
-        <img src="${e.target.result}" class="preview-thumb" />
-        <button class="remove-btn">×</button>
-        <button class="cover-btn">★</button>
-      `;
-      preview.appendChild(thumbnailDiv);
-      // ALSO refresh the entire gallery to ensure consistency
+      // REMOVED: Direct DOM manipulation (causes duplication)
+      // const thumbnailDiv = document.createElement('div');
+      // thumbnailDiv.className = 'gallery-thumbnail';
+      // thumbnailDiv.innerHTML = `
+      //   <img src="${e.target.result}" class="preview-thumb" />
+      //   <button class="remove-btn">×</button>
+      //   <button class="cover-btn">★</button>
+      // `;
+      // preview.appendChild(thumbnailDiv);
+      
+      // ONLY update from the source of truth
       updateGalleryPreviews(); // ← CRITICAL: This ensures buttons work
     };
     reader.readAsDataURL(file);
   });
   // RE-INITIALIZE BUTTONS FOR NEW IMAGES
-  initGalleryInteractions();
+  // initGalleryInteractions(); // ← REMOVE THIS TOO (updateGalleryPreviews() already calls it)
 });
 
     // ========================
