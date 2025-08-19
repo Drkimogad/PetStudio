@@ -688,7 +688,7 @@ previewTheme(profile.theme || DEFAULT_THEME);
       if (submitBtn) submitBtn.after(cancelBtn);
     }
        // 🎯 INSERT HERE ▼ (after fields, before UI updates)
-    updateGalleryPreviews(); // Refresh gallery with existing images
+      updateGalleryPreviews(gallery); // ✅ Refresh gallery with existing images
     
 
     // ======================
@@ -772,7 +772,9 @@ function openCreateForm() {
   if (themeRadios.length) themeRadios[0].checked = true;
 
   // 2. Initialize gallery previews
-  updateGalleryPreviews();
+  //updateGalleryPreviews();
+  updateGalleryPreviews(gallery); // ✅ pass updated gallery
+
 
   //3. Initialize preview with empty state
   const preview = document.getElementById('birthday-card-preview');
@@ -918,7 +920,6 @@ function updateGalleryPreviews(galleryArray) {
   // Re-hook events for new DOM elements
   initGalleryInteractions();
 }
-
 // Hook remove and cover button events
 function initGalleryInteractions() {
   // Remove image
@@ -938,7 +939,7 @@ function initGalleryInteractions() {
       else if (coverIndex > idx) coverIndex -= 1;
       DOM.profileForm.dataset.coverIndex = coverIndex;
 
-      updateGalleryPreviews(gallery);
+      updateGalleryPreviews(gallery, previewId);
     };
   });
 
@@ -957,13 +958,12 @@ function initGalleryInteractions() {
       const gallery = isEditing 
         ? petProfiles[currentEditIndex].gallery 
         : uploadedImageUrls;
-      updateGalleryPreviews(gallery);
+      updateGalleryPreviews(gallery, previewId);
     };
   });
 }
 
 
-// Gallery input change (add new images)
 // Gallery input change (add new images)
 document.getElementById("petGallery").addEventListener("change", function() {
   const files = Array.from(this.files);
@@ -977,8 +977,8 @@ document.getElementById("petGallery").addEventListener("change", function() {
   files.forEach(file => {
     const reader = new FileReader();
     reader.onload = function(e) {
-      gallery.push(e.target.result); // directly update the correct memory array
-      updateGalleryPreviews(gallery); // pass it to the preview function
+      gallery.push({ url: e.target.result }); // ✅ store as object with url
+      updateGalleryPreviews(gallery); // ✅ pass updated gallery
     };
     reader.readAsDataURL(file);
   });
