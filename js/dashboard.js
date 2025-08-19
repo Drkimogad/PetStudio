@@ -779,8 +779,17 @@ function openCreateForm() {
 
   // 2. Initialize gallery previews
   //updateGalleryPreviews();
-  updateGalleryPreviews(gallery); // ✅ pass updated gallery
+// ======================
+// 3. GALLERY PREVIEW SETUP (FIXED)
+// ======================
+// 1.Copy gallery to memory
+petProfiles[currentEditIndex].gallery = [...(profile.gallery || [])];
 
+// 2.Set current cover index in form dataset
+DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
+
+// 3.Update gallery preview (FIXED - pass the actual gallery)
+updateGalleryPreviews(petProfiles[currentEditIndex].gallery);
 
   //3. Initialize preview with empty state
   const preview = document.getElementById('birthday-card-preview');
@@ -906,14 +915,18 @@ if (themeRadios.length) {
 //4. helper function for gallery preview in edit form
 //=====================================================
 // Helper function to update previews in both create/edit forms SELF CONTAINED
-function updateGalleryPreviews(galleryArray) {
-  const gallery = Array.isArray(galleryArray) ? galleryArray : []; // ✅ always an array
+//=================================================
+//4. helper function for gallery preview in edit form (FIXED)
+//=====================================================
+// Helper function to update previews in both create/edit forms SELF CONTAINED
+function updateGalleryPreviews(galleryArray = []) {
+  const gallery = Array.isArray(galleryArray) ? galleryArray : [];
   const preview = document.getElementById('editGalleryPreview');
   if (!preview) return;
-// gallery is always passed as an array of objects.
+  
   preview.innerHTML = gallery.map((img, idx) => `
     <div class="gallery-thumbnail" data-index="${idx}">
-      <img src="${img.url || img}" 
+      <img src="${typeof img === 'string' ? img : (img?.url || '')}" 
            class="preview-thumb"
            onerror="this.src='placeholder.jpg'">
       <button class="remove-btn">×</button>
@@ -926,7 +939,8 @@ function updateGalleryPreviews(galleryArray) {
   // Re-hook events for new DOM elements
   initGalleryInteractions();
 }
-// Hook remove and cover button events
+
+// Hook remove and cover button events - FIXED
 function initGalleryInteractions() {
   // Remove image
   document.querySelectorAll('.remove-btn').forEach(btn => {
@@ -945,7 +959,7 @@ function initGalleryInteractions() {
       else if (coverIndex > idx) coverIndex -= 1;
       DOM.profileForm.dataset.coverIndex = coverIndex;
 
-      updateGalleryPreviews(gallery, previewId);
+      updateGalleryPreviews(gallery); // ✅ FIXED: Remove previewId parameter
     };
   });
 
@@ -964,13 +978,14 @@ function initGalleryInteractions() {
       const gallery = isEditing 
         ? petProfiles[currentEditIndex].gallery 
         : uploadedImageUrls;
-      updateGalleryPreviews(gallery, previewId);
+      updateGalleryPreviews(gallery); // ✅ FIXED: Remove previewId parameter
     };
   });
 }
 
 
 // Gallery input change (add new images)
+// Gallery input change (add new images) - FIXED
 document.getElementById("petGallery").addEventListener("change", function() {
   const files = Array.from(this.files);
   if (!files.length) return;
@@ -984,7 +999,7 @@ document.getElementById("petGallery").addEventListener("change", function() {
     const reader = new FileReader();
     reader.onload = function(e) {
       gallery.push({ url: e.target.result }); // ✅ store as object with url
-      updateGalleryPreviews(gallery); // ✅ pass updated gallery
+      updateGalleryPreviews(gallery); // ✅ FIXED: Remove previewId parameter
     };
     reader.readAsDataURL(file);
   });
@@ -2565,17 +2580,8 @@ document.getElementById("petGallery").addEventListener("change", function() {
         const newProfileId = Date.now();
         console.log("🆕 New profile ID:", newProfileId); // DEBUG LINE KEPT
 
-        // ========================
-        // SECTION 4: GALLERY UPLOAD
-        // ========================
-        // ========================
-// SECTION 4: GALLERY UPLOAD & FINAL SAVE
 // ========================
-// ========================
-// SECTION 4: GALLERY UPLOAD & FINAL SAVE
-// ========================
-// ========================
-// GALLERY UPLOAD & MERGE WITH PUBLIC ID
+// SECTION 4: GALLERY UPLOAD & FINAL SAVE (FIXED)
 // ========================
 const galleryFiles = Array.from(document.getElementById("petGallery").files);
 let uploadedGallery = []; // only new uploads
@@ -2598,7 +2604,7 @@ for (const file of galleryFiles) {
 // Get old gallery if editing
 const oldGallery = isEditing ? (petProfiles[currentEditIndex]?.gallery || []) : [];
 
-// Merge old + newly uploaded gallery
+// Merge old + newly uploaded gallery (FIXED - use uploadedGallery instead of uploadedImageUrls)
 newProfile.gallery = [...oldGallery, ...uploadedGallery];
 
 // Get the cover photo index from form dataset (default 0)
