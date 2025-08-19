@@ -901,6 +901,7 @@ function updateGalleryPreviews() {
 }
 
 
+
 //================================
 //5. FUNCTION CANCEL EDIT
 //===============================
