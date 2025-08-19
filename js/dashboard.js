@@ -2445,19 +2445,28 @@ document.getElementById("petGallery").addEventListener("change", function() {
               const result = await uploadToCloudinary(file, userId, newProfileId);
               
               // In the upload section, add validation:
+// In the upload section, fix the public_id handling:
 if (result?.url) {
   console.log("✅ Upload success:", result.url);
   
-  // NEW CODE: Validate public_id exists before adding
-  if (!result.public_id) {
-    console.warn("⚠️ Cloudinary response missing public_id:", result);
-    // Fallback: generate a unique ID locally if Cloudinary doesn't provide one
-    result.public_id = `manual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  // FIXED: Extract public_id from the response properly
+  let public_id = result.public_id;
+  
+  // If Cloudinary doesn't provide public_id, try to extract it from the URL or path
+  if (!public_id && result.path) {
+    public_id = result.path; // Cloudinary sometimes provides 'path' instead
+  }
+  
+  if (!public_id) {
+    console.warn("⚠️ Cloudinary response missing public_id, generating fallback:", result);
+    // Fallback: use the URL path or generate unique ID
+    const urlPath = new URL(result.url).pathname.split('/').pop().split('.')[0];
+    public_id = `fallback_${urlPath || Date.now()}`;
   }
   
   uploadedImageUrls.push({
     url: result.url,
-    public_id: result.public_id
+    public_id: result.public_id // ← Now Cloudinary provides this reliably
   });
 }
             } catch (uploadError) {
@@ -2538,11 +2547,11 @@ if (result?.url) {
         // ✅ ADD THIS LINE IMMEDIATELY AFTER required for firestore saving
         newProfile.userId = userId;
 
-       // 🖼️ Gallery Consolidation and clean up after profile generation
+// 🖼️ Gallery Consolidation - FIXED (remove duplication)
 if (isEditing) {
-  console.log("✏️ Merging with existing gallery...");
-  const oldGallery = petProfiles[currentEditIndex]?.gallery || [];
-  newProfile.gallery = [...oldGallery, ...uploadedImageUrls];
+  console.log("✏️ Using current gallery state...");
+  // JUST use the uploadedImageUrls array (which already contains old + new images)
+  newProfile.gallery = [...uploadedImageUrls];
 } else {
   newProfile.gallery = uploadedImageUrls;
 }
