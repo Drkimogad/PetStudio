@@ -877,8 +877,7 @@ function initGalleryInteractions() {
 // Helper function to update both form previews
 function updateGalleryPreviews() {
   const gallery = isEditing ? petProfiles[currentEditIndex].gallery : uploadedImageUrls;
-  const preview = document.getElementById('galleryPreview');
-  
+  const preview = document.getElementById('galleryPreview'); 
   // replaced if preview
    const currentCoverIndex = isEditing 
       ? petProfiles[currentEditIndex].coverPhotoIndex 
@@ -898,9 +897,6 @@ function updateGalleryPreviews() {
     
     initGalleryInteractions();
   }
-}
-
-
 
 //================================
 //5. FUNCTION CANCEL EDIT
