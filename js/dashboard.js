@@ -897,6 +897,28 @@ if (themeRadios.length) {
 //=================================================
 //4. helper function for gallery preview in edit form
 //=====================================================
+// Helper function to update previews in both create/edit forms
+function updateGalleryPreviews(galleryArray) {
+  const preview = document.getElementById('editGalleryPreview');
+  if (!preview) return;
+
+  preview.innerHTML = galleryArray.map((img, idx) => `
+    <div class="gallery-thumbnail" data-index="${idx}">
+      <img src="${typeof img === 'string' ? img : img.url}" 
+           class="preview-thumb"
+           onerror="this.src='placeholder.jpg'">
+      <button class="remove-btn">×</button>
+      <button class="cover-btn ${
+        idx === parseInt(DOM.profileForm.dataset.coverIndex || 0, 10) ? 'active' : ''
+      }">★</button>
+    </div>
+  `).join('');
+
+  // Re-hook events for new DOM elements
+  initGalleryInteractions(galleryArray);
+}
+
+// Hook remove and cover button events
 function initGalleryInteractions(galleryArray) {
   // Remove image
   document.querySelectorAll('.remove-btn').forEach(btn => {
@@ -904,59 +926,59 @@ function initGalleryInteractions(galleryArray) {
       e.stopPropagation();
       const idx = parseInt(e.target.closest('.gallery-thumbnail').dataset.index);
       galleryArray.splice(idx, 1); // remove from gallery
+
       // Adjust coverIndex if necessary
-      const coverIndex = parseInt(DOM.profileForm.dataset.coverIndex, 10);
-      if (coverIndex === idx) DOM.profileForm.dataset.coverIndex = 0;
-      else if (coverIndex > idx) DOM.profileForm.dataset.coverIndex = coverIndex - 1;
+      let coverIndex = parseInt(DOM.profileForm.dataset.coverIndex || 0, 10);
+      if (coverIndex === idx) coverIndex = 0;
+      else if (coverIndex > idx) coverIndex -= 1;
+      DOM.profileForm.dataset.coverIndex = coverIndex;
+
       updateGalleryPreviews(galleryArray);
     };
   });
 
-  // Cover photo selection
+  // Select cover photo
   document.querySelectorAll('.cover-btn').forEach(btn => {
     btn.onclick = (e) => {
       e.stopPropagation();
       const idx = parseInt(e.target.closest('.gallery-thumbnail').dataset.index);
-      DOM.profileForm.dataset.coverIndex = idx; // mark active cover
+      DOM.profileForm.dataset.coverIndex = idx;
+
+      // If editing, update memory immediately for live preview
+      if (isEditing) {
+        petProfiles[currentEditIndex].coverPhotoIndex = idx;
+      }
+
       updateGalleryPreviews(galleryArray);
     };
   });
 }
 
+// Gallery input change (add new images)
+document.getElementById("petGallery").addEventListener("change", function() {
+  const files = Array.from(this.files);
+  const preview = document.getElementById("editGalleryPreview");
+  if (!preview) return;
+
+  // Start with existing gallery
+  const currentGallery = preview.querySelectorAll('img') 
+    ? Array.from(preview.querySelectorAll('img')).map(img => img.src) 
+    : [];
+
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      currentGallery.push(e.target.result);
+      updateGalleryPreviews(currentGallery);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Clear input to allow re-adding same files if needed
+  this.value = "";
+});
 
 
-// Helper function to update both form previews
-function updateGalleryPreviews() {
-const gallery = isEditing 
-  ? [...(petProfiles[currentEditIndex].gallery || []), ...(uploadedImageUrls || [])] 
-  : uploadedImageUrls;
-  const preview = document.getElementById('galleryPreview');
-  
-  if (preview) {
-    preview.innerHTML = gallery.map((img, idx) => `
-      <div class="gallery-thumbnail" data-index="${idx}">
-        <img src="${typeof img === 'string' ? img : img.url}" 
-             class="preview-thumb"
-             onerror="this.src='placeholder.jpg'">
-        <button class="remove-btn">×</button>
-        <button class="cover-btn ${
-  idx === (
-    isEditing 
-      ? petProfiles[currentEditIndex].coverPhotoIndex 
-      : parseInt(DOM.profileForm.dataset.coverIndex || 0, 10)
-  ) 
-  ? 'active' 
-  : ''
-}">
-  ★
-</button>
-
-      </div>
-    `).join('');
-    
-    initGalleryInteractions();
-  }
-}
 
 
 //================================
@@ -2392,21 +2414,31 @@ function initializeDashboard() {
   
 // for gallery preview
   function updateGalleryPreviews(galleryArray) {
-  const preview = document.getElementById("editGalleryPreview");
+  const preview = document.getElementById('galleryPreview');
   if (!preview) return;
-
-  const coverIndex = parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0;
 
   preview.innerHTML = galleryArray.map((img, idx) => `
     <div class="gallery-thumbnail" data-index="${idx}">
-      <img src="${img}" class="preview-thumb" onerror="this.src='placeholder.jpg'">
+      <img src="${typeof img === 'string' ? img : img.url}" 
+           class="preview-thumb"
+           onerror="this.src='placeholder.jpg'">
       <button class="remove-btn">×</button>
-      <button class="cover-btn ${idx === coverIndex ? 'active' : ''}">★</button>
+      <button class="cover-btn ${
+        idx === (
+          isEditing
+            ? petProfiles[currentEditIndex].coverPhotoIndex
+            : parseInt(DOM.profileForm.dataset.coverIndex || 0, 10)
+        )
+        ? 'active'
+        : ''
+      }">★</button>
     </div>
   `).join('');
 
-  initGalleryInteractions(galleryArray); // reattach listeners
+  // Re-hook interactions every time DOM updates
+  initGalleryInteractions(galleryArray);
 }
+
 
 
   
@@ -2434,7 +2466,6 @@ function attachFormListenerWhenReady() {
     // ========================
     // SECTION 1: GALLERY PREVIEW
     // ========================
-    // SECTION 1: GALLERY PREVIEW
 document.getElementById("petGallery").addEventListener("change", function() {
   const preview = document.getElementById("editGalleryPreview");
   if (!preview) return;
@@ -2443,15 +2474,21 @@ document.getElementById("petGallery").addEventListener("change", function() {
   const currentGallery = Array.from(preview.querySelectorAll('img')).map(img => img.src);
 
   const files = Array.from(this.files);
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      currentGallery.push(e.target.result); // append new images
-      updateGalleryPreviews(currentGallery); // render all images
-    };
-    reader.readAsDataURL(file);
+  const readers = files.map(file => {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.readAsDataURL(file);
+    });
+  });
+
+  // Wait until all files are read
+  Promise.all(readers).then(newImages => {
+    currentGallery.push(...newImages); // append all new images
+    updateGalleryPreviews(currentGallery); // render all images at once
   });
 });
+
 
 
 
@@ -2496,15 +2533,18 @@ document.getElementById("petGallery").addEventListener("change", function() {
         // ========================
 // SECTION 4: GALLERY UPLOAD & FINAL SAVE
 // ========================
+// ========================
+// SECTION 4: GALLERY UPLOAD & FINAL SAVE
+// ========================
 const galleryFiles = Array.from(document.getElementById("petGallery").files);
 let finalGallery = [];
 
-// If editing, start with existing gallery
+// Start with existing gallery if editing
 if (isEditing) {
   finalGallery = [...(petProfiles[currentEditIndex]?.gallery || [])];
 }
 
-// Upload new files
+// Upload new files to Cloudinary
 for (const file of galleryFiles) {
   try {
     const result = await uploadToCloudinary(file, userId, newProfileId);
@@ -2514,28 +2554,33 @@ for (const file of galleryFiles) {
   }
 }
 
-// Determine cover photo index from form dataset
+// Get the cover photo index from form dataset (default 0)
 const coverIndex = parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0;
 
-// Merge & save
+// Merge & save to newProfile
 newProfile.gallery = finalGallery;
 newProfile.coverPhotoIndex = coverIndex;
 
-// If editing, update memory
+// Update main memory
 if (isEditing) {
   petProfiles[currentEditIndex] = { ...petProfiles[currentEditIndex], ...newProfile };
 } else {
   petProfiles.push(newProfile);
 }
 
-// Persist
+// Persist to localStorage
 localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
-// Refresh gallery preview in form
-updateGalleryPreviews(newProfile.gallery);
+// Update gallery preview in form
+if (isEditing) {
+  updateGalleryPreviews(petProfiles[currentEditIndex].gallery);
+} else {
+  updateGalleryPreviews(newProfile.gallery);
+}
 
 // Clear file input
 document.getElementById("petGallery").value = "";
+
 
 
         // ========================
