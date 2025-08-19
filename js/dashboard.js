@@ -2575,7 +2575,7 @@ localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 if (isEditing) {
   updateGalleryPreviews(petProfiles[currentEditIndex].gallery);
 } else {
-  updateGalleryPreviews(newProfile.gallery);
+  updateGalleryPreviews(currentGallery);
 }
 
 // Clear file input
