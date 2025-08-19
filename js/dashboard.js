@@ -899,6 +899,7 @@ if (themeRadios.length) {
 //=====================================================
 // Helper function to update previews in both create/edit forms
 function updateGalleryPreviews(galleryArray) {
+  const gallery = Array.isArray(galleryArray) ? galleryArray : []; // ✅ always an array
   const preview = document.getElementById('editGalleryPreview');
   if (!preview) return;
 
