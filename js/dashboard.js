@@ -2411,11 +2411,20 @@ function attachFormListenerWhenReady() {
           // 🟢 1. NEW PROFILE CREATION LOADER MESSAGE
       //define loader to init properly
      const loader = document.getElementById('processing-loader');
+      // FIX: Check if loader exists before using it
+      if (!loader) {
+        console.error("❌ Loader element not found");
+        return;
+      }
+      
      const loaderText = loader.querySelector('p'); // Define loaderText here
-
+     // FIX: Check if loaderText exists
+      if (loaderText) {
      loaderText.innerHTML = isEditing ? 
     '<i class="fas fa-save"></i> Updating profile...' : 
     '<i class="fas fa-paw"></i> Creating pet profile...';
+      }
+      
      loader.style.display = 'block';
      document.body.style.pointerEvents = 'none';
 
