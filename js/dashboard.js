@@ -877,10 +877,11 @@ function initGalleryInteractions() {
 
 // Helper function to update both form previews
 function updateGalleryPreviews() {
-  const gallery = isEditing ? petProfiles[currentEditIndex].gallery : uploadedImageUrls;
-  const preview = document.getElementById('galleryPreview'); 
-  // replaced if preview
-   const currentCoverIndex = isEditing 
+  const gallery = uploadedImageUrls; 
+  const preview = document.getElementById('galleryPreview');
+  
+  if (preview) {
+    const currentCoverIndex = isEditing 
       ? petProfiles[currentEditIndex].coverPhotoIndex 
       : parseInt(DOM.profileForm.dataset.coverIndex || 0, 10);
     
@@ -896,8 +897,11 @@ function updateGalleryPreviews() {
       </div>
     `).join('');
     
+    // RE-INITIALIZE BUTTONS FOR ALL GALLERY ITEMS
     initGalleryInteractions();
   }
+ }
+  
 
 //================================
 //5. FUNCTION CANCEL EDIT
@@ -2327,28 +2331,7 @@ function initializeDashboard() {
       openCreateForm();
     });
   }
-  
-// for gallery preview
-  const galleryInput = document.getElementById("petGallery");
-if (galleryInput) {
-  galleryInput.addEventListener("change", function (e) {
-    const previewContainer = document.getElementById("galleryPreview");
-    if (!previewContainer) return;
 
-    previewContainer.innerHTML = '';
-
-    Array.from(e.target.files).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const img = document.createElement('img');
-        img.src = e.target.result;
-        img.className = 'preview-thumb';
-        previewContainer.appendChild(img);
-      };
-      reader.readAsDataURL(file);
-    });
-  });
- }
   
 // Add this:
 setInterval(() => {
@@ -2371,29 +2354,37 @@ function attachFormListenerWhenReady() {
   if (DOM.profileForm && !DOM.profileForm.dataset.listenerAttached) {
     console.log("✅ Form element found, attaching listeners..."); // DEBUG LINE KEPT
 
-    // ========================
-    // SECTION 1: GALLERY PREVIEW
-    // ========================
-    document.getElementById("petGallery").addEventListener("change", function() {
-      console.log("📸 Gallery input changed"); // DEBUG LINE KEPT
-      const preview = document.getElementById("editGalleryPreview");
-      const files = Array.from(this.files);
-      
-      if (!preview) {
-        console.warn("⚠️ Preview container not found"); // DEBUG LINE KEPT
-        return;
-      }
-
-      preview.innerHTML = "";
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          preview.innerHTML += `<img src="${e.target.result}" class="preview-thumb" />`;
-          console.log("🖼️ Added preview for:", file.name); // DEBUG LINE KEPT
-        };
-        reader.readAsDataURL(file);
-      });
-    });
+// ========================
+// SECTION 1: GALLERY PREVIEW - UPDATED
+// ========================
+document.getElementById("petGallery").addEventListener("change", function() {
+  console.log("📸 Gallery input changed");
+  const preview = document.getElementById("editGalleryPreview");
+  const files = Array.from(this.files);
+  if (!preview) {
+    console.warn("⚠️ Preview container not found");
+    return;
+  }
+  // REMOVED: preview.innerHTML = ""; // ← THIS LINE CLEARS EXISTING IMAGES
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      // CHANGED FROM: preview.innerHTML += 
+      // TO: Create proper thumbnail with buttons
+      const thumbnailDiv = document.createElement('div');
+      thumbnailDiv.className = 'gallery-thumbnail';
+      thumbnailDiv.innerHTML = `
+        <img src="${e.target.result}" class="preview-thumb" />
+        <button class="remove-btn">×</button>
+        <button class="cover-btn">★</button>
+      `;
+      preview.appendChild(thumbnailDiv);
+    };
+    reader.readAsDataURL(file);
+  });
+  // RE-INITIALIZE BUTTONS FOR NEW IMAGES
+  initGalleryInteractions();
+});
 
     // ========================
     // SECTION 2: FORM SUBMISSION
@@ -2444,7 +2435,7 @@ function attachFormListenerWhenReady() {
         // ========================
         console.log("📁 Processing gallery..."); // DEBUG LINE KEPT
         const galleryFiles = Array.from(document.getElementById("petGallery").files);
-        const uploadedImageUrls = [];
+      //  uploadedImageUrls.length = 0; // Clear only if needed, or just push new files to existing array
 
         if (galleryFiles.length > 0) {
           console.log("🔼 Found", galleryFiles.length, "files to upload"); // DEBUG LINE KEPT
@@ -2455,7 +2446,11 @@ function attachFormListenerWhenReady() {
               
               if (result?.url) {
                 console.log("✅ Upload success:", result.url); // DEBUG LINE KEPT
-                uploadedImageUrls.push(result);
+            // ADD THIS: Store both URL and public_id for proper image management
+                  uploadedImageUrls.push({
+                 url: result.url,
+              public_id: result.public_id // ← THIS IS WHAT YOU NEED TO ADD
+              });
               }
             } catch (uploadError) {
               console.error('❌ Upload failed:', uploadError); // DEBUG LINE KEPT
