@@ -2477,6 +2477,11 @@ if (result?.url) {
     public_id = `fallback_${urlPath || Date.now()}`;
   }
   
+   // Clear temp placeholders before adding real uploads
+uploadedImageUrls = uploadedImageUrls.filter(img => !img.isTemp);
+
+
+  
   uploadedImageUrls.push({
     url: result.url,
     public_id: result.public_id // ← Now Cloudinary provides this reliably
@@ -2592,7 +2597,8 @@ if (newProfile.emergencyContact) {
 
 // Clean gallery items (remove any invalid images)
 if (newProfile.gallery) {
-  newProfile.gallery = newProfile.gallery.filter(img => img && img.url);
+  newProfile.gallery = newProfile.gallery.filter(img => img && img.url && !img.isTemp);
+  
   newProfile.gallery.forEach(img => {
     Object.keys(img).forEach(key => {
       if (img[key] === undefined) {
