@@ -2533,10 +2533,6 @@ if (result?.url) {
           notes: document.getElementById("petNotes")?.value.trim() || "",
           tags: selectedTags, // ✅ Inserted properly now
           coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
-          // ADD THIS VALIDATION:
-         if (newProfile.coverPhotoIndex >= newProfile.gallery.length) {
-           newProfile.coverPhotoIndex = 0; // Reset to first image if invalid
-          },
           
           // Fixed version (dashboard.js)
           moodHistory: (() => {
@@ -2565,7 +2561,10 @@ if (isEditing) {
 } else {
   newProfile.gallery = uploadedImageUrls;
 }
-
+          // ADD THIS VALIDATION:
+         if (newProfile.coverPhotoIndex >= newProfile.gallery.length) {
+           newProfile.coverPhotoIndex = 0; // Reset to first image if invalid
+          }
 // ========================
 // 🆕 NEW: CLEANUP SECTION (ADD THIS RIGHT HERE)
 // ========================
