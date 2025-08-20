@@ -2457,31 +2457,24 @@ document.getElementById("petGallery").addEventListener("change", function() {
               console.log("⬆️ Uploading:", file.name); // DEBUG LINE KEPT
               const result = await uploadToCloudinary(file, userId, newProfileId);
               
-              // In the upload section, add validation:
-// In the upload section, fix the public_id handling:
+// In the upload section, after successful Cloudinary upload:
 if (result?.url) {
   console.log("✅ Upload success:", result.url);
   
-  // FIXED: Extract public_id from the response properly
-  let public_id = result.public_id;
+  // REMOVE any temporary version of this image first
+  uploadedImageUrls = uploadedImageUrls.filter(img => 
+    !img.isTemp || img.url !== result.url // Keep if not temp OR different URL
+  );
   
-  // If Cloudinary doesn't provide public_id, try to extract it from the URL or path
-  if (!public_id && result.path) {
-    public_id = result.path; // Cloudinary sometimes provides 'path' instead
-  }
-  
-  if (!public_id) {
-    console.warn("⚠️ Cloudinary response missing public_id, generating fallback:", result);
-    // Fallback: use the URL path or generate unique ID
-    const urlPath = new URL(result.url).pathname.split('/').pop().split('.')[0];
-    public_id = `fallback_${urlPath || Date.now()}`;
-  }
-  
+  // THEN add the Cloudinary version
   uploadedImageUrls.push({
     url: result.url,
-    public_id: result.public_id // ← Now Cloudinary provides this reliably
+    public_id: result.public_id
   });
-}
+  
+  // UPDATE PREVIEW IMMEDIATELY
+     updateGalleryPreviews();
+   }
             } catch (uploadError) {
               console.error('❌ Upload failed:', uploadError); // DEBUG LINE KEPT
               Utils.showErrorToUser(`Failed to upload ${file.name}`);
@@ -2540,6 +2533,10 @@ if (result?.url) {
           notes: document.getElementById("petNotes")?.value.trim() || "",
           tags: selectedTags, // ✅ Inserted properly now
           coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
+          // ADD THIS VALIDATION:
+         if (newProfile.coverPhotoIndex >= newProfile.gallery.length) {
+           newProfile.coverPhotoIndex = 0; // Reset to first image if invalid
+          },
           
           // Fixed version (dashboard.js)
           moodHistory: (() => {
