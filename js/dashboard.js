@@ -570,7 +570,6 @@ tagCheckboxes.forEach(checkbox => {
     // after resetForm before poppulating fields.
   // 1. Copy existing gallery to uploadedImageUrls so both show together
  uploadedImageUrls = [...(profile.gallery || [])];
-  petProfiles[currentEditIndex].gallery = uploadedImageUrls;
     
   // 2.Set current cover index in form dataset
   DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
@@ -852,21 +851,22 @@ function initGalleryInteractions() {
   });
 
   // Cover photo selection
- document.querySelectorAll('.cover-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+ // Cover photo selection
+document.querySelectorAll('.cover-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
     e.stopPropagation();
-    e.preventDefault(); // 🛠 Prevent form submission or unwanted navigation
+    e.preventDefault();
 
     const index = parseInt(
       e.target.closest('.gallery-thumbnail').dataset.index
     );
 
+    // Always keep dataset in sync
+    DOM.profileForm.dataset.coverIndex = index;
+
     if (isEditing) {
-      // Just mark the new cover photo in memory
-      petProfiles[currentEditIndex].coverPhotoIndex = index;
-    } else {
-      // In create form, mark in temp array
-      DOM.profileForm.dataset.coverIndex = index;
+      // Just mark in memory (not in petProfiles yet)
+      uploadedImageUrls = [...uploadedImageUrls]; // keep array stable
     }
 
     // Refresh the preview to visually update the active star
@@ -2528,7 +2528,7 @@ if (result?.url) {
           nextBirthday: document.getElementById("nextBirthday").value, // needed for age calculation
           
           birthdayReminder: document.getElementById("birthdayReminder").value,
-          gallery: uploadedImageUrls, // ✅ Replace empty array with uploaded URLs
+          gallery: [...uploadedImageUrls], // ✅ fixed duplication
           emergencyContact: {
             name: document.getElementById("emergencyName").value.trim(),
             phone: document.getElementById("emergencyPhone").value.trim(),
