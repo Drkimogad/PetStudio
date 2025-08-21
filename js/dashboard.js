@@ -838,14 +838,19 @@ if (themeRadios.length) {
 function initGalleryInteractions() {
   // Remove button functionality
   document.querySelectorAll('.remove-btn').forEach(btn => {
+    // ✅ REMOVE existing listeners first to prevent duplicates
+    btn.replaceWith(btn.cloneNode(true));
+  });
+  
+  // ✅ RE-BIND remove buttons
+  document.querySelectorAll('.remove-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const thumbnail = e.target.closest('.gallery-thumbnail');
       const index = parseInt(thumbnail.dataset.index);
-      const isTemp = thumbnail.dataset.temp === 'true'; // ✅ NEW: Check if temp image
+      const isTemp = thumbnail.dataset.temp === 'true';
       
       if (isTemp) {
-        // ✅ Remove from temporary images
         window.tempGalleryImages.splice(index, 1);
       } else if (isEditing) {
         petProfiles[currentEditIndex].gallery.splice(index, 1);
@@ -856,7 +861,13 @@ function initGalleryInteractions() {
     });
   });
 
-  // Cover photo selection
+  // Cover photo selection - FIXED VERSION
+  document.querySelectorAll('.cover-btn').forEach(btn => {
+    // ✅ REMOVE existing listeners first to prevent duplicates
+    btn.replaceWith(btn.cloneNode(true));
+  });
+  
+  // ✅ RE-BIND cover buttons
   document.querySelectorAll('.cover-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -864,12 +875,12 @@ function initGalleryInteractions() {
       
       const thumbnail = e.target.closest('.gallery-thumbnail');
       const index = parseInt(thumbnail.dataset.index);
-      const isTemp = thumbnail.dataset.temp === 'true'; // ✅ NEW: Check if temp image
+      const isTemp = thumbnail.dataset.temp === 'true';
+      
+      console.log("Cover button clicked - index:", index, "isTemp:", isTemp); // DEBUG
       
       if (isTemp) {
-        // ✅ Handle cover selection for temporary images
-        // We need to track this differently since temp images aren't in main array
-        // Store the temp image index separately
+        // ✅ Store BOTH index and temp flag
         DOM.profileForm.dataset.tempCoverIndex = index;
         DOM.profileForm.dataset.isTempCover = 'true';
       } else if (isEditing) {
@@ -891,28 +902,25 @@ function updateGalleryPreviews() {
   
   if (!preview) return;
   
-  // ✅ COMBINE both permanent and temporary images
+  // ✅ PRESERVE existing cover selection before rebuild
+  const currentTempCover = DOM.profileForm.dataset.isTempCover === 'true';
+  const currentCoverIndex = currentTempCover 
+    ? parseInt(DOM.profileForm.dataset.tempCoverIndex || 0)
+    : parseInt(DOM.profileForm.dataset.coverIndex || 0);
+  
   const permanentImages = uploadedImageUrls || [];
   const tempImages = window.tempGalleryImages || [];
   const allImages = [...permanentImages, ...tempImages];
   
-  // ✅ Handle cover index logic for both types
-  let currentCoverIndex = 0;
-  let isTempCover = DOM.profileForm.dataset.isTempCover === 'true';
-  
-  if (isEditing) {
-    currentCoverIndex = petProfiles[currentEditIndex].coverPhotoIndex || 0;
-  } else if (isTempCover) {
-    currentCoverIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex || 0);
-  } else {
-    currentCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex || 0);
-  }
-  
-  // ✅ Generate HTML for all images with temp flag
+  // ✅ Generate HTML
   preview.innerHTML = allImages.map((img, idx) => {
-    const isTemp = idx >= permanentImages.length; // Temp images come after permanent ones
+    const isTemp = idx >= permanentImages.length;
     const displayIndex = isTemp ? idx - permanentImages.length : idx;
     const imgUrl = typeof img === 'string' ? img : img?.url || 'placeholder.jpg';
+    
+    // ✅ Calculate correct active state
+    const isActiveCover = (currentTempCover && isTemp && displayIndex === currentCoverIndex) ||
+                         (!currentTempCover && !isTemp && displayIndex === currentCoverIndex);
     
     return `
       <div class="gallery-thumbnail" data-index="${displayIndex}" data-temp="${isTemp}">
@@ -920,14 +928,14 @@ function updateGalleryPreviews() {
              class="preview-thumb"
              onerror="this.src='placeholder.jpg'">
         <button class="remove-btn">×</button>
-        <button class="cover-btn ${idx === currentCoverIndex ? 'active' : ''}">
+        <button class="cover-btn ${isActiveCover ? 'active' : ''}">
           ★
         </button>
       </div>
     `;
   }).join('');
   
-  // RE-INITIALIZE BUTTONS
+  // ✅ RE-INITIALIZE BUTTONS (with fixed function)
   initGalleryInteractions();
 }
   
