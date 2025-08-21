@@ -2528,6 +2528,30 @@ if (window.tempGalleryImages && window.tempGalleryImages.length > 0) {
           console.log("➕ Added new mood entry:", newMood); // DEBUG LINE KEPT
         }
 
+
+       // ========================
+// SECTION 5.5: COVER PHOTO FIX - NEW
+// ========================
+console.log("🖼️ Processing cover photo selection...");
+
+// ✅ Handle temporary cover photo conversion
+let finalCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0;
+const isTempCover = DOM.profileForm.dataset.isTempCover === 'true';
+
+if (isTempCover && window.tempGalleryImages && window.tempGalleryImages.length > 0) {
+  // If a temporary image was selected as cover, we need to calculate its final position
+  const tempCoverIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex, 10);
+  
+  // The final cover index will be: permanent images count + temp cover index
+  finalCoverIndex = uploadedImageUrls.length + tempCoverIndex;
+  
+  console.log("✅ Converted temp cover index:", tempCoverIndex, "to final index:", finalCoverIndex);
+}
+
+// Reset temp cover flags
+DOM.profileForm.dataset.isTempCover = 'false';
+
+        
     // ========================
     // SECTION 6: PROFILE ASSEMBLY
     // ========================
@@ -2559,7 +2583,7 @@ if (window.tempGalleryImages && window.tempGalleryImages.length > 0) {
           
           notes: document.getElementById("petNotes")?.value.trim() || "",
           tags: selectedTags, // ✅ Inserted properly now
-          coverPhotoIndex: parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0,
+          coverPhotoIndex: finalCoverIndex, // ← Use the calculated final index instead
           
           // Fixed version (dashboard.js)
           moodHistory: (() => {
@@ -2590,7 +2614,7 @@ if (isEditing) {
 }
 
 // ========================
-// 🆕 NEW: CLEANUP SECTION (ADD THIS RIGHT HERE)
+// 🆕 DATA CLEANUP SECTION (KEEP IT AFTER PROFILE ASSEMBLY AND BEFORE FIRESTORE SYNC)
 // ========================
 console.log("🧹 Cleaning undefined values before saving...");
 // Remove any undefined values from the entire profile object
@@ -2701,19 +2725,17 @@ setTimeout(() => {
   submitBtn.innerHTML = originalBtnText;
   submitBtn.disabled = false;
 
-        // ✅ Safely clear petGallery input
+         // ✅ UI & TEMPORARY DATA CLEANUP (ADD THIS IN FINALLY)
         const galleryInput = document.getElementById("petGallery");
         if (galleryInput) galleryInput.value = "";
+         // ✅ Cleanup temporary gallery data
+       window.tempGalleryImages = [];
+       DOM.profileForm.dataset.tempCoverIndex = '0';
+       DOM.profileForm.dataset.isTempCover = 'false';
+        // ✅ Clear gallery preview (optional - prevents showing old data)
+      const galleryPreview = document.getElementById("editGalleryPreview");
+      if (galleryPreview) galleryPreview.innerHTML = "";
 
-        // ✅ Refresh gallery preview after submission/wrapped in an if block
-          if (typeof newProfile !== "undefined") {
-        const galleryPreview = document.getElementById("editGalleryPreview");
-       if (galleryPreview && newProfile.gallery?.length) {
-        galleryPreview.innerHTML = newProfile.gallery.map(img => 
-        `<img src="${typeof img === 'string' ? img : img.url}" class="preview-thumb">`
-      ).join('');
-          }
-        } // closes if 
       } // ✅ closes finally
     }); // ✅ closes addEventListener
 
