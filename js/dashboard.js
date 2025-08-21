@@ -2557,27 +2557,26 @@ if (window.tempGalleryImages && window.tempGalleryImages.length > 0) {
         }
 
 
-       // ========================
 // SECTION 5.5: COVER PHOTO FIX - NEW
 // ========================
 console.log("🖼️ Processing cover photo selection...");
 
-// ✅ Handle temporary cover photo conversion
+// Start with dataset cover index
 let finalCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0;
 const isTempCover = DOM.profileForm.dataset.isTempCover === 'true';
 
 if (isTempCover && window.tempGalleryImages && window.tempGalleryImages.length > 0) {
-  // If a temporary image was selected as cover, we need to calculate its final position
   const tempCoverIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex, 10);
-  
-  // The final cover index will be: permanent images count + temp cover index
+
+  // Shift temp cover index by number of permanent images
   finalCoverIndex = uploadedImageUrls.length + tempCoverIndex;
-  
-  console.log("✅ Converted temp cover index:", tempCoverIndex, "to final index:", finalCoverIndex);
+
+  console.log("✅ Converted temp cover index:", tempCoverIndex, "→ final index:", finalCoverIndex);
 }
 
 // Reset temp cover flags
 DOM.profileForm.dataset.isTempCover = 'false';
+
 
         
     // ========================
@@ -2631,22 +2630,14 @@ DOM.profileForm.dataset.isTempCover = 'false';
         };
         // ✅ ADD THIS LINE IMMEDIATELY AFTER required for firestore saving
         newProfile.userId = userId;
-        // Finalize cover photo choice from form dataset
-if (DOM.profileForm.dataset.isTempCover === 'true') {
-  newProfile.coverPhotoIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex || 0);
-} else {
-  newProfile.coverPhotoIndex = parseInt(DOM.profileForm.dataset.coverIndex || 0);
-}
+
+        // ✅ Finalize cover photo choice using computed index from Section 5.5
+newProfile.coverPhotoIndex = finalCoverIndex;
+
+// 🖼️ Gallery Consolidation - unified
+newProfile.gallery = [...uploadedImageUrls];
 
 
-// 🖼️ Gallery Consolidation - FIXED (remove duplication)
-if (isEditing) {
-  console.log("✏️ Using current gallery state...");
-  // JUST use the uploadedImageUrls array (which already contains old + new images)
-  newProfile.gallery = [...uploadedImageUrls];
-} else {
-  newProfile.gallery = uploadedImageUrls;
-}
 
         
 // ========================
