@@ -2367,36 +2367,30 @@ document.getElementById("petGallery").addEventListener("change", function() {
     return;
   }
   
-    if (files.length === 0) return;
+  if (files.length === 0) return;
 
-  // REMOVED: preview.innerHTML = ""; // ← THIS LINE CLEARS EXISTING IMAGES
   files.forEach(file => {
     const reader = new FileReader();
+    
+    // ✅ CORRECT - Move inside the forEach callback
     reader.onload = function(e) {
-
-       // Add to uploadedImageUrls as temporary object
-      uploadedImageUrls.push({
-        url: e.target.result, // temporary data URL
-        isTemp: true // mark as temporary
-      });
-      
-      // REMOVED: Direct DOM manipulation (causes duplication)
-      // const thumbnailDiv = document.createElement('div');
-      // thumbnailDiv.className = 'gallery-thumbnail';
-      // thumbnailDiv.innerHTML = `
-      //   <img src="${e.target.result}" class="preview-thumb" />
-      //   <button class="remove-btn">×</button>
-      //   <button class="cover-btn">★</button>
-      // `;
-      // preview.appendChild(thumbnailDiv);
-      
-      // ONLY update from the source of truth
-      updateGalleryPreviews(); // ← CRITICAL: This ensures buttons work
+        // Create temporary object but DON'T add to uploadedImageUrls yet
+        const tempImage = {
+            url: e.target.result,
+            isTemp: true,
+            file: file  // Keep reference to the actual file
+        };
+        
+        // Use a separate array for temporary preview images
+        if (!window.tempGalleryImages) window.tempGalleryImages = [];
+        window.tempGalleryImages.push(tempImage);
+        
+        // Update preview to show both existing and temporary images
+        updateGalleryPreviews();
     };
+    
     reader.readAsDataURL(file);
   });
-  // RE-INITIALIZE BUTTONS FOR NEW IMAGES
-  // initGalleryInteractions(); // ← REMOVE THIS TOO (updateGalleryPreviews() already calls it)
 });
 
     // ========================
