@@ -2475,7 +2475,10 @@ document.getElementById("petGallery").addEventListener("change", function() {
         const userId = firebase.auth().currentUser?.uid;
         if (!userId) throw new Error("User not authenticated");
         
-        const newProfileId = Date.now();
+    // ✅ FIX: Use original ID when editing, new ID only when creating
+      const newProfileId = isEditing && petProfiles[currentEditIndex]?.id 
+        ? petProfiles[currentEditIndex].id  // Keep original ID
+          : Date.now(); // New ID only for new profiles        
         console.log("🆕 New profile ID:", newProfileId); // DEBUG LINE KEPT
 
         // ========================
