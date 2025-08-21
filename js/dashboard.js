@@ -2400,7 +2400,7 @@ function attachFormListenerWhenReady() {
 // ========================
 document.getElementById("petGallery").addEventListener("change", function() {
   console.log("📸 Gallery input changed");
-  const preview = document.getElementById("editGalleryPreview");
+  const preview = document.getElementById("galleryPreview");
   const files = Array.from(this.files);
   
   if (!preview) {
