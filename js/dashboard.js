@@ -2239,13 +2239,23 @@ function showQRStatus(message, isSuccess) {
 //=================
 // Set cover photo
 //====================
-//=================
-// Set cover photo
-//====================
 function setCoverPhoto(profileIndex, imageIndex) {
   // Update model
   petProfiles[profileIndex].coverPhotoIndex = imageIndex;
   localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+
+  // ✅ ADD FIRESTORE SYNC (NON-BLOCKING)
+  const profile = petProfiles[profileIndex];
+  if (profile && profile.docId) {
+    // Firestore update (don't await - let it run in background)
+    firebase.firestore().collection("profiles").doc(profile.docId).update({
+      coverPhotoIndex: imageIndex,
+      lastUpdated: new Date().toISOString() // ✅ Good practice for sync tracking
+    }).catch(error => {
+      console.error("Firestore cover photo update failed:", error);
+      // Optional: show subtle error message to user
+    });
+  }
 
   // Visually update ★ buttons
   const galleryItems = document.querySelectorAll(`.gallery-item button[data-index="${profileIndex}"]`);
@@ -2256,13 +2266,7 @@ function setCoverPhoto(profileIndex, imageIndex) {
 
   // 🔹 NEW: Update current form state if inside create/edit form
   if (DOM && DOM.profileForm) {
-    DOM.profileForm.dataset.coverIndex = imageIndex; // 🔹 Added line
-  }
-
-  // 🔹 NEW: If we are editing, keep in-memory consistency
-  if (typeof uploadedImageUrls !== "undefined" && uploadedImageUrls.length) {
-    // No need to reorder array — just ensure previews match active star
-    // This keeps the cover photo choice visible in birthday card preview
+    DOM.profileForm.dataset.coverIndex = imageIndex;
   }
 
   // Re-render if needed
