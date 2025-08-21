@@ -568,12 +568,13 @@ tagCheckboxes.forEach(checkbox => {
 // 3. GALLERY PREVIEW SETUP (UPDATED TO USE updateGalleryPreviews now)
 // ======================
     // after resetForm before poppulating fields.
-  // 1. Copy existing gallery to uploadedImageUrls so both show together
- uploadedImageUrls = [...(profile.gallery || [])];
-  petProfiles[currentEditIndex].gallery = uploadedImageUrls;
-    
-  // 2.Set current cover index in form dataset
-  DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
+// 1.Load gallery into local editing buffer
+uploadedImageUrls = [...(profile.gallery || [])];
+
+// 2.Store cover index in form dataset only
+DOM.profileForm.dataset.coverIndex = profile.coverPhotoIndex ?? 0;
+DOM.profileForm.dataset.isTempCover = 'false'; // default to permanent
+
 
   //3.Update gallery preview
 updateGalleryPreviews(); // refresh gallery,– populates thumbnails with remove and cover buttons.
@@ -861,39 +862,41 @@ function initGalleryInteractions() {
     });
   });
 
-  // Cover photo selection - FIXED VERSION
-  document.querySelectorAll('.cover-btn').forEach(btn => {
-    // ✅ REMOVE existing listeners first to prevent duplicates
-    btn.replaceWith(btn.cloneNode(true));
+  // ================================
+// Cover photo selection - FIXED VERSION
+// ================================
+document.querySelectorAll('.cover-btn').forEach(btn => {
+  // ✅ REMOVE existing listeners first to prevent duplicates
+  btn.replaceWith(btn.cloneNode(true));
+});
+
+// ✅ RE-BIND cover buttons
+document.querySelectorAll('.cover-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const thumbnail = e.target.closest('.gallery-thumbnail');
+    const index = parseInt(thumbnail.dataset.index);
+    const isTemp = thumbnail.dataset.temp === 'true';
+
+    console.log("Cover button clicked - index:", index, "isTemp:", isTemp); // DEBUG
+
+    if (isTemp) {
+      // 🟢 Temp images (newly uploaded this session)
+      DOM.profileForm.dataset.tempCoverIndex = index;
+      DOM.profileForm.dataset.isTempCover = 'true';
+    } else {
+      // 🟢 Both edit & create modes now handled the same:
+      // just store in form dataset, don’t touch petProfiles directly
+      DOM.profileForm.dataset.coverIndex = index;
+      DOM.profileForm.dataset.isTempCover = 'false';
+    }
+
+    // 🔄 Refresh preview so correct star shows active
+    updateGalleryPreviews();
   });
-  
-  // ✅ RE-BIND cover buttons
-  document.querySelectorAll('.cover-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      
-      const thumbnail = e.target.closest('.gallery-thumbnail');
-      const index = parseInt(thumbnail.dataset.index);
-      const isTemp = thumbnail.dataset.temp === 'true';
-      
-      console.log("Cover button clicked - index:", index, "isTemp:", isTemp); // DEBUG
-      
-      if (isTemp) {
-        // ✅ Store BOTH index and temp flag
-        DOM.profileForm.dataset.tempCoverIndex = index;
-        DOM.profileForm.dataset.isTempCover = 'true';
-      } else if (isEditing) {
-        petProfiles[currentEditIndex].coverPhotoIndex = index;
-        DOM.profileForm.dataset.isTempCover = 'false';
-      } else {
-        DOM.profileForm.dataset.coverIndex = index;
-        DOM.profileForm.dataset.isTempCover = 'false';
-      }
-      
-      updateGalleryPreviews();
-    });
-  });
+});
 }
 
 // Helper function to update both form previews
@@ -2628,6 +2631,13 @@ DOM.profileForm.dataset.isTempCover = 'false';
         };
         // ✅ ADD THIS LINE IMMEDIATELY AFTER required for firestore saving
         newProfile.userId = userId;
+        // Finalize cover photo choice from form dataset
+if (DOM.profileForm.dataset.isTempCover === 'true') {
+  newProfile.coverPhotoIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex || 0);
+} else {
+  newProfile.coverPhotoIndex = parseInt(DOM.profileForm.dataset.coverIndex || 0);
+}
+
 
 // 🖼️ Gallery Consolidation - FIXED (remove duplication)
 if (isEditing) {
@@ -2638,6 +2648,7 @@ if (isEditing) {
   newProfile.gallery = uploadedImageUrls;
 }
 
+        
 // ========================
 // 🆕 DATA CLEANUP SECTION (KEEP IT AFTER PROFILE ASSEMBLY AND BEFORE FIRESTORE SYNC)
 // ========================
