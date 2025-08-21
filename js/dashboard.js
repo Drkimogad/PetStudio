@@ -835,14 +835,19 @@ if (themeRadios.length) {
 //=================================================
 //4. helper function for gallery preview in edit form
 //=====================================================
-// Update your initGalleryInteractions() function:
 function initGalleryInteractions() {
   // Remove button functionality
   document.querySelectorAll('.remove-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const index = parseInt(e.target.closest('.gallery-thumbnail').dataset.index);
-      if (isEditing) {
+      const thumbnail = e.target.closest('.gallery-thumbnail');
+      const index = parseInt(thumbnail.dataset.index);
+      const isTemp = thumbnail.dataset.temp === 'true'; // ✅ NEW: Check if temp image
+      
+      if (isTemp) {
+        // ✅ Remove from temporary images
+        window.tempGalleryImages.splice(index, 1);
+      } else if (isEditing) {
         petProfiles[currentEditIndex].gallery.splice(index, 1);
       } else {
         uploadedImageUrls.splice(index, 1);
@@ -852,42 +857,66 @@ function initGalleryInteractions() {
   });
 
   // Cover photo selection
- document.querySelectorAll('.cover-btn').forEach(btn => {
+  document.querySelectorAll('.cover-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    e.preventDefault(); // 🛠 Prevent form submission or unwanted navigation
-
-    const index = parseInt(
-      e.target.closest('.gallery-thumbnail').dataset.index
-    );
-
-    if (isEditing) {
-      // Just mark the new cover photo in memory
-      petProfiles[currentEditIndex].coverPhotoIndex = index;
-    } else {
-      // In create form, mark in temp array
-      DOM.profileForm.dataset.coverIndex = index;
-    }
-
-    // Refresh the preview to visually update the active star
-    updateGalleryPreviews();
+      e.stopPropagation();
+      e.preventDefault();
+      
+      const thumbnail = e.target.closest('.gallery-thumbnail');
+      const index = parseInt(thumbnail.dataset.index);
+      const isTemp = thumbnail.dataset.temp === 'true'; // ✅ NEW: Check if temp image
+      
+      if (isTemp) {
+        // ✅ Handle cover selection for temporary images
+        // We need to track this differently since temp images aren't in main array
+        // Store the temp image index separately
+        DOM.profileForm.dataset.tempCoverIndex = index;
+        DOM.profileForm.dataset.isTempCover = 'true';
+      } else if (isEditing) {
+        petProfiles[currentEditIndex].coverPhotoIndex = index;
+        DOM.profileForm.dataset.isTempCover = 'false';
+      } else {
+        DOM.profileForm.dataset.coverIndex = index;
+        DOM.profileForm.dataset.isTempCover = 'false';
+      }
+      
+      updateGalleryPreviews();
+    });
   });
-});
-} // closes the function 
+}
 
 // Helper function to update both form previews
 function updateGalleryPreviews() {
-  const gallery = uploadedImageUrls; 
   const preview = document.getElementById('galleryPreview');
   
-  if (preview) {
-    const currentCoverIndex = isEditing 
-      ? petProfiles[currentEditIndex].coverPhotoIndex 
-      : parseInt(DOM.profileForm.dataset.coverIndex || 0, 10);
+  if (!preview) return;
+  
+  // ✅ COMBINE both permanent and temporary images
+  const permanentImages = uploadedImageUrls || [];
+  const tempImages = window.tempGalleryImages || [];
+  const allImages = [...permanentImages, ...tempImages];
+  
+  // ✅ Handle cover index logic for both types
+  let currentCoverIndex = 0;
+  let isTempCover = DOM.profileForm.dataset.isTempCover === 'true';
+  
+  if (isEditing) {
+    currentCoverIndex = petProfiles[currentEditIndex].coverPhotoIndex || 0;
+  } else if (isTempCover) {
+    currentCoverIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex || 0);
+  } else {
+    currentCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex || 0);
+  }
+  
+  // ✅ Generate HTML for all images with temp flag
+  preview.innerHTML = allImages.map((img, idx) => {
+    const isTemp = idx >= permanentImages.length; // Temp images come after permanent ones
+    const displayIndex = isTemp ? idx - permanentImages.length : idx;
+    const imgUrl = typeof img === 'string' ? img : img?.url || 'placeholder.jpg';
     
-    preview.innerHTML = gallery.map((img, idx) => `
-      <div class="gallery-thumbnail" data-index="${idx}">
-        <img src="${typeof img === 'string' ? img : img?.url || 'placeholder.jpg'}" 
+    return `
+      <div class="gallery-thumbnail" data-index="${displayIndex}" data-temp="${isTemp}">
+        <img src="${imgUrl}" 
              class="preview-thumb"
              onerror="this.src='placeholder.jpg'">
         <button class="remove-btn">×</button>
@@ -895,12 +924,12 @@ function updateGalleryPreviews() {
           ★
         </button>
       </div>
-    `).join('');
-    
-    // RE-INITIALIZE BUTTONS FOR ALL GALLERY ITEMS
-    initGalleryInteractions();
-  }
- }
+    `;
+  }).join('');
+  
+  // RE-INITIALIZE BUTTONS
+  initGalleryInteractions();
+}
   
 
 //================================
@@ -2440,48 +2469,45 @@ document.getElementById("petGallery").addEventListener("change", function() {
         // ========================
         // SECTION 4: GALLERY UPLOAD
         // ========================
-        console.log("📁 Processing gallery..."); // DEBUG LINE KEPT
-        const galleryFiles = Array.from(document.getElementById("petGallery").files);
-      //  uploadedImageUrls.length = 0; // Clear only if needed, or just push new files to existing array
+// ========================
+// SECTION 4: GALLERY UPLOAD - UPDATED
+// ========================
+console.log("📁 Processing gallery...");
 
-        if (galleryFiles.length > 0) {
-          console.log("🔼 Found", galleryFiles.length, "files to upload"); // DEBUG LINE KEPT
-          for (const file of galleryFiles) {
-            try {
-              console.log("⬆️ Uploading:", file.name); // DEBUG LINE KEPT
-              const result = await uploadToCloudinary(file, userId, newProfileId);
-              
-              // In the upload section, add validation:
-// In the upload section, fix the public_id handling:
-if (result?.url) {
-  console.log("✅ Upload success:", result.url);
+// ✅ CHANGE: Use tempGalleryImages instead of direct file input
+if (window.tempGalleryImages && window.tempGalleryImages.length > 0) {
+  console.log("🔼 Found", window.tempGalleryImages.length, "temporary files to upload");
   
-  // FIXED: Extract public_id from the response properly
-  let public_id = result.public_id;
-  
-  // If Cloudinary doesn't provide public_id, try to extract it from the URL or path
-  if (!public_id && result.path) {
-    public_id = result.path; // Cloudinary sometimes provides 'path' instead
-  }
-  
-  if (!public_id) {
-    console.warn("⚠️ Cloudinary response missing public_id, generating fallback:", result);
-    // Fallback: use the URL path or generate unique ID
-    const urlPath = new URL(result.url).pathname.split('/').pop().split('.')[0];
-    public_id = `fallback_${urlPath || Date.now()}`;
-  }
-  
-  uploadedImageUrls.push({
-    url: result.url,
-    public_id: result.public_id // ← Now Cloudinary provides this reliably
-  });
-}
-            } catch (uploadError) {
-              console.error('❌ Upload failed:', uploadError); // DEBUG LINE KEPT
-              Utils.showErrorToUser(`Failed to upload ${file.name}`);
-            }
-          } // closes for loop
-        } // closes if galleryFiles.length
+  for (const tempImage of window.tempGalleryImages) {
+    try {
+      console.log("⬆️ Uploading:", tempImage.file.name);
+      const result = await uploadToCloudinary(tempImage.file, userId, newProfileId);
+      
+      if (result?.url) {
+        console.log("✅ Upload success:", result.url);
+        
+        let public_id = result.public_id;
+        if (!public_id && result.path) {
+          public_id = result.path;
+        }
+        if (!public_id) {
+          const urlPath = new URL(result.url).pathname.split('/').pop().split('.')[0];
+          public_id = `fallback_${urlPath || Date.now()}`;
+        }
+        
+        uploadedImageUrls.push({
+          url: result.url,
+          public_id: public_id
+        });
+      }
+    } catch (uploadError) {
+      console.error('❌ Upload failed:', uploadError);
+      Utils.showErrorToUser(`Failed to upload ${tempImage.file.name}`);
+    }
+  } // closes for loop 
+  // ✅ CLEANUP: Clear temporary images after processing
+  window.tempGalleryImages = [];
+} // closes if galleryFiles.length
 
         // ========================
         // SECTION 5: MOOD HANDLING
