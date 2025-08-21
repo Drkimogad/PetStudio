@@ -2672,21 +2672,50 @@ if (newProfile.gallery) {
 }
         
 
-       // ========================
-        // SECTION 7: FIRESTORE SYNC
-        // ========================
-        console.log("🔥 Saving to Firestore..."); // DEBUG LINE KEPT
-        // ✅ NEW:
+      // ========================
+// SECTION 7: FIRESTORE SYNC — FIXED
+// ========================
+console.log("🔥 Saving to Firestore...");
+
 let docRef;
-if (isEditing && docIdToUpdate) {
-  docRef = firebase.firestore().collection("profiles").doc(docIdToUpdate);
-  await docRef.set(newProfile, { merge: true });
-  console.log("🔄 Updated existing profile");
+
+if (isEditing) {
+  if (docIdToUpdate) {
+    // Normal edit: update existing doc
+    docRef = firebase.firestore().collection("profiles").doc(docIdToUpdate);
+    await docRef.set(newProfile, { merge: true });
+    newProfile.docId = docIdToUpdate; // ✅ keep local in sync
+    console.log("🔄 Updated existing profile");
+  } else {
+    // 🩹 Legacy fix: recover doc by (userId, id)
+    const snap = await firebase.firestore()
+      .collection("profiles")
+      .where("userId", "==", userId)
+      .where("id", "==", newProfileId)
+      .limit(1)
+      .get();
+
+    if (!snap.empty) {
+      docRef = snap.docs[0].ref;
+      await docRef.set(newProfile, { merge: true });
+      newProfile.docId = snap.docs[0].id; // ✅ recovered
+      console.warn("🩹 Recovered missing docId and updated in place");
+    } else {
+      // No prior doc found (e.g., first sync) → create once
+      docRef = await firebase.firestore().collection("profiles").add(newProfile);
+      await docRef.update({ docId: docRef.id });
+      newProfile.docId = docRef.id; // ✅ propagate to local
+      console.log("✨ Created profile (no prior doc found)");
+    }
+  }
 } else {
+  // Create mode
   docRef = await firebase.firestore().collection("profiles").add(newProfile);
   await docRef.update({ docId: docRef.id });
+  newProfile.docId = docRef.id; // ✅ propagate to local
   console.log("✨ Created new profile");
 }
+
 
         /// 🎉 Add birthday reminder if needed (updated to use upcomingBirthday)
         if (newProfile.nextBirthday) {
