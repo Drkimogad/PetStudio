@@ -2475,11 +2475,21 @@ document.getElementById("petGallery").addEventListener("change", function() {
         const userId = firebase.auth().currentUser?.uid;
         if (!userId) throw new Error("User not authenticated");
         
-    // ✅ FIX: Use original ID when editing, new ID only when creating
-      const newProfileId = isEditing && petProfiles[currentEditIndex]?.id 
-        ? petProfiles[currentEditIndex].id  // Keep original ID
-          : Date.now(); // New ID only for new profiles        
-        console.log("🆕 New profile ID:", newProfileId); // DEBUG LINE KEPT
+         // ✅ FIX: Use original ID when editing, new ID only for creation
+let newProfileId;
+let docIdToUpdate;
+
+if (isEditing && petProfiles[currentEditIndex]) {
+  // EDIT MODE: Use existing IDs
+  newProfileId = petProfiles[currentEditIndex].id;
+  docIdToUpdate = petProfiles[currentEditIndex].docId; // Keep original Firestore docId
+  console.log("✏️ Editing existing profile ID:", newProfileId, "DocID:", docIdToUpdate);
+} else {
+  // CREATE MODE: Generate new IDs
+  newProfileId = Date.now();
+  docIdToUpdate = null;
+  console.log("➕ Creating new profile ID:", newProfileId);
+}
 
         // ========================
         // SECTION 4: GALLERY UPLOAD
@@ -2666,16 +2676,17 @@ if (newProfile.gallery) {
         // SECTION 7: FIRESTORE SYNC
         // ========================
         console.log("🔥 Saving to Firestore..."); // DEBUG LINE KEPT
-        let docRef;
-        if (isEditing && petProfiles[currentEditIndex]?.docId) {
-          docRef = firebase.firestore().collection("profiles").doc(petProfiles[currentEditIndex].docId);
-          await docRef.set(newProfile, { merge: true });
-          console.log("🔄 Updated existing profile"); // DEBUG LINE KEPT
-        } else {
-          docRef = await firebase.firestore().collection("profiles").add(newProfile);
-          await docRef.update({ docId: docRef.id });
-          console.log("✨ Created new profile"); // DEBUG LINE KEPT
-        }
+        // ✅ NEW:
+let docRef;
+if (isEditing && docIdToUpdate) {
+  docRef = firebase.firestore().collection("profiles").doc(docIdToUpdate);
+  await docRef.set(newProfile, { merge: true });
+  console.log("🔄 Updated existing profile");
+} else {
+  docRef = await firebase.firestore().collection("profiles").add(newProfile);
+  await docRef.update({ docId: docRef.id });
+  console.log("✨ Created new profile");
+}
 
         /// 🎉 Add birthday reminder if needed (updated to use upcomingBirthday)
         if (newProfile.nextBirthday) {
