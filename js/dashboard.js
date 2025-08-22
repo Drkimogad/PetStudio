@@ -685,35 +685,42 @@ previewTheme(profile.theme || DEFAULT_THEME);
   }
 } // ← End of openEditForm
 
-//====≈===================
-// 2. OPENCREATEFORM()
-//==========================
+// ================================================================================================
+// ✅ OPEN CREATE FORM - REFACTORED
+// ==============================
 function openCreateForm() {
   console.log("➕ Opening form to create new pet profile");
-  
-  // 1. RESET STATE & FLAGS
-  // ======================
-  isEditing = false;
-  currentEditIndex = null;
-  uploadedImageUrls = [];
-  
-  // Initialize live preview (if container exists)
-  // 2. CLEAR FORM FIELDS
-  // ======================
-  resetForm(); // Handles all field/gallery clearing
-  
-  // Right after restform
-  // Default cover index for new profiles
-  DOM.profileForm.dataset.coverIndex = 0;
 
-  // 1. Set first theme radio as default
+  // ======================
+  // SECTION 1: RESET STATE & FLAGS
+  // ======================
+  isEditing = false;                      // Ensure we're in create mode
+  currentEditIndex = null;               // No index for new profile
+  uploadedImageUrls = [];                // Clear gallery buffer
+
+  resetForm();                            // Reset form fields & UI
+
+  // ======================
+  // SECTION 2: INITIALIZE DATASET FOR COVER LOGIC
+  // ======================
+  // NEW ✅ Start cover index at 0 and mark as not temp
+  DOM.profileForm.dataset.coverIndex = "0";
+  DOM.profileForm.dataset.isTempCover = "false";
+
+  // ======================
+  // SECTION 3: DEFAULT THEME SELECTION
+  // ======================
   const themeRadios = document.querySelectorAll('input[name="theme"]');
   if (themeRadios.length) themeRadios[0].checked = true;
 
-  // 2. Initialize gallery previews
-  updateGalleryPreviews();
+  // ======================
+  // SECTION 4: INITIALIZE GALLERY PREVIEW
+  // ======================
+  updateGalleryPreviews(); // Will show empty state initially
 
-  //3. Initialize preview with empty state
+  // ======================
+  // SECTION 5: PREVIEW DEFAULT THEME
+  // ======================
   const preview = document.getElementById('birthday-card-preview');
   if (preview) {
     preview.innerHTML = `
@@ -726,24 +733,30 @@ function openCreateForm() {
     `;
     preview.classList.remove('hidden');
   }
-
-  // 4. Preview default theme
   previewTheme(themeRadios[0]?.value || DEFAULT_THEME);
 
-  // 5. 🎯 Live theme preview on radio change
- // after reset,updategallerypreview and before initgalleryinteractions called
-document.querySelectorAll('input[name="theme"]').forEach(radio => {
-  radio.addEventListener('change', (e) => {
-    if (e.target.checked) {
-      previewTheme(e.target.value);
-    }
+  // ======================
+  // SECTION 6: ADD LIVE THEME PREVIEW ON CHANGE
+  // ======================
+  document.querySelectorAll('input[name="theme"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        previewTheme(e.target.value);
+      }
+    });
   });
-});
 
-  // 6. Initialize gallery interactions
-  initGalleryInteractions();
+  // ======================
+  // SECTION 7: INITIALIZE GALLERY INTERACTIONS
+  // ======================
+  initGalleryInteractions(); // Handles remove-btn & cover-btn
+  // ✅ Cover-btn clicks will now only update dataset:
+  // DOM.profileForm.dataset.coverIndex (for permanent images)
+  // DOM.profileForm.dataset.tempCoverIndex (for temp images)
+  // and DOM.profileForm.dataset.isTempCover flag
 
-  // 4. CANCEL BUTTON SETUP
+  // ======================
+  // SECTION 8: ADD CANCEL BUTTON
   // ======================
   if (!document.getElementById("cancelEditBtn")) {
     const cancelBtn = document.createElement("button");
@@ -762,7 +775,8 @@ document.querySelectorAll('input[name="theme"]').forEach(radio => {
     if (submitBtn) submitBtn.after(cancelBtn);
   }
 
-  // 5. SHOW FORM / HIDE DASHBOARD
+  // ======================
+  // SECTION 9: SHOW FORM / HIDE DASHBOARD
   // ======================
   DOM.profileSection.classList.remove("hidden");
   DOM.petList.classList.add("hidden");
@@ -771,7 +785,8 @@ document.querySelectorAll('input[name="theme"]').forEach(radio => {
   console.log("✅ Create form ready for new profile");
 }
 
-//=====================================================
+
+//==================================================================================================
 // 3. RESET FORM FOR BOTH OPENEDIT AND OPENCREATEFORMS
 //========================================================
 /**
