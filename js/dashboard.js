@@ -169,6 +169,14 @@ const DEFAULT_THEME = 'balloons';
 // ==============================
 // 🎨 previewTheme() - Live Theme Preview
 // ==============================
+/*✅ 1. previewTheme(themeValue)
+
+Purpose: Updates the birthday card preview theme styling when a theme radio button is clicked.
+
+What it updates: CSS class or inline style for the preview container (color scheme, background, fonts).
+
+What it does NOT do: It does not update the cover image in the preview; it only affects theme appearance.*/
+
 function previewTheme(selectedTheme) {
   // Visual selection
   document.querySelectorAll('.theme-preview').forEach(el => {
@@ -447,32 +455,32 @@ function toggleCelebrateButton(dateInput) {
 }
 
 
-// ==============================
-// 🎨 previewTheme() - Unified Live Theme Preview
+
+// ==============================================================================
+// 🎨 previewTheme() - Unified Live Theme Preview (patched)
 // ==============================
 function previewTheme(selectedTheme) {
   const preview = document.getElementById('birthday-card-preview');
   if (!preview) return;
 
   const theme = THEMES[selectedTheme] || THEMES[DEFAULT_THEME];
-  
+
+  // 🔄 Always use the live-selected cover (temp or permanent)
+  // NEW: this line replaces the old branchy coverPhoto logic
+  const coverPhoto = getCurrentCoverUrl();
+
   // Build preview using live form data or fallbacks
-  let name, coverPhoto, ageText;
-  
+  let name, ageText;
+
   if (isEditing && currentEditIndex !== null) {
-    // EDIT MODE: Use actual profile data
+    // EDIT MODE: Use actual profile data for non-image fields
     const profile = petProfiles[currentEditIndex];
     name = document.getElementById('petName').value || profile.name || "Unnamed Pet";
-    
-    const coverImg = profile.gallery?.[profile.coverPhotoIndex];
-    coverPhoto = typeof coverImg === 'string' ? coverImg : coverImg?.url;
-    
     ageText = profile.dob ? `Age: ${Utils.calculateAge(profile.dob)}` : "";
   } else {
     // CREATE MODE: Use form inputs or fallbacks
     name = document.getElementById('petName')?.value || "Your Pet's Name";
-    coverPhoto = null; // Will trigger fallback
-    ageText = "";
+    ageText = ""; // (no DOB yet or optional while creating)
   }
 
   // Apply theme styles
@@ -501,6 +509,34 @@ function previewTheme(selectedTheme) {
 }
 
 
+// ==============================
+// 🧩 Helper: getCurrentCoverUrl()
+// ==============================
+function getCurrentCoverUrl() {
+  if (!DOM || !DOM.profileForm) return null;
+
+  const isTemp = DOM.profileForm.dataset.isTempCover === 'true';
+  const tempIdx = parseInt(DOM.profileForm.dataset.tempCoverIndex || '0', 10);
+  const permIdx = parseInt(DOM.profileForm.dataset.coverIndex || '0', 10);
+
+  // Prefer TEMP when flagged (newly added images not yet persisted)
+  if (isTemp && Array.isArray(window.tempGalleryImages) && window.tempGalleryImages.length) {
+    const img = window.tempGalleryImages[tempIdx];
+    // Support string URLs or objects with url/src
+    return typeof img === 'string' ? img : (img?.url || img?.src || null);
+  }
+
+  // Otherwise use the current in-memory gallery state (old + new merged)
+  // uploadedImageUrls should already be the unified working gallery during the form session
+  if (Array.isArray(window.uploadedImageUrls) && window.uploadedImageUrls.length) {
+    const img = window.uploadedImageUrls[permIdx];
+    return typeof img === 'string' ? img : (img?.url || img?.src || null);
+  }
+
+  return null; // fallback (shows theme emoji)
+}
+/* Cover image is selected and  gets passed to previewTheme(selectedTheme) then
+after cover selection changes in initGalleryinteractions() we call previewTheme()*/
 
 
 // 🌀🌀🌀 CORE BUTTONS FUNCTIONALITY🌀🌀🌀 
@@ -704,8 +740,12 @@ function openCreateForm() {
   // SECTION 2: INITIALIZE DATASET FOR COVER LOGIC
   // ======================
   // NEW ✅ Start cover index at 0 and mark as not temp
-  DOM.profileForm.dataset.coverIndex = "0";
-  DOM.profileForm.dataset.isTempCover = "false";
+  /* (Optional but recommended) Initialize defaults in openCreateForm
+   Why: Ensures a consistent baseline so your first selection behaves 
+   predictably and the preview can render immediately. */
+DOM.profileForm.dataset.coverIndex = DOM.profileForm.dataset.coverIndex || '0';
+DOM.profileForm.dataset.tempCoverIndex = DOM.profileForm.dataset.tempCoverIndex || '0';
+DOM.profileForm.dataset.isTempCover = DOM.profileForm.dataset.isTempCover || 'false';
 
   // ======================
   // SECTION 3: DEFAULT THEME SELECTION
@@ -910,6 +950,11 @@ document.querySelectorAll('.cover-btn').forEach(btn => {
 
     // 🔄 Refresh preview so correct star shows active
     updateGalleryPreviews();
+    // ✅ NEW: Update birthday card live preview to reflect new cover
+    /* What this does: Every time a user clicks a cover-btn (temp or permanent), 
+    we immediately rebuild the birthday-card preview with the currently selected theme + newly selected cover image.*/
+    const themeValue = document.querySelector('input[name="theme"]:checked')?.value || DEFAULT_THEME;
+    previewTheme(themeValue);
   });
 });
 }
