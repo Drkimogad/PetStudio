@@ -964,34 +964,31 @@ document.querySelectorAll('.cover-btn').forEach(btn => {
 // Helper function to update both form previews
 function updateGalleryPreviews() {
   const preview = document.getElementById('galleryPreview');
-  
   if (!preview) return;
   
-  // ✅ PRESERVE existing cover selection before rebuild
-  const currentTempCover = DOM.profileForm.dataset.isTempCover === 'true';
-  const currentCoverIndex = currentTempCover 
-    ? parseInt(DOM.profileForm.dataset.tempCoverIndex || 0)
-    : parseInt(DOM.profileForm.dataset.coverIndex || 0);
+  // Get current selection state
+  const isTempCover = DOM.profileForm.dataset.isTempCover === 'true';
+  const currentCoverIndex = isTempCover 
+    ? parseInt(DOM.profileForm.dataset.tempCoverIndex || '0', 10)
+    : parseInt(DOM.profileForm.dataset.coverIndex || '0', 10);
   
   const permanentImages = uploadedImageUrls || [];
   const tempImages = window.tempGalleryImages || [];
   const allImages = [...permanentImages, ...tempImages];
   
-  // ✅ Generate HTML
+  // Generate HTML with proper active states
   preview.innerHTML = allImages.map((img, idx) => {
     const isTemp = idx >= permanentImages.length;
     const displayIndex = isTemp ? idx - permanentImages.length : idx;
     const imgUrl = typeof img === 'string' ? img : img?.url || 'placeholder.jpg';
     
-    // ✅ Calculate correct active state
-    const isActiveCover = (currentTempCover && isTemp && displayIndex === currentCoverIndex) ||
-                         (!currentTempCover && !isTemp && displayIndex === currentCoverIndex);
+    // Calculate active state
+    const isActiveCover = (isTempCover && isTemp && displayIndex === currentCoverIndex) ||
+                         (!isTempCover && !isTemp && displayIndex === currentCoverIndex);
     
     return `
       <div class="gallery-thumbnail" data-index="${displayIndex}" data-temp="${isTemp}">
-        <img src="${imgUrl}" 
-             class="preview-thumb"
-             onerror="this.src='placeholder.jpg'">
+        <img src="${imgUrl}" class="preview-thumb" onerror="this.src='placeholder.jpg'">
         <button class="remove-btn">×</button>
         <button class="cover-btn ${isActiveCover ? 'active' : ''}">
           ★
@@ -1000,10 +997,9 @@ function updateGalleryPreviews() {
     `;
   }).join('');
   
-  // ✅ RE-INITIALIZE BUTTONS (with fixed function)
+  // Re-initialize interactions
   initGalleryInteractions();
 }
-  
 
 //================================
 //5. FUNCTION CANCEL EDIT
@@ -2622,26 +2618,37 @@ if (window.tempGalleryImages && window.tempGalleryImages.length > 0) {
 // ==============================
 // ✅ SECTION 5.5: FINALIZE COVER & GALLERY BEFORE SAVE
 // ==============================
+// ==============================
+// ✅ SECTION 5.5: FINALIZE COVER & GALLERY BEFORE SAVE - FIXED
+// ==============================
 console.log("🖼️ Processing cover photo selection...");
 
-// 1) Compute finalCoverIndex
-let finalCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex || '0', 10);
+// 1) Get the current selection from form dataset
 const isTempCover = DOM.profileForm.dataset.isTempCover === 'true';
+const tempCoverIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex || '0', 10);
+const permCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex || '0', 10);
 
-if (isTempCover && window.tempGalleryImages && window.tempGalleryImages.length > 0) {
-  const tempCoverIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex || '0', 10);
+// 2) Calculate final cover index based on selection type
+let finalCoverIndex;
 
-  // ✅ Convert temp index → final index (after merging galleries)
-  // permanent images count is already in uploadedImageUrls
+if (isTempCover) {
+  // Temp cover selected: index = permanent images count + temp index
   finalCoverIndex = uploadedImageUrls.length + tempCoverIndex;
-
-  console.log("✅ Converted temp cover index:", tempCoverIndex, "→ final index:", finalCoverIndex);
+  console.log("✅ Temp cover selected, final index:", finalCoverIndex);
+} else {
+  // Permanent cover selected: use the stored index directly
+  finalCoverIndex = permCoverIndex;
+  console.log("✅ Permanent cover selected, final index:", finalCoverIndex);
 }
 
-// ✅ Reset temp cover flags (clean state for next operation)
+// 3) Ensure the index is valid
+if (finalCoverIndex >= uploadedImageUrls.length) {
+  console.warn("⚠️ Cover index out of bounds, resetting to 0");
+  finalCoverIndex = 0;
+}
+
+// 4) Reset temp flags for next operation
 DOM.profileForm.dataset.isTempCover = 'false';
-
-
         
     // ========================
     // SECTION 6: PROFILE ASSEMBLY
@@ -2699,9 +2706,20 @@ DOM.profileForm.dataset.isTempCover = 'false';
         // ✅ ADD THIS LINE IMMEDIATELY AFTER required for firestore saving
         newProfile.userId = userId;
 
+        // Add this helper function and call it before saving
+function validateCoverIndex(images, coverIndex) {
+  if (!images || images.length === 0) return 0;
+  if (coverIndex >= images.length) return 0;
+  if (coverIndex < 0) return 0;
+  return coverIndex;
+}
+
+// Use it in your save logic:
+newProfile.coverPhotoIndex = validateCoverIndex(newProfile.gallery, finalCoverIndex);
+
         // ✅ Apply unified cover + gallery
-   newProfile.coverPhotoIndex = finalCoverIndex;
-   newProfile.gallery = [...uploadedImageUrls]; // single source of truth
+//   newProfile.coverPhotoIndex = finalCoverIndex;
+ //  newProfile.gallery = [...uploadedImageUrls]; // single source of truth
 
 console.log("✅ Final cover index:", finalCoverIndex);
 console.log("✅ Final gallery size:", newProfile.gallery.length);
