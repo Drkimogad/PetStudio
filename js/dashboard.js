@@ -93,8 +93,16 @@ function resetSessionTimer() {
 // 🌍 Load from localStorage only on initial boot
 if (!window.petProfiles || !Array.isArray(window.petProfiles) || window.petProfiles.length === 0) {
   let savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
+  
+  // Normalize coverPhotoIndex for consistency
+  savedProfiles = savedProfiles.map(p => ({
+    ...p,
+    coverPhotoIndex: Number(p.coverPhotoIndex ?? 0)
+  }));
+  
   window.petProfiles = savedProfiles;
 }
+
 
 // SAFE GLOBAL INITIALIZATION (compatible with auth.js)
 if (typeof isEditing === 'undefined') {
@@ -254,7 +262,10 @@ function loadSavedProfiles() {
       petCard.id = `pet-card-${profile.id}`;
 
       // ✅ Support both object-based and string-based gallery entries
-      const coverImageObj = profile.gallery?.[profile.coverPhotoIndex];
+  //    const coverImageObj = profile.gallery?.[profile.coverPhotoIndex];
+      // after:
+const coverIndex = Number(profile.coverPhotoIndex ?? 0);
+const coverImageObj = profile.gallery?.[coverIndex];
        //validate coverphoto url
       const coverPhotoUrl = validateImageUrl(
       typeof coverImageObj === "string" ? coverImageObj : coverImageObj?.url
@@ -291,12 +302,13 @@ petCard.innerHTML = `
              alt="Pet photo ${imgIndex + 1}"
              onerror="this.classList.add('error'); this.src='placeholder.jpg';"
              loading="lazy">
-        <button class="cover-btn ${imgIndex === profile.coverPhotoIndex ? 'active' : ''}" 
-                data-id="${profile.id}" 
-                data-index="${index}" 
-                data-photo-index="${imgIndex}">
-          ★
-        </button>
+        <button class="cover-btn ${imgIndex === coverIndex ? 'active' : ''}" 
+        data-id="${profile.id}" 
+        data-index="${index}" 
+        data-photo-index="${imgIndex}">
+  ★
+</button>
+
       </div>
     `).join('') 
     : '<div class="empty-gallery-msg">No photos yet</div>'
