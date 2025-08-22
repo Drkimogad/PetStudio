@@ -2618,6 +2618,9 @@ if (window.tempGalleryImages && window.tempGalleryImages.length > 0) {
 // ==============================
 // ✅ SECTION 5.5: FINALIZE COVER & GALLERY BEFORE SAVE - FIXED
 // ==============================
+// ==============================
+// ✅ SECTION 5.5: FINALIZE COVER & GALLERY BEFORE SAVE - FIXED
+// ==============================
 console.log("🖼️ Processing cover photo selection...");
 
 // 1) Get the current selection from form dataset
@@ -2629,12 +2632,15 @@ const permCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex || '0', 10);
 let finalCoverIndex;
 
 if (isTempCover) {
-  // AFTER Cloudinary uploads, temp images are at the END of uploadedImageUrls
-  // So final index = original uploadedImageUrls count + temp index
-  const originalUploadedCount = uploadedImageUrls.length - (window.tempGalleryImages?.length || 0);
-  finalCoverIndex = originalUploadedCount + tempCoverIndex;
+  // CORRECT CALCULATION: uploadedImageUrls contains ALL images (existing + newly uploaded)
+  // The temp images are appended at the END, so their final positions are:
+  // uploadedImageUrls.length - tempImagesCount + tempIndex
+  const tempImagesCount = window.tempGalleryImages?.length || 0;
+  finalCoverIndex = (uploadedImageUrls.length - tempImagesCount) + tempCoverIndex;
   console.log("✅ Temp cover selected, final index:", finalCoverIndex, 
-             "(original count:", originalUploadedCount, "temp index:", tempCoverIndex + ")");
+             "(total images:", uploadedImageUrls.length, 
+             "temp count:", tempImagesCount, 
+             "temp index:", tempCoverIndex + ")");
 } else {
   // Permanent cover selected: use the stored index directly
   finalCoverIndex = permCoverIndex;
@@ -2642,7 +2648,7 @@ if (isTempCover) {
 }
 
 // 3) Ensure the index is valid
-if (finalCoverIndex >= uploadedImageUrls.length) {
+if (finalCoverIndex >= uploadedImageUrls.length || finalCoverIndex < 0) {
   console.warn("⚠️ Cover index out of bounds, resetting to 0");
   finalCoverIndex = 0;
 }
