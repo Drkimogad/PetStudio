@@ -894,30 +894,143 @@ if (themeRadios.length) {
 //4. helper function for gallery preview in edit form
 //=====================================================
 function initGalleryInteractions() {
-  // Remove button functionality
+  // ================================
+  // 1. REMOVE BUTTONS - FIXED
+  // ================================
   document.querySelectorAll('.remove-btn').forEach(btn => {
-    // ✅ REMOVE existing listeners first to prevent duplicates
-    btn.replaceWith(btn.cloneNode(true));
-  });
-  
-  // ✅ RE-BIND remove buttons
-  document.querySelectorAll('.remove-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    // ✅ Store original onclick first to preserve it
+    const originalOnClick = btn.onclick;
+    
+    // ✅ Clone but WITHOUT events (cloneNode(false))
+    const newBtn = btn.cloneNode(false);
+    
+    // ✅ Restore the original parent and styles
+    btn.parentNode.replaceChild(newBtn, btn);
+    
+    // ✅ Rebind the click event properly
+    newBtn.addEventListener('click', function(e) {
       e.stopPropagation();
+      e.preventDefault();
+      
       const thumbnail = e.target.closest('.gallery-thumbnail');
+      if (!thumbnail) return;
+      
       const index = parseInt(thumbnail.dataset.index);
       const isTemp = thumbnail.dataset.temp === 'true';
       
+      console.log("Remove clicked - index:", index, "isTemp:", isTemp);
+      
       if (isTemp) {
-        window.tempGalleryImages.splice(index, 1);
+        // Remove from temp images
+        if (window.tempGalleryImages && window.tempGalleryImages.length > index) {
+          window.tempGalleryImages.splice(index, 1);
+        }
       } else if (isEditing) {
-        petProfiles[currentEditIndex].gallery.splice(index, 1);
+        // Remove from editing profile
+        if (petProfiles[currentEditIndex]?.gallery?.length > index) {
+          petProfiles[currentEditIndex].gallery.splice(index, 1);
+        }
       } else {
-        uploadedImageUrls.splice(index, 1);
+        // Remove from create mode uploaded images
+        if (uploadedImageUrls.length > index) {
+          uploadedImageUrls.splice(index, 1);
+        }
       }
+      
+      // Update the preview
       updateGalleryPreviews();
     });
   });
+
+  // ================================
+  // 2. COVER BUTTONS - FIXED
+  // ================================
+function initGalleryInteractions() {
+  // ================================
+  // 1. REMOVE BUTTONS - FIXED
+  // ================================
+  document.querySelectorAll('.remove-btn').forEach(btn => {
+    // ✅ Store original onclick first to preserve it
+    const originalOnClick = btn.onclick;
+    
+    // ✅ Clone but WITHOUT events (cloneNode(false))
+    const newBtn = btn.cloneNode(false);
+    
+    // ✅ Restore the original parent and styles
+    btn.parentNode.replaceChild(newBtn, btn);
+    
+    // ✅ Rebind the click event properly
+    newBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      
+      const thumbnail = e.target.closest('.gallery-thumbnail');
+      if (!thumbnail) return;
+      
+      const index = parseInt(thumbnail.dataset.index);
+      const isTemp = thumbnail.dataset.temp === 'true';
+      
+      console.log("Remove clicked - index:", index, "isTemp:", isTemp);
+      
+      if (isTemp) {
+        // Remove from temp images
+        if (window.tempGalleryImages && window.tempGalleryImages.length > index) {
+          window.tempGalleryImages.splice(index, 1);
+        }
+      } else if (isEditing) {
+        // Remove from editing profile
+        if (petProfiles[currentEditIndex]?.gallery?.length > index) {
+          petProfiles[currentEditIndex].gallery.splice(index, 1);
+        }
+      } else {
+        // Remove from create mode uploaded images
+        if (uploadedImageUrls.length > index) {
+          uploadedImageUrls.splice(index, 1);
+        }
+      }
+      
+      // Update the preview
+      updateGalleryPreviews();
+    });
+  });
+
+  // ================================
+  // 2. COVER BUTTONS - FIXED
+  // ================================
+  document.querySelectorAll('.cover-btn').forEach(btn => {
+    // ✅ Clone without breaking events
+    const newBtn = btn.cloneNode(false);
+    btn.parentNode.replaceChild(newBtn, btn);
+    
+    newBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      const thumbnail = e.target.closest('.gallery-thumbnail');
+      if (!thumbnail) return;
+      
+      const index = parseInt(thumbnail.dataset.index);
+      const isTemp = thumbnail.dataset.temp === 'true';
+
+      console.log("Cover button clicked - index:", index, "isTemp:", isTemp);
+
+      if (isTemp) {
+        DOM.profileForm.dataset.tempCoverIndex = index;
+        DOM.profileForm.dataset.isTempCover = 'true';
+      } else {
+        DOM.profileForm.dataset.coverIndex = index;
+        DOM.profileForm.dataset.isTempCover = 'false';
+      }
+
+      // Refresh preview
+      updateGalleryPreviews();
+      
+      // Update birthday card live preview
+      const themeValue = document.querySelector('input[name="theme"]:checked')?.value || DEFAULT_THEME;
+      previewTheme(themeValue);
+    });
+  });
+}
 
   // ================================
 // Cover photo selection - FIXED VERSION
