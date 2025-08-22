@@ -123,6 +123,7 @@ function initDashboardDOM() {
 
 // ======================
 // 🎨 THEME CONFIGURATION (Global)
+// DEFINE THEMES
 // ======================
 const THEMES = {
   balloons: { 
@@ -169,12 +170,9 @@ const DEFAULT_THEME = 'balloons';
 // ==============================
 // 🎨 previewTheme() - Live Theme Preview
 // ==============================
-/*✅ 1. previewTheme(themeValue)
-
+/* ✅ previewTheme(themeValue)
 Purpose: Updates the birthday card preview theme styling when a theme radio button is clicked.
-
 What it updates: CSS class or inline style for the preview container (color scheme, background, fonts).
-
 What it does NOT do: It does not update the cover image in the preview; it only affects theme appearance.*/
 
 function previewTheme(selectedTheme) {
@@ -191,6 +189,7 @@ function previewTheme(selectedTheme) {
 }
 //======================================
 // Helper for theme-specific icons
+// DEFINE ICONS FOR THEMES
 //=======================================
 function getThemeIcon(theme) {
   const icons = {
@@ -221,8 +220,8 @@ function validateImageUrl(url) {
   return (isCloudinary || isDataUri) ? url : '';
 }
 
-//========================
-// R 🎨 RENDERING ===================================
+//=====================================================================
+// R 🎨 RENDERING PETCARDS
 // LOADSAVEDPROFILES()
 //==========================
 function loadSavedProfiles() {
@@ -414,8 +413,8 @@ ${profile.nextBirthday ? `
   }
 }
 
-//==============  
-// Log mood HAS TO STAY IN DASHBOARD.JS
+//===========================================================
+// LOGMOOD  HAS TO STAY IN DASHBOARD.JS
 // MOST FUNCTIONS RELY ON IT 
 //================
 function logMood(profileIndex, mood) {
@@ -435,7 +434,7 @@ function logMood(profileIndex, mood) {
   loadSavedProfiles();
 }
 
-//==========================================
+//====================================================================
 // Helper functions for theme togling
 //==========================================
 function toggleCelebrateButton(dateInput) {
@@ -454,11 +453,13 @@ function toggleCelebrateButton(dateInput) {
   }
 }
 
-
-
 // ==============================================================================
 // 🎨 previewTheme() - Unified Live Theme Preview (patched)
 // ==============================
+/* IT TAKES UPDATED COVERPHOTO TO SHOW IT IN BIRTHDAYCARD LIVE PREVIEW
+   THEN IT PASSESS IT TO INITGALLERYINTERACTIONS() THATS WHY IT HAS TO BE CALLED AFTER 
+   COVERINDEX IS UPDATED IN INITGALLERYINTERACTIONS FUNCTION */
+
 function previewTheme(selectedTheme) {
   const preview = document.getElementById('birthday-card-preview');
   if (!preview) return;
@@ -535,6 +536,7 @@ function getCurrentCoverUrl() {
 
   return null; // fallback (shows theme emoji)
 }
+
 /* Cover image is selected and  gets passed to previewTheme(selectedTheme) then
 after cover selection changes in initGalleryinteractions() we call previewTheme()*/
 
@@ -2617,24 +2619,26 @@ if (window.tempGalleryImages && window.tempGalleryImages.length > 0) {
         }
 
 
-// SECTION 5.5: COVER PHOTO FIX - NEW
-// ========================
+// ==============================
+// ✅ SECTION 5.5: FINALIZE COVER & GALLERY BEFORE SAVE
+// ==============================
 console.log("🖼️ Processing cover photo selection...");
 
-// Start with dataset cover index
-let finalCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex, 10) || 0;
+// 1) Compute finalCoverIndex
+let finalCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex || '0', 10);
 const isTempCover = DOM.profileForm.dataset.isTempCover === 'true';
 
 if (isTempCover && window.tempGalleryImages && window.tempGalleryImages.length > 0) {
-  const tempCoverIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex, 10);
+  const tempCoverIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex || '0', 10);
 
-  // Shift temp cover index by number of permanent images
+  // ✅ Convert temp index → final index (after merging galleries)
+  // permanent images count is already in uploadedImageUrls
   finalCoverIndex = uploadedImageUrls.length + tempCoverIndex;
 
   console.log("✅ Converted temp cover index:", tempCoverIndex, "→ final index:", finalCoverIndex);
 }
 
-// Reset temp cover flags
+// ✅ Reset temp cover flags (clean state for next operation)
 DOM.profileForm.dataset.isTempCover = 'false';
 
 
@@ -2670,7 +2674,11 @@ DOM.profileForm.dataset.isTempCover = 'false';
           
           notes: document.getElementById("petNotes")?.value.trim() || "",
           tags: selectedTags, // ✅ Inserted properly now
-          coverPhotoIndex: finalCoverIndex, // ← Use the calculated final index instead
+          
+          /* coverPhotoIndex: finalCoverIndex, // ← Use the calculated final index instead
+          //MOVED AFTER PROFILE ASSEMBLY TO AVOID ISSUE!
+          Assigning it after the object is built avoids duplication and makes the code clearer 
+          (assemble core fields → apply computed values → save).*/
           
           // Fixed version (dashboard.js)
           moodHistory: (() => {
@@ -2691,11 +2699,12 @@ DOM.profileForm.dataset.isTempCover = 'false';
         // ✅ ADD THIS LINE IMMEDIATELY AFTER required for firestore saving
         newProfile.userId = userId;
 
-        // ✅ Finalize cover photo choice using computed index from Section 5.5
-newProfile.coverPhotoIndex = finalCoverIndex;
+        // ✅ Apply unified cover + gallery
+   newProfile.coverPhotoIndex = finalCoverIndex;
+   newProfile.gallery = [...uploadedImageUrls]; // single source of truth
 
-// 🖼️ Gallery Consolidation - unified
-newProfile.gallery = [...uploadedImageUrls];
+console.log("✅ Final cover index:", finalCoverIndex);
+console.log("✅ Final gallery size:", newProfile.gallery.length);
 
 
 
@@ -2803,11 +2812,15 @@ if (isEditing) {
             console.warn("Reminder not saved:", reminderErr.message);
           }
         }
-
-        // 🧠 Update local array & localStorage
+        
+// ==============================
+// ✅ SECTION 7: SAVE OR UPDATE.// 🧠 Update local array & localStorage
+// ==============================
         if (isEditing) {
+            console.log("✏️ Updating existing profile...");
           petProfiles[currentEditIndex] = newProfile;
         } else {
+          console.log("➕ Creating new profile...");
           petProfiles.push(newProfile);
         }
 
@@ -2816,8 +2829,6 @@ if (isEditing) {
        // ========================
 // SECTION 8: UI UPDATE
 // ======================== 
-console.log("🖥️ Updating UI..."); // DEBUG LINE KEPT
-
 // 🟢 SUCCESS MESSAGE
 loaderText.innerHTML = isEditing ? 
   '<i class="fas fa-check-circle"></i> Profile updated!' : 
@@ -2825,6 +2836,9 @@ loaderText.innerHTML = isEditing ?
 
 setTimeout(() => {
   showDashboard();
+  console.log("✅ Profile saved successfully!");
+  resetForm();
+  
   loader.style.display = 'none';
   document.body.style.pointerEvents = 'auto';
   window.scrollTo(0, 0); // Ensures consistent scrolling
