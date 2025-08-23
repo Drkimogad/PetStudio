@@ -916,8 +916,15 @@ function initGalleryInteractions() {
   document.querySelectorAll('.remove-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-          console.log('🟢 Remove button clicked');
+        e.preventDefault(); // <-- prevents form submit
 
+ // SAFE debug (no spreads on undefined)
+  console.log('🟢 Remove button clicked', {
+    tempGalleryImages: Array.isArray(window.tempGalleryImages) ? window.tempGalleryImages.slice() : null,
+    editGallery: (isEditing && petProfiles[currentEditIndex]?.gallery) ? petProfiles[currentEditIndex].gallery.slice() : null,
+    uploadedImageUrls: Array.isArray(uploadedImageUrls) ? uploadedImageUrls.slice() : null
+  });
+      
       const thumbnail = e.target.closest('.gallery-thumbnail');
           console.log('Thumbnail found:', thumbnail);
 
@@ -1035,7 +1042,7 @@ function updateGalleryPreviews() {
     return `
       <div class="gallery-thumbnail" data-index="${displayIndex}" data-temp="${isTemp}">
         <img src="${imgUrl}" class="preview-thumb" onerror="this.src='placeholder.jpg'">
-        <button class="remove-btn">×</button>
+        <button type="button" class="remove-btn">×</button>
         <button class="cover-btn ${isActiveCover ? 'active' : ''}">
           ★
         </button>
