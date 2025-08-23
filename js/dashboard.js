@@ -907,11 +907,11 @@ if (themeRadios.length) {
 //=====================================================
 function initGalleryInteractions() {
   // Remove button functionality
-  document.querySelectorAll('.remove-btn').forEach(btn => {
+//  document.querySelectorAll('.remove-btn').forEach(btn => {
     // ✅ REMOVE existing listeners first to prevent duplicates
-    btn.replaceWith(btn.cloneNode(true));
-  });
-  
+//    btn.replaceWith(btn.cloneNode(true));
+//  });
+  // Unbind existing by selecting fresh DOM and adding new listeners
   // ✅ RE-BIND remove buttons
   document.querySelectorAll('.remove-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
