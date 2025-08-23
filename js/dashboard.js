@@ -907,26 +907,52 @@ if (themeRadios.length) {
 //=====================================================
 function initGalleryInteractions() {
   // Remove button functionality
-//  document.querySelectorAll('.remove-btn').forEach(btn => {
-    // ✅ REMOVE existing listeners first to prevent duplicates
-//    btn.replaceWith(btn.cloneNode(true));
-//  });
-  // Unbind existing by selecting fresh DOM and adding new listeners
+  document.querySelectorAll('.remove-btn').forEach(btn => {
+     ✅ REMOVE existing listeners first to prevent duplicates
+    btn.replaceWith(btn.cloneNode(true));
+ });
+  
   // ✅ RE-BIND remove buttons
   document.querySelectorAll('.remove-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
+          console.log('🟢 Remove button clicked');
+
       const thumbnail = e.target.closest('.gallery-thumbnail');
+          console.log('Thumbnail found:', thumbnail);
+
       const index = parseInt(thumbnail.dataset.index);
       const isTemp = thumbnail.dataset.temp === 'true';
+
+      console.log('Index:', index, 'isTemp:', isTemp);
+    console.log('isEditing:', isEditing);
+    console.log('Current gallery arrays:', {
+      tempGalleryImages: [...window.tempGalleryImages],
+      editGallery: isEditing ? [...petProfiles[currentEditIndex].gallery] : [],
+      uploadedImageUrls: [...uploadedImageUrls]
+    });
+
       
       if (isTemp) {
+              console.log('Removing from tempGalleryImages');
+
         window.tempGalleryImages.splice(index, 1);
       } else if (isEditing) {
+              console.log('Removing from petProfiles[currentEditIndex].gallery');
+
         petProfiles[currentEditIndex].gallery.splice(index, 1);
       } else {
+              console.log('Removing from uploadedImageUrls');
+
         uploadedImageUrls.splice(index, 1);
       }
+      
+      console.log('After removal:', {
+      tempGalleryImages: [...window.tempGalleryImages],
+      editGallery: isEditing ? [...petProfiles[currentEditIndex].gallery] : [],
+      uploadedImageUrls: [...uploadedImageUrls]
+    });
+
       updateGalleryPreviews();
     });
   });
@@ -975,6 +1001,14 @@ document.querySelectorAll('.cover-btn').forEach(btn => {
 
 // Helper function to update both form previews
 function updateGalleryPreviews() {
+
+       console.log('Cover highlight debug:', {
+  datasetCoverIndex: DOM.profileForm.dataset.coverIndex,
+  datasetIsTempCover: DOM.profileForm.dataset.isTempCover,
+  isEditing,
+  currentEditGallery: isEditing ? petProfiles[currentEditIndex].gallery : []
+});
+  
   const preview = document.getElementById('galleryPreview');
   if (!preview) return;
   
