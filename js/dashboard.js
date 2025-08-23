@@ -908,7 +908,7 @@ if (themeRadios.length) {
 function initGalleryInteractions() {
   // Remove button functionality
   document.querySelectorAll('.remove-btn').forEach(btn => {
-     ✅ REMOVE existing listeners first to prevent duplicates
+  //   ✅ REMOVE existing listeners first to prevent duplicates
     btn.replaceWith(btn.cloneNode(true));
  });
   
