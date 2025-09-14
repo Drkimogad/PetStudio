@@ -237,10 +237,9 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-
 // ================= MODAL MANAGER UTILITY =================
 const ModalManager = {
-  currentModal: null,
+  _currentModal: null,  // Change to _currentModal (with underscore)
   previousModal: null,
   
   show(modalId) {
@@ -261,12 +260,12 @@ const ModalManager = {
     if (modal) {
       modal.style.display = 'flex';
       modal.classList.remove('hidden');
-      this.currentModal = modalId;
+      this.currentModal = modalId;  // This will trigger the setter
     }
   },
   
   hide() {
-  console.log("📋 ModalManager hiding current modal:", this.currentModal);
+    console.log("📋 ModalManager hiding current modal:", this.currentModal);
     
     if (this.currentModal) {
       const modal = document.getElementById(this.currentModal);
@@ -274,7 +273,7 @@ const ModalManager = {
         modal.style.display = 'none';
         modal.classList.add('hidden');
       }
-      this.currentModal = null;
+      this.currentModal = null;  // This will trigger the setter
     }
   },
   
@@ -284,7 +283,16 @@ const ModalManager = {
       modal.style.display = 'none';
       modal.classList.add('hidden');
     });
-    this.currentModal = null;
+    this.currentModal = null;  // This will trigger the setter
     this.previousModal = null;
   }
 };
+
+// ✅ CORRECT PLACEMENT: Apply defineProperty AFTER the object is created
+Object.defineProperty(ModalManager, 'currentModal', {
+  get() { return this._currentModal; },
+  set(value) {
+    console.log("🔍 currentModal changing from:", this._currentModal, "to:", value);
+    this._currentModal = value;
+  }
+});
