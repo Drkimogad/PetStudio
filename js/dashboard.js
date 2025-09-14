@@ -2010,7 +2010,7 @@ function showCollagePreview(canvas, profile) {
   // === Helper to close and cleanup ===
   const closeModal = () => {
     // Immediate removal (no leftover backdrop)
-    ModalManager.hide();  /added
+    ModalManager.hide();  //added
     URL.revokeObjectURL(img.src);
     removeListeners();
   };
