@@ -1718,8 +1718,9 @@ function createPetCollage(index) {
   }
 
   const modal = document.getElementById('collage-modal');
-  showModal(modal);
-
+ // showModal(modal);
+   ModalManager.show('collage-modal');
+  
   const grid = document.getElementById('collage-image-grid');
   grid.innerHTML = '';
 
@@ -1780,10 +1781,9 @@ document.body.addEventListener('click', (e) => {
     generateCollagePNG(profile); // Phase 2 hook
   }
   else if (e.target.id === 'close-collage') {
-    const modal = document.getElementById('collage-modal');
-    hideModal(modal);
-    resetCollageSelections();
-  }
+  ModalManager.hide();
+  resetCollageSelections();
+}
 });
 
 
@@ -1974,11 +1974,13 @@ showCollagePreview(canvas, profile);
 //==========================
 function showCollagePreview(canvas, profile) {
   // Remove any existing preview modal to avoid duplicates/leaks
-  const existingModal = document.getElementById('collage-preview-modal');
-  if (existingModal) existingModal.remove();
+ // const existingModal = document.getElementById('collage-preview-modal');
+ // if (existingModal) existingModal.remove();
 
   // Create modal
   document.body.insertAdjacentHTML('beforeend', `
+     ModalManager.show('collage-preview-modal');
+     
     <div id="collage-preview-modal" class="modal" style="pointer-events:auto;">
       <div class="modal-backdrop"></div>
       <div class="modal-content">
@@ -2008,7 +2010,7 @@ function showCollagePreview(canvas, profile) {
   // === Helper to close and cleanup ===
   const closeModal = () => {
     // Immediate removal (no leftover backdrop)
-    modal.remove();
+    ModalManager.hide();  /added
     URL.revokeObjectURL(img.src);
     removeListeners();
   };
