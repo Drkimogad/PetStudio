@@ -236,3 +236,55 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
+
+// ================= MODAL MANAGER UTILITY =================
+const ModalManager = {
+  currentModal: null,
+  previousModal: null,
+  
+  show(modalId) {
+    console.log("📋 ModalManager showing:", modalId);
+    
+    // Hide current modal if exists
+    if (this.currentModal) {
+      this.previousModal = this.currentModal;
+      const current = document.getElementById(this.currentModal);
+      if (current) {
+        current.style.display = 'none';
+        current.classList.add('hidden');
+      }
+    }
+    
+    // Show new modal
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.classList.remove('hidden');
+      this.currentModal = modalId;
+    }
+  },
+  
+  hide() {
+    console.log("📋 ModalManager hiding current modal");
+    
+    if (this.currentModal) {
+      const modal = document.getElementById(this.currentModal);
+      if (modal) {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+      }
+      this.currentModal = null;
+    }
+  },
+  
+  hideAll() {
+    console.log("📋 ModalManager hiding ALL modals");
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.style.display = 'none';
+      modal.classList.add('hidden');
+    });
+    this.currentModal = null;
+    this.previousModal = null;
+  }
+};
