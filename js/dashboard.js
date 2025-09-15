@@ -1995,7 +1995,7 @@ function showCollagePreview(canvas, profile) {
 
     // === FIX 1: Use stack manager to close preview ===
     ModalStackManager.close();
-    console.log('📋 Stack after preview close:', ModalStackManager.getStack());
+   console.log('📋 Stack after preview close:', ModalStackManager._stack);
 
     // === FIX 2: OPTIONAL: Also close parent collage modal if open ===
     const parentModalId = 'collage-modal';
