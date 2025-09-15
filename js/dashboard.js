@@ -1688,7 +1688,7 @@ function ensureCollageModalExists() {
 // ===============================
 // Modal Show/Hide Helpers
 // ===============================
-function hideModal(modal) {
+function ModalManager.hide() {
   if (!modal) return;
   modal.classList.add('hidden');
   setTimeout(() => {
@@ -1697,7 +1697,7 @@ function hideModal(modal) {
   }, 300); // match CSS transition
 }
 
-function showModal(modal) {
+function ModalManager.show('collage-modal') {
   if (!modal) return;
   modal.style.display = 'flex';
   modal.style.pointerEvents = 'auto';
