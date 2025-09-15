@@ -266,7 +266,8 @@ const ModalManager = {
   
   hide() {
     console.log("📋 ModalManager hiding current modal:", this.currentModal);
-    
+    console.trace(); // ← ADD THIS LINE to see WHERE hide() is being called from
+
     if (this.currentModal) {
       const modal = document.getElementById(this.currentModal);
       if (modal) {
