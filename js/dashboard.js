@@ -1972,7 +1972,7 @@ function showCollagePreview(canvas, profile) {
   const img = modal.querySelector('#collage-preview-image');
   img.src = canvas.toDataURL();
 
-  ModalStackManager.open('collage-preview-modal',    //opened the cleaning modal here again
+ ModalStackManager.open('collage-preview-modal', {
   cleanup: removeListeners
 });
 
