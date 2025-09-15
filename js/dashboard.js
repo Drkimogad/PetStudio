@@ -1686,23 +1686,11 @@ function ensureCollageModalExists() {
 }
 
 // ===============================
-// Modal Show/Hide Helpers
+// Modal Show/Hide Helpers have been removed and called via Modal Manager
 // ===============================
-function ModalManager.hide() {
-  if (!modal) return;
-  modal.classList.add('hidden');
-  setTimeout(() => {
-    modal.style.display = 'none';
-    modal.style.pointerEvents = 'none';
-  }, 300); // match CSS transition
-}
-
-function ModalManager.show('collage-modal') {
-  if (!modal) return;
-  modal.style.display = 'flex';
-  modal.style.pointerEvents = 'auto';
-  setTimeout(() => modal.classList.remove('hidden'), 10);
-}
+// New
+ModalManager.show('collage-modal');
+ModalManager.hide();
 
 // ===============================
 // Create Collage Modal Logic
@@ -1781,7 +1769,7 @@ document.body.addEventListener('click', (e) => {
   }
   else if (e.target.id === 'close-collage') {
     const modal = document.getElementById('collage-modal');
-    hideModal(modal);
+    ModalManager.hide(); // calling the manager now
     resetCollageSelections();
   }
 });
@@ -1973,9 +1961,7 @@ showCollagePreview(canvas, profile);
 // PHASE 3. SHOW COLLAGE PREVIEW ()
 //==========================
 function showCollagePreview(canvas, profile) {
-  // Remove any existing preview modal to avoid duplicates/leaks
-  const existingModal = document.getElementById('collage-preview-modal');
-  if (existingModal) existingModal.remove();
+  ModalManager.hide(); // hides any currently open modal (including previous preview modal)
 
   // Create modal
   document.body.insertAdjacentHTML('beforeend', `
@@ -2004,14 +1990,15 @@ function showCollagePreview(canvas, profile) {
   const modal = document.getElementById('collage-preview-modal');
   const img = modal.querySelector('#collage-preview-image');
   img.src = canvas.toDataURL();
+  ModalManager.show('collage-preview-modal'); // added
 
   // === Helper to close and cleanup ===
-  const closeModal = () => {
-    // Immediate removal (no leftover backdrop)
-    modal.remove();
-    URL.revokeObjectURL(img.src);
-    removeListeners();
-  };
+const closeModal = () => {
+  removeListeners();           // keep listener cleanup
+  URL.revokeObjectURL(img.src); // optional: keep if using blob URLs
+  ModalManager.hide();          // centralized hiding
+};
+
 
   // === Listener cleanup ===
   const removeListeners = () => {
