@@ -2020,8 +2020,14 @@ function showCollagePreview(canvas, profile) {
 
   // === Helper to close and cleanup ===
   const closeModal = () => {
-    // Immediate removal (no leftover backdrop)
-    ModalManager.hide();  //added
+  if (ModalManager.currentModal === 'collage-preview-modal') {
+    // For preview modal, go back to collage modal
+    ModalManager.show('collage-modal');
+  } else {
+    // For other modals, just hide
+    ModalManager.hide();
+  }
+    
     URL.revokeObjectURL(img.src);
     removeListeners();
   };
