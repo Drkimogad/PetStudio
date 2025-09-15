@@ -2015,14 +2015,6 @@ function showCollagePreview(canvas, profile) {
 ModalStackManager.close();
 console.log('📋 Stack after preview close:', ModalStackManager._stack);
 
-// === FIX 2: OPTIONAL: Also close parent collage modal if open ===
-const parentModalId = 'collage-modal';
-if (ModalStackManager._stack.includes(parentModalId)) {
-  console.log(`🛑 Closing parent modal: ${parentModalId}`);
-  // No parameter supported in your current close(), so must pop manually or call close repeatedly
-  ModalStackManager.close(); // this will close the top; ensure top is parent if needed
-  console.log('📋 Stack after parent close:', ModalStackManager._stack);
-  }
 };
 
   const handleKeyDown = (e) => {
