@@ -1957,8 +1957,6 @@ collage.style.cssText = `
     
 // Inside generateCollagePNG(), after canvas generation:
 showCollagePreview(canvas, profile);
-// Add this:
-ModalManager.show('collage-preview-modal');
     
   } catch (error) {
     console.error('Collage generation error:', error);
