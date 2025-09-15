@@ -2006,6 +2006,15 @@ function showCollagePreview(canvas, profile) {
   `);
 
   const modal = document.getElementById('collage-preview-modal');
+   // Debug click events
+  modal.addEventListener('click', (e) => {
+    console.log('🔍 Modal clicked:', e.target, 
+                'Class:', e.target.className,
+                'ID:', e.target.id,
+                'Tag:', e.target.tagName);
+    e.stopPropagation(); // Prevent event bubbling
+  });
+  
   const img = modal.querySelector('#collage-preview-image');
   img.src = canvas.toDataURL();
 
