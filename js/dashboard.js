@@ -1979,7 +1979,13 @@ function showCollagePreview(canvas, profile) {
   cleanup: removeListeners
 });
 
-
+ // === Listener cleanup ===
+  const removeListeners = () => {
+    modal.querySelector('.modal-close').onclick = null;
+    modal.querySelector('.modal-backdrop').onclick = null;
+    document.removeEventListener('keydown', handleKeyDown);
+  };
+  
   // === Helper to close and cleanup ===
 const closeModal = () => {
   removeListeners();
@@ -1987,15 +1993,7 @@ const closeModal = () => {
   ModalStackManager.close();  // then called closing cleaning modal
 };
 
-
-  // === Listener cleanup ===
-  const removeListeners = () => {
-    modal.querySelector('.modal-close').onclick = null;
-    modal.querySelector('.modal-backdrop').onclick = null;
-    document.removeEventListener('keydown', handleKeyDown);
-  };
-
-  const handleKeyDown = (e) => {
+ const handleKeyDown = (e) => {
     if (e.key === 'Escape') closeModal();
   };
 
