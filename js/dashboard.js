@@ -1505,9 +1505,9 @@ card.innerHTML = `
    window.currentBirthdayCanvas = canvas; // Store reference
     
        // 5. ADD NEW PREVIEW MODAL LOGIC]
-  //  showBirthdayCardModal(canvas, profile); // New function call
+    showBirthdayCardModal(canvas, profile); // New function call
   // ✅ This automatically handles showing the modal, hiding underlying modals, and ensures cleanup runs on close.
-    ModalStackManager.open('birthday-card-modal', { cleanup: () => closeModal() });
+   // ModalStackManager.open('birthday-card-modal', { cleanup: () => closeModal() });
 
     // 6. CLEANUP]
     document.body.removeChild(card);
