@@ -1505,7 +1505,9 @@ card.innerHTML = `
    window.currentBirthdayCanvas = canvas; // Store reference
     
        // 5. ADD NEW PREVIEW MODAL LOGIC]
-    showBirthdayCardModal(canvas, profile); // New function call
+  //  showBirthdayCardModal(canvas, profile); // New function call
+  // ✅ This automatically handles showing the modal, hiding underlying modals, and ensures cleanup runs on close.
+    ModalStackManager.open('birthday-card-modal', { cleanup: () => closeModal() });
 
     // 6. CLEANUP]
     document.body.removeChild(card);
@@ -1520,16 +1522,7 @@ card.innerHTML = `
 // [ADD NEW FUNCTION FOR SHARING&DOWNLOADING BIRTHDAYCARD (place near your collage modal code)]
 //================================================================================================
 function showBirthdayCardModal(canvas, profile) {
-  // ===== [CLEANUP SECTION - NEW] =====
-  // 1. Check for existing modal and clean up
-  const existingModal = document.getElementById('birthday-card-modal');
-  if (existingModal) {
-    // Clean up previous listeners to prevent duplicates
-    document.removeEventListener('keydown', handleKeyDown);
-    existingModal.querySelector('.modal-close').onclick = null;
-    existingModal.querySelector('.modal-backdrop').onclick = null;
-  }
-
+  // ===== [CLEANUP is done via modal manager in utils.js now =====
   // ===== [MODAL CREATION - EXISTING CODE] ===== 
   if (!existingModal) {
     const modalHTML = `
@@ -1556,8 +1549,8 @@ function showBirthdayCardModal(canvas, profile) {
 
   // ===== [MODAL SHOW - EXISTING CODE] =====
   const modal = document.getElementById('birthday-card-modal');
-  modal.classList.remove('hidden');
-
+  //modal.classList.remove('hidden');
+ ModalStackManager.open('birthday-card-modal', { cleanup: closeModal });
 
   // Update these event listeners:
   document.getElementById('share-birthday-btn').onclick = async () => {
@@ -1618,23 +1611,19 @@ function showBirthdayCardModal(canvas, profile) {
 //==================================
 //Keep the modal in DOM but add proper state cleanup:
 function closeModal() {
-  const modal = document.getElementById('birthday-card-modal');
-  if (!modal || modal.classList.contains('hidden')) return;
-
-  // 1. Cleanup canvas references
   const img = document.getElementById('birthday-card-preview-img');
   if (img && img.src.startsWith('blob:')) {
     URL.revokeObjectURL(img.src);
-    img.removeAttribute('src'); // Important for memory cleanup
+    img.removeAttribute('src');
   }
 
-  // 2. Reset any interactive elements
   const downloadBtn = document.getElementById('download-birthday-btn');
   if (downloadBtn) downloadBtn.onclick = null;
 
-  // 3. Hide the modal
-  modal.classList.add('hidden');
+  // ModalStackManager handles hiding automatically
+  ModalStackManager.close();
 }
+
 
 // ========================
 // BIRTHDAY CARD DOWNLOAD FUNCTION (updated)
