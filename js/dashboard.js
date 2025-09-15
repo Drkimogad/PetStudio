@@ -1781,7 +1781,11 @@ document.body.addEventListener('click', (e) => {
     generateCollagePNG(profile); // Phase 2 hook
   }
   else if (e.target.id === 'close-collage') {
-  ModalManager.hide();
+  if (ModalManager.currentModal === 'collage-preview-modal') {
+    ModalManager.show('collage-modal');  // Go back to collage modal
+  } else {
+    ModalManager.hideAll();  // Close everything and return to dashboard
+  }
   resetCollageSelections();
 }
 });
