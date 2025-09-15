@@ -1993,18 +1993,19 @@ function showCollagePreview(canvas, profile) {
       console.log('🧹 Image src revoked');
     }
 
-    // === FIX 1: Use stack manager to close preview ===
-    ModalStackManager.close();
-   console.log('📋 Stack after preview close:', ModalStackManager._stack);
+ // === FIX 1: Use stack manager to close preview ===
+ModalStackManager.close();
+console.log('📋 Stack after preview close:', ModalStackManager._stack);
 
-    // === FIX 2: OPTIONAL: Also close parent collage modal if open ===
-    const parentModalId = 'collage-modal';
-    if (ModalStackManager.getStack().includes(parentModalId)) {
-      console.log(`🛑 Closing parent modal: ${parentModalId}`);
-      ModalStackManager.close(parentModalId);
-      console.log('📋 Stack after parent close:', ModalStackManager.getStack());
-    }
-  };
+// === FIX 2: OPTIONAL: Also close parent collage modal if open ===
+const parentModalId = 'collage-modal';
+if (ModalStackManager._stack.includes(parentModalId)) {
+  console.log(`🛑 Closing parent modal: ${parentModalId}`);
+  // No parameter supported in your current close(), so must pop manually or call close repeatedly
+  ModalStackManager.close(); // this will close the top; ensure top is parent if needed
+  console.log('📋 Stack after parent close:', ModalStackManager._stack);
+  }
+};
 
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') closeModal();
