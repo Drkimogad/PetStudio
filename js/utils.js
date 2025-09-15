@@ -334,3 +334,39 @@ const ModalStackManager = {
   }
 };
 
+
+
+// =======================
+// 🎂 Birthday Modal Queue
+// =======================
+const BirthdayModalQueue = (() => {
+  const queue = [];
+  let processing = false;
+
+  // Enqueue a birthday card request
+  function enqueue(fn) {
+    queue.push(fn);
+    processQueue();
+  }
+
+  // Process the queue if not already processing
+  async function processQueue() {
+    if (processing) return;  // Already processing
+    if (queue.length === 0) return; // Nothing to do
+
+    processing = true;
+    const nextFn = queue.shift();
+    try {
+      await nextFn();  // Call the async generate function
+    } catch (err) {
+      console.error("🎂 Birthday Modal Queue error:", err);
+    }
+    processing = false;
+    // Process next item if any
+    if (queue.length > 0) processQueue();
+  }
+
+  return { enqueue };
+})();
+
+
