@@ -1431,6 +1431,9 @@ function openPrintWindow(canvas, profile) {
 //===============================
 //  🎂 Generate Birthday card() WORKS
 //===============================
+//===============================
+//  🎂 Generate Birthday card() WORKS
+//===============================
 async function generateBirthdayCard(index) {
   let blobUrl = null;
 
@@ -1651,6 +1654,10 @@ function downloadCard(canvas, petName) {
     URL.revokeObjectURL(link.href); // Added cleanup
   }, 100);
 }
+
+
+
+
 
 
 
