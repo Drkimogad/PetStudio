@@ -1945,8 +1945,6 @@ showCollagePreview(canvas, profile);
 // PHASE 3. SHOW COLLAGE PREVIEW ()
 //==========================
 function showCollagePreview(canvas, profile) {
-  // No need to manually remove previous; stack handles it
-
   // Create modal
   document.body.insertAdjacentHTML('beforeend', `
     <div id="collage-preview-modal" class="modal" style="pointer-events:auto;">
@@ -1960,12 +1958,8 @@ function showCollagePreview(canvas, profile) {
           <img id="collage-preview-image" alt="Collage Preview">
         </div>
         <div class="modal-actions">
-          <button id="share-collage" class="btn-share">
-            <i class="fas fa-share-alt"></i> Share
-          </button>
-          <button id="download-collage" class="btn-download">
-            <i class="fas fa-download"></i> Download
-          </button>
+          <button id="share-collage" class="btn-share"><i class="fas fa-share-alt"></i> Share</button>
+          <button id="download-collage" class="btn-download"><i class="fas fa-download"></i> Download</button>
         </div>
       </div>
     </div>
@@ -1975,31 +1969,22 @@ function showCollagePreview(canvas, profile) {
   const img = modal.querySelector('#collage-preview-image');
   img.src = canvas.toDataURL();
 
- // === Listener cleanup ===
+  // === Keydown handler ===
+  const handleKeyDown = (e) => { if (e.key === 'Escape') ModalStackManager.close(); };
+
+  // === Listener cleanup ===
   const removeListeners = () => {
     modal.querySelector('.modal-close').onclick = null;
     modal.querySelector('.modal-backdrop').onclick = null;
     document.removeEventListener('keydown', handleKeyDown);
   };
 
- ModalStackManager.open('collage-preview-modal', {
-  cleanup: removeListeners
-});
- 
-  // === Helper to close and cleanup ===
-const closeModal = () => {
-  removeListeners();
-  URL.revokeObjectURL(img.src);
-  ModalStackManager.close();  // then called closing cleaning modal
-};
-
- const handleKeyDown = (e) => {
-    if (e.key === 'Escape') closeModal();
-  };
+  // === Open with manager ===
+  ModalStackManager.open('collage-preview-modal', { cleanup: removeListeners });
 
   // === Bind listeners ===
-  modal.querySelector('.modal-close').onclick = closeModal;
-  modal.querySelector('.modal-backdrop').onclick = closeModal;
+  modal.querySelector('.modal-close').onclick = () => ModalStackManager.close();
+  modal.querySelector('.modal-backdrop').onclick = () => ModalStackManager.close();
   document.addEventListener('keydown', handleKeyDown);
 
   // === Button: Share ===
@@ -2035,7 +2020,7 @@ const closeModal = () => {
   };
 
   // === Show modal ===
-  modal.classList.remove('hidden');
+ // modal.classList.remove('hidden');
 }
 
 // ========================
