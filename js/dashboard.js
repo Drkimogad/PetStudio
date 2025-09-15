@@ -1942,12 +1942,12 @@ showCollagePreview(canvas, profile);
  }
 
 //==========================
-// PHASE 3. SHOW COLLAGE PREVIEW ()
+// PHASE 3. SHOW COLLAGE PREVIEW (UPDATED)
 //==========================
 function showCollagePreview(canvas, profile) {
-  // Create modal
+  // === Create modal HTML ===
   document.body.insertAdjacentHTML('beforeend', `
-    <div id="collage-preview-modal" class="modal" style="pointer-events:auto;">
+    <div id="collage-preview-modal" class="modal">
       <div class="modal-backdrop"></div>
       <div class="modal-content">
         <div class="modal-header">
@@ -1958,8 +1958,12 @@ function showCollagePreview(canvas, profile) {
           <img id="collage-preview-image" alt="Collage Preview">
         </div>
         <div class="modal-actions">
-          <button id="share-collage" class="btn-share"><i class="fas fa-share-alt"></i> Share</button>
-          <button id="download-collage" class="btn-download"><i class="fas fa-download"></i> Download</button>
+          <button id="share-collage" class="btn-share">
+            <i class="fas fa-share-alt"></i> Share
+          </button>
+          <button id="download-collage" class="btn-download">
+            <i class="fas fa-download"></i> Download
+          </button>
         </div>
       </div>
     </div>
@@ -1969,25 +1973,49 @@ function showCollagePreview(canvas, profile) {
   const img = modal.querySelector('#collage-preview-image');
   img.src = canvas.toDataURL();
 
-  // === Keydown handler ===
-  const handleKeyDown = (e) => { if (e.key === 'Escape') ModalStackManager.close(); };
-
-  // === Listener cleanup ===
+  // =======================
+  // === HANDLE STACK LOGIC ===
+  // =======================
   const removeListeners = () => {
     modal.querySelector('.modal-close').onclick = null;
     modal.querySelector('.modal-backdrop').onclick = null;
     document.removeEventListener('keydown', handleKeyDown);
+    console.log('✅ Listeners removed for collage-preview-modal');
   };
 
-  // === Open with manager ===
-  ModalStackManager.open('collage-preview-modal', { cleanup: removeListeners });
+  const closeModal = () => {
+    console.log('🛑 Closing collage-preview-modal');
+    removeListeners();
+
+    if (img && img.src.startsWith('data:')) {
+      URL.revokeObjectURL(img.src); // cleanup blob if any
+      img.removeAttribute('src');
+      console.log('🧹 Image src revoked');
+    }
+
+    // === FIX 1: Use stack manager to close preview ===
+    ModalStackManager.close();
+    console.log('📋 Stack after preview close:', ModalStackManager.getStack());
+
+    // === FIX 2: OPTIONAL: Also close parent collage modal if open ===
+    const parentModalId = 'collage-modal';
+    if (ModalStackManager.getStack().includes(parentModalId)) {
+      console.log(`🛑 Closing parent modal: ${parentModalId}`);
+      ModalStackManager.close(parentModalId);
+      console.log('📋 Stack after parent close:', ModalStackManager.getStack());
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') closeModal();
+  };
 
   // === Bind listeners ===
-  modal.querySelector('.modal-close').onclick = () => ModalStackManager.close();
-  modal.querySelector('.modal-backdrop').onclick = () => ModalStackManager.close();
+  modal.querySelector('.modal-close').onclick = closeModal;
+  modal.querySelector('.modal-backdrop').onclick = closeModal;
   document.addEventListener('keydown', handleKeyDown);
 
-  // === Button: Share ===
+  // === Share button ===
   modal.querySelector('#share-collage').onclick = async () => {
     try {
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
@@ -2002,7 +2030,7 @@ function showCollagePreview(canvas, profile) {
       } else {
         throw new Error('Share API not available');
       }
-    } catch (error) {
+    } catch {
       console.log('Sharing not supported, downloading instead');
       const link = document.createElement('a');
       link.href = canvas.toDataURL();
@@ -2011,17 +2039,22 @@ function showCollagePreview(canvas, profile) {
     }
   };
 
-  // === Button: Download ===
+  // === Download button ===
   modal.querySelector('#download-collage').onclick = () => {
     const link = document.createElement('a');
     link.href = canvas.toDataURL();
     link.download = `${profile.name}_collage.png`;
     link.click();
+    console.log('💾 Collage downloaded');
   };
 
-  // === Show modal ===
- // modal.classList.remove('hidden');
+  // === FIX 3: Open modal via stack manager ===
+  ModalStackManager.open('collage-preview-modal', {
+    cleanup: removeListeners
+  });
+  console.log('🟢 Collage preview modal opened');
 }
+
 
 // ========================
 //  COLLAGE DOWNLOAD (updated)
