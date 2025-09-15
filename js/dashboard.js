@@ -2019,18 +2019,22 @@ function showCollagePreview(canvas, profile) {
   img.src = canvas.toDataURL();
 
   // === Helper to close and cleanup ===
-  const closeModal = () => {
+  //avoid automatic close button attachement and specify which modal 
+const closeModal = () => {
   if (ModalManager.currentModal === 'collage-preview-modal') {
     // For preview modal, go back to collage modal
     ModalManager.show('collage-modal');
+  } else if (ModalManager.currentModal === 'collage-modal') {
+    // For collage modal, go back to dashboard (hide everything)
+    ModalManager.hideAll();
   } else {
     // For other modals, just hide
     ModalManager.hide();
   }
-    
-    URL.revokeObjectURL(img.src);
-    removeListeners();
-  };
+  
+  URL.revokeObjectURL(img.src);
+  removeListeners();
+};
 
   // === Listener cleanup ===
   const removeListeners = () => {
