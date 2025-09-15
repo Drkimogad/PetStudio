@@ -1686,25 +1686,6 @@ function ensureCollageModalExists() {
 }
 
 // ===============================
-// Modal Show/Hide Helpers
-// ===============================
-function hideModal(modal) {
-  if (!modal) return;
-  modal.classList.add('hidden');
-  setTimeout(() => {
-    modal.style.display = 'none';
-    modal.style.pointerEvents = 'none';
-  }, 300); // match CSS transition
-}
-
-function showModal(modal) {
-  if (!modal) return;
-  modal.style.display = 'flex';
-  modal.style.pointerEvents = 'auto';
-  setTimeout(() => modal.classList.remove('hidden'), 10);
-}
-
-// ===============================
 // Create Collage Modal Logic
 // ===============================
 function createPetCollage(index) {
@@ -1716,9 +1697,10 @@ function createPetCollage(index) {
     showQRStatus("No photos available for collage.", false);
     return;
   }
-
-  const modal = document.getElementById('collage-modal');
-  showModal(modal);
+// calling cleaning modal
+ ModalStackManager.open('collage-modal', {
+  cleanup: resetCollageSelections
+});
 
   const grid = document.getElementById('collage-image-grid');
   grid.innerHTML = '';
@@ -1780,9 +1762,7 @@ document.body.addEventListener('click', (e) => {
     generateCollagePNG(profile); // Phase 2 hook
   }
   else if (e.target.id === 'close-collage') {
-    const modal = document.getElementById('collage-modal');
-    hideModal(modal);
-    resetCollageSelections();
+    ModalStackManager.close(); // cleanup (resetCollageSelections) runs automatically
   }
 });
 
@@ -1973,9 +1953,7 @@ showCollagePreview(canvas, profile);
 // PHASE 3. SHOW COLLAGE PREVIEW ()
 //==========================
 function showCollagePreview(canvas, profile) {
-  // Remove any existing preview modal to avoid duplicates/leaks
-  const existingModal = document.getElementById('collage-preview-modal');
-  if (existingModal) existingModal.remove();
+  // No need to manually remove previous; stack handles it
 
   // Create modal
   document.body.insertAdjacentHTML('beforeend', `
@@ -2005,13 +1983,18 @@ function showCollagePreview(canvas, profile) {
   const img = modal.querySelector('#collage-preview-image');
   img.src = canvas.toDataURL();
 
+  ModalStackManager.open('collage-preview-modal',    //opened the cleaning modal here again
+  cleanup: removeListeners
+});
+
+
   // === Helper to close and cleanup ===
-  const closeModal = () => {
-    // Immediate removal (no leftover backdrop)
-    modal.remove();
-    URL.revokeObjectURL(img.src);
-    removeListeners();
-  };
+const closeModal = () => {
+  removeListeners();
+  URL.revokeObjectURL(img.src);
+  ModalStackManager.close();  // then called closing cleaning modal
+};
+
 
   // === Listener cleanup ===
   const removeListeners = () => {
