@@ -237,63 +237,100 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// ================= MODAL MANAGER UTILITY =================
-const ModalManager = {
-  _currentModal: null,  // Change to _currentModal (with underscore)
-  previousModal: null,
-  
-  show(modalId) {
-    console.log("📋 ModalManager showing:", modalId);
-    
-    // Hide current modal if exists
-    if (this.currentModal) {
-      this.previousModal = this.currentModal;
-      const current = document.getElementById(this.currentModal);
-      if (current) {
-        current.style.display = 'none';
-        current.classList.add('hidden');
+// ================= ENQUEUE/DEQUEUE STACK-BASED MODAL MANAGER (with debug) =================
+const ModalStackManager = {
+  _stack: [], // Stack of open modal IDs
+  _cleanupMap: new Map(), // Optional per-modal cleanup functions
+
+  // Open a modal and optionally register a cleanup function
+  open(modalId, { cleanup } = {}) {
+    console.log("🟢 Opening modal:", modalId); // DEBUG
+    console.log("📋 Stack before open:", [...this._stack]); // DEBUG
+
+    const modal = document.getElementById(modalId);
+    if (!modal) {
+      console.warn("⚠️ Modal not found:", modalId);
+      return;
+    }
+
+    // Hide current top modal (if any) without removing it
+    const topModalId = this._stack[this._stack.length - 1];
+    if (topModalId) {
+      console.log("↩️ Hiding current top modal:", topModalId); // DEBUG
+      const topModal = document.getElementById(topModalId);
+      if (topModal) {
+        topModal.style.display = 'none';
+        topModal.classList.add('hidden');
       }
     }
-    
-    // Show new modal
+
+    // Show the new modal
+    modal.style.display = 'flex';
+    modal.style.pointerEvents = 'auto';
+    setTimeout(() => modal.classList.remove('hidden'), 10);
+
+    // Push to stack
+    this._stack.push(modalId);
+
+    // Register cleanup function if provided
+    if (cleanup) this._cleanupMap.set(modalId, cleanup);
+
+    console.log("✅ Stack after open:", [...this._stack]); // DEBUG
+  },
+
+  // Close the top modal
+  close() {
+    console.log("🔴 Closing top modal"); // DEBUG
+    console.log("📋 Stack before close:", [...this._stack]); // DEBUG
+
+    const modalId = this._stack.pop();
+    if (!modalId) {
+      console.warn("⚠️ No modals to close");
+      return;
+    }
+
     const modal = document.getElementById(modalId);
     if (modal) {
-      modal.style.display = 'flex';
-      modal.classList.remove('hidden');
-      this.currentModal = modalId;  // This will trigger the setter
-    }
-  },
-  
-  hide() {
-    console.log("📋 ModalManager hiding current modal:", this.currentModal);
-    console.trace(); // ← ADD THIS LINE to see WHERE hide() is being called from
-
-    if (this.currentModal) {
-      const modal = document.getElementById(this.currentModal);
-      if (modal) {
-        modal.style.display = 'none';
-        modal.classList.add('hidden');
-      }
-      this.currentModal = null;  // This will trigger the setter
-    }
-  },
-  
-  hideAll() {
-    console.log("📋 ModalManager hiding ALL modals");
-    document.querySelectorAll('.modal').forEach(modal => {
       modal.style.display = 'none';
+      modal.style.pointerEvents = 'none';
       modal.classList.add('hidden');
-    });
-    this.currentModal = null;  // This will trigger the setter
-    this.previousModal = null;
+    }
+
+    // Run registered cleanup
+    const cleanup = this._cleanupMap.get(modalId);
+    if (cleanup) {
+      console.log("🧹 Running cleanup for:", modalId); // DEBUG
+      cleanup();
+      this._cleanupMap.delete(modalId);
+    }
+
+    // Restore previous modal (if any)
+    const prevModalId = this._stack[this._stack.length - 1];
+    if (prevModalId) {
+      console.log("↪️ Restoring previous modal:", prevModalId); // DEBUG
+      const prevModal = document.getElementById(prevModalId);
+      if (prevModal) {
+        prevModal.style.display = 'flex';
+        prevModal.style.pointerEvents = 'auto';
+        setTimeout(() => prevModal.classList.remove('hidden'), 10);
+      }
+    }
+
+    console.log("✅ Stack after close:", [...this._stack]); // DEBUG
+  },
+
+  // Close all modals and clear stack
+  closeAll() {
+    console.log("🛑 Closing ALL modals"); // DEBUG
+    while (this._stack.length) this.close();
+    console.log("✅ Stack cleared"); // DEBUG
+  },
+
+  // Optional: peek at top modal ID
+  top() {
+    const topId = this._stack[this._stack.length - 1] || null;
+    console.log("👀 Top modal is:", topId); // DEBUG
+    return topId;
   }
 };
 
-// ✅ CORRECT PLACEMENT: Apply defineProperty AFTER the object is created
-Object.defineProperty(ModalManager, 'currentModal', {
-  get() { return this._currentModal; },
-  set(value) {
-    console.log("🔍 currentModal changing from:", this._currentModal, "to:", value);
-    this._currentModal = value;
-  }
-});
