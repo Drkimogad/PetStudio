@@ -1523,6 +1523,9 @@ card.innerHTML = `
 //================================================================================================
 function showBirthdayCardModal(canvas, profile) {
   // ===== [CLEANUP is done via modal manager in utils.js now =====
+    // First check if modal already exists
+    const existingModal = document.getElementById('birthday-card-modal');
+
   // ===== [MODAL CREATION - EXISTING CODE] ===== 
   if (!existingModal) {
     const modalHTML = `
