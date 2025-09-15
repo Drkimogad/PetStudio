@@ -56,6 +56,58 @@ Profile Management: Users can upload photos, edit pet details, and store them in
 └── main.js              → main entry point (calls init, sets up events)
 
 
+
+Collage Modals Clean-Up Diagram
+┌─────────────────────────┐
+│  User clicks "Create"   │
+│  → createPetCollage()   │
+└───────────┬─────────────┘
+            │
+            ▼
+┌─────────────────────────┐
+│ ModalStackManager.open()│
+│  - Pushes "collage-modal" onto stack
+│  - Runs cleanup: resetCollageSelections
+│  - Shows collage modal only
+└───────────┬─────────────┘
+            │
+            ▼
+┌─────────────────────────┐
+│ User clicks "Generate"  │
+│  → generateCollagePNG() │
+│  → showCollagePreview() │
+└───────────┬─────────────┘
+            │
+            ▼
+┌─────────────────────────┐
+│ ModalStackManager.open()│
+│  - Pushes "collage-preview-modal" onto stack
+│  - Runs cleanup: removeListeners
+│  - Hides underlying "collage-modal"
+│  - Shows preview modal only
+└───────────┬─────────────┘
+            │
+            ▼
+┌─────────────────────────┐
+│ User closes preview      │
+│  → closeModal()          │
+│  → ModalStackManager.close()
+│     - Pops preview modal
+│     - Runs removeListeners
+│     - Restores collage modal (previous top)
+└───────────┬─────────────┘
+            │
+            ▼
+┌─────────────────────────┐
+│ User closes collage      │
+│  → ModalStackManager.close()
+│     - Pops collage modal
+│     - Runs resetCollageSelections
+│     - Stack empty
+│     - All modals hidden
+└─────────────────────────┘
+
+
 ## License
 
 This project is licensed under the [Proprietary License](LICENSE).
