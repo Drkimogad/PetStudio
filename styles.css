@@ -1396,6 +1396,29 @@ styled to show in petcard header plus nickname */
   pointer-events: none;
 }
 
+/* ====================
+   MODAL Z-INDEX OVERRIDE    RECENTLY ADDED
+   (Add this at the VERY END of your CSS file)
+==================== */
+
+#collage-modal,
+#collage-preview-modal,
+#birthday-card-modal,
+#qr-modal {
+  z-index: 9999 !important; /* ← Force above everything */
+}
+
+/* Ensure modal backdrops are also above everything */
+#collage-modal::before,
+#collage-preview-modal::before {
+  z-index: 9998 !important; /* ← Just below the modal */
+}
+
+/* Force pet cards to stay in their lane */
+.petCard {
+  z-index: 1 !important; /* ← Keep them low */
+  position: relative;
+}
 
 
 
