@@ -1432,8 +1432,6 @@ function openPrintWindow(canvas, profile) {
 //  🎂 Generate Birthday card() WORKS
 //===============================
 async function generateBirthdayCard(index) {
-  console.warn("🚨 generateBirthdayCard CALLED!", new Error().stack);
-
   let blobUrl = null;
 
   try {
@@ -1508,8 +1506,6 @@ card.innerHTML = `
     
        // 5. ADD NEW PREVIEW MODAL LOGIC]
     showBirthdayCardModal(canvas, profile); // New function call
-  // ✅ This automatically handles showing the modal, hiding underlying modals, and ensures cleanup runs on close.
-   // ModalStackManager.open('birthday-card-modal', { cleanup: () => closeModal() });
 
     // 6. CLEANUP]
     document.body.removeChild(card);
@@ -1524,9 +1520,15 @@ card.innerHTML = `
 // [ADD NEW FUNCTION FOR SHARING&DOWNLOADING BIRTHDAYCARD (place near your collage modal code)]
 //================================================================================================
 function showBirthdayCardModal(canvas, profile) {
-  // ===== [CLEANUP is done via modal manager in utils.js now =====
-    // First check if modal already exists
-    const existingModal = document.getElementById('birthday-card-modal');
+  // ===== [CLEANUP SECTION - NEW] =====
+  // 1. Check for existing modal and clean up
+  const existingModal = document.getElementById('birthday-card-modal');
+  if (existingModal) {
+    // Clean up previous listeners to prevent duplicates
+    document.removeEventListener('keydown', handleKeyDown);
+    existingModal.querySelector('.modal-close').onclick = null;
+    existingModal.querySelector('.modal-backdrop').onclick = null;
+  }
 
   // ===== [MODAL CREATION - EXISTING CODE] ===== 
   if (!existingModal) {
@@ -1554,8 +1556,8 @@ function showBirthdayCardModal(canvas, profile) {
 
   // ===== [MODAL SHOW - EXISTING CODE] =====
   const modal = document.getElementById('birthday-card-modal');
-  //modal.classList.remove('hidden');
- ModalStackManager.open('birthday-card-modal', { cleanup: closeModal });
+  modal.classList.remove('hidden');
+
 
   // Update these event listeners:
   document.getElementById('share-birthday-btn').onclick = async () => {
@@ -1616,19 +1618,23 @@ function showBirthdayCardModal(canvas, profile) {
 //==================================
 //Keep the modal in DOM but add proper state cleanup:
 function closeModal() {
+  const modal = document.getElementById('birthday-card-modal');
+  if (!modal || modal.classList.contains('hidden')) return;
+
+  // 1. Cleanup canvas references
   const img = document.getElementById('birthday-card-preview-img');
   if (img && img.src.startsWith('blob:')) {
     URL.revokeObjectURL(img.src);
-    img.removeAttribute('src');
+    img.removeAttribute('src'); // Important for memory cleanup
   }
 
+  // 2. Reset any interactive elements
   const downloadBtn = document.getElementById('download-birthday-btn');
   if (downloadBtn) downloadBtn.onclick = null;
 
-  // ModalStackManager handles hiding automatically
-  ModalStackManager.close();
+  // 3. Hide the modal
+  modal.classList.add('hidden');
 }
-
 
 // ========================
 // BIRTHDAY CARD DOWNLOAD FUNCTION (updated)
@@ -1645,6 +1651,9 @@ function downloadCard(canvas, petName) {
     URL.revokeObjectURL(link.href); // Added cleanup
   }, 100);
 }
+
+
+
 
 //===============================
 //  EVERYTHING RELATED TO COLLAGE GENERATION, CREATE COLLAGE/HELPER FUNCTIONS(2) AND GENERATE COLLAGE AS PNG
