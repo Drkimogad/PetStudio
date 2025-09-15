@@ -1975,17 +1975,17 @@ function showCollagePreview(canvas, profile) {
   const img = modal.querySelector('#collage-preview-image');
   img.src = canvas.toDataURL();
 
- ModalStackManager.open('collage-preview-modal', {
-  cleanup: removeListeners
-});
-
  // === Listener cleanup ===
   const removeListeners = () => {
     modal.querySelector('.modal-close').onclick = null;
     modal.querySelector('.modal-backdrop').onclick = null;
     document.removeEventListener('keydown', handleKeyDown);
   };
-  
+
+ ModalStackManager.open('collage-preview-modal', {
+  cleanup: removeListeners
+});
+ 
   // === Helper to close and cleanup ===
 const closeModal = () => {
   removeListeners();
