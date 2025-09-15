@@ -1432,6 +1432,8 @@ function openPrintWindow(canvas, profile) {
 //  🎂 Generate Birthday card() WORKS
 //===============================
 async function generateBirthdayCard(index) {
+  console.warn("🚨 generateBirthdayCard CALLED!", new Error().stack);
+
   let blobUrl = null;
 
   try {
