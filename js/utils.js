@@ -237,140 +237,84 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// ================= ENQUEUE/DEQUEUE STACK-BASED MODAL MANAGER (with debug) =================
-const ModalStackManager = {
-  _stack: [], // Stack of open modal IDs
-  _cleanupMap: new Map(), // Optional per-modal cleanup functions
+// ✅ 1. GLOBAL REFERENCES & STATE (For the Linear Modal)
+// These track the state of the ONE active modal at a time.
+window._activeLinearModal = null; // Holds the ID of the currently open linear modal
+window._activeLinearModalCleanup = null; // Holds the cleanup function for the current modal
 
-  // Open a modal and optionally register a cleanup function
-  open(modalId, { cleanup } = {}) {
-    console.log("🟢 Opening modal:", modalId); // DEBUG
-    console.log("📋 Stack before open:", [...this._stack]); // DEBUG
+// ✅ 2. UNIVERSAL LINEAR MODAL CLOSE FUNCTION
+/**
+ * Destroys the current linear modal and runs its cleanup.
+ * This is the SINGLE SOURCE OF TRUTH for closing a linear modal.
+ */
+function closeLinearModal() {
+  console.log("[LinearModal] Close function called. Closing:", window._activeLinearModal);
 
-    const modal = document.getElementById(modalId);
-    if (!modal) {
-      console.warn("⚠️ Modal not found:", modalId);
-      return;
-    }
-
-    // Hide current top modal (if any) without removing it
-    const topModalId = this._stack[this._stack.length - 1];
-    if (topModalId) {
-      console.log("↩️ Hiding current top modal:", topModalId); // DEBUG
-      const topModal = document.getElementById(topModalId);
-      if (topModal) {
-        topModal.style.display = 'none';
-        topModal.classList.add('hidden');
-      }
-    }
-
-    // Show the new modal
-    modal.style.display = 'flex';
-    modal.style.pointerEvents = 'auto';
-    setTimeout(() => modal.classList.remove('hidden'), 10);
-
-    // Push to stack
-    this._stack.push(modalId);
-
-    // Register cleanup function if provided
-    if (cleanup) this._cleanupMap.set(modalId, cleanup);
-
-    console.log("✅ Stack after open:", [...this._stack]); // DEBUG
-  },
-
-  // Close the top modal
-  close() {
-    console.log("🔴 Closing top modal"); // DEBUG
-    console.log("📋 Stack before close:", [...this._stack]); // DEBUG
-
-    const modalId = this._stack.pop();
-    if (!modalId) {
-      console.warn("⚠️ No modals to close");
-      return;
-    }
-
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.style.display = 'none';
-      modal.style.pointerEvents = 'none';
-      modal.classList.add('hidden');
-    }
-
-    // Run registered cleanup
-    const cleanup = this._cleanupMap.get(modalId);
-    if (cleanup) {
-      console.log("🧹 Running cleanup for:", modalId); // DEBUG
-      cleanup();
-      this._cleanupMap.delete(modalId);
-    }
-
-    // Restore previous modal (if any)
-    const prevModalId = this._stack[this._stack.length - 1];
-    if (prevModalId) {
-      console.log("↪️ Restoring previous modal:", prevModalId); // DEBUG
-      const prevModal = document.getElementById(prevModalId);
-      if (prevModal) {
-        prevModal.style.display = 'flex';
-        prevModal.style.pointerEvents = 'auto';
-        setTimeout(() => prevModal.classList.remove('hidden'), 10);
-      }
-    }
-
-    console.log("✅ Stack after close:", [...this._stack]); // DEBUG
-  },
-
-  // Close all modals and clear stack
-  closeAll() {
-    console.log("🛑 Closing ALL modals"); // DEBUG
-    while (this._stack.length) this.close();
-    console.log("✅ Stack cleared"); // DEBUG
-  },
-
-  // Optional: peek at top modal ID
-  top() {
-    const topId = this._stack[this._stack.length - 1] || null;
-    console.log("👀 Top modal is:", topId); // DEBUG
-    return topId;
-  }
-};
-
-
-
-// =======================
-// 🎂 Birthday Modal Queue
-// =======================
-const BirthdayModalQueue = (() => {
-  const queue = [];
-  let processing = false;
-
-  // Enqueue a birthday card request
-  function enqueue(fn) {
-    queue.push(fn);
-    processQueue();
+  if (!window._activeLinearModal) {
+    console.log("[LinearModal] No active modal to close.");
+    return;
   }
 
-  // Process the queue if not already processing
-  async function processQueue() {
-    if (processing) return;  // Already processing
-    if (queue.length === 0) return; // Nothing to do
-
-    processing = true;
-    const nextFn = queue.shift();
-    try {
-      await nextFn();  // Call the async generate function
-    } catch (err) {
-      console.error("🎂 Birthday Modal Queue error:", err);
-    }
-    processing = false;
-    // Process next item if any
-    if (queue.length > 0) processQueue();
+  const modal = document.getElementById(window._activeLinearModal);
+  
+  // 1. RUN THE MODAL'S SPECIFIC CLEANUP FUNCTION
+  if (typeof window._activeLinearModalCleanup === 'function') {
+    console.log("[LinearModal] Running registered cleanup function.");
+    window._activeLinearModalCleanup();
   }
 
-  return { enqueue };
-})();
+  // 2. REMOVE THE MODAL FROM THE DOM
+  if (modal && modal.parentNode) {
+    console.log("[LinearModal] Removing modal element from DOM.");
+    modal.parentNode.removeChild(modal);
+  }
 
+  // 3. CLEAN UP GLOBAL STATE
+  window._activeLinearModal = null;
+  window._activeLinearModalCleanup = null;
 
+  console.log("[LinearModal] Environment clean. Modal destroyed.\n");
+}
+
+// ✅ 3. UNIVERSAL LINEAR MODAL OPEN FUNCTION
+/**
+ * Opens a modal in LINEAR mode. Destroys any previous linear modal first.
+ * @param {string} modalId - The ID of the modal to create/show.
+ * @param {string} modalHTML - The HTML content of the modal.
+ * @param {Function} [setupFunction] - A function to run after the modal is injected (e.g., to add listeners).
+ * @param {Function} [cleanupFunction] - A function to run when the modal is closed (for custom cleanup).
+ */
+function openLinearModal(modalId, modalHTML, setupFunction, cleanupFunction) {
+  console.log(`[LinearModal] Request to open: ${modalId}`);
+  
+  // 🧹 STEP 1: DESTROY THE PREVIOUS MODAL (If one exists)
+  closeLinearModal();
+
+  // 🧱 STEP 2: CREATE & INJECT THE NEW MODAL
+  console.log(`[LinearModal] Injecting HTML for: ${modalId}`);
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+  const modal = document.getElementById(modalId);
+  
+  // 📝 STEP 3: RUN THE MODAL'S SETUP FUNCTION
+  if (typeof setupFunction === 'function') {
+    console.log(`[LinearModal] Running setup function for: ${modalId}`);
+    setupFunction(modal); // Pass the modal element to the setup function
+  }
+
+  // 👁️ STEP 4: SHOW THE MODAL
+  console.log(`[LinearModal] Making modal visible: ${modalId}`);
+  modal.classList.remove('hidden');
+
+  // 💾 STEP 5: UPDATE GLOBAL STATE
+  window._activeLinearModal = modalId;
+  window._activeLinearModalCleanup = cleanupFunction || null; // Store the cleanup function
+
+  console.log(`[LinearModal] ${modalId} is now active.\n`);
+}
+
+//=============================================================================
 // ✅ PETSTUDIO - BIRTHDAY CARD MODAL SINGLETON & CLEANUP FUNCTION
+//=====================================================================================
 /**
  * Completely tears down the existing birthday card modal and its resources.
  * This function must be called before creating a new modal to prevent stale listeners and memory leaks.
