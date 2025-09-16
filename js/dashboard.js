@@ -1601,7 +1601,10 @@ function showBirthdayCardModal(canvas, profile) {
   };
   // ===== [CLEAN LISTENER SETUP - NEW] =====
   // 3. Close handlers (now using single references)
-      closeBtn.onclick = closeModal;
+  const closeBtn = modal.querySelector('.modal-close');        // ✅ DEFINE closeBtn
+  const backdrop = modal.querySelector('.modal-backdrop');    // ✅ DEFINE backdrop
+// now use them
+  closeBtn.onclick = closeModal;
   backdrop.onclick = closeModal;
 
   // ✅ ROBUST LISTENER SETUP: Define and control the handler locally
@@ -1633,6 +1636,8 @@ function closeModal() {
 // BIRTHDAY CARD DOWNLOAD FUNCTION (updated)
 // ========================
 function downloadCard(canvas, petName) {
+  console.log(`[BirthdayCard] Download initiated for: ${petName}`); // ✅ ADD THIS LINE
+
   const sanitizedName = petName.replace(/[^a-z0-9]/gi, '_'); // Added sanitization
   const link = document.createElement('a');
   link.download = `${sanitizedName}_birthday.png`;
