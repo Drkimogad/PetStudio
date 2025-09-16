@@ -1953,6 +1953,12 @@ showCollagePreview(canvas, profile);
 // PHASE 3. SHOW COLLAGE PREVIEW (UPDATED)
 //==========================
 function showCollagePreview(canvas, profile) {
+    // ✅ ADD THIS SAFETY CHECK
+  if (!canvas || !profile) {
+    console.error("⚠️ showCollagePreview called with invalid parameters:", {canvas, profile});
+    return; // Exit early if called incorrectly
+  }
+
     console.trace("showCollagePreview called from:"); // ← ADD THIS LINE
 
   // === Create modal HTML ===
