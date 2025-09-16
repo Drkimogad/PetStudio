@@ -370,3 +370,48 @@ const BirthdayModalQueue = (() => {
 })();
 
 
+// ✅ PETSTUDIO - BIRTHDAY CARD MODAL SINGLETON & CLEANUP FUNCTION
+/**
+ * Completely tears down the existing birthday card modal and its resources.
+ * This function must be called before creating a new modal to prevent stale listeners and memory leaks.
+ */
+function teardownBirthdayModal() {
+  console.log("[BirthdayModal-Cleanup] Phase 1: Starting comprehensive teardown...");
+
+  // 1. Get a reference to the existing modal
+  const existingModal = document.getElementById('birthday-card-modal');
+  console.log(`[BirthdayModal-Cleanup] Found existing modal element: ${!!existingModal}`);
+
+  // 2. Remove global event listeners first (CRITICAL FOR STALE LISTENERS)
+  console.log("[BirthdayModal-Cleanup] Phase 2: Removing global event listeners...");
+  // Remove the keydown listener for the Escape key
+  if (window._birthdayModalKeyHandler) {
+    console.log("[BirthdayModal-Cleanup] Removing 'keydown' event listener.");
+    document.removeEventListener('keydown', window._birthdayModalKeyHandler);
+    window._birthdayModalKeyHandler = null; // Clear the reference
+  }
+
+  // 3. Remove the modal from the DOM
+  if (existingModal && existingModal.parentNode) {
+    console.log("[BirthdayModal-Cleanup] Phase 3: Removing modal from DOM.");
+    existingModal.parentNode.removeChild(existingModal);
+  } else {
+    console.log("[BirthdayModal-Cleanup] No modal in DOM to remove.");
+  }
+
+  // 4. Clean up resources (Blob URLs, Canvases)
+  console.log("[BirthdayModal-Cleanup] Phase 4: Cleaning up Blobs, URLs, and Canvases.");
+  // Clean up Object URLs from potential previous shares/downloads
+  document.querySelectorAll('a[href^="blob:"]').forEach(link => {
+    console.log(`[BirthdayModal-Cleanup] Revoking Object URL: ${link.href}`);
+    URL.revokeObjectURL(link.href);
+  });
+  // Clean up temporary canvases
+  if (window.currentBirthdayCanvas) {
+    console.log("[BirthdayModal-Cleanup] Cleaning up currentBirthdayCanvas reference.");
+    // Note: The canvas itself is already part of the modal and was removed with the DOM
+    window.currentBirthdayCanvas = null;
+  }
+
+  console.log("[BirthdayModal-Cleanup] Phase 5: Teardown complete. Environment is clean.\n");
+}
