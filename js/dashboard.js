@@ -1621,32 +1621,16 @@ function showBirthdayCardModal(canvas, profile) {
   console.log("[BirthdayCard] Escape key listener attached.");
 } // closes the modal
 
-//======================================
 // HANDLE KEY DOWN FUNCTION FOR CLOSE BUTTON
 // IT HAS BEEN moved back in cleaning setup⬆️
-//======================================
-
 //=============================
 // CLOSE MODAL FUNCTION
 //==================================
 //Keep the modal in DOM but add proper state cleanup:
 function closeModal() {
-  const modal = document.getElementById('birthday-card-modal');
-  if (!modal || modal.classList.contains('hidden')) return;
-
-  // 1. Cleanup canvas references
-  const img = document.getElementById('birthday-card-preview-img');
-  if (img && img.src.startsWith('blob:')) {
-    URL.revokeObjectURL(img.src);
-    img.removeAttribute('src'); // Important for memory cleanup
-  }
-
-  // 2. Reset any interactive elements
-  const downloadBtn = document.getElementById('download-birthday-btn');
-  if (downloadBtn) downloadBtn.onclick = null;
-
-  // 3. Hide the modal
-  modal.classList.add('hidden');
+  console.log("[BirthdayCard] Close modal function called.");
+  // Call the powerful singleton cleanup function to do everything
+  teardownBirthdayModal();
 }
 
 // ========================
