@@ -1963,16 +1963,18 @@ function showCollagePreview(canvas, profile) {
 
   // === Create modal HTML ===
 // ✅ PHASE 3 - STEP 1: Define the preview modal HTML
-const previewModalHTML = `
-<div id="collage-preview-modal" class="modal">
-      <div class="modal-backdrop"></div>
+ // === FIXED MODAL HTML (SURGICAL FIX) ===
+  // 🔹 Highlight: Wrap the collage grid inside a proper modal container with ID
+  const collageGridHTML = `<img id="collage-preview-image" alt="Collage Preview">`; // your previous inner collage content
+  const previewModalHTML = `
+    <div id="collage-preview-modal" class="modal hidden">
       <div class="modal-content">
         <div class="modal-header">
           <h3>${profile.name}'s Collage</h3>
           <span class="modal-close" role="button" tabindex="0">&times;</span>
         </div>
         <div class="collage-preview-container">
-          <img id="collage-preview-image" alt="Collage Preview">
+          ${collageGridHTML} <!-- 🔹 Wrapped inside modal container -->
         </div>
         <div class="modal-actions">
           <button id="share-collage" class="btn-share">
@@ -1983,7 +1985,8 @@ const previewModalHTML = `
           </button>
         </div>
       </div>
-  </div>`;
+    </div>
+  `;
 
 // ✅ PHASE 3 - STEP 2: Use the linear system to open the preview modal
 openLinearModal(
