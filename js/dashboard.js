@@ -415,7 +415,9 @@ ${profile.nextBirthday ? `
     </div>
   </div>
 `; // ← ONLY ONE CLOSING BACKTICK
-
+// ✅ Add theme class BEFORE appending to DOM
+petCard.classList.add(`theme-${profile.theme || 'balloons'}`);
+console.log(`Profile: ${profile.name}, Theme: ${profile.theme || 'balloons (fallback)'}`);
       DOM.petList.appendChild(petCard);
     });
   }
@@ -1735,13 +1737,20 @@ openLinearModal(
 // Reset Collage Selections
 // ===============================
 function resetCollageSelections() {
-  selectedImages = [];
-  selectedLayout = '2x2';
-  document.querySelectorAll('#collage-image-grid img.selected')
-    .forEach(img => img.classList.remove('selected'));
-  
-  const genBtn = document.getElementById('generate-collage');
-  if (genBtn) genBtn.disabled = true;
+    selectedImages = [];
+    selectedLayout = '2x2';
+    
+    // Remove any selected class from images
+    document.querySelectorAll('#collage-image-grid img.selected')
+        .forEach(img => img.classList.remove('selected'));
+    
+    // Disable generate button
+    const genBtn = document.getElementById('generate-collage');
+    if (genBtn) genBtn.disabled = true;
+    
+    // Clean up any remaining temporary elements
+    document.querySelectorAll('.collage-layout-2x2, .collage-layout-3x3, .collage-layout-1x3')
+        .forEach(el => el.remove());
 }
 
 // ===============================
@@ -2672,32 +2681,21 @@ const tempCoverIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex || '0', 1
 const permCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex || '0', 10);
 
 // 2) Calculate final cover index based on selection type
-let finalCoverIndex;
+// Replace the current cover index calculation with:
+let finalCoverIndex = 0;
+const isTempCover = DOM.profileForm.dataset.isTempCover === 'true';
 
 if (isTempCover) {
-  // CORRECT CALCULATION: uploadedImageUrls contains ALL images (existing + newly uploaded)
-  // The temp images are appended at the END, so their final positions are:
-  // uploadedImageUrls.length - tempImagesCount + tempIndex
-  const tempImagesCount = window.tempGalleryImages?.length || 0;
-  finalCoverIndex = (uploadedImageUrls.length - tempImagesCount) + tempCoverIndex;
-  console.log("✅ Temp cover selected, final index:", finalCoverIndex, 
-             "(total images:", uploadedImageUrls.length, 
-             "temp count:", tempImagesCount, 
-             "temp index:", tempCoverIndex + ")");
+    const tempIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex || '0', 10);
+    // Temp images are at the end of the combined array
+    finalCoverIndex = uploadedImageUrls.length - (window.tempGalleryImages?.length || 0) + tempIndex;
 } else {
-  // Permanent cover selected: use the stored index directly
-  finalCoverIndex = permCoverIndex;
-  console.log("✅ Permanent cover selected, final index:", finalCoverIndex);
+    finalCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex || '0', 10);
 }
 
-// 3) Ensure the index is valid
-if (finalCoverIndex >= uploadedImageUrls.length || finalCoverIndex < 0) {
-  console.warn("⚠️ Cover index out of bounds, resetting to 0");
-  finalCoverIndex = 0;
-}
-
-// 4) Reset temp flags for next operation
-DOM.profileForm.dataset.isTempCover = 'false';
+// Ensure it's within bounds
+finalCoverIndex = Math.max(0, Math.min(finalCoverIndex, uploadedImageUrls.length - 1));
+newProfile.coverPhotoIndex = finalCoverIndex;
         
     // ========================
     // SECTION 6: PROFILE ASSEMBLY
@@ -2705,6 +2703,8 @@ DOM.profileForm.dataset.isTempCover = 'false';
         // ✅ Extract tags BEFORE creating newProfile
         const selectedTags = Array.from(
         document.querySelectorAll('input[name="petTags"]:checked')).map(checkbox => checkbox.value);
+                  // Ensure theme is properly captured
+        const theme = document.querySelector('input[name="theme"]:checked').value || 'balloons';
         
         console.log("🧩 Building profile object..."); // DEBUG LINE KEPT
 
@@ -2726,10 +2726,12 @@ DOM.profileForm.dataset.isTempCover = 'false';
             relationship: document.getElementById("emergencyRelationship").value.trim()
           },
           microchipNumber: document.getElementById("microchipNumber").value.trim(),
-          theme: document.querySelector('input[name="theme"]:checked').value || 'balloons', // default theme
-          
+          // Add this to your newProfile object construction
+          newProfile.theme = theme;
+        
           notes: document.getElementById("petNotes")?.value.trim() || "",
           tags: selectedTags, // ✅ Inserted properly now
+          
           
           /* coverPhotoIndex: finalCoverIndex, // ← Use the calculated final index instead
           //MOVED AFTER PROFILE ASSEMBLY TO AVOID ISSUE!
