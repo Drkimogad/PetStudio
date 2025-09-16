@@ -1953,6 +1953,8 @@ showCollagePreview(canvas, profile);
 // PHASE 3. SHOW COLLAGE PREVIEW (UPDATED)
 //==========================
 function showCollagePreview(canvas, profile) {
+    console.trace("showCollagePreview called from:"); // ← ADD THIS LINE
+
   // === Create modal HTML ===
 // ✅ PHASE 3 - STEP 1: Define the preview modal HTML
 const previewModalHTML = `
