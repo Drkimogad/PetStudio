@@ -1650,20 +1650,11 @@ function downloadCard(canvas, petName) {
   }, 100);
 }
 
-
-
-
-
-
-
-
 //===============================
 //  EVERYTHING RELATED TO COLLAGE GENERATION, CREATE COLLAGE/HELPER FUNCTIONS(2) AND GENERATE COLLAGE AS PNG
 // CORS ISSUE IS STILL TO BE FIXED BUT FUNCTION IS WORKING
-//====================================================================================
-// FUNCTION TO ENSURE COLLAGE MODAL EXISTS/MOVED MODAL HTML FROM HTML TO DASHBOARD.JS
 //=========================================================================================
-// Create Collage Modal Logic
+// Create Collage Modal Logic IT USES LINEAR FLOW MODAL IN UTILS.JS FOR CLEANING UP ✅
 // ===============================
 function createPetCollage(index) {
   window.currentPetIndex = index;
@@ -1949,15 +1940,15 @@ showCollagePreview(canvas, profile);
     showQRStatus(`Failed: ${error.message}`, false);
     throw error;
   } finally {
-    // Cleanup
+    // ✅ FINAL CLEANUP: Remove the temporary collage element from the DOM
     const collageEl = document.querySelector(`.collage-layout-${selectedLayout}`);
-    if (collageEl) collageEl.remove();
-    
-    const modal = document.getElementById('collage-modal');
-  // modal?.classList.add('hidden');
-    selectedImages = [];
-  }
+    if (collageEl && collageEl.parentNode) {
+        collageEl.parentNode.removeChild(collageEl);
+        console.log("[Collage] Temporary collage element cleaned up.");
+    }
+    selectedImages = []; // Reset selections for next time
  }
+} // closes the png generation function
 
 //==========================
 // PHASE 3. SHOW COLLAGE PREVIEW (UPDATED)
