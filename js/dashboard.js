@@ -2019,15 +2019,15 @@ openLinearModal(
           } else {
             throw new Error('Share API not available');
           }
-        } catch {
+        } catch {  // closes try
           console.log('Sharing not supported, downloading instead');
           const link = document.createElement('a');
           link.href = canvas.toDataURL();
           link.download = `${profile.name}_collage.png`;
           link.click();
-        }
-      };
-    }
+        }  // closes catch
+      }; // closes share async
+    } // closes if
 
     // 4. Setup the Download button
     const downloadButton = modalElement.querySelector('#download-collage');
@@ -2039,22 +2039,24 @@ openLinearModal(
         link.click();
         console.log('💾 Collage downloaded');
       };
-    }
+    } //closes if download
 
     console.log('🟢 Collage preview modal opened with LINEAR flow');
-  },
+  },   // does this close modal element brace?
   // Cleanup function: runs when closeLinearModal is called
   () => {
     console.log("[CollagePreview] Cleanup completed.");
     // Our linear system automatically removes the modal from the DOM
     // Add any other specific cleanup here if needed later
   }
-);
+); // does this xloses the function?
 
 // ========================
 //  COLLAGE DOWNLOAD (updated)
 // ========================
 function downloadCollage(canvas, petName) {
+    console.log(`[Collage] Download initiated for: ${petName}`); // ✅ ADD THIS LINE
+  
   const sanitizedName = petName.replace(/[^a-z0-9]/gi, '_');
   const link = document.createElement('a');
   link.download = `${sanitizedName}_collage.png`;
