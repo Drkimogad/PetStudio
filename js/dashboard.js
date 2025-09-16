@@ -1680,7 +1680,6 @@ function createPetCollage(index) {
       </div>
     </div>`;
   
- // document.body.insertAdjacentHTML('beforeend', modalHTML);
 
   const profile = window.petProfiles[index];
   if (!profile?.gallery?.length) {
@@ -2040,7 +2039,8 @@ openLinearModal(
     // Our linear system automatically removes the modal from the DOM
     // Add any other specific cleanup here if needed later
   }
-); // does this xloses the function?
+ ); 
+} // ✅ THIS IS THE MISSING CLOSING BRACE FOR THE showCollagePreview FUNCTION
 
 // ========================
 //  COLLAGE DOWNLOAD (updated)
