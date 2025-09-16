@@ -1,3 +1,10 @@
+:root {
+  --form-bg: #fffaf0;        /* Warm ivory */
+  --primary-color: #8d6e63;  /* Headers & highlights */
+  --input-border: #d7ccc8;   /* Inputs & borders */
+  --accent-color: #ffb74d;   /* Buttons, hover, tags */
+}
+
 /* ====================
    PET WINDOW AUTH STYLE 
    (Modified from your original auth styles)
@@ -258,8 +265,8 @@ Adjust in 5% increments for smooth changes.*/
 /* ==ONCE ADD PROFILE BUTTON CLICKED AND
        PETLIST OPENED===== */
 #profileSection {
-  background: #fff8e1;
-  border: 1px solid #e0c471;
+  background: var(--form-bg);
+  border: 1px solid var(--input-border);
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 30px;
@@ -270,14 +277,14 @@ Adjust in 5% increments for smooth changes.*/
 
 #profileSection h2 {
   text-align: center;
-  color: #6a1b9a;
+  color: var(--primary-color);
 }
 
 #profileForm label {
   display: block;
   margin-top: 12px;
   font-weight: bold;
-  color: #444;
+  color: var(--primary-color);
 }
 
 #profileForm input,
@@ -285,7 +292,7 @@ Adjust in 5% increments for smooth changes.*/
   width: 80%;
   padding: 8px;
   margin-top: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--input-border);
   border-radius: 4px;
   font-size: 1rem;
 }
@@ -296,45 +303,46 @@ Adjust in 5% increments for smooth changes.*/
   display: grid;
   gap: 1rem;
   padding: 1rem;
-  background: #f8f9fa;
+  background: var(--form-bg);
+  border: 1px solid var(--input-border); /* added*/
   border-radius: 8px;
 }
 
 #profileForm .petBasicInfo label {
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--primary-color);
 }
 
 #profileForm .petBasicInfo input {
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--input-border);
   border-radius: 4px;
 }
 
 #profileForm #agePreview {
   margin-top: 0.5rem;
   font-size: 0.9em;
-  color: #555;
+  color: var(--primary-color);
 }
 /* Enhanced to support gallery preview*/
 #profileForm .petGallerySection {
   margin: 1.5rem 0;
   padding: 1rem;
-  background: #f8f9fa;
+  background: var(--form-bg);
   border-radius: 8px;
-  border: 1px dashed #ccc;
+  border: 1px solid var(--input-border);
   transition: border-color 0.3s;
 }
 
 #profileForm .petGallerySection:hover {
-  border-color: #a0a0a0;
+  border: 1px solid var(--input-border);
 }
 
 #profileForm .petGallerySection label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #333;
+  color: var(--primary-color);
 }
 
 /* Gallery Preview Grid */
@@ -354,8 +362,8 @@ Adjust in 5% increments for smooth changes.*/
   aspect-ratio: 1; /* Ensures square */
   object-fit: cover; /* Prevents distortion */
   border-radius: 6px;
-  border: 1px solid #e0e0e0;
-  background: white;
+  border: 1px solid var(--input-border);
+  background: var(--form-bg);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -363,7 +371,7 @@ Adjust in 5% increments for smooth changes.*/
 #profileForm .gallery-preview .preview-thumb:hover {
   transform: scale(1.03);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-color: #c0c0c0;
+  border: 1px solid var(--input-border);
 }
 
 /* Responsive: Switch to vertical list on small screens */
@@ -376,8 +384,9 @@ Adjust in 5% increments for smooth changes.*/
 /* ===== MOOD SECTION ===== */
 #profileForm .moodHistoryInput {
   padding: 1rem;
-  background: #f0f7ff;
+  background: var(--form-bg);
   border-radius: 8px;
+  border: 1px solid var(--input-border); /*added*/
 }
 
 #profileForm .moodHistoryInput select {
@@ -403,31 +412,31 @@ Adjust in 5% increments for smooth changes.*/
   align-items: center;
   gap: 0.3rem;
   padding: 0.3rem 0.6rem;
-  background: #80819e;
+  background: var(--form-bg);
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid transparent;
+  border: 1px solid var(--input-border);
 }
 
 /* Hover State */
 #profileForm .tag:hover {
   background: #583666;
-  border-color: #a0d0ff;
+  border: 1px solid var(--input-border);
   transform: translateY(-1px);
 }
 
 /* Selected State */
 #profileForm input[type="checkbox"]:checked + .tag {
-  background: #4CAF50;
-  color: white;
-  border-color: #388E3C;
+  background: var(--form-bg);
+  color: var(--primary-color);
+  border: 1px solid var(--input-border);
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* Focus State */
 #profileForm .tag:focus-within {
-  outline: 2px solid #2196F3;
+  outline: 2px solid var(--input-border);
 }
 
 /* Checkbox Visually Hidden */
@@ -446,14 +455,15 @@ Adjust in 5% increments for smooth changes.*/
 
 #profileForm input[type="checkbox"]:checked + .tag .tag-icon {
   transform: scale(1.2);
-  color: #C8E6C9;
+  background-color: var(--primary-color);
 }
 
 /* ===== EMERGENCY CONTACT ===== */
 #profileForm .emergency-contact-section {
   padding: 1rem;
-  background: #fff8f8;
+  background: var(--form-bg);
   border-radius: 8px;
+  border-color: var(--accent-color);
   margin-top: 1rem;
 }
 
@@ -472,19 +482,19 @@ Adjust in 5% increments for smooth changes.*/
 #profileForm .theme-preview {
   width: 50px;
   height: 50px;
-  border: 2px solid transparent;
+  border: 2px solid var(--accent-color);
   border-radius: 8px;
   display: grid;
   place-items: center;
 }
 
 #profileForm input[type="radio"]:checked + .theme-preview {
-  border-color: #4CAF50;
+  border: 1px solid var(--input-border);
 }
 #profileForm input[type="file"] {
   width: 100%;
   padding: 0.5rem;
-  background: white;
+  background: var(--form-bg);
 }
 
 
@@ -514,18 +524,18 @@ Adjust in 5% increments for smooth changes.*/
 
 /* ===== SAVE BUTTON (CHARCOAL + MUSTARD BORDER) ===== */
 #profileForm button[type="submit"] {
-  background-color: #808080;
+  background-color: var(--primary-color);
   color: white;
-  border: 1px solid #c9ba2c;
+  border: 1px solid var(--accent-color);
   border-radius: 10px;
 }
 #profileForm button[type="submit"]:hover {
-  background-color: #6a6a6a;
+  background-color: #7b5c52;
 }
 
 /* ===== CANCEL BUTTON (RED PILL) ===== */
 #profileForm .cancel-btn.pill {
-  background-color: #e74c3c;
+  background-color: #e57373;
   color: white;
   border-radius: 9999px; /* Full pill */
 }
