@@ -1438,6 +1438,10 @@ async function generateBirthdayCard(index) {
   let blobUrl = null;
 
   try {
+    try {
+    teardownBirthdayModal(); // Clean up any previous modal first
+    console.log("[BirthdayCard] Starting generation for pet index:", index);
+      
     // 1. Fetch the pet's profile
     const petProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
     const profile = window.petProfiles[index];
@@ -1523,15 +1527,16 @@ card.innerHTML = `
 // [ADD NEW FUNCTION FOR SHARING&DOWNLOADING BIRTHDAYCARD (place near your collage modal code)]
 //================================================================================================
 function showBirthdayCardModal(canvas, profile) {
-  // ===== [CLEANUP SECTION - NEW] =====
-  // 1. Check for existing modal and clean up
-  const existingModal = document.getElementById('birthday-card-modal');
-  if (existingModal) {
-    // Clean up previous listeners to prevent duplicates
-    document.removeEventListener('keydown', handleKeyDown);
-    existingModal.querySelector('.modal-close').onclick = null;
-    existingModal.querySelector('.modal-backdrop').onclick = null;
-  }
+    // ===== [CLEANUP SECTION - NEW] =====
+    // 1. Check for existing modal and clean up
+    const existingModal = document.getElementById('birthday-card-modal');
+    if (existingModal) {
+        teardownBirthdayModal(); // ✅ COMPREHENSIVE CLEANUP
+        // Clean up previous listeners to prevent duplicates
+        document.removeEventListener('keydown', handleKeyDown);
+        existingModal.querySelector('.modal-close').onclick = null;
+        existingModal.querySelector('.modal-backdrop').onclick = null;
+    }
 
   // ===== [MODAL CREATION - EXISTING CODE] ===== 
   if (!existingModal) {
@@ -1555,6 +1560,7 @@ function showBirthdayCardModal(canvas, profile) {
         </div>
       </div>`;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
+    console.log("[BirthdayCard] New modal HTML injected into DOM."); // ✅ ADD THIS LINE
   }
 
   // ===== [MODAL SHOW - EXISTING CODE] =====
