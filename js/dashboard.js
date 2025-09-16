@@ -1663,49 +1663,71 @@ function downloadCard(canvas, petName) {
 //====================================================================================
 // FUNCTION TO ENSURE COLLAGE MODAL EXISTS/MOVED MODAL HTML FROM HTML TO DASHBOARD.JS
 //=========================================================================================
-// PHASE 1
-// ===============================
-function ensureCollageModalExists() {
-  if (!document.getElementById('collage-modal')) {
-    const modalHTML = `
-      <div id="collage-modal" class="modal hidden">
-        <div class="modal-content">
-          <h3>Create Collage</h3>
-          <h4>To proceed please choose 2 images or more...</h4>
-          <div class="image-grid" id="collage-image-grid"></div>
-          
-          <div class="layout-options">
-            <button data-layout="2x2">2×2</button>
-            <button data-layout="3x3">3×3</button>
-            <button data-layout="1x3">1×3</button>
-          </div>
-          
-          <div class="collage-buttons">
-            <button id="generate-collage" disabled>Generate Collage</button>
-            <button id="close-collage">Close</button>
-          </div>
-        </div>
-      </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-  }
-}
-
-// ===============================
 // Create Collage Modal Logic
 // ===============================
 function createPetCollage(index) {
   window.currentPetIndex = index;
-  ensureCollageModalExists();
+  // ✅ PHASE 2 - STEP 1: Define the modal HTML as a string
+  // It has to be passed to the function from ensurecollageexists()
+  const collageModalHTML = `
+    <div id="collage-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Create Collage</h3>
+        <h4>To proceed please choose 2 images or more...</h4>
+        <div class="image-grid" id="collage-image-grid"></div>
+        
+        <div class="layout-options">
+          <button data-layout="2x2">2×2</button>
+          <button data-layout="3x3">3×3</button>
+          <button data-layout="1x3">1×3</button>
+        </div>
+        
+        <div class="collage-buttons">
+          <button id="generate-collage" disabled>Generate Collage</button>
+          <button id="close-collage">Close</button>
+        </div>
+      </div>
+    </div>`;
+  
+ // document.body.insertAdjacentHTML('beforeend', modalHTML);
 
   const profile = window.petProfiles[index];
   if (!profile?.gallery?.length) {
     showQRStatus("No photos available for collage.", false);
     return;
   }
-// calling cleaning modal
- ModalStackManager.open('collage-modal', {
-  cleanup: resetCollageSelections
-});
+  
+// ✅ PHASE 2 - STEP 2,4,5: Use the new linear system to open the modal with setup
+openLinearModal(
+  'collage-modal',
+  collageModalHTML,
+  // This is the setup function for buttons
+  (modalElement) => {
+    console.log("[Collage] Setting up button handlers.");
+    // 1. Handle the Close button
+    const closeButton = modalElement.querySelector('#close-collage');
+    if (closeButton) {
+      closeButton.onclick = closeLinearModal;
+    }
+    // 2. Handle the Generate button
+    const generateButton = modalElement.querySelector('#generate-collage');
+    if (generateButton) {
+      generateButton.onclick = () => {
+        const profile = window.petProfiles[window.currentPetIndex];
+        generateCollagePNG(profile);
+      };
+    }
+    // 3. Handle the Layout buttons
+    const layoutButtons = modalElement.querySelectorAll('.layout-options button');
+    layoutButtons.forEach(button => {
+      button.onclick = () => {
+        selectedLayout = button.dataset.layout;
+        console.log(`[Collage] Layout selected: ${selectedLayout}`);
+      };
+    });
+  },
+  resetCollageSelections
+);
 
   const grid = document.getElementById('collage-image-grid');
   grid.innerHTML = '';
@@ -1754,23 +1776,6 @@ function toggleImageSelection(e) {
   const genBtn = document.getElementById('generate-collage');
   if (genBtn) genBtn.disabled = selectedImages.length < 2;
 }
-
-// ===============================
-// Global Delegated Listeners
-// ===============================
-document.body.addEventListener('click', (e) => {
-  if (e.target.closest('.layout-options button')) {
-    selectedLayout = e.target.dataset.layout;
-  }
-  else if (e.target.id === 'generate-collage') {
-    const profile = window.petProfiles[currentPetIndex];
-    generateCollagePNG(profile); // Phase 2 hook
-  }
-  else if (e.target.id === 'close-collage') {
-    ModalStackManager.close(); // cleanup (resetCollageSelections) runs automatically
-  }
-});
-
 
 
 //==================================
