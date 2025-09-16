@@ -4,10 +4,6 @@ let generatingQR = false;
 let sessionExpiryTimer = null; // Add this for session timeout tracking
 const SESSION_EXPIRY_MINUTES = 30; // Session expires after 30 minutes of inactivity
 setupPetProfileDelegation();
-// Add this:
-const handleKeyDown = (e) => {
-  if (e.key === 'Escape') closeModal();
-};
 
 // ===== SESSION RECOVERY WITH EXPIRY =====
 function initSessionRecovery() {
@@ -1609,17 +1605,25 @@ function showBirthdayCardModal(canvas, profile) {
   };
   // ===== [CLEAN LISTENER SETUP - NEW] =====
   // 3. Close handlers (now using single references)
-  const closeBtn = modal.querySelector('.modal-close');
-  const backdrop = modal.querySelector('.modal-backdrop');
-  
-  closeBtn.onclick = closeModal;
+      closeBtn.onclick = closeModal;
   backdrop.onclick = closeModal;
-  document.addEventListener('keydown', handleKeyDown);
+
+  // ✅ ROBUST LISTENER SETUP: Define and control the handler locally
+  const escapeKeyHandler = (e) => {
+    if (e.key === 'Escape') closeModal();
+  };
+  // Remove any possible leftover listener first
+  document.removeEventListener('keydown', escapeKeyHandler);
+  // Attach the fresh listener
+  document.addEventListener('keydown', escapeKeyHandler);
+  // Store the reference GLOBALLY for our cleanup function to find and remove later
+  window._birthdayModalEscapeHandler = escapeKeyHandler;
+  console.log("[BirthdayCard] Escape key listener attached.");
 } // closes the modal
 
 //======================================
 // HANDLE KEY DOWN FUNCTION FOR CLOSE BUTTON
-// IT HAS BEEN DECLARED GLOBALLY
+// IT HAS BEEN moved back in cleaning setup⬆️
 //======================================
 
 //=============================
