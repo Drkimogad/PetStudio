@@ -1424,17 +1424,13 @@ function openPrintWindow(canvas, profile) {
 }
 
 
-//===============================
-//  🎂 Generate Birthday card() WORKS
-//===============================
-//===============================
-//  🎂 Generate Birthday card() WORKS
-//===============================
+//====================================================================
+           //  🎂 Generate Birthday card() WORKS
+//=================================================================
 async function generateBirthdayCard(index) {
   let blobUrl = null;
 
   try {
-    try {
     teardownBirthdayModal(); // Clean up any previous modal first
     console.log("[BirthdayCard] Starting generation for pet index:", index);
       
