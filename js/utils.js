@@ -237,6 +237,10 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+
+//======================================================
+// Collage functions cleaning linear flow modal
+//===========================================================
 // ✅ 1. GLOBAL REFERENCES & STATE (For the Linear Modal)
 // These track the state of the ONE active modal at a time.
 window._activeLinearModal = null; // Holds the ID of the currently open linear modal
@@ -301,9 +305,18 @@ function openLinearModal(modalId, modalHTML, setupFunction, cleanupFunction) {
     setupFunction(modal); // Pass the modal element to the setup function
   }
 
-  // 👁️ STEP 4: SHOW THE MODAL
-  console.log(`[LinearModal] Making modal visible: ${modalId}`);
-  modal.classList.remove('hidden');
+// 👁️ STEP 4: SHOW THE MODAL (with CSS visibility/opacity support)
+console.log(`[LinearModal] Making modal visible: ${modalId}`);
+modal.classList.remove('hidden');
+
+// ✅ ADD THESE LINES: Force the modal to be visible and opaque
+// This works with your existing CSS transition system
+setTimeout(() => {
+  modal.style.visibility = 'visible';
+  modal.style.opacity = '1';
+  console.log(`[LinearModal] CSS visibility/opacity applied to: ${modalId}`);
+}, 10);
+  
 
   // 💾 STEP 5: UPDATE GLOBAL STATE
   window._activeLinearModal = modalId;
