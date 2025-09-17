@@ -150,27 +150,6 @@ calculateAge(dobString) {
   }
 },
 
-//=======================
-// show error to user
-//====================
-showErrorToUser(message, isSuccess = false) {
-    try {
-      const errorDiv = document.getElementById('error-message');
-      if (!errorDiv) {
-        const newErrorDiv = document.createElement('div');
-        newErrorDiv.id = 'error-message';
-        newErrorDiv.className = isSuccess ? 'success-message' : 'auth-error';
-        newErrorDiv.textContent = message;
-        document.querySelector('#authContainer').prepend(newErrorDiv);
-      } else {
-        errorDiv.textContent = message;
-        errorDiv.className = isSuccess ? 'success-message' : 'auth-error';
-      }
-    } catch (fallbackError) {
-      alert(message);
-    }
-  },
-
 //==============================
 // formatDate function
 //==============================
@@ -206,6 +185,92 @@ function showUserInfo(user) {
   if (emailEl && user?.email) {
     emailEl.textContent = user.email;
   }
+}
+
+
+// ========================
+// SUCCESS NOTIFICATION FUNCTION
+// ========================
+function showSuccessNotification(message, duration = 3000) {
+  // Remove any existing success notification
+  const existingNotification = document.getElementById('success-notification');
+  if (existingNotification) {
+    existingNotification.remove();
+  }
+  
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.id = 'success-notification';
+  notification.className = 'global-notification success-notification';
+  notification.innerHTML = `
+    <div class="notification-content">
+      <i class="fas fa-check-circle"></i>
+      <span>${message}</span>
+    </div>
+  `;
+  
+  // Add to document
+  document.body.appendChild(notification);
+  
+  // Show with animation
+  setTimeout(() => {
+    notification.classList.add('show');
+  }, 10);
+  
+  // Auto-remove after duration
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 300);
+  }, duration);
+  
+  return notification;
+}
+
+// ========================
+// ENHANCE YOUR EXISTING ERROR FUNCTION (OPTIONAL)
+// ========================
+// If you want to make them consistent, update showErrorToUser too:
+function showErrorToUser(message, duration = 5000) {
+  // Remove any existing error notification
+  const existingNotification = document.getElementById('error-notification');
+  if (existingNotification) {
+    existingNotification.remove();
+  }
+  
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.id = 'error-notification';
+  notification.className = 'global-notification error-notification';
+  notification.innerHTML = `
+    <div class="notification-content">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>${message}</span>
+    </div>
+  `;
+  
+  // Add to document
+  document.body.appendChild(notification);
+  
+  // Show with animation
+  setTimeout(() => {
+    notification.classList.add('show');
+  }, 10);
+  
+  // Auto-remove after duration
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 300);
+  }, duration);
+  
+  return notification;
 }
 
 //=====================================================
