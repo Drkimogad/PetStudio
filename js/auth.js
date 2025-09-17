@@ -26,6 +26,63 @@ function disableUI() {
     </h1>
   `;
 }
+
+//===================================================
+        //    Unified Loader System
+//====================================================
+function showLoader(show, messageType = "loading", customMessage = "") {
+  const loader = document.getElementById("processing-loader");
+  const lottie = document.getElementById("loader-animation");
+  const cssSpinner = document.getElementById("css-spinner-fallback");
+  
+  if (!loader) {
+    console.warn("Loader element not found");
+    return;
+  }
+  
+  // Hide all messages first
+  document.querySelectorAll('.loader-text').forEach(el => {
+    el.style.display = 'none';
+  });
+  
+  // Show specific message
+  const messageEl = document.getElementById(`loader-message-${messageType}`) || 
+                   document.getElementById('loader-message-loading');
+  
+  if (messageEl) {
+    messageEl.style.display = 'block';
+    if (customMessage) messageEl.textContent = customMessage;
+    
+    // Add color classes for success/error
+    messageEl.classList.remove('success', 'error');
+    if (messageType === 'success') messageEl.classList.add('success');
+    if (messageType === 'error') messageEl.classList.add('error');
+  }
+  
+  if (show) {
+    loader.style.display = 'block';
+    
+    // Try Lottie first, fallback to CSS
+    if (lottie) {
+      lottie.style.display = 'block';
+      if (cssSpinner) cssSpinner.style.display = 'none';
+    } else if (cssSpinner) {
+      cssSpinner.style.display = 'block';
+    }
+    
+  } else {
+    // For success/error, show briefly then hide
+    if (messageType === 'success' || messageType === 'error') {
+      setTimeout(() => {
+        loader.style.display = 'none';
+      }, 2000);
+    } else {
+      loader.style.display = 'none';
+    }
+  }
+}
+
+
 // DOM Elements - Initialize as null first
 const DOM = {
   authContainer: null,
@@ -61,20 +118,7 @@ function initDOMReferences() {
   return true;
 }
 
-// show loading function - UPDATED
-function showLoading(show) {
-  const loader = document.getElementById("processing-loader");
-  if (!loader) {
-    console.warn("⛔ 'processing-loader' element not found.");
-    return;
-  }
-  
-  if (show) {
-    loader.style.display = "block";  // ← ONLY THIS
-  } else {
-    loader.style.display = "none";   // ← AND THIS
-  }
-}
+// show loading function - Removed
 
 // ===== DOM Ready: Initialize Everything =====
 document.addEventListener("DOMContentLoaded", () => {
@@ -144,7 +188,7 @@ async function setupGoogleLoginButton() {
       client_id: CLIENT_ID,
       callback: async (response) => {
         try {
-          showLoading(true);
+      showLoader(true, "loading", "Signing in...");
           // Using v9 compat syntax
           const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
           await firebase.auth().signInWithCredential(credential);
