@@ -334,116 +334,133 @@ Adjust in 5% increments for smooth changes.*/
 
 /* ==ONCE ADD PROFILE BUTTON CLICKED AND
        PETLIST OPENED===== */
+/* == FORM CONTAINER == */
 #profileSection {
   background: var(--form-bg);
   border: 1px solid var(--input-border);
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 30px;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem auto;
   width: 100%;
   max-width: 700px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  box-shadow: var(--shadow);
 }
 
 #profileSection h2 {
   text-align: center;
   color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+/* Form Input Base Styles */
+#profileForm input,
+#profileForm textarea,
+#profileForm select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border: 2px solid var(--input-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  transition: var(--transition);
+}
+
+#profileForm input:focus,
+#profileForm textarea:focus,
+#profileForm select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(255, 183, 77, 0.2);
 }
 
 #profileForm label {
   display: block;
-  margin-top: 12px;
-  font-weight: bold;
+  margin-top: 1.2rem;
+  font-weight: 600;
   color: var(--primary-color);
-}
-
-#profileForm input,
-#profileForm textarea {
-  width: 80%;
-  padding: 8px;
-  margin-top: 4px;
-  border: 1px solid var(--input-border);
-  border-radius: 4px;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 /* ===== BASIC INFO SECTION ===== */
 /* Everything is strictly nested under #profileForm matching HTML*/
+/* ===== BASIC INFO SECTION ===== */
 #profileForm .petBasicInfo {
   display: grid;
-  gap: 1rem;
-  padding: 1rem;
-  background: var(--form-bg);
-  border: 1px solid var(--input-border); /* added*/
-  border-radius: 8px;
+  gap: 1.2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid var(--input-border);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
 }
 
 #profileForm .petBasicInfo label {
   font-weight: 600;
   color: var(--primary-color);
-}
-
-#profileForm .petBasicInfo input {
-  padding: 0.5rem;
-  border: 1px solid var(--input-border);
-  border-radius: 4px;
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
+  margin-bottom: 0.3rem;
 }
 
 #profileForm #agePreview {
   margin-top: 0.5rem;
   font-size: 0.9em;
-  color: var(--primary-color);
+  color: var(--text-color);
+  font-style: italic;
+  padding: 0.5rem;
+  background: rgba(255, 183, 77, 0.1);
+  border-radius: 6px;
+  border-left: 3px solid var(--accent-color);
 }
-/* Enhanced to support gallery preview*/
+
+
+/* ===== GALLERY SECTION ===== */
 #profileForm .petGallerySection {
   margin: 1.5rem 0;
-  padding: 1rem;
-  background: var(--form-bg);
-  border-radius: 8px;
-  border: 1px solid var(--input-border);
-  transition: border-color 0.3s;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid var(--input-border);
+  border-radius: 12px;
+  transition: var(--transition);
 }
 
 #profileForm .petGallerySection:hover {
-  border: 1px solid var(--input-border);
+  border-color: var(--accent-color);
 }
 
 #profileForm .petGallerySection label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: var(--primary-color);
+  margin-bottom: 0.8rem;
 }
 
 /* Gallery Preview Grid */
 #profileForm .gallery-preview {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columns by default */
-  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
   margin-top: 1rem;
-  max-height: 400px; /* Scroll after ~6 images (adjust as needed) */
+  max-height: 400px;
   overflow-y: auto;
-  padding: 0.2rem;
+  padding: 0.5rem;
+  background: rgba(248, 249, 250, 0.5);
+  border-radius: 8px;
+  border: 1px dashed var(--input-border);
 }
 
-/* Thumbnail Styles */
 #profileForm .gallery-preview .preview-thumb {
   width: 100%;
-  aspect-ratio: 1; /* Ensures square */
-  object-fit: cover; /* Prevents distortion */
-  border-radius: 6px;
-  border: 1px solid var(--input-border);
-  background: var(--form-bg);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s, box-shadow 0.2s;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid var(--input-border);
+  background: white;
+  transition: var(--transition);
 }
 
 #profileForm .gallery-preview .preview-thumb:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--input-border);
+  transform: scale(1.05);
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsive: Switch to vertical list on small screens */
@@ -455,185 +472,219 @@ Adjust in 5% increments for smooth changes.*/
 
 /* ===== MOOD SECTION ===== */
 #profileForm .moodHistoryInput {
-  padding: 1rem;
-  background: var(--form-bg);
-  border-radius: 8px;
-  border: 1px solid var(--input-border); /*added*/
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid var(--input-border);
+  border-radius: 12px;
+  margin: 1.5rem 0;
 }
 
 #profileForm .moodHistoryInput select {
-  padding: 0.5rem;
-  width: 100%;
-}
-
-#profileForm .moodHistoryInput select:focus {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
+  padding: 12px;
+  border-radius: 8px;
+  background: white;
 }
 
 /* ===== TAGS SECTION ===== */
 #profileForm .pet-tags-container {
-  margin-top: 1rem;
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid var(--input-border);
+  border-radius: 12px;
 }
 
 #profileForm .pet-tags-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: 0.8rem;
+  margin-top: 0.8rem;
 }
 
 #profileForm .tag {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.3rem 0.6rem;
-  background: #fff8e1; /* Soft warm cream */
-  border-radius: 20px;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: rgba(255, 183, 77, 0.1);
+  border: 2px solid var(--accent-color);
+  border-radius: 25px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid #ffd54f; /* Light gold border */
-  color: #5d4037; /* Earthy brown text */
+  transition: var(--transition);
+  color: var(--text-color);
+  font-weight: 500;
 }
 
-/* Hover State */
 #profileForm .tag:hover {
-  background: #ffb74d; /* Your accent color */
-  border: 1px solid #f57c00;
+  background: var(--accent-color);
   color: white;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
-/* Selected State */
 #profileForm input[type="checkbox"]:checked + .tag {
-  background: #ffb74d; /* Your accent color */
+  background: var(--accent-color);
   color: white;
-  border: 1px solid #f57c00;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-/* Focus State */
-#profileForm .tag:focus-within {
-  outline: 2px solid #ffb74d; /* Accent color for focus */
-}
-
-/* Checkbox Visually Hidden */
-#profileForm .tag input[type="checkbox"] {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* Icon Styling */
-#profileForm .tag .tag-icon {
-  font-size: 0.8em;
-  transition: transform 0.2s ease;
-}
-
-#profileForm input[type="checkbox"]:checked + .tag .tag-icon {
-  transform: scale(1.2);
-  color: white; /* White icon when selected */
-  background-color: transparent; /* Remove background */
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 8px rgba(255, 183, 77, 0.3);
 }
 
 /* ===== EMERGENCY CONTACT ===== */
 #profileForm .emergency-contact-section {
-  padding: 1rem;
-  background: var(--form-bg);
-  border-radius: 8px;
-  border-color: var(--accent-color);
-  margin-top: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid var(--accent-color);
+  border-radius: 12px;
+  margin: 1.5rem 0;
+}
+
+#profileForm .emergency-contact-section h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 0.5rem;
 }
 
 /* ===== THEME SELECTION ===== */
+#profileForm .theme-selection {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid var(--input-border);
+  border-radius: 12px;
+}
+
 #profileForm .theme-options {
   display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
+  gap: 1.2rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 #profileForm .theme-option {
   cursor: pointer;
   text-align: center;
+  transition: var(--transition);
+}
+
+#profileForm .theme-option:hover {
+  transform: translateY(-3px);
 }
 
 #profileForm .theme-preview {
-  width: 50px;
-  height: 50px;
-  border: 2px solid var(--accent-color);
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-}
-
-#profileForm input[type="radio"]:checked + .theme-preview {
-  border: 1px solid var(--input-border);
-}
-#profileForm input[type="file"] {
-  width: 100%;
-  padding: 0.5rem;
-  background: var(--form-bg);
-}
-
-
-/* ===== FORM BUTTON CONTAINER (REQUIRED) ===== */
-#profileForm .button-container {
-  display: flex;
-  gap: 1rem;
-  width: 100%;
-  max-width: 800px; /* Match your form width */
-  margin: 1.5rem 0;
-}
-
-/* ===== BASE BUTTON STYLES (APPLIES TO BOTH) ===== */
-#profileForm button[type="submit"],
-#profileForm .cancel-btn.pill {
-  flex: 1; /* Equal width */
-  max-width: 300px; /* Same as addPetProfileBtn */
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--input-border);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px; /* Space between icon/text */
-  transition: all 0.3s;
+  transition: var(--transition);
 }
 
-/* ===== SAVE BUTTON (CHARCOAL + MUSTARD BORDER) ===== */
-#profileForm button[type="submit"] {
-  background-color: var(--primary-color);
-  color: white;
-  border: 1px solid var(--accent-color);
-  border-radius: 10px;
-}
-#profileForm button[type="submit"]:hover {
-  background-color: #7b5c52;
+#profileForm input[type="radio"]:checked + .theme-preview {
+  border-color: var(--accent-color);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 183, 77, 0.3);
 }
 
-/* ===== CANCEL BUTTON (RED PILL) ===== */
+/* ===== FORM BUTTONS ===== */
+#profileForm .button-container {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+  margin: 2rem 0 1rem;
+  flex-wrap: wrap;
+}
+
+#profileForm button[type="submit"],
 #profileForm .cancel-btn.pill {
-  background-color: #e57373;
-  color: white;
-  border-radius: 9999px; /* Full pill */
-}
-#profileForm .cancel-btn.pill:hover {
-  background-color: #c0392b;
+  flex: 1;
+  min-width: 160px;
+  max-width: 280px;
+  padding: 14px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-/* ===== MOBILE RESPONSIVE ===== */
-@media (max-width: 600px) {
+/* Save Button */
+#profileForm button[type="submit"] {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 12px rgba(141, 110, 99, 0.3);
+}
+
+#profileForm button[type="submit"]:hover {
+  background: #7a5b52;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(141, 110, 99, 0.4);
+}
+
+/* Cancel Button */
+#profileForm .cancel-btn.pill {
+  background: #e57373;
+  color: white;
+  border-radius: 25px;
+  box-shadow: 0 4px 12px rgba(229, 115, 115, 0.3);
+}
+
+#profileForm .cancel-btn.pill:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(211, 47, 47, 0.4);
+}
+
+/* File Input */
+#profileForm input[type="file"] {
+  padding: 12px;
+  background: white;
+  border: 2px dashed var(--input-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#profileForm input[type="file"]:hover {
+  border-color: var(--accent-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #profileSection {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
   #profileForm .button-container {
     flex-direction: column;
+    align-items: center;
   }
+  
   #profileForm button[type="submit"],
   #profileForm .cancel-btn.pill {
-    max-width: 100%; /* Full width on mobile */
+    width: 100%;
+    max-width: none;
+  }
+  
+  #profileForm .theme-options {
+    gap: 0.8rem;
+  }
+  
+  #profileForm .theme-preview {
+    width: 50px;
+    height: 50px;
   }
 }
 
 /*sorted out*/
+
 /* ====================
    RENDERED PETCARD ALL STYLES  
   DESIGNED FOR SAVEDPETPROFILES()
