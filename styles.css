@@ -195,6 +195,63 @@ Adjust in 5% increments for smooth changes.*/
   visibility: hidden !important;
 }
 
+/* ======================================
+   LEGAL LINKS STYLING ADDED RECENTLY
+========================================== */
+.legal-links {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.legal-link {
+  color: #6a0dad !important;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+.legal-link:hover {
+  color: #4b0082 !important;
+  text-decoration: underline;
+  background-color: rgba(107, 0, 131, 0.1);
+}
+
+.link-separator {
+  color: #8b5a2b;
+  margin: 0 8px;
+  font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .legal-links {
+    font-size: 0.8rem;
+    margin-top: 12px;
+  }
+  
+  .legal-link {
+    padding: 1px 3px;
+  }
+  
+  .link-separator {
+    margin: 0 5px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .legal-link {
+    color: #b19cd9 !important;
+  }
+  
+  .legal-link:hover {
+    color: #d4bff9 !important;
+    background-color: rgba(180, 191, 249, 0.15);
+  }
+}
 
 /* ====================
    DASHBOARD & LAYOUT
