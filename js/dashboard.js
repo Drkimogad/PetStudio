@@ -1475,14 +1475,12 @@ async function generateBirthdayCard(index) {
     card.style.left = "-9999px";
     document.body.appendChild(card);
 
-    // 3. Create a birthday-themed card container
- //  const profile = window.petProfiles[index];
-   const themeKey = profile.theme || 'balloons'; // e.g., 'balloons', 'stars'
-   const themeConfig = THEMES[themeKey] || THEMES['balloons'];
+// 3. Create a birthday-themed card container
+const themeKey = profile.theme || 'balloons';
+card.className = `birthday-card theme-${themeKey}`; // Add CSS class
 
-card.className = `birthday-card theme-${themeKey}`; // Now works, card is defined
 card.innerHTML = `
-  <div class="birthday-header" style="background:${themeConfig.bgColor}">
+  <div class="birthday-header"> <!-- REMOVE inline styles -->
     ${themeConfig.emoji} ${profile.name}'s Birthday! ${themeConfig.emoji}
   </div>
   <div class="birthday-countdown">${Utils.getCountdown(profile.nextBirthday)}</div>
