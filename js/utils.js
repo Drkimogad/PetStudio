@@ -372,3 +372,74 @@ function teardownBirthdayModal() {
 
   console.log("[BirthdayModal-Cleanup] Phase 5: Teardown complete. Environment is clean.\n");
 }
+
+
+
+//===================================================
+        //    Unified Loader System
+//====================================================
+function showLoader(show, messageType = "loading", customMessage = "") {
+  const loader = document.getElementById("processing-loader");
+  const lottie = document.getElementById("loader-animation");
+  const cssSpinner = document.getElementById("css-spinner-fallback");
+  
+  if (!loader) return;
+  
+  // Hide all messages first
+  document.querySelectorAll('.loader-text').forEach(el => {
+    el.style.display = 'none';
+  });
+  
+  // Show specific message
+  const messageEl = document.getElementById(`loader-message-${messageType}`) || 
+                   document.getElementById('loader-message-loading');
+  
+  if (messageEl) {
+    messageEl.style.display = 'block';
+    if (customMessage) messageEl.textContent = customMessage;
+    
+    // Add color classes for success/error
+    messageEl.classList.remove('success', 'error');
+    if (messageType === 'success') messageEl.classList.add('success');
+    if (messageType === 'error') messageEl.classList.add('error');
+  }
+  
+  if (show) {
+    loader.style.display = 'block';
+    
+    // Try Lottie first, fallback to CSS
+    if (lottie) {
+      lottie.style.display = 'block';
+      cssSpinner.style.display = 'none';
+    } else if (cssSpinner) {
+      cssSpinner.style.display = 'block';
+    }
+    
+  } else {
+    // For success/error, show briefly then hide
+    if (messageType === 'success' || messageType === 'error') {
+      setTimeout(() => {
+        loader.style.display = 'none';
+      }, 2000);
+    } else {
+      loader.style.display = 'none';
+    }
+  }
+}
+
+// Lottie error fallback
+function setupLottieFallback() {
+  const lottie = document.getElementById("loader-animation");
+  const cssSpinner = document.getElementById("css-spinner-fallback");
+  
+  if (lottie && cssSpinner) {
+    lottie.addEventListener('error', () => {
+      lottie.style.display = 'none';
+      cssSpinner.style.display = 'block';
+    });
+  }
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', setupLottieFallback);
+
