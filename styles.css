@@ -1762,6 +1762,25 @@ styled to show in petcard header plus nickname */
   opacity: 0.8;
 }
 
+/* Add to ALL theme classes */
+.petCard[class*="theme-"] {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Specific theme enhancements */
+.petCard.theme-minimal {
+  border-left: 4px solid #95a5a6 !important;
+}
+
+.petCard.theme-balloons {
+  background-image: radial-gradient(circle, #ffebee 20%, #f8bbd0 100%) !important;
+}
+
+.petCard.theme-paws {
+  background-image: repeating-linear-gradient(45deg, #e8f5e9, #e8f5e9 10px, #c8e6c9 10px, #c8e6c9 20px) !important;
+}
+
 /* ====================
    DRIVE SYNC STATUS
 ==================== */
