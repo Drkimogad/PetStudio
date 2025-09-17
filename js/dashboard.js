@@ -1477,18 +1477,16 @@ async function generateBirthdayCard(index) {
 
 // 3. Create a birthday-themed card container
 const themeKey = profile.theme || 'balloons';
+const themeConfig = THEMES[themeKey] || THEMES['balloons'];
 card.className = `birthday-card theme-${themeKey}`; // Add CSS class
 
+// But CHANGE the HTML to use CSS classes instead of inline styles:
 card.innerHTML = `
-  <div class="birthday-header"> <!-- REMOVE inline styles -->
+  <div class="birthday-header">  <!-- REMOVE style="background:${themeConfig.bgColor}" -->
     ${themeConfig.emoji} ${profile.name}'s Birthday! ${themeConfig.emoji}
   </div>
   <div class="birthday-countdown">${Utils.getCountdown(profile.nextBirthday)}</div>
-  ${
-    validCover
-      ? `<img src="${coverUrl}" alt="${profile.name}" class="birthday-photo">`
-      : `<div class="birthday-photo-placeholder">No valid cover image</div>`
-  }
+  ${validCover ? `<img src="${coverUrl}" alt="${profile.name}" class="birthday-photo">` : `<div class="birthday-photo-placeholder">No valid cover image</div>`}
   <div class="birthday-footer">Celebrate on ${new Date(profile.nextBirthday).toLocaleDateString()}</div>
 `;
 
