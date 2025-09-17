@@ -257,6 +257,11 @@ function loadSavedProfiles() {
       petCard.style.marginBottom = "2rem";
       petCard.id = `pet-card-${profile.id}`;
 
+        // 🔍 ADD THESE CONSOLE LINES:
+  const themeClass = `theme-${profile.theme || 'balloons'}`;
+  console.log(`🎨 Profile: ${profile.name}, Saved theme: ${profile.theme}, Applying: ${themeClass}`);
+  petCard.classList.add(themeClass);
+
       // ✅ Support both object-based and string-based gallery entries
   //    const coverImageObj = profile.gallery?.[profile.coverPhotoIndex];
       // after:
@@ -415,9 +420,7 @@ ${profile.nextBirthday ? `
     </div>
   </div>
 `; // ← ONLY ONE CLOSING BACKTICK
-// ✅ Add theme class BEFORE appending to DOM
-petCard.classList.add(`theme-${profile.theme || 'balloons'}`);
-console.log(`Profile: ${profile.name}, Theme: ${profile.theme || 'balloons (fallback)'}`);
+      
       DOM.petList.appendChild(petCard);
     });
   }
@@ -2711,8 +2714,9 @@ DOM.profileForm.dataset.isTempCover = 'false';
         // ✅ Extract tags BEFORE creating newProfile
         const selectedTags = Array.from(
         document.querySelectorAll('input[name="petTags"]:checked')).map(checkbox => checkbox.value);
-                  // Ensure theme is properly captured
-        const theme = document.querySelector('input[name="theme"]:checked').value || 'balloons'; // Check if it needs to stay or go inside profile objects
+       // 🔍 ADD THIS CONSOLE LOG RIGHT HERE:
+         const theme = document.querySelector('input[name="theme"]:checked').value || 'balloons';
+         console.log("🎨 Selected theme:", theme); // ← ADD THIS LINE    
         
         console.log("🧩 Building profile object..."); // DEBUG LINE KEPT
 
