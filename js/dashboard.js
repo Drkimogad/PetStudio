@@ -2553,25 +2553,11 @@ document.getElementById("petGallery").addEventListener("change", function() {
       console.log("📨 Form submit triggered"); // DEBUG LINE KEPT
       e.preventDefault();
 
-          // 🟢 1. NEW PROFILE CREATION LOADER MESSAGE
-      //define loader to init properly
-     const loader = document.getElementById('processing-loader');
-      // FIX: Check if loader exists before using it
-      if (!loader) {
-        console.error("❌ Loader element not found");
-        return;
-      }
-      
-     const loaderText = loader.querySelector('p'); // Define loaderText here
-     // FIX: Check if loaderText exists
-      if (loaderText) {
-     loaderText.innerHTML = isEditing ? 
-    '<i class="fas fa-save"></i> Updating profile...' : 
-    '<i class="fas fa-paw"></i> Creating pet profile...';
-      }
-      
-     loader.style.display = 'block';
-     document.body.style.pointerEvents = 'none';
+  // 🟢 1. NEW LOADER IMPLEMENTATION
+  if (typeof showLoader === 'function') {
+    showLoader(true, isEditing ? 'updating' : 'saving', 
+      isEditing ? 'Updating profile...' : 'Creating pet profile...');
+  }
 
 
       // ✅ UI State Management
@@ -2610,6 +2596,14 @@ if (isEditing && petProfiles[currentEditIndex]) {
 // SECTION 4: GALLERY UPLOAD - UPDATED
 // ========================
 console.log("📁 Processing gallery...");
+
+    // 🟢 SHOW UPLOADING MESSAGE
+if (window.tempGalleryImages && window.tempGalleryImages.length > 0) {
+  if (typeof showLoader === 'function') {
+    showLoader(true, 'saving', 'Uploading images...');
+  }
+}
+        
 
 // ✅ CHANGE: Use tempGalleryImages instead of direct file input
 if (window.tempGalleryImages && window.tempGalleryImages.length > 0) {
@@ -2905,28 +2899,42 @@ if (isEditing) {
        // ========================
 // SECTION 8: UI UPDATE
 // ======================== 
-// 🟢 SUCCESS MESSAGE
-loaderText.innerHTML = isEditing ? 
-  '<i class="fas fa-check-circle"></i> Profile updated!' : 
-  '<i class="fas fa-check-circle"></i> Pet profile created!';
+// 🟢 SUCCESS MESSAGE WITH LOADER
+if (typeof showLoader === 'function') {
+  showLoader(true, 'success', 
+    isEditing ? 'Profile updated successfully!' : 'Pet profile created!');
+}
 
 setTimeout(() => {
   showDashboard();
   console.log("✅ Profile saved successfully!");
   resetForm();
   
-  loader.style.display = 'none';
+  // Hide loader after success message is shown
+  if (typeof showLoader === 'function') {
+    showLoader(false);
+  }
   document.body.style.pointerEvents = 'auto';
-  window.scrollTo(0, 0); // Ensures consistent scrolling
+  window.scrollTo(0, 0);
 }, 1500);
-
+        
+// Error handling 
 } catch (err) {
   console.error("Profile save failed:", err);
-  // 🟢 ERROR MESSAGE
-  loaderText.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Failed to save';
-    setTimeout(() => loader.style.display = 'none', 3000);
+  
+  // 🟢 ERROR MESSAGE WITH LOADER
+  if (typeof showLoader === 'function') {
+    showLoader(true, 'error', 'Failed to save. Please try again.');
+  }  
+  // Hide error after 3 seconds
+  setTimeout(() => {
+    if (typeof showLoader === 'function') {
+      showLoader(false);
+    }
     window.scrollTo(0, 0);
-    console.error("Save failed:", err);
+  }, 3000); 
+  console.error("Save failed:", err);
+        
 
 } finally {
   submitBtn.innerHTML = originalBtnText;
