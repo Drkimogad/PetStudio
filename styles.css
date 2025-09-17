@@ -561,11 +561,11 @@ Adjust in 5% increments for smooth changes.*/
   ==================== */
 /* Can't be nested as # it is a class and not id */
 .petCard {
-  border: 4px solid #808080; /* Slightly thinner border */
+ /* border: 4px solid #808080; Slightly thinner border  */
   border-radius: 10px;
   padding: 25px;
   margin: 20px auto;
-  background-color: #ffffff;
+/*  background-color: #ffffff;*/
   width: 90%; /* Fixed 90% width */
   max-width: 1200px; /* Preoversizing on large screens */
   position: relative;
@@ -1109,6 +1109,36 @@ styled to show in petcard header plus nickname */
 }
 
 /* END OF PETCARD CREATION STYLES*/
+
+/* === ADDED LATELY FOR PETCARD THEMES AND IMPORTANT TO OVERRIDE ANY PREVIOUS CONFLICTING RULES*/
+/* ===== THEME STYLES FOR PET CARDS ===== */
+.petCard.theme-balloons {
+  border: 2px dashed #f44336 !important;
+  background-color: #ffebee !important;
+}
+
+.petCard.theme-paws {
+  border: 2px dotted #4caf50 !important;
+  background-color: #e8f5e9 !important;
+}
+
+.petCard.theme-party {
+  border: 2px solid #ff9800 !important;
+  background-color: #fff3e0 !important;
+}
+
+.petCard.theme-elegant {
+  border: 1px solid #9c27b0 !important;
+  background-color: #f3e5f5 !important;
+}
+
+.petCard.theme-minimal {
+  border: 1px solid #bdbdbd !important;
+  background-color: #ffffff !important;
+}
+
+
+
 
 /* =====COLLAGE BUTTON STYLES======= */
 /* Critical Fix: Force visibility for modal and its parent chain as it was hidden*/
