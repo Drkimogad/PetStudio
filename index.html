@@ -91,6 +91,10 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
   <script src="https://unpkg.com/cloudinary-core@2.11.4/cloudinary-core-shrinkwrap.min.js"></script>
+
+  <!-- Add this BEFORE your other scripts -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+	
   <!-- html2canvas -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha256-6H5VB5QyLldKH9oMFUmjxw2uWpPZETQXpCkBaDjquMs=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -159,11 +163,9 @@
     <div id="css-spinner-fallback" class="css-spinner" style="display:none;"></div>
     
     <!-- Messages -->
-    <p id="loader-message-loading" class="loader-text">Loading your app...</p>
     <p id="loader-message-saving" class="loader-text" style="display:none;">Saving profile...</p>
     <p id="loader-message-updating" class="loader-text" style="display:none;">Updating profile...</p>
     <p id="loader-message-success" class="loader-text" style="display:none;">Success!</p>
-    <p id="loader-message-error" class="loader-text" style="display:none;">Something went wrong...</p>
   </div>
 </div>
 	
