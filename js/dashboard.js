@@ -2173,7 +2173,7 @@ async function sharePetCard(profile, event) {
 }
 
 //===============================
-//🌀 QR Code Managementenhanced to be finalised ⛔️
+//🌀 QR Code Managementenhanced To be finalised ⛔️ for cleaning.
 //===========================
 //1. Generate QR code
 function generateQRCode(profileIndex) {
