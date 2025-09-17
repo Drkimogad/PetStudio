@@ -2727,8 +2727,7 @@ newProfile.coverPhotoIndex = finalCoverIndex;
           },
           microchipNumber: document.getElementById("microchipNumber").value.trim(),
           // Add this to your newProfile object construction
-          newProfile.theme = theme;
-        
+          theme: theme,        
           notes: document.getElementById("petNotes")?.value.trim() || "",
           tags: selectedTags, // ✅ Inserted properly now
           
