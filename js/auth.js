@@ -60,19 +60,19 @@ function initDOMReferences() {
   console.log("✅ DOM references initialized.");
   return true;
 }
-// show loading function
+
+// show loading function - UPDATED
 function showLoading(show) {
   const loader = document.getElementById("processing-loader");
   if (!loader) {
     console.warn("⛔ 'processing-loader' element not found.");
     return;
   }
+  
   if (show) {
-    loader.classList.remove("hidden");
-    loader.style.display = "block";
+    loader.style.display = "block";  // ← ONLY THIS
   } else {
-    loader.classList.add("hidden");
-    loader.style.display = "none";
+    loader.style.display = "none";   // ← AND THIS
   }
 }
 
@@ -148,7 +148,6 @@ async function setupGoogleLoginButton() {
           // Using v9 compat syntax
           const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
           await firebase.auth().signInWithCredential(credential);
-         // showDashboard();  // old ✅ No need to manually call showDashboard here!
         } catch (error) {
           console.error("Google Sign-In failed:", error);
           if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
