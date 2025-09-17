@@ -1,32 +1,4 @@
 // GLOBAL DECLARATIONS - AUTH-INITIALIZATION
-const CLOUDINARY_CONFIG = {
-  cloudName: 'dh7d6otgu',
-  uploadPreset: 'petstudio_auto_folder'
-};
-// 🔶 GLOBAL DECLARATIONS🔶🔶🔶
-let auth = null;
-let provider = null;
-let isSignupInProgress = false;
-let googleSignInInitialized = false;
-
-// 🔶 State Management🔶🔶🔶
-const VALID_ORIGINS = [
-  'https://drkimogad.github.io',
-  'https://drkimogad.github.io/PetStudio'
-];
-// Runtime origin check
-if (!VALID_ORIGINS.includes(window.location.origin)) {
-  window.location.href = 'https://drkimogad.github.io/PetStudio';
-}
-// HELPER FUNCTION DISABLE UI    
-function disableUI() {
-  document.body.innerHTML = `
-    <h1 style="color: red; padding: 2rem; text-align: center">
-      Critical Error: Failed to load application interface
-    </h1>
-  `;
-}
-
 //===================================================
         //    Unified Loader System
 //====================================================
@@ -83,6 +55,35 @@ function showLoader(show, messageType = "loading", customMessage = "") {
 }
 
 
+const CLOUDINARY_CONFIG = {
+  cloudName: 'dh7d6otgu',
+  uploadPreset: 'petstudio_auto_folder'
+};
+// 🔶 GLOBAL DECLARATIONS🔶🔶🔶
+let auth = null;
+let provider = null;
+let isSignupInProgress = false;
+let googleSignInInitialized = false;
+
+// 🔶 State Management🔶🔶🔶
+const VALID_ORIGINS = [
+  'https://drkimogad.github.io',
+  'https://drkimogad.github.io/PetStudio'
+];
+// Runtime origin check
+if (!VALID_ORIGINS.includes(window.location.origin)) {
+  window.location.href = 'https://drkimogad.github.io/PetStudio';
+}
+// HELPER FUNCTION DISABLE UI    
+function disableUI() {
+  document.body.innerHTML = `
+    <h1 style="color: red; padding: 2rem; text-align: center">
+      Critical Error: Failed to load application interface
+    </h1>
+  `;
+}
+
+
 // DOM Elements - Initialize as null first
 const DOM = {
   authContainer: null,
@@ -118,7 +119,6 @@ function initDOMReferences() {
   return true;
 }
 
-// show loading function - Removed
 
 // ===== DOM Ready: Initialize Everything =====
 document.addEventListener("DOMContentLoaded", () => {
@@ -198,7 +198,7 @@ async function setupGoogleLoginButton() {
             Utils.showErrorToUser("Google Sign-In failed. Please try again.");
           }
         } finally {
-          showLoading(false);
+          showLoader(false);
         }
       }
     });
