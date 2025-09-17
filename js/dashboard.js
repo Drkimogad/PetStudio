@@ -2683,7 +2683,7 @@ const permCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex || '0', 10);
 // 2) Calculate final cover index based on selection type
 // Replace the current cover index calculation with:
 let finalCoverIndex = 0;
-const isTempCover = DOM.profileForm.dataset.isTempCover === 'true';
+const isTempCoverFlag = DOM.profileForm.dataset.isTempCover === 'true';
 
 if (isTempCover) {
     const tempIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex || '0', 10);
