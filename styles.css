@@ -1447,7 +1447,7 @@ styled to show in petcard header plus nickname */
   width: 300px; 
   padding: 20px;
   text-align: center;
-  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+ /* REMOVED HARDCODED BACKGROUND*/
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
@@ -1504,6 +1504,49 @@ styled to show in petcard header plus nickname */
   font-size: 1.1em;
   color: #333;
   font-weight: 500;
+}
+
+/* Add Theme-Specific Styles (AFTER the .birthday-card rule):*/
+/* ===== BIRTHDAY CARD THEMES ===== */
+.birthday-card.theme-balloons {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+  border: 3px dashed rgba(255,255,255,0.5);
+  color: #d32f2f;
+}
+
+.birthday-card.theme-paws {
+  background: #e8f5e9;
+  border: 2px dotted #4caf50;
+  color: #2e7d32;
+}
+
+.birthday-card.theme-party {
+  background: #fff3e0;
+  border: 2px solid #ff9800;
+  color: #e65100;
+}
+
+.birthday-card.theme-elegant {
+  background: #f3e5f5;
+  border: 1px solid #9c27b0;
+  color: #7b1fa2;
+}
+
+.birthday-card.theme-minimal {
+  background: #ffffff;
+  border: 1px solid #bdbdbd;
+  color: #212121;
+}
+
+/* Theme-specific text colors for header/footer */
+.birthday-card.theme-minimal .birthday-header,
+.birthday-card.theme-minimal .birthday-footer {
+  color: #212121;
+}
+
+.birthday-card.theme-balloons .birthday-header,
+.birthday-card.theme-balloons .birthday-footer {
+  color: #d32f2f;
 }
 
 /*====================================*/
