@@ -2215,3 +2215,64 @@ styled to show in petcard header plus nickname */
     animation-duration: 3s !important; /* ⬆️⬇️ Slower bounce */
   }
 }
+
+
+/*===========================================
+    Global Loader Styles 
+===============================================*/
+.global-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+}
+
+.loader-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+}
+
+.loader-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+}
+
+.loader-text {
+  margin-top: 15px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* CSS Spinner Fallback */
+.css-spinner {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-top: 4px solid #ffb74d;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success/Error States */
+.loader-text.success {
+  color: #4CAF50;
+}
+
+.loader-text.error {
+  color: #F44336;
+}
