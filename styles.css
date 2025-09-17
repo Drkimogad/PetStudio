@@ -2276,3 +2276,50 @@ styled to show in petcard header plus nickname */
 .loader-text.error {
   color: #F44336;
 }
+/* ========================
+   GLOBAL NOTIFICATION STYLES success and error handling 
+   ======================== */
+.global-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  z-index: 10000;
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.3s ease;
+  max-width: 350px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.global-notification.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notification-content i {
+  font-size: 18px;
+}
+
+/* Success Notification */
+.success-notification {
+  background: #28a745;
+  border-left: 4px solid #1e7e34;
+}
+
+/* Error Notification */
+.error-notification {
+  background: #dc3545;
+  border-left: 4px solid #c82333;
+}
+
+
