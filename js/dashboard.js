@@ -2666,10 +2666,6 @@ if (window.tempGalleryImages && window.tempGalleryImages.length > 0) {
           console.log("➕ Added new mood entry:", newMood); // DEBUG LINE KEPT
         }
 
-
-// ==============================
-// ✅ SECTION 5.5: FINALIZE COVER & GALLERY BEFORE SAVE - FIXED
-// ==============================
 // ==============================
 // ✅ SECTION 5.5: FINALIZE COVER & GALLERY BEFORE SAVE - FIXED
 // ==============================
@@ -2681,21 +2677,33 @@ const tempCoverIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex || '0', 1
 const permCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex || '0', 10);
 
 // 2) Calculate final cover index based on selection type
-// Replace the current cover index calculation with:
-let finalCoverIndex = 0;
-const isTempCoverFlag = DOM.profileForm.dataset.isTempCover === 'true';
+let finalCoverIndex;
 
 if (isTempCover) {
-    const tempIndex = parseInt(DOM.profileForm.dataset.tempCoverIndex || '0', 10);
-    // Temp images are at the end of the combined array
-    finalCoverIndex = uploadedImageUrls.length - (window.tempGalleryImages?.length || 0) + tempIndex;
+  // CORRECT CALCULATION: uploadedImageUrls contains ALL images (existing + newly uploaded)
+  // The temp images are appended at the END, so their final positions are:
+  // uploadedImageUrls.length - tempImagesCount + tempIndex
+  const tempImagesCount = window.tempGalleryImages?.length || 0;
+  finalCoverIndex = (uploadedImageUrls.length - tempImagesCount) + tempCoverIndex;
+  console.log("✅ Temp cover selected, final index:", finalCoverIndex, 
+             "(total images:", uploadedImageUrls.length, 
+             "temp count:", tempImagesCount, 
+             "temp index:", tempCoverIndex + ")");
 } else {
-    finalCoverIndex = parseInt(DOM.profileForm.dataset.coverIndex || '0', 10);
+  // Permanent cover selected: use the stored index directly
+  finalCoverIndex = permCoverIndex;
+  console.log("✅ Permanent cover selected, final index:", finalCoverIndex);
 }
 
-// Ensure it's within bounds
-finalCoverIndex = Math.max(0, Math.min(finalCoverIndex, uploadedImageUrls.length - 1));
-newProfile.coverPhotoIndex = finalCoverIndex;
+// 3) Ensure the index is valid
+if (finalCoverIndex >= uploadedImageUrls.length || finalCoverIndex < 0) {
+  console.warn("⚠️ Cover index out of bounds, resetting to 0");
+  finalCoverIndex = 0;
+}
+
+// 4) Reset temp flags for next operation
+DOM.profileForm.dataset.isTempCover = 'false';
+
         
     // ========================
     // SECTION 6: PROFILE ASSEMBLY
@@ -2704,7 +2712,7 @@ newProfile.coverPhotoIndex = finalCoverIndex;
         const selectedTags = Array.from(
         document.querySelectorAll('input[name="petTags"]:checked')).map(checkbox => checkbox.value);
                   // Ensure theme is properly captured
-        const theme = document.querySelector('input[name="theme"]:checked').value || 'balloons';
+        const theme = document.querySelector('input[name="theme"]:checked').value || 'balloons'; // Check if it needs to stay or go inside profile objects
         
         console.log("🧩 Building profile object..."); // DEBUG LINE KEPT
 
