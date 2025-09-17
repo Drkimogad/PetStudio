@@ -1507,11 +1507,12 @@ styled to show in petcard header plus nickname */
 }
 
 /* Add Theme-Specific Styles (AFTER the .birthday-card rule):*/
-/* ===== BIRTHDAY CARD THEMES ===== */
+/* ===== BIRTHDAY CARD THEMES =====UPDATED WITH NEW COLOURS  */
 .birthday-card.theme-balloons {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-  border: 3px dashed rgba(255,255,255,0.5);
-  color: #d32f2f;
+  background: #fffaf0; /* Elegant cream */
+  border: 2px solid #d4af37; /* Gold border */
+  color: #8b4513; /* Rich brown text */
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
 }
 
 .birthday-card.theme-paws {
@@ -1521,15 +1522,17 @@ styled to show in petcard header plus nickname */
 }
 
 .birthday-card.theme-party {
-  background: #fff3e0;
-  border: 2px solid #ff9800;
-  color: #e65100;
+  background: #f5f5dc; /* Soft beige/cream */
+  border: 2px solid #2e8b57; /* Deep sea green */
+  color: #2e8b57; /* Matching green text */
+  box-shadow: 0 4px 15px rgba(46, 139, 87, 0.3);
 }
 
 .birthday-card.theme-elegant {
-  background: #f3e5f5;
-  border: 1px solid #9c27b0;
-  color: #7b1fa2;
+  background: #f8f8ff; /* Ghost white - elegant light background */
+  border: 2px solid #9370db; /* Medium purple */
+  color: #6a5acd; /* Slate blue text */
+  box-shadow: 0 4px 12px rgba(147, 112, 219, 0.25);
 }
 
 .birthday-card.theme-minimal {
@@ -1643,7 +1646,7 @@ styled to show in petcard header plus nickname */
 
 
 /*============================================*/
-/* =Theme/Templates-Specific Styles 5= */
+/* =Theme/Templates-Specific Styles 5= */ NEEDS UPDATING!!!!
 /*===========================================*/
 /* Theme Selection */
 .theme-selection {
@@ -1692,37 +1695,41 @@ styled to show in petcard header plus nickname */
   border: 1px solid #ddd;
 }
 
+/* UPDATED: Party mini preview to match new green theme */
 .party-mini {
-  background: linear-gradient(135deg, #6a5acd 0%, #b19cd9 100%);
-  position: relative;
+  background: #f5f5dc; /* Soft beige/cream */
+  border: 2px solid #2e8b57; /* Deep sea green */
 }
 
+/* UPDATED: Elegant mini preview to match new purple theme */
 .elegant-mini {
-  background: #f8f8f8;
-  border: 1px solid #ccc;
-  font-family: 'Georgia', serif;
+  background: #f8f8ff; /* Ghost white */
+  border: 2px solid #9370db; /* Medium purple */
 }
 
 .theme-option input:checked + .theme-preview {
   border-color: #6a5acd;
 }
 
-/* 1. Balloons */
+/* 1. Balloons - UPDATED to match new cream & gold theme */
 .balloons {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-  color: #f0bdec;
-  border: 3px dashed rgba(255,255,255,0.5);
+  background: #fffaf0; /* Elegant cream */
+  color: #8b4513; /* Rich brown text */
+  border: 2px solid #d4af37; /* Gold border */
 }
 
 .balloons .banner {
   font-size: 1.5em;
   margin-bottom: 15px;
 }
+
+/* UPDATED: Balloons mini preview */
 .balloons-mini {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+  background: #fffaf0; /* Elegant cream */
+  border: 2px solid #d4af37; /* Gold border */
 }
 
-/* 2. Paw Prints */
+/* 2. Paw Prints - Keep existing (looks good) */
 .paws {
   background: #fa895c;
   color: #5a4a6a;
@@ -1737,7 +1744,8 @@ styled to show in petcard header plus nickname */
   background: #fff8e6 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,50 Q50,30 70,50 Q50,70 30,50 Z" fill="%236a5acd"/></svg>');
   background-size: 20px;
 }
-/* 3. Minimalist */
+
+/* 3. Minimalist - Keep existing */
 .minimal {
   background: white;
   color: #a3a09e;
@@ -1748,10 +1756,11 @@ styled to show in petcard header plus nickname */
   text-decoration: underline;
 }
 
-/* 4. Party Theme */
+/* 4. Party Theme - UPDATED to match new green theme */
 .party {
-  background: #f7ec99;
-  color: white;
+  background: #f5f5dc; /* Soft beige/cream */
+  color: #2e8b57; /* Deep sea green text */
+  border: 2px solid #2e8b57; /* Deep sea green border */
 }
 
 .party .confetti {
@@ -1760,15 +1769,16 @@ styled to show in petcard header plus nickname */
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2" fill="gold"/><rect x="8" y="8" width="4" height="4" fill="hotpink" opacity="0.7"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2" fill="%232e8b57"/><rect x="8" y="8" width="4" height="4" fill="%23d4af37" opacity="0.7"/></svg>');
   opacity: 0.3;
   z-index: 0;
 }
 
-/* 5. Elegant */
+/* 5. Elegant - UPDATED to match new purple theme */
 .elegant {
-  background: #11f2ee;
-  color: #140217;
+  background: #f8f8ff; /* Ghost white */
+  color: #6a5acd; /* Slate blue text */
+  border: 2px solid #9370db; /* Medium purple border */
   font-family: 'Georgia', serif;
 }
 
@@ -1784,7 +1794,9 @@ styled to show in petcard header plus nickname */
 }
 
 
-/* Live Preview Container */
+/*=================================
+   Live Preview Container 
+===============================*/
 #birthday-card-preview {
   transition: all 0.3s ease;
   margin: 15px 0;
@@ -1805,7 +1817,9 @@ styled to show in petcard header plus nickname */
   opacity: 0.8;
 }
 
-/* Add to ALL theme classes */
+/*========================================
+    Add to ALL theme classes ON PRTCARDS ADDED RECENTLY
+============================================*/
 .petCard[class*="theme-"] {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
   transition: all 0.3s ease !important;
@@ -1816,13 +1830,36 @@ styled to show in petcard header plus nickname */
   border-left: 4px solid #95a5a6 !important;
 }
 
+/* BALLOONS - Cream & Gold (Matches birthday cards) */
 .petCard.theme-balloons {
-  background-image: radial-gradient(circle, #ffebee 20%, #f8bbd0 100%) !important;
+  background: #fffaf0 !important; /* Elegant cream */
+  border: 2px solid #d4af37 !important; /* Gold border */
+  color: #8b4513 !important; /* Rich brown text */
 }
 
+/* PAWS - Keep existing green theme */
 .petCard.theme-paws {
   background-image: repeating-linear-gradient(45deg, #e8f5e9, #e8f5e9 10px, #c8e6c9 10px, #c8e6c9 20px) !important;
+  border: 2px dotted #4caf50 !important;
+  color: #2e7d32 !important;
 }
+
+/* PARTY - Deep Green & Cream (Matches birthday cards) */
+.petCard.theme-party {
+  background: #f5f5dc !important; /* Soft beige/cream */
+  border: 2px solid #2e8b57 !important; /* Deep sea green */
+  color: #2e8b57 !important; /* Matching green text */
+}
+
+/* ELEGANT - Royal Purple & Silver (Matches birthday cards) */
+.petCard.theme-elegant {
+  background: #f8f8ff !important; /* Ghost white */
+  border: 2px solid #9370db !important; /* Medium purple */
+  color: #6a5acd !important; /* Slate blue text */
+}
+
+
+
 
 /* ====================
    DRIVE SYNC STATUS
