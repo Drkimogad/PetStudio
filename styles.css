@@ -6,6 +6,16 @@ ROOT COLOURS FOR PROFILE CREATION FORM
   --primary-color: #8d6e63;  /* Headers & highlights */
   --input-border: #d7ccc8;   /* Inputs & borders */
   --accent-color: #ffb74d;   /* Buttons, hover, tags */
+
+    --form-bg: #f5f7f3;        /* Very pale sage green */
+  --primary-color: #8d6e63;  /* Keep earthy brown */
+  --input-border: #c8d6c8;   /* Soft sage border */
+  --accent-color: #ffb74d;   /* Keep mustard */
+
+   --form-bg: #fef9f0;        /* Warm vanilla cream */
+  --primary-color: #8d6e63;  /* Keep earthy brown */
+  --input-border: #e8d6c8;   /* Warm tan border */
+  --accent-color: #ffb74d;   /* Keep mustard */
 }
 
 /* ====================
@@ -320,6 +330,8 @@ Adjust in 5% increments for smooth changes.*/
   padding: 0.5rem;
   border: 1px solid var(--input-border);
   border-radius: 4px;
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 #profileForm #agePreview {
@@ -397,7 +409,11 @@ Adjust in 5% increments for smooth changes.*/
   width: 100%;
 }
 
-/* ===== TAGS SECTION ===== */
+#profileForm .moodHistoryInput select:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
 /* ===== TAGS SECTION ===== */
 #profileForm .pet-tags-container {
   margin-top: 1rem;
@@ -415,31 +431,33 @@ Adjust in 5% increments for smooth changes.*/
   align-items: center;
   gap: 0.3rem;
   padding: 0.3rem 0.6rem;
-  background: var(--form-bg);
+  background: #fff8e1; /* Soft warm cream */
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid var(--input-border);
+  border: 1px solid #ffd54f; /* Light gold border */
+  color: #5d4037; /* Earthy brown text */
 }
 
 /* Hover State */
 #profileForm .tag:hover {
-  background: #583666;
-  border: 1px solid var(--input-border);
+  background: #ffb74d; /* Your accent color */
+  border: 1px solid #f57c00;
+  color: white;
   transform: translateY(-1px);
 }
 
 /* Selected State */
 #profileForm input[type="checkbox"]:checked + .tag {
-  background: var(--form-bg);
-  color: var(--primary-color);
-  border: 1px solid var(--input-border);
+  background: #ffb74d; /* Your accent color */
+  color: white;
+  border: 1px solid #f57c00;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* Focus State */
 #profileForm .tag:focus-within {
-  outline: 2px solid var(--input-border);
+  outline: 2px solid #ffb74d; /* Accent color for focus */
 }
 
 /* Checkbox Visually Hidden */
@@ -458,7 +476,8 @@ Adjust in 5% increments for smooth changes.*/
 
 #profileForm input[type="checkbox"]:checked + .tag .tag-icon {
   transform: scale(1.2);
-  background-color: var(--primary-color);
+  color: white; /* White icon when selected */
+  background-color: transparent; /* Remove background */
 }
 
 /* ===== EMERGENCY CONTACT ===== */
@@ -775,7 +794,7 @@ Adjust in 5% increments for smooth changes.*/
 .petCard .profile-reminder-section {
   margin: 0.5rem 0;      /* Reduced vertical margin (external spacing) */
   padding: 0.3rem;       /* Reduced padding (internal spacing) was 0.5 */
-  background-color: #c8c5d4;
+  background-color: #FFFFFF;  /* white background now */
   border-radius: 8px;
   border-left: 4px solid #d4bff9;
   border: 1.5px solid #101112;
