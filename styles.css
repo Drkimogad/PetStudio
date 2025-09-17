@@ -1811,46 +1811,7 @@ styled to show in petcard header plus nickname */
   opacity: 0.8;
 }
 
-/*========================================
-    Add to ALL theme classes ON PRTCARDS ADDED RECENTLY
-============================================*/
-.petCard[class*="theme-"] {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-  transition: all 0.3s ease !important;
-}
 
-/* Specific theme enhancements */
-.petCard.theme-minimal {
-  border-left: 4px solid #95a5a6 !important;
-}
-
-/* BALLOONS - Cream & Gold (Matches birthday cards) */
-.petCard.theme-balloons {
-  background: #fffaf0 !important; /* Elegant cream */
-  border: 2px solid #d4af37 !important; /* Gold border */
-  color: #8b4513 !important; /* Rich brown text */
-}
-
-/* PAWS - Keep existing green theme */
-.petCard.theme-paws {
-  background-image: repeating-linear-gradient(45deg, #e8f5e9, #e8f5e9 10px, #c8e6c9 10px, #c8e6c9 20px) !important;
-  border: 2px dotted #4caf50 !important;
-  color: #2e7d32 !important;
-}
-
-/* PARTY - Deep Green & Cream (Matches birthday cards) */
-.petCard.theme-party {
-  background: #f5f5dc !important; /* Soft beige/cream */
-  border: 2px solid #2e8b57 !important; /* Deep sea green */
-  color: #2e8b57 !important; /* Matching green text */
-}
-
-/* ELEGANT - Royal Purple & Silver (Matches birthday cards) */
-.petCard.theme-elegant {
-  background: #f8f8ff !important; /* Ghost white */
-  border: 2px solid #9370db !important; /* Medium purple */
-  color: #6a5acd !important; /* Slate blue text */
-}
 
 
 /* ====================
