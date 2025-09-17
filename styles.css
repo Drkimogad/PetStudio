@@ -1556,50 +1556,93 @@ styled to show in petcard header plus nickname */
   font-weight: 500;
 }
 
-/* Add Theme-Specific Styles (AFTER the .birthday-card rule):*/
-/* ===== BIRTHDAY CARD THEMES =====UPDATED WITH NEW COLOURS  */
+/* ===== BIRTHDAY CARD THEMES - SIMPLIFIED ===== */
 .birthday-card.theme-balloons {
-  background: #fffaf0; /* Elegant cream */
-  border: 2px solid #d4af37; /* Gold border */
-  color: #8b4513; /* Rich brown text */
-  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  color: #333333;
 }
 
 .birthday-card.theme-paws {
-  background: #e8f5e9;
-  border: 2px dotted #4caf50;
-  color: #2e7d32;
+  background: #fafafa;
+  border: 2px solid #e0e0e0;
+  color: #333333;
 }
 
 .birthday-card.theme-party {
-  background: #f5f5dc; /* Soft beige/cream */
-  border: 2px solid #2e8b57; /* Deep sea green */
-  color: #2e8b57; /* Matching green text */
-  box-shadow: 0 4px 15px rgba(46, 139, 87, 0.3);
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  color: #333333;
 }
 
 .birthday-card.theme-elegant {
-  background: #f8f8ff; /* Ghost white - elegant light background */
-  border: 2px solid #9370db; /* Medium purple */
-  color: #6a5acd; /* Slate blue text */
-  box-shadow: 0 4px 12px rgba(147, 112, 219, 0.25);
+  background: #f8f8f8;
+  border: 2px solid #d0d0d0;
+  color: #333333;
+  font-family: 'Georgia', serif;
 }
 
 .birthday-card.theme-minimal {
   background: #ffffff;
-  border: 1px solid #bdbdbd;
-  color: #212121;
+  border: 1px solid #e0e0e0;
+  color: #333333;
 }
 
-/* Theme-specific text colors for header/footer */
-.birthday-card.theme-minimal .birthday-header,
-.birthday-card.theme-minimal .birthday-footer {
-  color: #212121;
+/* ===== PET CARD THEMES - MATCHING SIMPLIFIED STYLES ===== */
+.petCard.theme-balloons {
+  background: #ffffff !important;
+  border: 2px solid #e0e0e0 !important;
+  color: #333333 !important;
 }
 
-.birthday-card.theme-balloons .birthday-header,
-.birthday-card.theme-balloons .birthday-footer {
-  color: #d32f2f;
+.petCard.theme-paws {
+  background: #fafafa !important;
+  border: 2px solid #e0e0e0 !important;
+  color: #333333 !important;
+}
+
+.petCard.theme-party {
+  background: #ffffff !important;
+  border: 2px solid #e0e0e0 !important;
+  color: #333333 !important;
+}
+
+.petCard.theme-elegant {
+  background: #f8f8f8 !important;
+  border: 2px solid #d0d0d0 !important;
+  color: #333333 !important;
+}
+
+.petCard.theme-minimal {
+  background: #ffffff !important;
+  border: 1px solid #e0e0e0 !important;
+  color: #333333 !important;
+}
+
+/* ===== MINI PREVIEW THEMES - SIMPLIFIED ===== */
+.balloons-mini {
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+}
+
+.paws-mini {
+  background: #fafafa;
+  border: 2px solid #e0e0e0;
+}
+
+.party-mini {
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+}
+
+.elegant-mini {
+  background: #f8f8f8;
+  border: 2px solid #d0d0d0;
+}
+
+.minimal-mini {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
 }
 
 /*====================================*/
@@ -1693,12 +1736,7 @@ styled to show in petcard header plus nickname */
   pointer-events: all;
 }
 
-
-
-/*============================================*/
-/* =Theme/Templates-Specific Styles 5= */ NEEDS UPDATING!!!!
-/*===========================================*/
-/* Theme Selection */
+/* ===== THEME SELECTION STYLES ===== */
 .theme-selection {
   margin: 1.5rem 0;
 }
@@ -1707,6 +1745,7 @@ styled to show in petcard header plus nickname */
   display: flex;
   gap: 15px;
   margin-top: 8px;
+  flex-wrap: wrap;
 }
 
 .theme-option {
@@ -1714,134 +1753,39 @@ styled to show in petcard header plus nickname */
   flex-direction: column;
   align-items: center;
   cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
 }
-.theme-icon {
-  position: absolute;
-  z-index: 2;
-  color: #fff;
-  text-shadow: 0 0 2px black;
-  pointer-events: none;
+
+.theme-option:hover {
+  background-color: #f5f5f5;
 }
 
 .theme-preview {
-  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  font-weight: bold;
-  color: white; /* adjust per theme */
-}
-.theme-preview.selected-theme {
-  outline: 3px solid #3498db;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-
-/* Mini Preview Thumbnails for Additional Themes */
-.minimal-mini {
-  background: #ffffff;
-  border: 1px solid #ddd;
-}
-
-/* UPDATED: Party mini preview to match new green theme */
-.party-mini {
-  background: #f5f5dc; /* Soft beige/cream */
-  border: 2px solid #2e8b57; /* Deep sea green */
-}
-
-/* UPDATED: Elegant mini preview to match new purple theme */
-.elegant-mini {
-  background: #f8f8ff; /* Ghost white */
-  border: 2px solid #9370db; /* Medium purple */
+  font-size: 1.5rem;
+  transition: transform 0.2s ease;
 }
 
 .theme-option input:checked + .theme-preview {
-  border-color: #6a5acd;
+  transform: scale(1.1);
+  outline: 2px solid #3498db;
 }
 
-/* 1. Balloons - UPDATED to match new cream & gold theme */
-.balloons {
-  background: #fffaf0; /* Elegant cream */
-  color: #8b4513; /* Rich brown text */
-  border: 2px solid #d4af37; /* Gold border */
+.theme-option span:last-child {
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
 }
 
-.balloons .banner {
-  font-size: 1.5em;
-  margin-bottom: 15px;
-}
 
-/* UPDATED: Balloons mini preview */
-.balloons-mini {
-  background: #fffaf0; /* Elegant cream */
-  border: 2px solid #d4af37; /* Gold border */
-}
-
-/* 2. Paw Prints - Keep existing (looks good) */
-.paws {
-  background: #fa895c;
-  color: #5a4a6a;
-  border: 2px solid #6a5acd;
-}
-
-.paws .paw-decoration {
-  letter-spacing: 5px;
-  margin-top: 10px;
-}
-.paws-mini {
-  background: #fff8e6 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,50 Q50,30 70,50 Q50,70 30,50 Z" fill="%236a5acd"/></svg>');
-  background-size: 20px;
-}
-
-/* 3. Minimalist - Keep existing */
-.minimal {
-  background: white;
-  color: #a3a09e;
-  border: 1px solid #ddd;
-}
-
-.minimal .pet-name {
-  text-decoration: underline;
-}
-
-/* 4. Party Theme - UPDATED to match new green theme */
-.party {
-  background: #f5f5dc; /* Soft beige/cream */
-  color: #2e8b57; /* Deep sea green text */
-  border: 2px solid #2e8b57; /* Deep sea green border */
-}
-
-.party .confetti {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2" fill="%232e8b57"/><rect x="8" y="8" width="4" height="4" fill="%23d4af37" opacity="0.7"/></svg>');
-  opacity: 0.3;
-  z-index: 0;
-}
-
-/* 5. Elegant - UPDATED to match new purple theme */
-.elegant {
-  background: #f8f8ff; /* Ghost white */
-  color: #6a5acd; /* Slate blue text */
-  border: 2px solid #9370db; /* Medium purple border */
-  font-family: 'Georgia', serif;
-}
-
-.elegant .banner {
-  font-size: 1.8em;
-  letter-spacing: 1px;
-  margin-bottom: 10px;
-}
-
-.elegant .signature {
-  font-style: italic;
-  margin-top: 15px;
-}
 
 
 /*=================================
@@ -1907,34 +1851,6 @@ styled to show in petcard header plus nickname */
   border: 2px solid #9370db !important; /* Medium purple */
   color: #6a5acd !important; /* Slate blue text */
 }
-
-/* === ADDED LATELY FOR PETCARD THEMES AND IMPORTANT TO OVERRIDE ANY PREVIOUS CONFLICTING RULES*/
-/* ===== THEME STYLES FOR PET CARDS ===== */
-/*.petCard.theme-balloons {
-  border: 2px dashed #f44336 !important;
-  background-color: #ffebee !important;
-}
-
-.petCard.theme-paws {
-  border: 2px dotted #4caf50 !important;
-  background-color: #e8f5e9 !important;
-}
-
-.petCard.theme-party {
-  border: 2px solid #ff9800 !important;
-  background-color: #fff3e0 !important;
-}
-
-.petCard.theme-elegant {
-  border: 1px solid #9c27b0 !important;
-  background-color: #f3e5f5 !important;
-}
-
-.petCard.theme-minimal {
-  border: 1px solid #bdbdbd !important;
-  background-color: #ffffff !important;
-}*/
-
 
 
 /* ====================
