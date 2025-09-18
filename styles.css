@@ -683,7 +683,7 @@ Adjust in 5% increments for smooth changes.*/
   }
 }
 
-/*sorted out*/
+/*Updated*/
 
 /* ====================
    RENDERED PETCARD ALL STYLES  
@@ -715,352 +715,321 @@ Adjust in 5% increments for smooth changes.*/
 /* 1. PET CARD HEADER STYLES */
 /* petCard header INCLUDING HEADER, NICKNAME AND COUNTDOWN BADGE */
 /* ============================= */
+/* ===== PET CARD CONTAINER ===== */
+.petCard {
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem auto;
+  width: 90%;
+  max-width: 1000px;
+  position: relative;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  overflow: hidden;
+  background: white;
+  border: 2px solid var(--input-border);
+}
+
+.petCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(94, 64, 55, 0.15);
+}
+
+/* ===== PET CARD HEADER ===== */
 .petCard-header {
-  position: relative; /* Essential for absolute children */
-  min-height: 150px;
+  position: relative;
+  min-height: 140px;
   background-size: cover;
   background-position: center;
   border-radius: 10px 10px 0 0;
-  padding: 20px;
+  padding: 1.5rem;
+  margin: -1.5rem -1.5rem 1rem -1.5rem;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #a1887f 100%);
 }
 
 .petCard-header-content {
   position: relative;
   z-index: 2;
 }
-/* h3 + nickname in same div in petcard header*/
+
 .petCard-header h3 {
-  margin: 5px 0;
-  color: #2c2730;
-  text-align: left;
-  font-size: 1.5rem;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+  margin: 0 0 0.3rem 0;
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Fixed nickname selector */
 .petCard-header .nickname {
-  margin: 0 0 8px 0;
+  margin: 0 0 1rem 0;
   font-style: italic;
-  color: #4a4a4a;
-  text-align: left;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* Countdown badge - now properly positioned IN ITS OWN DIV IN THE HEADER */
 .petCard-header .countdown-badge {
   position: absolute;
-  right: 20px;
-  top: 20px;
-  background: rgba(255,255,255,0.9);
-  padding: 4px 12px;
-  border-radius: 12px;
+  right: 1.5rem;
+  top: 1.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
   font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: var(--transition);
 }
 
-/* Optional hover effect */
 .petCard-header .countdown-badge:hover {
   transform: scale(1.05);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+/* ===== CARD CONTENT LAYOUT ===== */
+.petCard-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  margin: 1rem 0;
 }
 
-/* ====================== */
-/* 2.IMAGE AND GALLERY RULES */
-/* ====================== */
-/* Failsafe for invalid images implemented recently*/
-.petCard img {
-  background: #f5f5f5;
-  border: 1px dashed #ccc;
+@media (max-width: 768px) {
+  .petCard-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
 }
-.petCard img[src=""] {
-  visibility: hidden;
+
+/* ===== PET INFO SECTION ===== */
+.petCard .pet-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1rem;
+  background: rgba(255, 183, 77, 0.05);
+  border-radius: 10px;
+  border: 1px solid var(--input-border);
 }
-/* ====================
-   GALLERY STYLES
-==================== */
-/* Gallery grid adjustments */
+
+.petCard .pet-age-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  background: rgba(106, 90, 205, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid var(--accent-color);
+  margin: 0.5rem 0;
+}
+
+.petCard .pet-age-display strong {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.petCard .pet-age-display .fa-dog {
+  color: var(--primary-color);
+}
+
+.petCard .pet-age-display .fa-birthday-cake {
+  color: #ff6b6b;
+}
+
+/* ===== BIRTHDAY REMINDER ===== */
+.petCard .profile-reminder-section {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(212, 191, 249, 0.1);
+  border-radius: 10px;
+  border: 2px solid #d4bff9;
+  box-shadow: 0 2px 8px rgba(148, 108, 230, 0.1);
+}
+
+.petCard .profile-reminder {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #7e5bef;
+  font-weight: 500;
+}
+
+.petCard .profile-reminder .fas {
+  color: #9c7df5;
+  font-size: 1.1rem;
+}
+
+/* ===== GALLERY STYLES ===== */
 .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
 }
 
 .gallery-item {
-    position: relative;
-    max-width: 100%;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+}
+
+.gallery-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .gallery-item img {
-    width: 100%;
-    height: auto;
-    max-height: 300px; /* Increased max height */
-    object-fit: contain; /* Ensure full visibility */
-    display: block;
-    opacity: 1; /* Remove fade-in for immediate visibility */
-    border-radius: 6px;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px;
 }
 
-/* ==================== */
-/* 3. TAGS SECTION - RENDERED PETCARDS*/
-/* using font awesome */
-/* ==================== */
+/* ===== TAGS SECTION ===== */
 .tags-container {
-  margin: 10px 0;
+  margin: 1rem 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 0.8rem;
 }
 
 .tag-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  background: #bfb1c9;
-  font-size: 0.9em;
-  transition: all 0.2s;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: rgba(255, 183, 77, 0.15);
+  border: 2px solid var(--accent-color);
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-color);
+  transition: var(--transition);
 }
 
 .tag-pill:hover {
-  background: #e0e0e0;
+  background: var(--accent-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 183, 77, 0.3);
 }
 
-/* Font Awesome icons */
-.tag-pill i {
-  font-size: 0.9em;
-}
-
-/* Specific icon mappings for tags */
-.tag-pill[data-tag="Adventure"] i { font-family: 'Font Awesome 6 Free'; font-weight: 900; content: "\f6ec"; } /* fa-hiking */
-.tag-pill[data-tag="Cuddly"] i { font-family: 'Font Awesome 6 Free'; font-weight: 900; content: "\f004"; } /* fa-heart */
-.tag-pill[data-tag="Playful"] i { font-family: 'Font Awesome 6 Free'; font-weight: 900; content: "\f45d"; } /* fa-table-tennis */
-.tag-pill[data-tag="Foodie"] i { font-family: 'Font Awesome 6 Free'; font-weight: 900; content: "\f2e7"; } /* fa-utensils */
-.tag-pill[data-tag="Athletic"] i { font-family: 'Font Awesome 6 Free'; font-weight: 900; content: "\f70c"; } /* fa-running */
-
-/* Helper text (if used in petcards) */
-.tags-container small {
-  display: block;
-  color: #666;
-  font-size: 0.8em;
-  margin-top: 5px;
-  width: 100%;
-}
-
-
-/*=============================*/
-/* 4. Pet info section inside generated petcard- left aligned*/
-/*Includes breed, DOF, upcoming reminer,AGE DISPLAY */
-/*=======================================*/
-.petCard .pet-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-    width: 100%;
-    gap: 3px; /* Uniform gap between all elements it was 6*/
-    padding: 0; /* Remove any default padding */
-    margin: 0 0 5px 0; /* Reduced bottom margin */
-}
-
-/* Age display section */
-.petCard .pet-age-display {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin: 4px 0; /* Reduced top/bottom margin */
-    font-size: 0.9rem;
-    padding: 0;
-}
-
-.petCard .pet-age-display strong {
-    color: #6a5acd;
-}
-
-.petCard .pet-age-display .fa-dog { 
-    color: #6a5acd; 
-}
-.petCard .pet-age-display .fa-birthday-cake { 
-    color: #ff6b6b; 
-}
-
-/* Ensure all child elements are properly aligned */
-.petCard .pet-info > * {
-    margin: 0;
-    padding: 0;
-    text-align: left;
-    align-self: flex-start;
-}
-
-/*=======================*/
-/* 6. BIRTHDAY REMINDER */
-/*========================*/
-.petCard .profile-reminder-section {
-  margin: 0.5rem 0;      /* Reduced vertical margin (external spacing) */
-  padding: 0.3rem;       /* Reduced padding (internal spacing) was 0.5 */
-  background-color: #FFFFFF;  /* white background now */
-  border-radius: 8px;
-  border-left: 4px solid #d4bff9;
-  border: 1.5px solid #101112;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.petCard .profile-reminder {
-  text-align: left;
-  display: flex;
-  align-items: center;
-  margin: 0.3rem 0;      /* Reduced vertical spacing between lines */
-  gap: 6px;              /* Tighter gap between items */
-  font-size: 0.9em;
-  color: #7e5bef; /* More readable purple instead of bright red */
-  font-weight: 500;
-}
-
-/* Optional icon styling */
-.petCard .profile-reminder .fas {
-  color: #9c7df5; /* Matching purple for icons */
-  font-size: 1em;
-}
-
-/*====================*/
-/* 7. EMERGENCY INFO */
-/*=====================*/
-/* Emergency Contact Section - inline appearance */
+/* ===== EMERGENCY INFO ===== */
 .emergency-contact-section {
-  margin: 5px 0;
-  padding: 2px; /*to be revisited*/
-  background: none;
-  border: none;
-  border-radius: 0;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(220, 53, 69, 0.05);
+  border-radius: 10px;
+  border: 2px solid #e57373;
 }
 
 .emergency-contact-section h3 {
-  margin-top: 1px;
   color: #dc3545;
-  font-size: 1.1em;
-  display: inline;
-  font-weight: bold;
-}
-
-.emergency-info {
-  margin-top: 1px;
-  padding: 0;
-  background: none;
-  border: none;
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  border-bottom: 2px solid #f8d7da;
+  padding-bottom: 0.5rem;
 }
 
 .emergency-info h4 {
-  margin: 1px;
   color: #dc3545;
-  font-size: 1em;
-  font-weight: bold;
-  display: inline;
+  font-size: 1rem;
+  margin: 0.5rem 0 0.3rem 0;
+  font-weight: 600;
 }
 
 .emergency-info p {
-  margin: 0 0 5px 0;
-  font-size: 0.9em;
-  display: inline;
+  margin: 0 0 0.8rem 0;
+  font-size: 0.95rem;
+  color: var(--text-color);
 }
 
-/*==================*/
-/*8. MOOD TRACKER */
-*/====================*/
+/* ===== MOOD TRACKER ===== */
 .mood-btn-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 5px; /* test it */
+  gap: 0.8rem;
+  margin: 1rem 0;
   justify-content: center;
 }
 
 .mood-btn {
-  font-size: 1.5rem;
-  padding: 8px 12px;
-  border: 2px solid transparent;
-  background-color: #f4f4f4;
-  border-radius: 8px;
+  font-size: 1.8rem;
+  padding: 0.8rem;
+  border: 2px solid var(--input-border);
+  background-color: white;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: var(--transition);
 }
 
 .mood-btn:hover,
 .mood-btn.active {
-  border-color: #6a1b9a;
-  background-color: #e9d5ff;
+  border-color: var(--accent-color);
+  background-color: rgba(255, 183, 77, 0.1);
+  transform: scale(1.1);
 }
 
-/* Shows mood history as a timeline */
 .mood-history {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 12px;
-  max-height: 120px;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  max-height: 150px;
   overflow-y: auto;
-  padding: 8px;
-  background: #f8f8f8;
-  border-radius: 8px;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 1px solid var(--input-border);
 }
 
 .mood-entry {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px;
+  gap: 0.8rem;
+  padding: 0.8rem;
   background: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-/*==================*/
-/* 9. NOTES SECTION */
-/*==================*/
-/* Notes Section - inline appearance */
+/* ===== NOTES SECTION ===== */
 .petCard .pet-notes {
   width: 100%;
-  text-align: left;
-  padding: 2px; /* was 0 */
-  margin: 2px; /* wasn't there*/
-  border: none;
-  border-radius: 0;
-  font-family: inherit;
-  resize: none; /* Disable resize if you want it to appear seamless */
-  background: none;
-  font-size: 0.9em;
-}
-
-.pet-notes {
-  margin-top: 0;
-  padding: 0;
-  background: none;
-  text-align: left;
-  border-radius: 0;
-  font-size: 0.9em;
+  padding: 1rem;
+  margin: 1rem 0;
+  background: rgba(248, 249, 250, 0.8);
+  border-radius: 10px;
+  border: 1px solid var(--input-border);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-color);
 }
 
 .pet-notes p {
   margin: 0;
-   text-align: left;
+  text-align: left;
   white-space: pre-line;
 }
-
-/*=================================*/
-/* 10. Action buttons container==== */
-/*=================================*/
+/* ===== ACTION BUTTONS ===== */
 .petCard .actions {
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    margin-top: 20px;
-    gap: 10px;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--input-border);
 }
 
-/* Base button styles (applies to ALL buttons) */
 .petCard .actions button,
 .celebrate-btn,
 .collage-btn,
@@ -1068,19 +1037,23 @@ Adjust in 5% increments for smooth changes.*/
 .share-profile,
 .generate-qr,
 .edit-profile {
-    flex: 0 1 auto;
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    border: 1px solid #808080;
-    border-radius: 10px;
-    min-width: 120px;
-    background: #ffffff;
-    color: #000000;
-    cursor: pointer;
-    transition: all 0.3s;
+  flex: 0 1 auto;
+  padding: 0.8rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 2px solid var(--input-border);
+  border-radius: 10px;
+  min-width: 140px;
+  background: white;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-/* Hover state for ALL buttons */
 .petCard .actions button:hover,
 .celebrate-btn:hover,
 .collage-btn:hover,
@@ -1088,28 +1061,31 @@ Adjust in 5% increments for smooth changes.*/
 .share-profile:hover,
 .generate-qr:hover,
 .edit-profile:hover {
-    background-color: #ffffff;
-    border-color: #808080;
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 183, 77, 0.3);
 }
 
-/* Delete button overrides (comes AFTER) */
 .delete-profile {
-     flex: 0 1 auto;
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    border: 1px solid #e74c3c !important; /* Only needed for border */
-    border-radius: 10px;
-    min-width: 120px;
-    background: #ffffff;
-    color: #e74c3c;
-    cursor: pointer;
-    transition: all 0.3s;
+  border: 2px solid #e74c3c !important;
+  color: #e74c3c;
+  background: white;
 }
 
 .delete-profile:hover {
-    background-color: #ffffff;
-    border-color: #e74c3c; 
+  background: #e74c3c !important;
+  color: white !important;
+  border-color: #e74c3c !important;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
+
+
+
+
+
+
 
 /*=======================*/
 /* ===GALLERY PREVIEW CONTROLS IN FORMEDIT AND FORM CREATE WITH COVER BTN AND X REMOVE  ===== */
