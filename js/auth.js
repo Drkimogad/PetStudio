@@ -39,6 +39,8 @@ function showLoader(show, messageType = "loading", customMessage = "") {
   
   if (show) {
     console.log(`🔧 Showing loader with type: ${messageType}`);
+        // 🔥 ADD THIS: Prevent body scrolling
+    document.body.classList.add('loader-active');
     loader.style.display = 'block';
     
     // Try Lottie first, fallback to CSS
@@ -50,6 +52,8 @@ function showLoader(show, messageType = "loading", customMessage = "") {
     }
     
   } else {
+    // 🔥 ADD THIS: Re-enable body scrolling
+    document.body.classList.remove('loader-active');
     console.log(`🔧 Hiding loader. Current state:`, {
       loaderDisplay: loader.style.display,
       messageType
