@@ -50,6 +50,9 @@
   <link rel="preconnect" href="https://accounts.google.com">
   <link rel="preconnect" href="https://apis.google.com">
   <link rel="preload" href="https://accounts.google.com/gsi/client" as="script">
+
+	<!-- Google Sign-In library has to be loaded and can;t be hosted locally  -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>	
 	
   <script>
     window.handleScriptError = (error) => {
@@ -63,7 +66,6 @@
     };
   </script>
 
-	  	    <!-- Google Sign-In library has to be loaded and can;t be hosted locally  -->
 
       <script>
     window.onload = function() {
@@ -85,17 +87,19 @@
     	console.log("Google ID Token", response.credential);
     	// You can pass this to Firebase auth if using signInWithCredential
     }    
+	// Initialize when everything is ready
+  document.addEventListener('DOMContentLoaded', initializeGoogleSignIn);
   </script>
 
 	  <!-- Local Scripts -->
-  <script src="./js/libs/firebase-app-compat.js"></script>
-  <script src="./js/libs/firebase-auth-compat.js"></script>
-  <script src="./js/libs/firebase-firestore-compat.js"></script>
+  <script src="./js/lib/firebase-app-compat.js"></script>
+  <script src="./js/lib/firebase-auth-compat.js"></script>
+  <script src="./js/lib/firebase-firestore-compat.js"></script>
   <script src="./js/lib/firebase-functions-compat.js"></script>
-  <script src="./js/libs/cloudinary-core-shrinkwrap.min.js"></script>
-  <script src="./js/libs/lottie-player.js"></script>
-  <script src="./js/libs/html2canvas.min.js"></script>
-  <script src="./js/libs/qrcode.min.js"></script>
+  <script src="./js/lib/cloudinary-core-shrinkwrap.min.js"></script>
+  <script src="./js/lib/lottie-player.js"></script>
+  <script src="./js/lib/html2canvas.min.js"></script>
+  <script src="./js/lib/qrcode.min.js"></script>
 	
  
   <!-- Add this in your <head> to use Font Awesome icons -->
