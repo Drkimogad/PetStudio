@@ -1092,17 +1092,14 @@ function cancelEdit() {
 //==========≈==============
 // 🛑  UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
 // DELET CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER
-//=========================
-//==========≈==============
-// 🛑  UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
-// DELETE CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER
-//=========================
+//=====================================================
 async function deleteProfile(index) {
-  // 1. Enhanced Confirmation UI with custom modal approach
-  if (!await showDeleteConfirmation(petProfiles[index]?.name)) return;
+  // 1. Enhanced Confirmation UI
+  if (!confirm(`Permanently delete ${petProfiles[index]?.name}'s profile?\nThis cannot be undone!`)) return;
 
   try {
-    showLoader(true, "loading", "Deleting profile...");
+    // Show deleting message with custom text
+    showLoader(true, "deleting", "Deleting profile...");
     
     const profile = petProfiles[index];
     if (!profile) throw new Error("Profile not found");
@@ -1145,9 +1142,9 @@ async function deleteProfile(index) {
     const [deletedProfile] = petProfiles.splice(index, 1);
     localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
-    // 5. UI Feedback with loader success message
+    // 5. UI Feedback with custom success message
     showLoader(false, "success", `Successfully deleted ${deletedProfile.name}'s profile!`);
-    
+
     // 6. Update UI after a brief delay to show success message
     setTimeout(() => {
       loadSavedProfiles();
@@ -1155,6 +1152,7 @@ async function deleteProfile(index) {
 
   } catch (error) {
     console.error("Critical deletion error:", error);
+    // Show error with custom message
     showLoader(false, "error", "Deletion failed - please try again");
   }
 }
