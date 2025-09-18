@@ -1,5 +1,5 @@
 // service-worker.js - Optimized Version
-const VERSION = '4.2.0';
+const VERSION = '4.2.1';
 const CACHE = {
   CORE: `PetStudio-core-v${VERSION}`,
   API: `PetStudio-api-v${VERSION}`,
@@ -17,23 +17,34 @@ const CORE_ASSETS = [
   '/PetStudio/js/auth.js',
   '/PetStudio/js/utils.js',
   '/PetStudio/js/dashboard.js',
-  '/PetStudio/manifest.json',
+  
+  '/PetStudio/privacy.html',
+  '/PetStudio/terms.html',
+
+  '/PetStudio/js/lottie/SnoopyDog.json',
+
   '/PetStudio/icons/icon-192x192.png',
   '/PetStudio/icons/icon-512x512.png',
+  '/PetStudio/favicon.ico',
+  
+  '/PetStudio/manifest.json',
+  
+  '/PetStudio/static/css/webfonts/fa-brands-400.woff2',
+  '/PetStudio/static/css/webfonts/fa-solid-900.woff2',
+  '/PetStudio/static/css/all.min.css',
+  
+  '/PetStudio/js/libs/firebase-app-compat.js',
+  '/PetStudio/js/libs/firebase-auth-compat.js',
+  '/PetStudio/js/libs/firebase-firestore-compat.js',
+  '/PetStudio/js/libs/cloudinary-core-shrinkwrap.min.js',
+  '/PetStudio/js/libs/lottie-player.js',
+  '/PetStudio/js/libs/html2canvas.min.js',
+  '/PetStudio/js/libs/qrcode.min.js',
+  
   OFFLINE_URL,
   FALLBACK_IMAGE
 ];
 
-// External dependencies that should be cached
-const EXTERNAL_DEPS = [
-  'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js',
-  'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js',
-  'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js',
-  'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js',
-  'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js',
-  'https://apis.google.com/js/api.js',
-  'https://accounts.google.com/gsi/client'
-];
 
 const FONT_SOURCES = [
   'https://fonts.gstatic.com',
@@ -202,3 +213,4 @@ self.addEventListener('message', event => {
     self.clients.claim();
   }
 });
+
