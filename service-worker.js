@@ -11,40 +11,37 @@ const OFFLINE_URL = '/PetStudio/offline.html';
 const FALLBACK_IMAGE = '/PetStudio/banner/image.png';
 
 const CORE_ASSETS = [
-  '/PetStudio/',
-  '/PetStudio/index.html',
-  '/PetStudio/styles.css',
-  '/PetStudio/js/auth.js',
-  '/PetStudio/js/utils.js',
-  '/PetStudio/js/dashboard.js',
+  '.',
+  'index.html',
+  'offline.html',
+  'js/auth.js',
+  'js/utils.js',
+  'js/dashboard.js',
+  'styles.css',
+  'manifest.json',
+  'icons/icon-192x192.png',
+  'icons/icon-512x512.png',
+  'favicon.ico',
+  'banner/image.png',
+  'privacy.html',
+  'terms.html',
+    
+  'static/css/webfonts/fa-brands-400.woff2',
+  'static/css/webfonts/fa-solid-900.woff2',
+  'static/css/all.min.css',
   
-  '/PetStudio/privacy.html',
-  '/PetStudio/terms.html',
-
-  '/PetStudio/js/lottie/SnoopyDog.json',
-
-  '/PetStudio/icons/icon-192x192.png',
-  '/PetStudio/icons/icon-512x512.png',
-  '/PetStudio/favicon.ico',
-  
-  '/PetStudio/manifest.json',
-  
-  '/PetStudio/static/css/webfonts/fa-brands-400.woff2',
-  '/PetStudio/static/css/webfonts/fa-solid-900.woff2',
-  '/PetStudio/static/css/all.min.css',
-  
-  '/PetStudio/js/libs/firebase-app-compat.js',
-  '/PetStudio/js/libs/firebase-auth-compat.js',
-  '/PetStudio/js/libs/firebase-firestore-compat.js',
-  '/PetStudio/js/libs/cloudinary-core-shrinkwrap.min.js',
-  '/PetStudio/js/libs/lottie-player.js',
-  '/PetStudio/js/libs/html2canvas.min.js',
-  '/PetStudio/js/libs/qrcode.min.js',
+  'js/libs/firebase-app-compat.js',
+  'js/libs/firebase-auth-compat.js',
+  'js/libs/firebase-firestore-compat.js',
+  'js/lib/firebase-functions-compat.js',
+  'js/libs/cloudinary-core-shrinkwrap.min.js',
+  'js/libs/lottie-player.js',
+  'js/libs/html2canvas.min.js',
+  'js/libs/qrcode.min.js',
   
   OFFLINE_URL,
   FALLBACK_IMAGE
 ];
-
 
 const FONT_SOURCES = [
   'https://fonts.gstatic.com',
@@ -63,20 +60,35 @@ const NO_CACHE_PATHS = [
   /\/token$/
 ];
 
-// Installation: precache core assets
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE.CORE)
-      .then(cache => {
-        return Promise.all([
-          cache.addAll(CORE_ASSETS),
-          cache.addAll(EXTERNAL_DEPS.map(url => new Request(url, { cache: 'reload' })))
-        ]).catch(err => {
-          console.log('Failed to cache:', err);
-        });
-      })
-      .then(() => self.skipWaiting())
-  );
+// ======== INSTALL ========
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+
+// Inside your 'install' event
+event.waitUntil(
+  (async () => {
+    // 1️⃣ Cache local assets
+    const cache = await caches.open(CACHE_NAME);
+    await cache.addAll(urlsToCache.map(url => new Request(url, { mode: 'same-origin' })));
+
+    // 2️⃣ Cache external libraries safely
+    const externalCache = await caches.open(OFFLINE_CACHE);
+    const externalLibs = [
+      'https://apis.google.com/js/api.js',
+      // Add other external libraries here
+    ];
+
+    for (const url of externalLibs) {
+      try {
+        await externalCache.add(new Request(url, { mode: 'no-cors', credentials: 'omit' }));
+      } catch (err) {
+        console.warn(`⚠️ Could not cache external library: ${url}`, err);
+      }
+    }
+
+    console.log('✅ Installation completed with local + external libraries');
+  })().catch(err => console.error('❌ Installation failed:', err))
+);
 });
 
 // Activation: clean up old caches
@@ -91,126 +103,144 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch handler with improved error handling
-self.addEventListener('fetch', event => {
-  const { request } = event;
+//========================================================================================================================
+//INITIALIZE FIREBASE AFTER ALL LIBRARIES HAVE BEEN CACHED AND SW INSTALLATION COMPLETED OTHERWISE IT WILL GET STUCK
+//========================================================================================================================
+importScripts('./js/lib/firebase-app-compat.js');
+importScripts('./js/lib/firebase-firestore-compat.js');
+// Initialize Firebase in Service Worker
+  const firebaseConfig = {
+    apiKey: "AIzaSyAnGNXr6JZHgCcHp5xKtGuIsTGaMRqZ6oM", // for firebase services auth/firestore safe if restricted
+    authDomain: "petstudio-c3679.firebaseapp.com",
+    projectId: "petstudio-c3679",  // for firestore database
+    storageBucket: "petstudio-c3679.appspot.com",
+    messagingSenderId: "1031214975391",
+    appId: "1:1031214975391:web:35878cabdd540b6fc455aa",
+    measurementId: "G-0GK7ZCV5VS"
+  };
+
+// Initialize Firebase
+// Wait a moment for files to load, then initialize
+setTimeout(() => {
+  if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+    console.log('✅ Firebase initialized in Service Worker');
+  } else if (typeof firebase !== 'undefined') {
+    console.log('✅ Firebase already available in Service Worker');
+  } else {
+    console.warn('⚠️ Firebase not loaded in Service Worker');
+  }
+}, 100);
+
+
+
+
+
+// ======== FETCH HANDLER ========
+self.addEventListener('fetch', (event) => {
+  const request = event.request;
   const url = new URL(request.url);
 
-  // Skip non-GET requests and chrome-extension
-  if (request.method !== 'GET' || url.protocol === 'chrome-extension:') {
-    return;
-  }
+  // Skip non-GET and browser extensions
+  if (request.method !== 'GET' || url.protocol === 'chrome-extension:') return;
 
-  // Skip caching for critical auth paths
-  if (NO_CACHE_PATHS.some(rx => rx.test(url.pathname))) {
-    return event.respondWith(fetch(request));
-  }
-
-  // Navigation requests
-  if (request.mode === 'navigate') {
-    return event.respondWith(
-      networkFirstWithOfflineFallback(request)
-    );
-  }
-
-  // API requests
-  if (DYNAMIC_PATHS.some(rx => rx.test(url.pathname))) {
-    return event.respondWith(
-      staleWhileRevalidate(request, CACHE.API)
-    );
-  }
-
-  // Font requests
-  if (FONT_SOURCES.includes(url.origin) && request.destination === 'font') {
-    return event.respondWith(
-      cacheFirst(request, CACHE.FONTS)
-    );
-  }
-
-  // Image requests
-  if (request.destination === 'image') {
-    return event.respondWith(
-      cacheFirstWithFallback(request, CACHE.IMAGES, FALLBACK_IMAGE)
-    );
-  }
-
-  // Default: cache first for core assets
+// Navigation requests (pages)
+if (request.mode === 'navigate') {
   event.respondWith(
-    cacheFirst(request, CACHE.CORE)
+    (async () => {
+      try {
+        // ✅ ALWAYS TRY NETWORK FIRST
+        const networkResponse = await fetch(request);
+        return networkResponse;
+      } catch (err) {
+        // ✅ NETWORK FAILED - CHECK IF OFFLINE
+        if (!navigator.onLine) {
+          // ✅ TRULY OFFLINE - SERVE OFFLINE.HTML
+          return await caches.match('offline.html');
+        } else {
+          // ✅ ONLINE BUT NETWORK FAILED - SERVE INDEX.HTML
+          return await caches.match('index.html');
+        }
+      }
+    })()
+  );
+  return;
+}
+
+  // Firestore API offline response
+// For external CDN libs (stale-while-revalidate)
+if (url.origin.includes('googleapis.com') || url.href.includes('apis.google.com/js/api.js')) {
+  event.respondWith(
+    (async () => {
+      const cache = await caches.open(OFFLINE_CACHE);
+
+      // 1️⃣ Check if cached
+      const cachedResponse = await cache.match(request);
+      const networkFetch = fetch(request)
+        .then(response => {
+          if (response && response.status === 200) {
+            cache.put(request, response.clone()); // 2️⃣ Update cache silently
+          }
+          return response;
+        })
+        .catch(() => null);
+
+      // 3️⃣ Serve cached first, fallback to network if not cached
+      return cachedResponse || (await networkFetch) || Response.error();
+    })()
+  );
+  return;
+}
+
+
+  // Static assets: cache first
+  event.respondWith(
+    (async () => {
+      const cachedResponse = await caches.match(request);
+      if (cachedResponse) return cachedResponse;
+
+      try {
+        const networkResponse = await fetch(request);
+        if (networkResponse && networkResponse.status === 200) {
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(request, networkResponse.clone());
+        }
+        return networkResponse;
+      } catch (err) {
+        if (request.destination === 'image') {
+          return await caches.match('icons/icon-192x192.png') || Response.error();
+        }
+        return Response.error();
+      }
+    })()
   );
 });
 
-// Improved network-first strategy with offline fallback
-async function networkFirstWithOfflineFallback(request) {
-  try {
-    const response = await fetch(request);
-    if (response && response.ok) {
-      const cache = await caches.open(CACHE.CORE);
-      cache.put(request, response.clone());
-      return response;
-    }
-    throw new Error('Network response not ok');
-  } catch (err) {
-    const cache = await caches.open(CACHE.CORE);
-    const cached = await cache.match(request) || cache.match(OFFLINE_URL);
-    return cached || Response.error();
-  }
-}
-
-// Stale-while-revalidate strategy for API calls
-async function staleWhileRevalidate(request, cacheName) {
-  const cache = await caches.open(cacheName);
-  const cachedResponse = await cache.match(request);
-  
-  const fetchPromise = fetch(request).then(networkResponse => {
-    if (networkResponse.ok) {
-      cache.put(request, networkResponse.clone());
-    }
-    return networkResponse;
-  }).catch(() => cachedResponse);
-
-  return cachedResponse ? Promise.any([fetchPromise, Promise.resolve(cachedResponse)]) : fetchPromise;
-}
-
-// Cache-first strategy with fallback
-async function cacheFirstWithFallback(request, cacheName, fallbackUrl) {
-  const cache = await caches.open(cacheName);
-  const cached = await cache.match(request);
-  
-  if (cached) {
-    // Update cache in background
-    fetch(request).then(response => {
-      if (response.ok) {
-        cache.put(request, response);
-      }
-    });
-    return cached;
-  }
-
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      cache.put(request, response.clone());
-      return response;
-    }
-    throw new Error('Network response not ok');
-  } catch (err) {
-    return fallbackUrl ? caches.match(fallbackUrl) : Response.error();
-  }
-}
-
-// Basic cache-first strategy
-async function cacheFirst(request, cacheName) {
-  const cache = await caches.open(cacheName);
-  const cached = await cache.match(request);
-  return cached || fetch(request);
-}
-
-// Message handler for skipWaiting
-self.addEventListener('message', event => {
-  if (event.data && event.data.action === 'skipWaiting') {
-    self.skipWaiting();
-    self.clients.claim();
-  }
+// ======== ACTIVATE & CLEANUP ========
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(
+        keys.map(key => (key !== CACHE_NAME) ? caches.delete(key) : null)
+      );
+      self.clients.claim();
+      console.log('✅ Service worker activated and old caches removed.');
+    })()
+  );
 });
+
+
+// ======== UPDATE NOTIFICATION ========
+self.addEventListener('message', (event) => {
+  if (event.data === 'skipWaiting') self.skipWaiting();
+});
+
+self.addEventListener('controllerchange', () => {
+  // Notify all clients about the update
+  self.clients.matchAll().then(clients => {
+    clients.forEach(client => client.postMessage('updateAvailable'));
+  });
+});
+
 
