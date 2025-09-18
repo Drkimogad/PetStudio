@@ -1,17 +1,20 @@
 // GLOBAL DECLARATIONS - AUTH-INITIALIZATION
-//===================================================
-        //    Unified Loader System
-//====================================================
 function showLoader(show, messageType = "loading", customMessage = "") {
   const loader = document.getElementById("processing-loader");
   const lottie = document.getElementById("loader-animation");
   const cssSpinner = document.getElementById("css-spinner-fallback");
   
-  // 🔧 TRACK CURRENT MESSAGE TYPE
-  let currentMessageType = messageType;
+  // 🔧 DEBUG: Log every call to showLoader
+  console.log(`🔧 showLoader called:`, { 
+    show, 
+    messageType, 
+    customMessage,
+    loaderExists: !!loader,
+    time: new Date().toISOString() 
+  });
   
   if (!loader) {
-    console.warn("Loader element not found");
+    console.warn("❌ Loader element not found");
     return;
   }
   
@@ -35,8 +38,8 @@ function showLoader(show, messageType = "loading", customMessage = "") {
   }
   
   if (show) {
+    console.log(`🔧 Showing loader with type: ${messageType}`);
     loader.style.display = 'block';
-    currentMessageType = messageType; // 🔧 UPDATE TRACKED TYPE
     
     // Try Lottie first, fallback to CSS
     if (lottie) {
@@ -47,15 +50,21 @@ function showLoader(show, messageType = "loading", customMessage = "") {
     }
     
   } else {
-    // 🔧 FIXED: Use tracked message type instead of parameter
-    if (currentMessageType === 'success' || currentMessageType === 'error') {
+    console.log(`🔧 Hiding loader. Current state:`, {
+      loaderDisplay: loader.style.display,
+      messageType
+    });
+    
+    // For success/error, show briefly then hide
+    if (messageType === 'success' || messageType === 'error') {
+      console.log(`⏰ Setting 2-second timeout for ${messageType} message`);
       setTimeout(() => {
+        console.log(`🕒 Timeout completed - hiding loader`);
         loader.style.display = 'none';
-        currentMessageType = 'loading'; // Reset
       }, 2000);
     } else {
+      console.log(`🚨 Immediate hide for message type: ${messageType}`);
       loader.style.display = 'none';
-      currentMessageType = 'loading'; // Reset
     }
   }
 }
@@ -197,13 +206,15 @@ async function setupGoogleLoginButton() {
       client_id: CLIENT_ID,
       callback: async (response) => {
         try {
+                    console.log("🔧 Google Sign-In started");
           // === CHANGE 1: Show loader immediately with signing in message ===
           showLoader(true, "loading", "Signing in with Google...");
           
           // Using v9 compat syntax
           const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
           await firebase.auth().signInWithCredential(credential);
-          
+
+         console.log("✅ Google Sign-In successful");
           // === CHANGE 2: Show success message for 2 seconds ===
           showLoader(true, "success", "Sign-in successful");
           
@@ -219,8 +230,8 @@ async function setupGoogleLoginButton() {
             Utils.showErrorToUser("Google Sign-In failed. Please try again.");
           }
         }
-        // === CHANGE 5: Removed finally block - let loader handle hiding ===
-      }
+          // 🔧 ADD THIS to see if we're reaching the end
+         console.log("🔧 Google Sign-In callback completed");      }
     });
 
     // Render button if container exists
