@@ -1262,11 +1262,11 @@ styled to show in petcard header plus nickname */
   }
 }
 
-/* Tablet (768px - 1023px) - 90vw, 3 buttons/line */
+/* Tablet (768px - 1023px) - 75vw (scaled down from 85vw), 3 buttons/line */
 @media (min-width: 768px) and (max-width: 1023px) {
   .petCard {
-    width: 85vw; /*to scale down if needed 90vw*/
-    max-width: 800px; /* 900*/
+    width: 75vw; /* ↓ Scaled down from 85vw */
+    max-width: 750px; /* ↓ Scaled down from 800px */
   }
   
   .petCard-content {
@@ -1279,120 +1279,113 @@ styled to show in petcard header plus nickname */
   }
   
   .gallery-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* ↓ Slightly smaller */
+    gap: 0.8rem; /* ↓ Tighter gap */
   }
 }
 
-/* Mobile (481px - 767px) - 95vw, 2 buttons/line */
+/* Mobile (481px - 767px) - 80vw (scaled down from 85vw), 2 buttons/line */
 @media (min-width: 481px) and (max-width: 767px) {
   .petCard {
-    width: 85vw; /* was 95*/
+    width: 80vw; /* ↓ Scaled down from 85vw */
     margin: 1rem auto;
-    padding: 1.2rem;
+    padding: 1rem; /* ↓ Slightly less padding */
   }
   
   .petCard-header {
-    min-height: 120px;
-    padding: 1.2rem;
-    margin: -1.2rem -1.2rem 1rem -1.2rem;
+    min-height: 110px; /* ↓ Slightly shorter */
+    padding: 1rem;
+    margin: -1rem -1rem 0.8rem -1rem; /* ↓ Adjusted margins */
   }
   
   .petCard-header h3 {
-    font-size: 1.5rem;
+    font-size: 1.4rem; /* ↓ Slightly smaller */
   }
   
   .petCard-header .countdown-badge {
-    right: 1rem;
-    top: 1rem;
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
+    right: 0.8rem;
+    top: 0.8rem;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
   }
   
   .petCard .actions {
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.8rem;
+    gap: 0.7rem; /* ↓ Tighter gap */
   }
   
   .gallery-grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 0.8rem;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* ↓ Smaller */
+    gap: 0.6rem; /* ↓ Tighter gap */
   }
   
   .tags-container {
-    gap: 0.6rem;
+    gap: 0.5rem; /* ↓ Tighter gap */
   }
   
   .tag-pill {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.8rem;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.75rem;
   }
 }
 
-/* Small Mobile (320px - 480px) - 95vw, 1 button/line */
+/* Small Mobile (320px - 480px) - 85vw (scaled down from 90vw), 1 button/line */
 @media (max-width: 480px) {
   .petCard {
-    width: 90vw; /* was 95*/
-    margin: 0.8rem auto;
-    padding: 1rem;
-    border-radius: 8px;
+    width: 85vw; /* ↓ Scaled down from 90vw */
+    margin: 0.6rem auto; /* ↓ Tighter margin */
+    padding: 0.8rem; /* ↓ Less padding */
+    border-radius: 6px; /* ↓ Smaller radius */
   }
   
   .petCard-header {
-    min-height: 100px;
-    padding: 1rem;
-    margin: -1rem -1rem 0.8rem -1rem;
-    border-radius: 8px 8px 0 0;
+    min-height: 90px; /* ↓ Shorter */
+    padding: 0.8rem;
+    margin: -0.8rem -0.8rem 0.6rem -0.8rem;
+    border-radius: 6px 6px 0 0;
   }
   
   .petCard-header h3 {
-    font-size: 1.3rem;
+    font-size: 1.2rem; /* ↓ Smaller */
   }
   
   .petCard-header .nickname {
-    font-size: 1rem;
-    margin-bottom: 0.8rem;
+    font-size: 0.9rem; /* ↓ Smaller */
+    margin-bottom: 0.6rem;
   }
   
   .petCard-header .countdown-badge {
-    position: relative;
-    right: auto;
-    top: auto;
-    display: inline-block;
-    margin-top: 0.5rem;
+    margin-top: 0.3rem;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
   }
   
   .petCard .actions {
     grid-template-columns: 1fr;
-    gap: 0.6rem;
+    gap: 0.5rem; /* ↓ Tighter gap */
   }
   
   .petCard .actions button {
-    padding: 0.7rem 0.9rem;
-    font-size: 0.85rem;
+    padding: 0.6rem 0.8rem; /* ↓ Smaller padding */
+    font-size: 0.8rem; /* ↓ Smaller font */
   }
   
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.6rem;
+    gap: 0.5rem; /* ↓ Tighter gap */
   }
   
   .mood-btn-group {
-    gap: 0.5rem;
+    gap: 0.4rem; /* ↓ Tighter gap */
   }
   
   .mood-btn {
-    font-size: 1.5rem;
-    padding: 0.6rem;
-  }
-  
-  /* Stack emergency info on small screens */
-  .emergency-info h4,
-  .emergency-info p {
-    display: block;
-    margin: 0.3rem 0;
+    font-size: 1.3rem; /* ↓ Smaller */
+    padding: 0.5rem; /* ↓ Less padding */
   }
 }
 
+/* Keep your existing Ultra-wide, Landscape, and High-DPI styles */
 /* Ultra-wide screens (1800px+) */
 @media (min-width: 1800px) {
   .petCard {
@@ -1431,13 +1424,6 @@ styled to show in petcard header plus nickname */
     border-width: 1.5px;
   }
 }
-
-
-/* END OF PETCARD CREATION STYLES*/
-
-
-
-
 
 /* =====COLLAGE BUTTON STYLES======= */
 /* Critical Fix: Force visibility for modal and its parent chain as it was hidden*/
