@@ -356,6 +356,8 @@ function initAuthListeners() {
         if (typeof showDashboard === 'function') {
           console.log("📺 Calling showDashboard()");
           showDashboard();
+            // 🔥 ADD THIS LINE: Hide the loader after dashboard shows and successful sign in
+           showLoader(false);
         
           // =============================================
           // ✅ LOGOUT INTEGRATION POINT 2: ONLINE MODE  
