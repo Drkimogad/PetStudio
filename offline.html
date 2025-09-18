@@ -129,6 +129,22 @@
     <script>
         // Simple offline page - just shows message and reload button
         console.log("Offline page loaded");
+        // In your offline.html
+        
+if (typeof firebase !== 'undefined' && firebase.auth) {
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      user.getIdTokenResult()
+        .then(tokenResult => {
+          const expiresIn = Math.round((tokenResult.expirationTime - Date.now()) / 60000);
+          if (expiresIn > 0) {
+            document.getElementById('auth-status').innerHTML = 
+              `Signed in (offline access for ${expiresIn} minutes)`;
+          }
+        });
+    }
+  });
+}
         
         // Try to reload when connection is restored
         window.addEventListener('online', function() {
