@@ -300,6 +300,15 @@ function initAuthListeners() {
           showDashboard();
         }
         
+        // =============================================
+        // ✅ LOGOUT INTEGRATION POINT 1: OFFLINE MODE
+        // =============================================
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', handleLogout);
+          logoutBtn.style.display = "block";
+        }
+        
         // Show offline indicator if available
         if (typeof onlineStatus !== 'undefined' && onlineStatus.showTemporaryMessage) {
           onlineStatus.showTemporaryMessage("Offline mode: Using cached data", "offline");
@@ -330,11 +339,17 @@ function initAuthListeners() {
           console.log("📺 Calling showDashboard()");
           showDashboard();
         
-          // ✅ Show logout button safely right after dashboard is shown
+          // =============================================
+          // ✅ LOGOUT INTEGRATION POINT 2: ONLINE MODE  
+          // =============================================
           const logoutBtn = document.getElementById("logoutBtn");
           if (logoutBtn) {
-            logoutBtn.addEventListener('click', handleLogout);
-            logoutBtn.style.display = "block";
+            // Remove any existing listeners to prevent duplicates
+            logoutBtn.replaceWith(logoutBtn.cloneNode(true));
+            const freshLogoutBtn = document.getElementById("logoutBtn");
+            
+            freshLogoutBtn.addEventListener('click', handleLogout);
+            freshLogoutBtn.style.display = "block";
           }
         } else {
           console.warn("⚠️ showDashboard is not yet defined. Skipping call.");
@@ -351,6 +366,15 @@ function initAuthListeners() {
           
           if (typeof showDashboard === 'function') {
             showDashboard();
+          }
+          
+          // =============================================
+          // ✅ LOGOUT INTEGRATION POINT 3: FALLBACK MODE
+          // =============================================
+          const logoutBtn = document.getElementById("logoutBtn");
+          if (logoutBtn) {
+            logoutBtn.addEventListener('click', handleLogout);
+            logoutBtn.style.display = "block";
           }
         }
         
@@ -370,6 +394,14 @@ function initAuthListeners() {
       localStorage.removeItem('petProfiles');
       if (DOM.petList) DOM.petList.innerHTML = "";
 
+      // =============================================
+      // ✅ LOGOUT INTEGRATION POINT 4: HIDE BUTTON
+      // =============================================
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.style.display = "none";
+      }
+
       // Re-render sign-in button if needed
       if (typeof setupGoogleLoginButton === 'function') {
         setupGoogleLoginButton();
@@ -377,30 +409,77 @@ function initAuthListeners() {
     }
   }, error => {
     console.error("❌ Auth listener error:", error);
+    // =============================================
+    // ✅ LOGOUT INTEGRATION POINT 5: ERROR HANDLING
+    // =============================================
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.style.display = "none";
+    }
   });
 }
 //===============================
 // Single logout handler function
 //================================
+// ===============================
+// SINGLE LOGOUT HANDLER FUNCTION
+// ===============================
 async function handleLogout() {
+  // Show logging out state immediately
+  showLoader(true, "loading", "Logging out...");
+  
   try {
-    if (typeof firebase !== 'undefined' && firebase.auth) {
-      await firebase.auth().signOut();
+    // Check if online before attempting Firebase logout
+    if (navigator.onLine) {
+      // ONLINE LOGOUT FLOW
+      if (typeof firebase !== 'undefined' && firebase.auth) {
+        await firebase.auth().signOut();
+      }
+      
+      if (window.google && google.accounts && google.accounts.id) {
+        google.accounts.id.disableAutoSelect(); // ✅ Clear previous Google session
+      } 
+      
+      // Show success feedback with brief delay
+      showLoader(true, "success", "Logged out successfully!");
+      await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5s success display
+      
+    } else {
+      // OFFLINE LOGOUT FLOW - Immediate fallback
+      throw new Error("Offline: Cannot perform logout without network connection");
     }
-   if (window.google && google.accounts && google.accounts.id) {
-  google.accounts.id.disableAutoSelect(); // ✅ Clear previous Google session
-  } 
-    localStorage.removeItem('petProfiles');
-    window.location.reload();
     
   } catch (error) {
     console.error("Logout failed:", error);
-    // Use existing error display method if available
-    if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
-      Utils.showErrorToUser("Logout failed. Please try again.");
-    } else {
-      alert("Logout failed. Please try again.");
+    
+    // Handle offline scenario specifically
+    if (!navigator.onLine || error.message.includes("Offline")) {
+      // OFFLINE: Clear local data and let service worker handle offline.html
+      localStorage.removeItem('petProfiles');
+      window.petProfiles = [];
+      
+      // Hide loader and let natural offline handling take over
+      showLoader(false);
+      return; // Let service worker show offline.html on next navigation
     }
+    
+    // ONLINE BUT OTHER ERROR: Show error message
+    showLoader(true, "error", "Logout failed. Please try again.");
+    setTimeout(() => {
+      showLoader(false);
+    }, 2000);
+    
+    return; // Don't proceed with reload on error
+  }
+  
+  // SUCCESSFUL ONLINE LOGOUT: Clean up and reload
+  try {
+    localStorage.removeItem('petProfiles');
+    window.petProfiles = [];
+    window.location.reload();
+  } catch (reloadError) {
+    console.error("Reload after logout failed:", reloadError);
+    showLoader(false);
   }
 }
 
