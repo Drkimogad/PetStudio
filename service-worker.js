@@ -1,5 +1,5 @@
 // service-worker.js - Optimized Version
-const VERSION = '4.2.1';
+const VERSION = '4.2.2';
 const CACHE = {
   CORE: `PetStudio-core-v${VERSION}`,
   API: `PetStudio-api-v${VERSION}`,
@@ -7,13 +7,12 @@ const CACHE = {
   IMAGES: `PetStudio-images-v${VERSION}`
 };
 
-const OFFLINE_URL = '/PetStudio/offline.html';
-const FALLBACK_IMAGE = '/PetStudio/banner/image.png';
+const OFFLINE_URL = 'offline.html';
+const FALLBACK_IMAGE = 'banner/image.png';
 
 const CORE_ASSETS = [
   '.',
   'index.html',
-  'offline.html',
   'js/auth.js',
   'js/utils.js',
   'js/dashboard.js',
@@ -242,5 +241,6 @@ self.addEventListener('controllerchange', () => {
     clients.forEach(client => client.postMessage('updateAvailable'));
   });
 });
+
 
 
