@@ -168,6 +168,7 @@ if (typeof loadSavedProfiles === "function" && window.petProfiles?.length > 0) {
 }
 
 // ====== Google Sign-In Initialization ======
+// ====== Google Sign-In Initialization ======
 async function setupGoogleLoginButton() {
   // Check if Google and Firebase are loaded
   if (googleSignInInitialized || !window.google) {
@@ -176,10 +177,10 @@ async function setupGoogleLoginButton() {
     return;
   } 
   if (!firebase.apps.length) {
-  console.warn("⏳ Firebase not initialized yet. Retrying...");
-  setTimeout(setupGoogleLoginButton, 300);
-  return;
-}
+    console.warn("⏳ Firebase not initialized yet. Retrying...");
+    setTimeout(setupGoogleLoginButton, 300);
+    return;
+  }
 
   const CLIENT_ID = '480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com';
   try {
@@ -188,42 +189,66 @@ async function setupGoogleLoginButton() {
       client_id: CLIENT_ID,
       callback: async (response) => {
         try {
-      showLoader(true, "loading", "Signing in...");
+          // === CHANGE 1: Show loader immediately with signing in message ===
+          showLoader(true, "loading", "Signing in with Google...");
+          
           // Using v9 compat syntax
           const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
           await firebase.auth().signInWithCredential(credential);
+          
+          // === CHANGE 2: Show success message for 2 seconds ===
+          showLoader(true, "success", "Sign-in successful");
+          
+          // === CHANGE 3: Wait minimum 2 seconds for smooth transition ===
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
         } catch (error) {
           console.error("Google Sign-In failed:", error);
+          // === CHANGE 4: Show error message in loader ===
+          showLoader(true, "error", "Sign-in failed. Please try again.");
+          
+          // Hide loader after 2 seconds
+          setTimeout(() => {
+            showLoader(false);
+          }, 2000);
+          
           if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
             Utils.showErrorToUser("Google Sign-In failed. Please try again.");
           }
-        } finally {
-          showLoader(false);
         }
+        // === CHANGE 5: Removed finally block - let loader handle hiding ===
       }
     });
-// Render button if container exists
+
+    // Render button if container exists
     const googleButtonContainer = document.getElementById("googleSignInBtn");
     if (googleButtonContainer) {
       google.accounts.id.renderButton(googleButtonContainer, {
         type: "standard",
-        theme: "filled_blue",
+        theme: "filled_blue", 
         size: "large",
         text: "continue_with",
         shape: "circular",
         width: 250
       });  
-      
-  // ✅ Avoid popup if already signed in
+    }
+          
+    // ✅ Avoid popup if already signed in
    // if (!firebase.auth().currentUser) {
    //   google.accounts.id.prompt();
   // } 
-  }
+          
   } catch (error) {
     console.error("Google Sign-In setup failed:", error);
+    // === CHANGE 6: Show error if setup fails ===
+    showLoader(true, "error", "Sign-in setup failed");
+    setTimeout(() => {
+      showLoader(false);
+    }, 2000);
   }
 }
 
+ 
 // ====== Firebase Integration ======
 // ====== Firebase Initialization ======
 async function initializeFirebase() {
