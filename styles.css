@@ -2154,15 +2154,17 @@ styled to show in petcard header plus nickname */
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2000;
+  z-index: 9999; /* Increased to maximum */
+  display: none; /* 🔥 CRITICAL: Add this line */
 }
 
 .loader-overlay {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(4px);
+  background: rgba(0,0,0,0.85); /* Darker overlay */
+  backdrop-filter: blur(8px); /* More blur */
+  z-index: 9998; /* Ensure overlay is behind content */
 }
 
 .loader-content {
@@ -2172,6 +2174,23 @@ styled to show in petcard header plus nickname */
   transform: translate(-50%, -50%);
   text-align: center;
   color: white;
+  z-index: 10000; /* Highest priority */
+}
+/* 🔥 ADD THESE LINES TO PREVENT SCROLLING */
+body.loader-active {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* 🔥 ADD THESE LINES TO PREVENT CLICKS THROUGH OVERLAY */
+.global-loader {
+  pointer-events: all !important;
+}
+
+.loader-overlay {
+  pointer-events: all !important;
 }
 
 .loader-text {
