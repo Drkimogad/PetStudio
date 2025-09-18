@@ -1019,31 +1019,24 @@ Adjust in 5% increments for smooth changes.*/
   text-align: left;
   white-space: pre-line;
 }
-/* ===== ACTION BUTTONS ===== */
+
+/* ===== ACTION BUTTONS - FIXED ===== */
 .petCard .actions {
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 buttons per line by default */
   gap: 1rem;
   margin-top: 2rem;
   padding-top: 1.5rem;
   border-top: 2px solid var(--input-border);
 }
 
-.petCard .actions button,
-.celebrate-btn,
-.collage-btn,
-.print-profile,
-.share-profile,
-.generate-qr,
-.edit-profile {
-  flex: 0 1 auto;
-  padding: 0.8rem 1.5rem;
-  font-size: 0.95rem;
+/* Base button styles for ALL buttons including delete */
+.petCard .actions button {
+  padding: 0.8rem 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   border: 2px solid var(--input-border);
   border-radius: 10px;
-  min-width: 140px;
   background: white;
   color: var(--text-color);
   cursor: pointer;
@@ -1052,26 +1045,36 @@ Adjust in 5% increments for smooth changes.*/
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  min-height: 44px; /* Consistent touch target size */
+  text-align: center;
 }
 
-.petCard .actions button:hover,
-.celebrate-btn:hover,
-.collage-btn:hover,
-.print-profile:hover,
-.share-profile:hover,
-.generate-qr:hover,
-.edit-profile:hover {
-  background: var(--accent-color);
-  color: white;
-  border-color: var(--accent-color);
+/* Specific button types */
+.celebrate-btn { border-color: #ffb74d; color: #ffb74d; }
+.collage-btn { border-color: #6a5acd; color: #6a5acd; }
+.print-profile { border-color: #689f38; color: #689f38; }
+.share-profile { border-color: #9b59b6; color: #9b59b6; }
+.generate-qr { border-color: #3498db; color: #3498db; }
+.edit-profile { border-color: #7d7d7d; color: #7d7d7d; }
+
+/* Hover states for all buttons */
+.petCard .actions button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 183, 77, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+.celebrate-btn:hover { background: #ffb74d; color: white; }
+.collage-btn:hover { background: #6a5acd; color: white; }
+.print-profile:hover { background: #689f38; color: white; }
+.share-profile:hover { background: #9b59b6; color: white; }
+.generate-qr:hover { background: #3498db; color: white; }
+.edit-profile:hover { background: #7d7d7d; color: white; }
+
+/* DELETE BUTTON - Now consistent size */
 .delete-profile {
   border: 2px solid #e74c3c !important;
-  color: #e74c3c;
-  background: white;
+  color: #e74c3c !important;
+  background: white !important;
 }
 
 .delete-profile:hover {
@@ -1081,15 +1084,231 @@ Adjust in 5% increments for smooth changes.*/
   box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
 
+/* Additional Utility Classes for Consistency*/
+/* Button icon sizing consistency */
+.petCard .actions button i {
+  font-size: 1.1em;
+  min-width: 1.2em;
+  text-align: center;
+}
 
+/* Ensure text doesn't overflow on small buttons */
+.petCard .actions button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
+/* Loading states for buttons */
+.petCard .actions button.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
 
+.petCard .actions button.loading::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 0.5rem;
+}
 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Desktop (1024px+) - 80vw, 4 buttons/line */
+@media (min-width: 1024px) {
+  .petCard {
+    width: 80vw;
+    max-width: 1200px;
+  }
+  
+  .petCard .actions {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Tablet (768px - 1023px) - 90vw, 3 buttons/line */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .petCard {
+    width: 90vw;
+    max-width: 900px;
+  }
+  
+  .petCard-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .petCard .actions {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+
+/* Mobile (481px - 767px) - 95vw, 2 buttons/line */
+@media (min-width: 481px) and (max-width: 767px) {
+  .petCard {
+    width: 95vw;
+    margin: 1rem auto;
+    padding: 1.2rem;
+  }
+  
+  .petCard-header {
+    min-height: 120px;
+    padding: 1.2rem;
+    margin: -1.2rem -1.2rem 1rem -1.2rem;
+  }
+  
+  .petCard-header h3 {
+    font-size: 1.5rem;
+  }
+  
+  .petCard-header .countdown-badge {
+    right: 1rem;
+    top: 1rem;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .petCard .actions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+  
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.8rem;
+  }
+  
+  .tags-container {
+    gap: 0.6rem;
+  }
+  
+  .tag-pill {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Small Mobile (320px - 480px) - 95vw, 1 button/line */
+@media (max-width: 480px) {
+  .petCard {
+    width: 95vw;
+    margin: 0.8rem auto;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .petCard-header {
+    min-height: 100px;
+    padding: 1rem;
+    margin: -1rem -1rem 0.8rem -1rem;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .petCard-header h3 {
+    font-size: 1.3rem;
+  }
+  
+  .petCard-header .nickname {
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .petCard-header .countdown-badge {
+    position: relative;
+    right: auto;
+    top: auto;
+    display: inline-block;
+    margin-top: 0.5rem;
+  }
+  
+  .petCard .actions {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  
+  .petCard .actions button {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.85rem;
+  }
+  
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+  
+  .mood-btn-group {
+    gap: 0.5rem;
+  }
+  
+  .mood-btn {
+    font-size: 1.5rem;
+    padding: 0.6rem;
+  }
+  
+  /* Stack emergency info on small screens */
+  .emergency-info h4,
+  .emergency-info p {
+    display: block;
+    margin: 0.3rem 0;
+  }
+}
+
+/* Ultra-wide screens (1800px+) */
+@media (min-width: 1800px) {
+  .petCard {
+    max-width: 1400px;
+  }
+  
+  .petCard-content {
+    grid-template-columns: 1fr 3fr;
+    gap: 2.5rem;
+  }
+  
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 600px) and (orientation: landscape) {
+  .petCard {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .petCard-header {
+    min-height: 80px;
+  }
+}
+
+/* High-density displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .petCard {
+    border-width: 1.5px;
+  }
+  
+  .petCard .actions button {
+    border-width: 1.5px;
+  }
+}
 
 
 /*=======================*/
 /* ===GALLERY PREVIEW CONTROLS IN FORMEDIT AND FORM CREATE WITH COVER BTN AND X REMOVE  ===== */
-/* Cover Button (Star Icon)  ON IMAGE */
+/* Cover Button (Star Icon)  ON IMAGE 🚫 untouched section yet*/
 /*======================*/
 .cover-btn {
     position: absolute;
@@ -1215,6 +1434,9 @@ styled to show in petcard header plus nickname */
 }
 
 /* END OF PETCARD CREATION STYLES*/
+
+
+
 
 
 /* =====COLLAGE BUTTON STYLES======= */
