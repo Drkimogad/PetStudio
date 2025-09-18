@@ -1083,229 +1083,6 @@ Adjust in 5% increments for smooth changes.*/
   border-color: #e74c3c !important;
   box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
-
-/* Additional Utility Classes for Consistency*/
-/* Button icon sizing consistency */
-.petCard .actions button i {
-  font-size: 1.1em;
-  min-width: 1.2em;
-  text-align: center;
-}
-
-/* Ensure text doesn't overflow on small buttons */
-.petCard .actions button span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Loading states for buttons */
-.petCard .actions button.loading {
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.petCard .actions button.loading::after {
-  content: '';
-  width: 16px;
-  height: 16px;
-  border: 2px solid transparent;
-  border-top: 2px solid currentColor;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-left: 0.5rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* ===== RESPONSIVE DESIGN ===== */
-
-/* Desktop (1024px+) - 80vw, 4 buttons/line */
-@media (min-width: 1024px) {
-  .petCard {
-    width: 80vw;
-    max-width: 1200px;
-  }
-  
-  .petCard .actions {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* Tablet (768px - 1023px) - 90vw, 3 buttons/line */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .petCard {
-    width: 90vw;
-    max-width: 900px;
-  }
-  
-  .petCard-content {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  
-  .petCard .actions {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .gallery-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
-}
-
-/* Mobile (481px - 767px) - 95vw, 2 buttons/line */
-@media (min-width: 481px) and (max-width: 767px) {
-  .petCard {
-    width: 95vw;
-    margin: 1rem auto;
-    padding: 1.2rem;
-  }
-  
-  .petCard-header {
-    min-height: 120px;
-    padding: 1.2rem;
-    margin: -1.2rem -1.2rem 1rem -1.2rem;
-  }
-  
-  .petCard-header h3 {
-    font-size: 1.5rem;
-  }
-  
-  .petCard-header .countdown-badge {
-    right: 1rem;
-    top: 1rem;
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
-  }
-  
-  .petCard .actions {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.8rem;
-  }
-  
-  .gallery-grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 0.8rem;
-  }
-  
-  .tags-container {
-    gap: 0.6rem;
-  }
-  
-  .tag-pill {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.8rem;
-  }
-}
-
-/* Small Mobile (320px - 480px) - 95vw, 1 button/line */
-@media (max-width: 480px) {
-  .petCard {
-    width: 95vw;
-    margin: 0.8rem auto;
-    padding: 1rem;
-    border-radius: 8px;
-  }
-  
-  .petCard-header {
-    min-height: 100px;
-    padding: 1rem;
-    margin: -1rem -1rem 0.8rem -1rem;
-    border-radius: 8px 8px 0 0;
-  }
-  
-  .petCard-header h3 {
-    font-size: 1.3rem;
-  }
-  
-  .petCard-header .nickname {
-    font-size: 1rem;
-    margin-bottom: 0.8rem;
-  }
-  
-  .petCard-header .countdown-badge {
-    position: relative;
-    right: auto;
-    top: auto;
-    display: inline-block;
-    margin-top: 0.5rem;
-  }
-  
-  .petCard .actions {
-    grid-template-columns: 1fr;
-    gap: 0.6rem;
-  }
-  
-  .petCard .actions button {
-    padding: 0.7rem 0.9rem;
-    font-size: 0.85rem;
-  }
-  
-  .gallery-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.6rem;
-  }
-  
-  .mood-btn-group {
-    gap: 0.5rem;
-  }
-  
-  .mood-btn {
-    font-size: 1.5rem;
-    padding: 0.6rem;
-  }
-  
-  /* Stack emergency info on small screens */
-  .emergency-info h4,
-  .emergency-info p {
-    display: block;
-    margin: 0.3rem 0;
-  }
-}
-
-/* Ultra-wide screens (1800px+) */
-@media (min-width: 1800px) {
-  .petCard {
-    max-width: 1400px;
-  }
-  
-  .petCard-content {
-    grid-template-columns: 1fr 3fr;
-    gap: 2.5rem;
-  }
-  
-  .gallery-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  }
-}
-
-/* Landscape orientation adjustments */
-@media (max-height: 600px) and (orientation: landscape) {
-  .petCard {
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  
-  .petCard-header {
-    min-height: 80px;
-  }
-}
-
-/* High-density displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .petCard {
-    border-width: 1.5px;
-  }
-  
-  .petCard .actions button {
-    border-width: 1.5px;
-  }
-}
-
-
 /*=======================*/
 /* ===GALLERY PREVIEW CONTROLS IN FORMEDIT AND FORM CREATE WITH COVER BTN AND X REMOVE  ===== */
 /* Cover Button (Star Icon)  ON IMAGE 🚫 untouched section yet*/
@@ -1432,6 +1209,229 @@ styled to show in petcard header plus nickname */
     transform: scale(1.05);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
+
+
+/* Additional Utility Classes for Consistency*/
+/* Button icon sizing consistency */
+.petCard .actions button i {
+  font-size: 1.1em;
+  min-width: 1.2em;
+  text-align: center;
+}
+
+/* Ensure text doesn't overflow on small buttons */
+.petCard .actions button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Loading states for buttons */
+.petCard .actions button.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.petCard .actions button.loading::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 0.5rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Desktop (1024px+) - 80vw, 4 buttons/line */
+@media (min-width: 1024px) {
+  .petCard {
+    width: 80vw;
+    max-width: 1200px;
+  }
+  
+  .petCard .actions {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Tablet (768px - 1023px) - 90vw, 3 buttons/line */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .petCard {
+    width: 85vw; /*to scale down if needed 90vw*/
+    max-width: 800px; /* 900*/
+  }
+  
+  .petCard-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .petCard .actions {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+
+/* Mobile (481px - 767px) - 95vw, 2 buttons/line */
+@media (min-width: 481px) and (max-width: 767px) {
+  .petCard {
+    width: 85vw; /* was 95*/
+    margin: 1rem auto;
+    padding: 1.2rem;
+  }
+  
+  .petCard-header {
+    min-height: 120px;
+    padding: 1.2rem;
+    margin: -1.2rem -1.2rem 1rem -1.2rem;
+  }
+  
+  .petCard-header h3 {
+    font-size: 1.5rem;
+  }
+  
+  .petCard-header .countdown-badge {
+    right: 1rem;
+    top: 1rem;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .petCard .actions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+  
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.8rem;
+  }
+  
+  .tags-container {
+    gap: 0.6rem;
+  }
+  
+  .tag-pill {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Small Mobile (320px - 480px) - 95vw, 1 button/line */
+@media (max-width: 480px) {
+  .petCard {
+    width: 90vw; /* was 95*/
+    margin: 0.8rem auto;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .petCard-header {
+    min-height: 100px;
+    padding: 1rem;
+    margin: -1rem -1rem 0.8rem -1rem;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .petCard-header h3 {
+    font-size: 1.3rem;
+  }
+  
+  .petCard-header .nickname {
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .petCard-header .countdown-badge {
+    position: relative;
+    right: auto;
+    top: auto;
+    display: inline-block;
+    margin-top: 0.5rem;
+  }
+  
+  .petCard .actions {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  
+  .petCard .actions button {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.85rem;
+  }
+  
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+  
+  .mood-btn-group {
+    gap: 0.5rem;
+  }
+  
+  .mood-btn {
+    font-size: 1.5rem;
+    padding: 0.6rem;
+  }
+  
+  /* Stack emergency info on small screens */
+  .emergency-info h4,
+  .emergency-info p {
+    display: block;
+    margin: 0.3rem 0;
+  }
+}
+
+/* Ultra-wide screens (1800px+) */
+@media (min-width: 1800px) {
+  .petCard {
+    max-width: 1400px;
+  }
+  
+  .petCard-content {
+    grid-template-columns: 1fr 3fr;
+    gap: 2.5rem;
+  }
+  
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 600px) and (orientation: landscape) {
+  .petCard {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .petCard-header {
+    min-height: 80px;
+  }
+}
+
+/* High-density displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .petCard {
+    border-width: 1.5px;
+  }
+  
+  .petCard .actions button {
+    border-width: 1.5px;
+  }
+}
+
 
 /* END OF PETCARD CREATION STYLES*/
 
