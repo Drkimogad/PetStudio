@@ -7,11 +7,10 @@ function showLoader(show, messageType = "loading", customMessage = "") {
   const lottie = document.getElementById("loader-animation");
   const cssSpinner = document.getElementById("css-spinner-fallback");
   
+  // 🔧 TRACK CURRENT MESSAGE TYPE
+  let currentMessageType = messageType;
   
-// 🔧 ADD THIS at the top of your showLoader function:
-let currentMessageType = messageType; // Track the current message type
-        
-if (!loader) {
+  if (!loader) {
     console.warn("Loader element not found");
     return;
   }
@@ -37,6 +36,7 @@ if (!loader) {
   
   if (show) {
     loader.style.display = 'block';
+    currentMessageType = messageType; // 🔧 UPDATE TRACKED TYPE
     
     // Try Lottie first, fallback to CSS
     if (lottie) {
@@ -46,19 +46,18 @@ if (!loader) {
       cssSpinner.style.display = 'block';
     }
     
- // 🔧 MODIFY the hide logic:
-} else {
-  // For success/error, show briefly then hide
-  if (currentMessageType === 'success' || currentMessageType === 'error') {
-    setTimeout(() => {
-      loader.style.display = 'none';
-      currentMessageType = 'loading'; // Reset after hiding
-    }, 2000);
   } else {
-    loader.style.display = 'none';
-    currentMessageType = 'loading'; // Reset after hiding
+    // 🔧 FIXED: Use tracked message type instead of parameter
+    if (currentMessageType === 'success' || currentMessageType === 'error') {
+      setTimeout(() => {
+        loader.style.display = 'none';
+        currentMessageType = 'loading'; // Reset
+      }, 2000);
+    } else {
+      loader.style.display = 'none';
+      currentMessageType = 'loading'; // Reset
+    }
   }
- }
 }
 
 //==================================
