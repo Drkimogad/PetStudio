@@ -245,6 +245,7 @@ async function initializeFirebase() {
   // ✅ Return the actual Firebase Auth instance
   return firebase.auth(); 
 }
+
 // ====== Auth State Listener ======
 function initAuthListeners() {
   console.log("👤 Firebase current user:", firebase.auth().currentUser);
@@ -255,6 +256,34 @@ function initAuthListeners() {
     if (user) {
       console.log("✅ User is signed in:", user);
 
+      // Check online status first
+      if (!navigator.onLine) {
+        console.log("📴 Offline mode: Loading profiles from localStorage");
+        
+        // Load from localStorage when offline
+        const cachedProfiles = localStorage.getItem("petProfiles");
+        if (cachedProfiles) {
+          window.petProfiles = JSON.parse(cachedProfiles);
+          console.log("📥 Loaded petProfiles from cache:", window.petProfiles);
+        } else {
+          window.petProfiles = [];
+          console.log("ℹ️ No cached profiles found");
+        }
+        
+        // Show dashboard with cached data
+        if (typeof showDashboard === 'function') {
+          showDashboard();
+        }
+        
+        // Show offline indicator if available
+        if (typeof onlineStatus !== 'undefined' && onlineStatus.showTemporaryMessage) {
+          onlineStatus.showTemporaryMessage("Offline mode: Using cached data", "offline");
+        }
+        
+        return; // Stop here in offline mode
+      }
+
+      // Online mode: Fetch from Firestore
       try {
         const snapshot = await firebase.firestore()
           .collection("profiles")
@@ -262,9 +291,9 @@ function initAuthListeners() {
           .get();
 
         const fetchedProfiles = snapshot.docs.map(doc => ({
-        docId: doc.id,  // ← Critical: Include document ID
-        ...doc.data()
-      }));
+          docId: doc.id,  // ← Critical: Include document ID
+          ...doc.data()
+        }));
 
         // ✅ Update both global state and storage
         window.petProfiles = fetchedProfiles;
@@ -276,20 +305,32 @@ function initAuthListeners() {
           console.log("📺 Calling showDashboard()");
           showDashboard();
         
-      // ✅ Show logout button safely right after dashboard is shown
-      const logoutBtn = document.getElementById("logoutBtn");
-      if (logoutBtn) {
-      logoutBtn.addEventListener('click', handleLogout);
-      }
-      if (logoutBtn) logoutBtn.style.display = "block";
-      } else {
+          // ✅ Show logout button safely right after dashboard is shown
+          const logoutBtn = document.getElementById("logoutBtn");
+          if (logoutBtn) {
+            logoutBtn.addEventListener('click', handleLogout);
+            logoutBtn.style.display = "block";
+          }
+        } else {
           console.warn("⚠️ showDashboard is not yet defined. Skipping call.");
         }  
         
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
+        
+        // Fallback to cached data if Firestore fails
+        const cachedProfiles = localStorage.getItem("petProfiles");
+        if (cachedProfiles) {
+          window.petProfiles = JSON.parse(cachedProfiles);
+          console.log("📥 Fallback to cached profiles due to error:", window.petProfiles);
+          
+          if (typeof showDashboard === 'function') {
+            showDashboard();
+          }
+        }
+        
         if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
-          Utils.showErrorToUser("Couldn't load your pet profiles.");
+          Utils.showErrorToUser("Couldn't load your pet profiles. Using cached data.");
         }
       }
 
