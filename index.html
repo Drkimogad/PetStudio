@@ -50,6 +50,7 @@
   <link rel="preconnect" href="https://accounts.google.com">
   <link rel="preconnect" href="https://apis.google.com">
   <link rel="preload" href="https://accounts.google.com/gsi/client" as="script">
+	
   <script>
     window.handleScriptError = (error) => {
     	console.error('Script failed to load:', error);
@@ -60,21 +61,11 @@
         </div>
       `;
     };
-    
+  </script>
 
-	  <!-- Local Scripts -->
-  <script src="/PetStudio/js/libs/firebase-app-compat.js"></script>
-  <script src="/PetStudio/js/libs/firebase-auth-compat.js"></script>
-  <script src="/PetStudio/js/libs/firebase-firestore-compat.js"></script>
-  <script src="/PetStudio/js/libs/cloudinary-core-shrinkwrap.min.js"></script>
-  <script src="/PetStudio/js/libs/lottie-player.js"></script>
-  <script src="/PetStudio/js/libs/html2canvas.min.js"></script>
-  <script src="/PetStudio/js/libs/qrcode.min.js"></script>
+	  	    <!-- Google Sign-In library has to be loaded and can;t be hosted locally  -->
 
-	  </script>
-  <!-- Google Sign-In library has to be loaded and can;t be hosted locally  -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script>
+      <script>
     window.onload = function() {
     	google.accounts.id.initialize({
     		client_id: "480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com",
@@ -93,9 +84,19 @@
     function handleCredentialResponse(response) {
     	console.log("Google ID Token", response.credential);
     	// You can pass this to Firebase auth if using signInWithCredential
-    }
-    
+    }    
   </script>
+
+	  <!-- Local Scripts -->
+  <script src="./js/libs/firebase-app-compat.js"></script>
+  <script src="./js/libs/firebase-auth-compat.js"></script>
+  <script src="./js/libs/firebase-firestore-compat.js"></script>
+  <script src="./js/lib/firebase-functions-compat.js"></script>
+  <script src="./js/libs/cloudinary-core-shrinkwrap.min.js"></script>
+  <script src="./js/libs/lottie-player.js"></script>
+  <script src="./js/libs/html2canvas.min.js"></script>
+  <script src="./js/libs/qrcode.min.js"></script>
+	
  
   <!-- Add this in your <head> to use Font Awesome icons -->
   <!-- Metadata -->
