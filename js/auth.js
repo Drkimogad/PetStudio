@@ -54,7 +54,9 @@ function showLoader(show, messageType = "loading", customMessage = "") {
   }
 }
 
-
+//==================================
+   // Cloudinary logic
+//===========================
 const CLOUDINARY_CONFIG = {
   cloudName: 'dh7d6otgu',
   uploadPreset: 'petstudio_auto_folder'
@@ -200,17 +202,12 @@ async function setupGoogleLoginButton() {
           showLoader(true, "success", "Sign-in successful");
           
           // === CHANGE 3: Wait minimum 2 seconds for smooth transition ===
-          await new Promise(resolve => setTimeout(resolve, 2000));
+        //  await new Promise(resolve => setTimeout(resolve, 2000));
           
         } catch (error) {
           console.error("Google Sign-In failed:", error);
           // === CHANGE 4: Show error message in loader ===
           showLoader(true, "error", "Sign-in failed. Please try again.");
-          
-          // Hide loader after 2 seconds
-          setTimeout(() => {
-            showLoader(false);
-          }, 2000);
           
           if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
             Utils.showErrorToUser("Google Sign-In failed. Please try again.");
