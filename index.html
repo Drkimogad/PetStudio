@@ -61,8 +61,18 @@
       `;
     };
     
-  </script>
-  <!-- Google Sign-In has been removed -->
+
+	  <!-- Local Scripts -->
+  <script src="/PetStudio/js/libs/firebase-app-compat.js"></script>
+  <script src="/PetStudio/js/libs/firebase-auth-compat.js"></script>
+  <script src="/PetStudio/js/libs/firebase-firestore-compat.js"></script>
+  <script src="/PetStudio/js/libs/cloudinary-core-shrinkwrap.min.js"></script>
+  <script src="/PetStudio/js/libs/lottie-player.js"></script>
+  <script src="/PetStudio/js/libs/html2canvas.min.js"></script>
+  <script src="/PetStudio/js/libs/qrcode.min.js"></script>
+
+	  </script>
+  <!-- Google Sign-In library has to be loaded and can;t be hosted locally  -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
     window.onload = function() {
@@ -86,18 +96,7 @@
     }
     
   </script>
-  <!-- Firebase Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-  <script src="https://unpkg.com/cloudinary-core@2.11.4/cloudinary-core-shrinkwrap.min.js"></script>
-
-  <!-- Add this BEFORE your other scripts -->
-  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-	
-  <!-- html2canvas -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha256-6H5VB5QyLldKH9oMFUmjxw2uWpPZETQXpCkBaDjquMs=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+ 
   <!-- Add this in your <head> to use Font Awesome icons -->
   <!-- Metadata -->
   <meta property="og:url" content="https://your-petstudio-url.com">
