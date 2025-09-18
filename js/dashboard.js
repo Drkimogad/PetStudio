@@ -127,7 +127,7 @@ function initDashboardDOM() {
 
 // ======================
 // 🎨 THEME CONFIGURATION (Global)
-// DEFINE THEMES
+// DEFINE THEMES    To be fixed !!!!!!
 // ======================
 const THEMES = {
   balloons: { 
