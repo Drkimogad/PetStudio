@@ -7,7 +7,11 @@ function showLoader(show, messageType = "loading", customMessage = "") {
   const lottie = document.getElementById("loader-animation");
   const cssSpinner = document.getElementById("css-spinner-fallback");
   
-  if (!loader) {
+  
+// 🔧 ADD THIS at the top of your showLoader function:
+let currentMessageType = messageType; // Track the current message type
+        
+if (!loader) {
     console.warn("Loader element not found");
     return;
   }
@@ -42,16 +46,19 @@ function showLoader(show, messageType = "loading", customMessage = "") {
       cssSpinner.style.display = 'block';
     }
     
-  } else {
-    // For success/error, show briefly then hide
-    if (messageType === 'success' || messageType === 'error') {
-      setTimeout(() => {
-        loader.style.display = 'none';
-      }, 2000);
-    } else {
+ // 🔧 MODIFY the hide logic:
+} else {
+  // For success/error, show briefly then hide
+  if (currentMessageType === 'success' || currentMessageType === 'error') {
+    setTimeout(() => {
       loader.style.display = 'none';
-    }
+      currentMessageType = 'loading'; // Reset after hiding
+    }, 2000);
+  } else {
+    loader.style.display = 'none';
+    currentMessageType = 'loading'; // Reset after hiding
   }
+ }
 }
 
 //==================================
