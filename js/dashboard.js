@@ -1093,15 +1093,17 @@ function cancelEdit() {
 // 🛑  UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
 // DELET CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER
 //=========================
+//==========≈==============
+// 🛑  UPGRADED DELETE BUTTON WORKS FOR BOTH LOCALSTORAGE AND FIRESTORE
+// DELETE CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER
+//=========================
 async function deleteProfile(index) {
-  // 1. Enhanced Confirmation UI
-  if (!confirm(`Permanently delete ${petProfiles[index]?.name}'s profile?\nThis cannot be undone!`)) return;
-
-  const loader = document.getElementById('processing-loader');
-  loader.style.display = 'block';
-  loader.querySelector('p').textContent = 'Deleting profile...';
+  // 1. Enhanced Confirmation UI with custom modal approach
+  if (!await showDeleteConfirmation(petProfiles[index]?.name)) return;
 
   try {
+    showLoader(true, "loading", "Deleting profile...");
+    
     const profile = petProfiles[index];
     if (!profile) throw new Error("Profile not found");
 
@@ -1143,17 +1145,63 @@ async function deleteProfile(index) {
     const [deletedProfile] = petProfiles.splice(index, 1);
     localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
-    // 5. UI Feedback
-    Utils.showErrorToUser(`Successfully deleted ${deletedProfile.name}'s profile.`, true);
+    // 5. UI Feedback with loader success message
+    showLoader(false, "success", `Successfully deleted ${deletedProfile.name}'s profile!`);
+    
+    // 6. Update UI after a brief delay to show success message
+    setTimeout(() => {
+      loadSavedProfiles();
+    }, 1500);
 
   } catch (error) {
     console.error("Critical deletion error:", error);
-    Utils.showErrorToUser("Deletion failed - please try again");
-  } finally {
-    // 6. Always Update UI and Hide Loader
-    loadSavedProfiles();
-    loader.style.display = 'none';
+    showLoader(false, "error", "Deletion failed - please try again");
   }
+}
+
+// Enhanced confirmation dialog
+function showDeleteConfirmation(petName) {
+  return new Promise((resolve) => {
+    // Create custom modal
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    `;
+    
+    modal.innerHTML = `
+      <div style="background: white; padding: 2rem; border-radius: 12px; text-align: center; max-width: 400px;">
+        <h3 style="margin-top: 0; color: #e74c3c;">Delete Profile</h3>
+        <p>Permanently delete <strong>${petName}</strong>'s profile?</p>
+        <p style="color: #e74c3c; font-size: 0.9rem;">This cannot be undone!</p>
+        <div style="margin-top: 1.5rem;">
+          <button id="confirmDelete" style="background: #e74c3c; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 4px; margin-right: 1rem; cursor: pointer;">Delete</button>
+          <button id="cancelDelete" style="background: #95a5a6; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 4px; cursor: pointer;">Cancel</button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Add event listeners
+    document.getElementById('confirmDelete').addEventListener('click', () => {
+      document.body.removeChild(modal);
+      resolve(true);
+    });
+    
+    document.getElementById('cancelDelete').addEventListener('click', () => {
+      document.body.removeChild(modal);
+      resolve(false);
+    });
+  });
 }
 
 
