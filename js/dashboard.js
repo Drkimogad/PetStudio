@@ -1143,8 +1143,8 @@ async function deleteProfile(index) {
     localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
     // 5. UI Feedback with custom success message
-    showLoader(false, "success", `Successfully deleted ${deletedProfile.name}'s profile!`);
-
+    showLoader(false);
+    showSuccessNotification('Profile deleted successfully!');
     // 6. Update UI after a brief delay to show success message
     setTimeout(() => {
       loadSavedProfiles();
@@ -1153,7 +1153,8 @@ async function deleteProfile(index) {
   } catch (error) {
     console.error("Critical deletion error:", error);
     // Show error with custom message
-    showLoader(false, "error", "Deletion failed - please try again");
+    showLoader(false);
+    showErrorToUser('Delete failed: ' + error.message);
   }
 }
 
@@ -2945,43 +2946,39 @@ if (isEditing) {
        // ========================
 // SECTION 8: UI UPDATE
 // ======================== 
-// 🟢 SUCCESS MESSAGE WITH LOADER
-if (typeof showLoader === 'function') {
-  showLoader(true, 'success', 
-    isEditing ? 'Profile updated successfully!' : 'Pet profile created!');
+// 🟢 SUCCESS MESSAGE WITH NOTIFICATION
+if (typeof showSuccessNotification === 'function') {
+  showSuccessNotification(
+    isEditing ? 'Profile updated successfully!' : 'Pet profile created!'
+  );
 }
 
-setTimeout(() => {
-  showDashboard();
-  console.log("✅ Profile saved successfully!");
-  resetForm();
-  
-  // Hide loader after success message is shown
-  if (typeof showLoader === 'function') {
-    showLoader(false);
-  }
-  document.body.style.pointerEvents = 'auto';
-  window.scrollTo(0, 0);
-}, 1500);
+// Hide loader immediately (no delay needed)
+if (typeof showLoader === 'function') {
+  showLoader(false);
+}
+
+showDashboard();
+console.log("✅ Profile saved successfully!");
+resetForm();
+document.body.style.pointerEvents = 'auto';
+window.scrollTo(0, 0);
         
 // Error handling 
 } catch (err) {
   console.error("Profile save failed:", err);
   
-  // 🟢 ERROR MESSAGE WITH LOADER
+  // 🟢 ERROR MESSAGE WITH NOTIFICATION
+  if (typeof showErrorToUser === 'function') {
+    showErrorToUser('Failed to save. Please try again.');
+  }
+  
+  // Hide loader immediately
   if (typeof showLoader === 'function') {
-    showLoader(true, 'error', 'Failed to save. Please try again.');
-  }  
-  // Hide error after 3 seconds
-  setTimeout(() => {
-    if (typeof showLoader === 'function') {
-      showLoader(false);
-    }
-    window.scrollTo(0, 0);
-  }, 3000); 
-  console.error("Save failed:", err);
-        
-
+    showLoader(false);
+  }
+  
+  window.scrollTo(0, 0);        
 } finally {
   submitBtn.innerHTML = originalBtnText;
   submitBtn.disabled = false;
