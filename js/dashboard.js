@@ -725,16 +725,6 @@ function openCreateForm() {
 // 🔧 Surgical online check for Create Form
   if (!navigator.onLine) return handleOfflineError("Creating a new profile requires internet connection.");
 
-  // Disable form elements to prevent interaction
-  const formElements = DOM.profileForm?.querySelectorAll("input, select, textarea, button");
-  if (formElements) {
-    formElements.forEach(el => el.disabled = true);
-  }
-
-  console.warn("❌ Cannot open Create Form while offline");
-  return; // Stop further execution to prevent offline actions
-}
-
   
   // ======================
   // SECTION 2: INITIALIZE DATASET FOR COVER LOGIC
