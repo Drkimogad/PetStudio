@@ -1218,6 +1218,11 @@ function showDeleteConfirmation(petName) {
 // OPTIMISED FOR TABLLET AND DESKTOIP
 //==================================================================
 async function printProfile(profile) {
+    // 🔧 Surgical online check
+  if (!navigator.onLine) {
+    showLoader(true, "error", "Printing requires internet connection. Try later.");
+    return; // stop execution immediately
+  }
      // Add this validation FIRST
   if (!profile?.id) {
     console.error("Invalid profile data:", profile);
@@ -2148,6 +2153,12 @@ function downloadCollage(canvas, petName) {
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION (MERGED BLOB FLOW) PRODUCTION READY ✅
 //=========================================================================================
 async function sharePetCard(profile, event) {
+    // 🔧 Surgical online check
+  if (!navigator.onLine) {
+    showLoader(true, "error", "Sharing requires internet connection. Try later.");
+    return; // stop execution immediately
+  }
+
   try {
     const petStudioLink = "https://drkimogad.github.io/PetStudio/";
 
@@ -2630,6 +2641,13 @@ document.getElementById("petGallery").addEventListener("change", function() {
     DOM.profileForm.addEventListener("submit", async (e) => {
       console.log("📨 Form submit triggered"); // DEBUG LINE KEPT
       e.preventDefault();
+
+     // 🔧 SURGICAL ONLINE CHECK SO IF NO INTERNET, USERS GET IMMEDIATE FEEDBACK WITHOUT LEAVING DASHBOARD.
+  if (!navigator.onLine) {
+    showLoader(true, "error", "Creating or updating profiles requires internet connection. Try later.");
+    return; // stop execution immediately
+  }
+      
 
   // 🟢 1. NEW LOADER IMPLEMENTATION
   if (typeof showLoader === 'function') {
