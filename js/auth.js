@@ -232,10 +232,10 @@ async function setupGoogleLoginButton() {
         try {
           console.log("🔧 Google Sign-In started");
           
-          // 🔧 Surgical online check using offline helper
-      if (!offlineHelper.checkOnline()) {
-       offlineHelper.showOfflineMessage("Sign-in requires internet connection."); 
-       return; // stop execution
+          // 🔧 Reliable online check
+      if (!navigator.onLine) {
+        showLoader(true, "error", "Sign-in requires internet connection.");
+        return; // stop execution immediately
       }
           
           // === CHANGE 1: Show loader immediately with signing in message ===
