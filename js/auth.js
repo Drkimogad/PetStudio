@@ -211,6 +211,19 @@ async function setupGoogleLoginButton() {
       callback: async (response) => {
         try {
                     console.log("🔧 Google Sign-In started");
+
+            // ===== SURGICAL CHANGE: Check online first =====
+         if (!navigator.onLine) {
+  showLoader(true, "error", "Sign-in requires internet connection. Redirecting...");
+  
+  setTimeout(() => {
+    showLoader(false); // hide loader before redirect
+    window.location.href = "offline.html"; // fallback
+  }, 2000); // matches your Lottie animation
+  return; // stop further execution
+}
+
+          
           // === CHANGE 1: Show loader immediately with signing in message ===
           showLoader(true, "loading", "Signing in with Google...");
           
@@ -438,9 +451,7 @@ function initAuthListeners() {
     }
   });
 }
-//===============================
-// Single logout handler function
-//================================
+
 // ===============================
 // SINGLE LOGOUT HANDLER FUNCTION
 // ===============================
