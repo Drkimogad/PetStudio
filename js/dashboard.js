@@ -1265,8 +1265,6 @@ async function printProfile(profile) {
     // Restore original styles
     petCard.style.boxShadow = '';
     petCard.style.transition = originalTransition;
-      // ✅ RESTORE ORIGINAL STYLES (guaranteed execution)
-    canvas = null; // Free large canvas memory/ clean up
   }
 } // closes print function 
 
