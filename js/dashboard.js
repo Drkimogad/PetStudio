@@ -1812,7 +1812,7 @@ openLinearModal(
 
   profile.gallery.forEach((img, i) => {
     const imgElement = document.createElement('img');
-    imgElement.src = typeof img === 'string' ? img : img.url;
+    imgElement.src = getCachedImage(typeof img === 'string' ? img : img.url); //UPDATED TO USED CACHED IMAGES
     imgElement.dataset.index = i;
     imgElement.addEventListener('click', toggleImageSelection);
     grid.appendChild(imgElement);
