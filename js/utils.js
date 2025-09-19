@@ -308,7 +308,7 @@ if ('serviceWorker' in navigator) {
 // A. cacheImage(url)
 const sessionImageCache = new Map();
 
-export async function cacheImage(url) {
+async function cacheImage(url) {
   if (!url) return url;
   if (sessionImageCache.has(url)) return sessionImageCache.get(url);
 
@@ -325,18 +325,38 @@ export async function cacheImage(url) {
 }
 
 // B. getCachedImage(url)
-export function getCachedImage(url) {
-  return sessionImageCache.get(url) || url;
+// Returns the cached version of an image if available
+function getCachedImage(src) {
+  // Look through all profiles and their gallery for a match
+  for (const profile of window.petProfiles || []) {
+    const img = profile.gallery?.find(i => i.url === src || i === src);
+    if (img && img.cachedUrl) return img.cachedUrl; // return prefetched session image
+  }
+  return src; // fallback to original URL if not cached
 }
 
+
 // C.  Optional: prefetchProfileImages(profile) — prefetch all gallery images for a profile:
-export async function prefetchProfileImages(profile) {
+function prefetchProfileImages(profile) {
   if (!profile?.gallery?.length) return;
-  for (const img of profile.gallery) {
-    const src = typeof img === 'string' ? img : img.url;
-    await cacheImage(src);
-  }
+
+  profile.gallery.forEach((img) => {
+    const image = new Image();
+    image.src = typeof img === 'string' ? img : img.url;
+
+    // When loaded, store a cached URL in profile object for session use
+    image.onload = () => {
+      if (typeof img === 'string') {
+        // Replace string with object containing cachedUrl
+        const index = profile.gallery.indexOf(img);
+        profile.gallery[index] = { url: img, cachedUrl: image.src };
+      } else {
+        img.cachedUrl = image.src;
+      }
+    };
+  });
 }
+
 
 
 //======================================================
