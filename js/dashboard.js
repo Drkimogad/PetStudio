@@ -2943,22 +2943,23 @@ if (isEditing) {
 
         localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
-       // ========================
+
+// ======================== 
 // SECTION 8: UI UPDATE
 // ======================== 
-// 🟢 SUCCESS MESSAGE WITH NOTIFICATION
-if (typeof showSuccessNotification === 'function') {
-  showSuccessNotification(
-    isEditing ? 'Profile updated successfully!' : 'Pet profile created!'
-  );
-}
-
-// Hide loader immediately (no delay needed)
+// 🟢 SUCCESS MESSAGE WITH LOADER
 if (typeof showLoader === 'function') {
-  showLoader(false);
+  showLoader(true, "success", isEditing ? 'Profile updated successfully!' : 'Pet profile created!');
 }
 
-showDashboard();
+// Hide loader after brief delay (let loader handle auto-hide)
+setTimeout(() => {
+  if (typeof showLoader === 'function') {
+    showLoader(false);
+  }
+  showDashboard();
+}, 1500); // 1.5 second delay
+
 console.log("✅ Profile saved successfully!");
 resetForm();
 document.body.style.pointerEvents = 'auto';
@@ -2968,14 +2969,10 @@ window.scrollTo(0, 0);
 } catch (err) {
   console.error("Profile save failed:", err);
   
-  // 🟢 ERROR MESSAGE WITH NOTIFICATION
-  if (typeof showErrorToUser === 'function') {
-    showErrorToUser('Failed to save. Please try again.');
-  }
-  
-  // Hide loader immediately
+  // 🔴 ERROR MESSAGE WITH LOADER
   if (typeof showLoader === 'function') {
-    showLoader(false);
+    showLoader(true, "error", 'Failed to save. Please try again.');
+    // Loader will auto-hide after 2 seconds
   }
   
   window.scrollTo(0, 0);        
