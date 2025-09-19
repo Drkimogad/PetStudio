@@ -564,11 +564,18 @@ function openEditForm(index) {
   const loader = document.getElementById('processing-loader');
   
   try {
+   // 🔧 Surgical Online Check
+    // ======================
+    if (!navigator.onLine) {
+      showLoader(true, "error", "Editing requires internet connection. Try later.");
+      return; // stop execution immediately
+    }
+
+    
     // ======================
     // 🔄 Loader ON (Improved visibility)
     // ======================
-    loader.style.display = 'flex'; // Changed to flex for better centering
-    loader.querySelector('p').textContent = 'Loading pet profile...';
+    showLoader(true, "loading", "Profile details retrieved...");
 
     // ======================
     // 1. INITIALIZATION & PROFILE CHECK
@@ -680,60 +687,28 @@ previewTheme(profile.theme || DEFAULT_THEME);
        // 🎯 INSERT HERE ▼ (after fields, before UI updates)
     updateGalleryPreviews(); // Refresh gallery with existing images
     
+// ======================
+// 6. UI STATE UPDATES (Cleaned)
+// ======================
+DOM.petList.classList.add('hidden');
+DOM.profileSection.classList.remove('hidden');
+window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // ======================
-    // 6. UI STATE UPDATES & LOADER HANDLING
-    // ======================
-    const transitionUI = () => {
-      // Smooth transition to form view
-      DOM.petList.classList.add('hidden');
-      DOM.profileSection.classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      
-      // Final loader state
-      loader.querySelector('p').textContent = 'Profile loaded successfully!';
-      loader.style.backgroundColor = '#4CAF50'; // Success green
-      
-      // Delay hide for better UX
-      setTimeout(() => {
-        loader.style.opacity = '0';
-        setTimeout(() => {
-          loader.style.display = 'none';
-          loader.style.opacity = '1';
-          loader.style.backgroundColor = ''; // Reset color
-        }, 300);
-      }, 500);
-    };
+console.log("✅ Edit form ready for:", profile.name);
 
-    transitionUI();
-    console.log("✅ Edit form ready for:", profile.name);
+} catch (error) {
+  console.error("Edit form error:", error);
 
-  } catch (error) {
-    // ======================
-    // ❌ ERROR HANDLING (ENHANCED)
-    // ======================
-    console.error("Edit form error:", error);
-    
-    // Visual error state
-    loader.querySelector('p').textContent = 'Failed to load profile';
-    loader.style.backgroundColor = '#f44336'; // Error red
-    
-    // Error animation
-    loader.classList.add('error-pulse');
-    Utils.showErrorToUser("Profile failed to load. Please try again.");
-    
-    // Reset after delay
-    setTimeout(() => {
-      loader.classList.remove('error-pulse');
-      loader.style.opacity = '0';
-      setTimeout(() => {
-        loader.style.display = 'none';
-        loader.style.opacity = '1';
-        loader.style.backgroundColor = '';
-        cancelEdit();
-      }, 300);
-    }, 2000);
+  // Use unified loader for error
+  if (typeof showLoader === 'function') {
+    showLoader(true, "error", "Profile failed to load. Please try again.");
   }
+
+  // Reset form state after short delay
+  setTimeout(() => {
+    cancelEdit();
+  }, 2000);
+ }
 } // ← End of openEditForm
 
 // ================================================================================================
@@ -751,6 +726,24 @@ function openCreateForm() {
 
   resetForm();                            // Reset form fields & UI
 
+// 🔧 Surgical online check for Create Form
+if (!navigator.onLine) {
+  // Show loader with error message
+  if (typeof showLoader === 'function') {
+    showLoader(true, "error", "Creating a profile requires internet connection. Try again later.");
+  }
+
+  // Disable form elements to prevent interaction
+  const formElements = DOM.profileForm?.querySelectorAll("input, select, textarea, button");
+  if (formElements) {
+    formElements.forEach(el => el.disabled = true);
+  }
+
+  console.warn("❌ Cannot open Create Form while offline");
+  return; // Stop further execution to prevent offline actions
+}
+
+  
   // ======================
   // SECTION 2: INITIALIZE DATASET FOR COVER LOGIC
   // ======================
