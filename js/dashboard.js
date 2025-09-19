@@ -2204,7 +2204,13 @@ async function sharePetCard(profile, event) {
         await navigator.clipboard.write([item]);
       } catch (clipboardError) {
         console.log("Clipboard copy failed, falling back to download");
-      }
+      } finally {
+    // 🧹 CLEANUP (runs whether success or error)
+     document.body.removeChild(a);
+     URL.revokeObjectURL(url);
+     cardElement.removeChild(linkElement); // ← Remove added URL element
+        }
+      }, 'image/png');
 
       // Auto-download as fallback
       const url = URL.createObjectURL(blob);
@@ -2224,6 +2230,10 @@ async function sharePetCard(profile, event) {
 
   } catch (error) {
     console.error('Sharing failed:', error);
+      // 🔴 ERROR NOTIFICATION (inside catch block)
+  if (typeof showErrorToUser === 'function') {
+    showErrorToUser('Sharing failed: ' + error.message);
+  }
     // ==== CHANGE 6: FALLBACK TO TEXT SHARING IF ALL ELSE FAILS ====
     if (navigator.share) {
       await navigator.share({
@@ -2232,9 +2242,12 @@ async function sharePetCard(profile, event) {
       });
     } else {
       alert(`Share this link manually: ${petStudioLink}`);
-    }
-  }
-}
+    }// closes the else 
+  // ✅ SUCCESS NOTIFICATION (OUTSIDE catch - after all share attempts)
+if (typeof showSuccessNotification === 'function') {
+  showSuccessNotification('Profile shared successfully!');
+ }// closes the catch
+} // closes the function 
 
 //===============================
 //🌀 QR Code Managementenhanced To be finalised ⛔️ for cleaning.
