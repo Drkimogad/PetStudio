@@ -1232,6 +1232,11 @@ async function printProfile(profile) {
     return fallbackHtmlPrint(validProfile);
   }
 
+  // 🔹 ADD HERE: Replace all images with cached session images
+  petCard.querySelectorAll('img').forEach(img => {
+  img.src = getCachedImage(img.src);
+  });
+  
   // Add temporary styling for print capture
   petCard.style.boxShadow = '0 0 0 10px white'; // Adds white border for print
   const originalTransition = petCard.style.transition;
@@ -1340,9 +1345,10 @@ function fallbackHtmlPrint(profile) {
       
         <h3>Gallery</h3>
         <div class="print-gallery">
-          ${profile.gallery.map(img => 
-           `<img src="${img.url}" alt="Pet photo" onload="this.style.opacity = '1'">`
-         ).join('')}
+  ${profile.gallery.map(img => 
+    `<img src="${getCachedImage(typeof img === 'string' ? img : img.url)}" 
+          alt="Pet photo" onload="this.style.opacity = '1'">`
+  ).join('')}
 
 
       <div class="print-actions">
