@@ -302,6 +302,42 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+//==============================================
+// Images caching utility functions
+//==============================================
+// A. cacheImage(url)
+const sessionImageCache = new Map();
+
+export async function cacheImage(url) {
+  if (!url) return url;
+  if (sessionImageCache.has(url)) return sessionImageCache.get(url);
+
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const objectURL = URL.createObjectURL(blob);
+    sessionImageCache.set(url, objectURL);
+    return objectURL;
+  } catch (err) {
+    console.warn("Image cache failed, using original URL:", url, err);
+    return url;
+  }
+}
+
+// B. getCachedImage(url)
+export function getCachedImage(url) {
+  return sessionImageCache.get(url) || url;
+}
+
+// C.  Optional: prefetchProfileImages(profile) — prefetch all gallery images for a profile:
+export async function prefetchProfileImages(profile) {
+  if (!profile?.gallery?.length) return;
+  for (const img of profile.gallery) {
+    const src = typeof img === 'string' ? img : img.url;
+    await cacheImage(src);
+  }
+}
+
 
 //======================================================
 // Collage functions cleaning linear flow modal
