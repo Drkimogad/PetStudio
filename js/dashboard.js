@@ -1192,33 +1192,44 @@ function showDeleteConfirmation(petName) {
 //=================================================================
 //  PRINT PROFILE BUTTON FUNCTION     PRODUCTION READY ✅
 // OPTIMISED FOR TABLLET AND DESKTOIP
+/* In printProfile(profile), instead of blocking with handleOfflineError, 
+we’ll try sources in this order:
+DOM → if petCard exists, capture with html2canvas.
+window.petProfiles → if found, print from cached object.
+localStorage → parse and use if available.
+Only fail if none of the above exist.*/
 //==================================================================
 async function printProfile(profile) {
- // 🔧 Surgical online check/old and completely blocks printing in offline which is an overkill
- //   if (!navigator.onLine) return handleOfflineError("Printing requires internet connection. Try later.");
+  // 1. Validate profile (multi-source strategy)
+  let validProfile = profile;
 
-  // 1. Validate profile
-  if (!profile?.id) {
-    console.error("Invalid profile data:", profile);
-    return;
-  }
-  
-  // 2. Try to locate the pet card in DOM
-  const petCard = document.getElementById(`pet-card-${profile.id}`);
-// 🚨 Smart offline check
-  if (!navigator.onLine) {
-       // If no card is available, we truly need internet
-      return handleOfflineError("Printing requires internet to fetch this profile.");
-    } else {
-      // Card is already rendered → allow printing offline
-      console.warn("⚠️ Offline: Printing cached profile only.");
+  if (!validProfile?.id) {
+    // Try window.petProfiles
+    if (window.petProfiles?.length) {
+      validProfile = window.petProfiles.find(p => p.id === profile?.id);
     }
-//  }
-  
-    // 3. Fallback if card not found at all
-    if (!petCard) {
-    console.warn('Pet card not found, using fallback method');
-    return fallbackHtmlPrint(profile);
+
+    // Try localStorage if still not found
+    if (!validProfile) {
+      const cachedProfiles = localStorage.getItem("petProfiles");
+      if (cachedProfiles) {
+        const parsed = JSON.parse(cachedProfiles);
+        validProfile = parsed.find(p => p.id === profile?.id);
+      }
+    }
+  }
+
+  // If profile still missing → hard fail
+  if (!validProfile) {
+    return handleOfflineError("Profile not available offline. Try again when online.");
+  }
+
+  // 2. Locate pet card in DOM
+  const petCard = document.getElementById(`pet-card-${validProfile.id}`);
+
+  if (!petCard) {
+    console.warn("⚠️ Pet card not in DOM. Using fallback HTML print.");
+    return fallbackHtmlPrint(validProfile);
   }
 
   // Add temporary styling for print capture
