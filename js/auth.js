@@ -1,4 +1,7 @@
 // GLOBAL DECLARATIONS - AUTH-INITIALIZATION
+//===================================
+      // UNIFIED LOADER LOGIC
+//========================================
 function showLoader(show, messageType = "loading", customMessage = "") {
   const loader = document.getElementById("processing-loader");
   const lottie = document.getElementById("loader-animation");
@@ -72,6 +75,23 @@ function showLoader(show, messageType = "loading", customMessage = "") {
     }
   }
 }
+
+//======================================================
+// Generic helper for offline handling
+//========================================
+function handleOfflineError(message = "Action requires internet connection") {
+  if (typeof showLoader === "function") {
+    // Show error message
+    showLoader(true, "error", message);
+
+    // Force hide after 2 seconds to prevent stuck Lottie
+    setTimeout(() => {
+      showLoader(false);
+    }, 2000);
+  }
+}
+
+
 
 //==================================
    // Cloudinary logic
@@ -210,19 +230,13 @@ async function setupGoogleLoginButton() {
       client_id: CLIENT_ID,
       callback: async (response) => {
         try {
-                    console.log("🔧 Google Sign-In started");
-
-            // ===== SURGICAL CHANGE: Check online first =====
-         if (!navigator.onLine) {
-  showLoader(true, "error", "Sign-in requires internet connection. Redirecting...");
-  
-  setTimeout(() => {
-    showLoader(false); // hide loader before redirect
-    window.location.href = "offline.html"; // fallback
-  }, 2000); // matches your Lottie animation
-  return; // stop further execution
-}
-
+          console.log("🔧 Google Sign-In started");
+          
+          // 🔧 Surgical online check using offline helper
+      if (!offlineHelper.checkOnline()) {
+       offlineHelper.showOfflineMessage("Sign-in requires internet connection."); 
+       return; // stop execution
+      }
           
           // === CHANGE 1: Show loader immediately with signing in message ===
           showLoader(true, "loading", "Signing in with Google...");
