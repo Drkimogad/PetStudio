@@ -1142,22 +1142,24 @@ async function deleteProfile(index) {
     const [deletedProfile] = petProfiles.splice(index, 1);
     localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
 
-    // 5. UI Feedback with custom success message
-    showLoader(false);
-    showSuccessNotification('Profile deleted successfully!');
-    // 6. Update UI after a brief delay to show success message
-    setTimeout(() => {
-      loadSavedProfiles();
-    }, 1500);
-
-  } catch (error) {
-    console.error("Critical deletion error:", error);
-    // Show error with custom message
-    showLoader(false);
-    showErrorToUser('Delete failed: ' + error.message);
-  }
+// 5. UI Feedback with loader success message
+if (typeof showLoader === 'function') {
+  showLoader(true, "success", 'Profile deleted successfully!');
 }
 
+// 6. Update UI after loader auto-hides
+setTimeout(() => {
+  loadSavedProfiles();
+}, 1500);
+
+} catch (error) {
+  console.error("Critical deletion error:", error);
+  // Show error with loader
+  if (typeof showLoader === 'function') {
+    showLoader(true, "error", 'Delete failed: ' + error.message);
+  }
+ }
+}
 // Enhanced confirmation dialog
 function showDeleteConfirmation(petName) {
   return new Promise((resolve) => {
