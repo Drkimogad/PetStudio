@@ -2143,20 +2143,24 @@ function downloadCollage(canvas, petName) {
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
 //=======================================================
 async function sharePetCard(profile, event) {
+
   try {
     const petStudioLink = "https://drkimogad.github.io/PetStudio/";
+
+    // ==== CHANGE 1: REORDERED LOGIC - TRY PNG SHARING FIRST FOR MOBILE ====
+    // Generate the card as PNG (mobile/tablets prefer images)
     const cardElement = document.getElementById(`pet-card-${profile.id}`);
     if (!cardElement) throw new Error("Card element not found");
 
-    // Add URL to card
+    // ==== CHANGE 2: ADDED URL VISIBLY EMBEDDED IN THE CARD ====
     const linkElement = document.createElement('div');
     linkElement.textContent = `View more: ${petStudioLink}`;
     linkElement.style.marginTop = '10px';
-    linkElement.style.fontWeight = 'bold';
-    linkElement.style.color = '#0066cc';
+    linkElement.style.fontWeight = 'bold'; // Highlight URL
+    linkElement.style.color = '#0066cc'; // Make URL stand out
     cardElement.appendChild(linkElement);
 
-    // Capture as PNG
+    // Capture as PNG (higher quality for sharing)
     const canvas = await html2canvas(cardElement, {
       scale: 2,
       logging: true,
@@ -2167,87 +2171,67 @@ async function sharePetCard(profile, event) {
       }
     });
 
-    // Native share with PNG
+    // ==== CHANGE 3: PRIORITIZE NATIVE SHARE WITH PNG (MOBILE/TABLETS) ====
     if (navigator.share && navigator.canShare) {
       canvas.toBlob(async (blob) => {
-        const file = new File([blob], `${profile.name}_profile.png`, { type: 'image/png' });
+        const file = new File([blob], `${profile.name}_profile.png`, {
+          type: 'image/png'
+        });
         try {
           await navigator.share({
             title: `Meet ${profile.name}! 🐾`,
-            text: `Check out ${profile.name}'s profile!`,
+            text: `Check out ${profile.name}'s profile!`, // Optional text
             files: [file],
           });
-          // ✅ SUCCESS for native share
-          if (typeof showSuccessNotification === 'function') {
-            showSuccessNotification('Profile shared successfully!');
-          }
-          return;
+          return; // Exit if PNG share succeeds
         } catch (shareError) {
           console.log("Image share failed, falling back to text/URL");
         }
       });
     }
 
-    // Fallback to clipboard + download
+    // ==== CHANGE 4: FALLBACK TO CLIPBOARD + DOWNLOAD (DESKTOP/MOBILE) ====
     canvas.toBlob(async (blob) => {
+      try {
+        // Copy PNG to clipboard
+        const item = new ClipboardItem({
+          'image/png': blob
+        });
+        await navigator.clipboard.write([item]);
+      } catch (clipboardError) {
+        console.log("Clipboard copy failed, falling back to download");
+      }
+
+      // Auto-download as fallback
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `${profile.name}_profile.png`;
       document.body.appendChild(a);
-      
-      try {
-        // Try clipboard first
-        const item = new ClipboardItem({ 'image/png': blob });
-        await navigator.clipboard.write([item]);
-      } catch (clipboardError) {
-        console.log("Clipboard copy failed, falling back to download");
-      } finally {
-        // Trigger download
-        a.click();
-        setTimeout(() => {
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          cardElement.removeChild(linkElement);
-        }, 100);
-      }
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
 
+      // ==== CHANGE 5: DESKTOP-FRIENDLY ALERT WITH LINK ====
       alert(`${profile.name}'s profile saved as PNG! Download it or paste the image.\n\nOr share this link: ${petStudioLink}`);
-      // ✅ SUCCESS for fallback
-      if (typeof showSuccessNotification === 'function') {
-        showSuccessNotification('Profile shared successfully!');
-      }
     }, 'image/png');
 
   } catch (error) {
     console.error('Sharing failed:', error);
-    
-    // Try text fallback
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: `Meet ${profile.name}! 🐾`,
-          text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.nextBirthday}\n\nView more: ${petStudioLink}`,
-        });
-        // ✅ SUCCESS for text fallback
-        if (typeof showSuccessNotification === 'function') {
-          showSuccessNotification('Profile shared successfully!');
-        }
-      } else {
-        alert(`Share this link manually: ${petStudioLink}`);
-        // ✅ SUCCESS for manual share
-        if (typeof showSuccessNotification === 'function') {
-          showSuccessNotification('Profile shared successfully!');
-        }
-      }
-    } catch (finalError) {
-      // 🔴 TOTAL FAILURE
-      if (typeof showErrorToUser === 'function') {
-        showErrorToUser('Sharing failed: ' + error.message);
-      }
+    // ==== CHANGE 6: FALLBACK TO TEXT SHARING IF ALL ELSE FAILS ====
+    if (navigator.share) {
+      await navigator.share({
+        title: `Meet ${profile.name}! 🐾`,
+        text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.nextBirthday}\n\nView more: ${petStudioLink}`,
+      });
+    } else {
+      alert(`Share this link manually: ${petStudioLink}`);
     }
   }
 }
+
 
 
 //===============================
