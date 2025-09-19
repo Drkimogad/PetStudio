@@ -1194,19 +1194,29 @@ function showDeleteConfirmation(petName) {
 // OPTIMISED FOR TABLLET AND DESKTOIP
 //==================================================================
 async function printProfile(profile) {
-    // 🔧 Surgical online check
-    if (!navigator.onLine) return handleOfflineError("Printing requires internet connection. Try later.");
+ // 🔧 Surgical online check/old and completely blocks printing in offline which is an overkill
+ //   if (!navigator.onLine) return handleOfflineError("Printing requires internet connection. Try later.");
 
-     // Add this validation FIRST
+  // 1. Validate profile
   if (!profile?.id) {
     console.error("Invalid profile data:", profile);
     return;
   }
   
-  // Change selector to use the specific card ID
+  // 2. Try to locate the pet card in DOM
   const petCard = document.getElementById(`pet-card-${profile.id}`);
-    // Fallback to old method if no card found
-  if (!petCard) {
+// 🚨 Smart offline check
+  if (!navigator.onLine) {
+       // If no card is available, we truly need internet
+      return handleOfflineError("Printing requires internet to fetch this profile.");
+    } else {
+      // Card is already rendered → allow printing offline
+      console.warn("⚠️ Offline: Printing cached profile only.");
+    }
+//  }
+  
+    // 3. Fallback if card not found at all
+    if (!petCard) {
     console.warn('Pet card not found, using fallback method');
     return fallbackHtmlPrint(profile);
   }
