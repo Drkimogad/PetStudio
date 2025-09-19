@@ -1769,7 +1769,7 @@ function createPetCollage(index) {
     </div>`;
   
 
-  const profile = window.petProfiles[index];
+ // const profile = window.petProfiles[index];
   if (!profile?.gallery?.length) {
     showQRStatus("No photos available for collage.", false);
     return;
