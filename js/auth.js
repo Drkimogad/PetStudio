@@ -374,8 +374,12 @@ function initAuthListeners() {
           ...doc.data()
         }));
 
-        // ✅ Update both global state and storage
-        window.petProfiles = fetchedProfiles;
+         // ✅ Update both global state and storage
+          window.petProfiles = fetchedProfiles;
+            // After window.petProfiles = fetchedProfiles;
+          for (const profile of window.petProfiles) {
+          prefetchProfileImages(profile); // fetch & cache session images
+        }
         localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
         console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
         
