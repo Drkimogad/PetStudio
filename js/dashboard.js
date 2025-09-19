@@ -1094,6 +1094,12 @@ function cancelEdit() {
 // DELET CLOUDINARY SDK FUNCTION TO BE IMPLEMENTED LATER   🛑
 //=====================================================================================
 async function deleteProfile(index) {
+  // 🔧 Surgical online check
+if (!navigator.onLine) {
+  showLoader(true, "error", "Deleting profiles requires internet connection. Try later.");
+  return; // stop execution immediately
+}
+  
   // 1. Enhanced Confirmation UI
   if (!confirm(`Permanently delete ${petProfiles[index]?.name}'s profile?\nThis cannot be undone!`)) return;
 
