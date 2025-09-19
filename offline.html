@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Offline - PetStudio</title>
 <style>
+  /* Global Styles */
   body {
     font-family: Arial, sans-serif;
     text-align: center;
@@ -17,24 +18,37 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: relative;
   }
+
+  /* Container Card */
   .container {
     max-width: 500px;
     padding: 40px;
-    background: white;
+    background: #ffffff;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     border: 2px solid #ffb74d;
-    z-index: 1;
+    position: relative;
   }
+
   .offline-icon {
     font-size: 80px;
     margin-bottom: 20px;
     color: #8d6e63;
   }
-  h1 { color: #8d6e63; margin-bottom: 15px; font-size: 2rem; }
-  p { font-size: 1.1rem; margin-bottom: 25px; line-height: 1.5; }
+
+  h1 {
+    color: #8d6e63;
+    margin-bottom: 15px;
+    font-size: 2rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    line-height: 1.5;
+  }
+
   .retry-btn {
     background: #ffb74d;
     color: white;
@@ -46,28 +60,97 @@
     transition: all 0.3s;
     font-weight: bold;
   }
-  .retry-btn:hover { background: #ff9800; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 183, 77, 0.4); }
-  .retry-btn:active { transform: translateY(0); }
-  .features-list { margin-top: 30px; text-align: left; max-width: 400px; }
-  .features-list ul { padding-left: 20px; }
-  .pet-paw { position: absolute; font-size: 20px; opacity: 0.3; animation: float 3s infinite ease-in-out; }
-  @keyframes float { 0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-10px) rotate(5deg);} }
-  @media (max-width: 600px) { .container { padding:30px 20px; margin:20px; } .offline-icon { font-size:60px; } h1{font-size:1.5rem;} p{font-size:1rem;} }
+
+  .retry-btn:hover {
+    background: #ff9800;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 183, 77, 0.4);
+  }
+
+  .retry-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Features list */
+  .features-list {
+    margin-top: 20px;
+    text-align: left;
+    color: #5d4037;
+  }
+
+  .features-list h3 {
+    margin-bottom: 10px;
+  }
+
+  .features-list ul {
+    padding-left: 20px;
+    margin-bottom: 10px;
+  }
+
+  .features-list p.note {
+    font-size: 0.9rem;
+    color: #a0522d;
+    font-style: italic;
+  }
+
+  /* Floating paw decorations */
+  .pet-paw {
+    position: absolute;
+    font-size: 20px;
+    opacity: 0.3;
+    animation: float 3s infinite ease-in-out;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+  }
+
+  /* Online message */
+  #online-message {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: none;
+    z-index: 10000;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .container { padding: 35px 25px; }
+    .offline-icon { font-size: 70px; }
+    h1 { font-size: 1.8rem; }
+    p { font-size: 1rem; }
+    .retry-btn { font-size: 1rem; padding: 10px 25px; }
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 30px 20px; margin: 20px; }
+    .offline-icon { font-size: 60px; }
+    h1 { font-size: 1.5rem; }
+    p { font-size: 0.95rem; }
+    .retry-btn { font-size: 0.95rem; padding: 10px 20px; }
+  }
 </style>
 </head>
 <body>
 
-<!-- Floating paws -->
-<div class="pet-paw" style="top:10%; left:10%;">🐾</div>
-<div class="pet-paw" style="top:20%; right:15%; animation-delay:1s;">🐾</div>
-<div class="pet-paw" style="bottom:15%; left:20%; animation-delay:2s;">🐾</div>
+<!-- Decorative floating paws -->
+<div class="pet-paw" style="top: 10%; left: 10%;">🐾</div>
+<div class="pet-paw" style="top: 20%; right: 15%; animation-delay: 1s;">🐾</div>
+<div class="pet-paw" style="bottom: 15%; left: 20%; animation-delay: 2s;">🐾</div>
 
 <div class="container">
-  <div class="offline-icon">📶</div>
-  <h1>You're Offline</h1>
-  <p>Looks like you're not connected to the internet. Please check your connection and try again.</p>
-  <button class="retry-btn" id="retry-btn">Try Again</button>
-  <p id="auth-status"></p>
+    <div class="offline-icon">📶</div>
+    <h1>You're Offline</h1>
+    <p>It seems there’s no internet connection. Please check your network and try again.</p>
+    <button class="retry-btn" id="retry-btn">Try Again</button>
 </div>
 
 <div class="features-list">
@@ -79,42 +162,35 @@
     <li>Create birthday cards</li>
     <li>Print documents</li>
   </ul>
-  <p class="note">Editing and saving requires internet connection</p>
+  <p class="note">Editing, saving, or deleting profiles requires an internet connection</p>
 </div>
 
+<div id="online-message">🟢 Back online! You can try signing in again.</div>
+
 <script>
-console.log("Offline page loaded");
+  console.log("Offline page loaded");
 
-// Retry button
-document.getElementById('retry-btn').addEventListener('click', () => {
-  if (navigator.onLine) {
-    window.location.reload();
-  } else {
-    alert("Still offline. Please check your connection.");
-  }
-});
-
-// Firebase Auth token display for offline
-if (typeof firebase !== 'undefined' && firebase.auth) {
-  firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      user.getIdTokenResult()
-        .then(tokenResult => {
-          const expiresIn = Math.round((tokenResult.expirationTime - Date.now()) / 60000);
-          if (expiresIn > 0) {
-            document.getElementById('auth-status').textContent = 
-              `Signed in (offline access for ${expiresIn} minutes)`;
-          }
-        });
+  // Manual retry button
+  const retryBtn = document.getElementById('retry-btn');
+  retryBtn.addEventListener('click', () => {
+    if (navigator.onLine) {
+      location.reload();
+    } else {
+      alert("Still offline. Check your connection and try again.");
     }
   });
-}
 
-// Auto-retry when connection is restored
-window.addEventListener('online', () => {
-  console.log("Connection restored, reloading...");
-  window.location.reload();
-});
+  // Automatic online detection
+  window.addEventListener('online', () => {
+    const msg = document.getElementById('online-message');
+    msg.style.display = 'block';
+    setTimeout(() => { msg.style.display = 'none'; }, 3000);
+  });
+
+  window.addEventListener('offline', () => {
+    console.log("Offline detected");
+  });
 </script>
+
 </body>
 </html>
