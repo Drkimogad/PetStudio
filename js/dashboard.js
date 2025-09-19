@@ -1247,17 +1247,32 @@ async function printProfile(profile) {
     });
 
     openPrintWindow(canvas, profile);
+    // SUCCESS: After successful print window opens
+    canvas = null; // Free large canvas memory/ clean up
+   if (typeof showSuccessNotification === 'function') {
+     showSuccessNotification('Print started successfully!');
+   }
     
   } catch (error) {
     console.error('Canvas capture failed:', error);
     alert('Advanced print failed, using standard version instead');
     fallbackHtmlPrint(profile);
+    // ERROR: In catch block after fallback
+    if (typeof showErrorToUser === 'function') {
+    showErrorToUser('Print failed: ' + error.message);
+   }
+    
   } finally {
     // Restore original styles
     petCard.style.boxShadow = '';
     petCard.style.transition = originalTransition;
+      // ✅ RESTORE ORIGINAL STYLES (guaranteed execution)
+  if (petCard) {
+    petCard.style.boxShadow = '';
+    petCard.style.transition = originalTransition;
   }
-}
+  }
+} // closes print function 
 
 
 // Fallback to original HTML method
