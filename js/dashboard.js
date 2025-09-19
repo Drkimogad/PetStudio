@@ -2147,24 +2147,20 @@ function downloadCollage(canvas, petName) {
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
 //=======================================================
 async function sharePetCard(profile, event) {
-
   try {
     const petStudioLink = "https://drkimogad.github.io/PetStudio/";
-
-    // ==== CHANGE 1: REORDERED LOGIC - TRY PNG SHARING FIRST FOR MOBILE ====
-    // Generate the card as PNG (mobile/tablets prefer images)
     const cardElement = document.getElementById(`pet-card-${profile.id}`);
     if (!cardElement) throw new Error("Card element not found");
 
-    // ==== CHANGE 2: ADDED URL VISIBLY EMBEDDED IN THE CARD ====
+    // Add URL to card
     const linkElement = document.createElement('div');
     linkElement.textContent = `View more: ${petStudioLink}`;
     linkElement.style.marginTop = '10px';
-    linkElement.style.fontWeight = 'bold'; // Highlight URL
-    linkElement.style.color = '#0066cc'; // Make URL stand out
+    linkElement.style.fontWeight = 'bold';
+    linkElement.style.color = '#0066cc';
     cardElement.appendChild(linkElement);
 
-    // Capture as PNG (higher quality for sharing)
+    // Capture as PNG
     const canvas = await html2canvas(cardElement, {
       scale: 2,
       logging: true,
@@ -2175,79 +2171,88 @@ async function sharePetCard(profile, event) {
       }
     });
 
-    // ==== CHANGE 3: PRIORITIZE NATIVE SHARE WITH PNG (MOBILE/TABLETS) ====
+    // Native share with PNG
     if (navigator.share && navigator.canShare) {
       canvas.toBlob(async (blob) => {
-        const file = new File([blob], `${profile.name}_profile.png`, {
-          type: 'image/png'
-        });
+        const file = new File([blob], `${profile.name}_profile.png`, { type: 'image/png' });
         try {
           await navigator.share({
             title: `Meet ${profile.name}! 🐾`,
-            text: `Check out ${profile.name}'s profile!`, // Optional text
+            text: `Check out ${profile.name}'s profile!`,
             files: [file],
           });
-          return; // Exit if PNG share succeeds
+          // ✅ SUCCESS for native share
+          if (typeof showSuccessNotification === 'function') {
+            showSuccessNotification('Profile shared successfully!');
+          }
+          return;
         } catch (shareError) {
           console.log("Image share failed, falling back to text/URL");
         }
       });
     }
 
-    // ==== CHANGE 4: FALLBACK TO CLIPBOARD + DOWNLOAD (DESKTOP/MOBILE) ====
+    // Fallback to clipboard + download
     canvas.toBlob(async (blob) => {
-      try {
-        // Copy PNG to clipboard
-        const item = new ClipboardItem({
-          'image/png': blob
-        });
-        await navigator.clipboard.write([item]);
-      } catch (clipboardError) {
-        console.log("Clipboard copy failed, falling back to download");
-      } finally {
-    // 🧹 CLEANUP (runs whether success or error)
-     document.body.removeChild(a);
-     URL.revokeObjectURL(url);
-     cardElement.removeChild(linkElement); // ← Remove added URL element
-        }
-      }, 'image/png');
-
-      // Auto-download as fallback
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `${profile.name}_profile.png`;
       document.body.appendChild(a);
-      a.click();
-      setTimeout(() => {
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }, 100);
+      
+      try {
+        // Try clipboard first
+        const item = new ClipboardItem({ 'image/png': blob });
+        await navigator.clipboard.write([item]);
+      } catch (clipboardError) {
+        console.log("Clipboard copy failed, falling back to download");
+      } finally {
+        // Trigger download
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          cardElement.removeChild(linkElement);
+        }, 100);
+      }
 
-      // ==== CHANGE 5: DESKTOP-FRIENDLY ALERT WITH LINK ====
       alert(`${profile.name}'s profile saved as PNG! Download it or paste the image.\n\nOr share this link: ${petStudioLink}`);
+      // ✅ SUCCESS for fallback
+      if (typeof showSuccessNotification === 'function') {
+        showSuccessNotification('Profile shared successfully!');
+      }
     }, 'image/png');
 
   } catch (error) {
     console.error('Sharing failed:', error);
-      // 🔴 ERROR NOTIFICATION (inside catch block)
-  if (typeof showErrorToUser === 'function') {
-    showErrorToUser('Sharing failed: ' + error.message);
+    
+    // Try text fallback
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `Meet ${profile.name}! 🐾`,
+          text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.nextBirthday}\n\nView more: ${petStudioLink}`,
+        });
+        // ✅ SUCCESS for text fallback
+        if (typeof showSuccessNotification === 'function') {
+          showSuccessNotification('Profile shared successfully!');
+        }
+      } else {
+        alert(`Share this link manually: ${petStudioLink}`);
+        // ✅ SUCCESS for manual share
+        if (typeof showSuccessNotification === 'function') {
+          showSuccessNotification('Profile shared successfully!');
+        }
+      }
+    } catch (finalError) {
+      // 🔴 TOTAL FAILURE
+      if (typeof showErrorToUser === 'function') {
+        showErrorToUser('Sharing failed: ' + error.message);
+      }
+    }
   }
-    // ==== CHANGE 6: FALLBACK TO TEXT SHARING IF ALL ELSE FAILS ====
-    if (navigator.share) {
-      await navigator.share({
-        title: `Meet ${profile.name}! 🐾`,
-        text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.nextBirthday}\n\nView more: ${petStudioLink}`,
-      });
-    } else {
-      alert(`Share this link manually: ${petStudioLink}`);
-    }// closes the else 
-  // ✅ SUCCESS NOTIFICATION (OUTSIDE catch - after all share attempts)
-if (typeof showSuccessNotification === 'function') {
-  showSuccessNotification('Profile shared successfully!');
- }// closes the catch
-} // closes the function 
+}
+
 
 //===============================
 //🌀 QR Code Managementenhanced To be finalised ⛔️ for cleaning.
