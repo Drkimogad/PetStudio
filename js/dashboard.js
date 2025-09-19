@@ -566,11 +566,7 @@ function openEditForm(index) {
   try {
    // 🔧 Surgical Online Check
     // ======================
-    if (!navigator.onLine) {
-      showLoader(true, "error", "Editing requires internet connection. Try later.");
-      return; // stop execution immediately
-    }
-
+      if (!navigator.onLine) return handleOfflineError("Editing a profile requires internet connection.");
     
     // ======================
     // 🔄 Loader ON (Improved visibility)
@@ -727,11 +723,7 @@ function openCreateForm() {
   resetForm();                            // Reset form fields & UI
 
 // 🔧 Surgical online check for Create Form
-if (!navigator.onLine) {
-  // Show loader with error message
-  if (typeof showLoader === 'function') {
-    showLoader(true, "error", "Creating a profile requires internet connection. Try again later.");
-  }
+  if (!navigator.onLine) return handleOfflineError("Creating a new profile requires internet connection.");
 
   // Disable form elements to prevent interaction
   const formElements = DOM.profileForm?.querySelectorAll("input, select, textarea, button");
@@ -1088,10 +1080,7 @@ function cancelEdit() {
 //=====================================================================================
 async function deleteProfile(index) {
   // 🔧 Surgical online check
-if (!navigator.onLine) {
-  showLoader(true, "error", "Deleting profiles requires internet connection. Try later.");
-  return; // stop execution immediately
-}
+  if (!navigator.onLine) return handleOfflineError("Deleting profiles requires internet connection. Try later.");
   
   // 1. Enhanced Confirmation UI
   if (!confirm(`Permanently delete ${petProfiles[index]?.name}'s profile?\nThis cannot be undone!`)) return;
@@ -1212,10 +1201,8 @@ function showDeleteConfirmation(petName) {
 //==================================================================
 async function printProfile(profile) {
     // 🔧 Surgical online check
-  if (!navigator.onLine) {
-    showLoader(true, "error", "Printing requires internet connection. Try later.");
-    return; // stop execution immediately
-  }
+    if (!navigator.onLine) return handleOfflineError("Printing requires internet connection. Try later.");
+
      // Add this validation FIRST
   if (!profile?.id) {
     console.error("Invalid profile data:", profile);
@@ -2147,10 +2134,7 @@ function downloadCollage(canvas, petName) {
 //=========================================================================================
 async function sharePetCard(profile, event) {
     // 🔧 Surgical online check
-  if (!navigator.onLine) {
-    showLoader(true, "error", "Sharing requires internet connection. Try later.");
-    return; // stop execution immediately
-  }
+    if (!navigator.onLine) return handleOfflineError("Sharing requires internet connection. Try later.");
 
   try {
     const petStudioLink = "https://drkimogad.github.io/PetStudio/";
@@ -2635,12 +2619,15 @@ document.getElementById("petGallery").addEventListener("change", function() {
       console.log("📨 Form submit triggered"); // DEBUG LINE KEPT
       e.preventDefault();
 
-     // 🔧 SURGICAL ONLINE CHECK SO IF NO INTERNET, USERS GET IMMEDIATE FEEDBACK WITHOUT LEAVING DASHBOARD.
+       // 🔧 ONLINE CHECK FIRST
   if (!navigator.onLine) {
-    showLoader(true, "error", "Creating or updating profiles requires internet connection. Try later.");
-    return; // stop execution immediately
+    if (typeof showLoader === "function") {
+      showLoader(true, "error", "Saving profiles requires internet connection. Try later.");
+      // Auto-hide after 2 seconds to prevent stuck loader/Lottie
+      setTimeout(() => showLoader(false), 2000);
+    }
+    return; // Stop execution immediately
   }
-      
 
   // 🟢 1. NEW LOADER IMPLEMENTATION
   if (typeof showLoader === 'function') {
