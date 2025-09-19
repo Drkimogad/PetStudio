@@ -1,124 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offline - PetStudio</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: linear-gradient(135deg, #f8f6f2 0%, #e8e2d6 100%);
-            color: #5d4037;
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .container {
-            max-width: 500px;
-            padding: 40px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: 2px solid #ffb74d;
-        }
-        
-        .offline-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-            color: #8d6e63;
-        }
-        
-        h1 {
-            color: #8d6e63;
-            margin-bottom: 15px;
-            font-size: 2rem;
-        }
-        
-        p {
-            font-size: 1.1rem;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-        
-        .retry-btn {
-            background: #ffb74d;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 1.1rem;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-        }
-        
-        .retry-btn:hover {
-            background: #ff9800;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 183, 77, 0.4);
-        }
-        
-        .retry-btn:active {
-            transform: translateY(0);
-        }
-        
-        .pet-paw {
-            position: absolute;
-            font-size: 20px;
-            opacity: 0.3;
-            animation: float 3s infinite ease-in-out;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(5deg); }
-        }
-        
-        /* Mobile responsive */
-        @media (max-width: 600px) {
-            .container {
-                padding: 30px 20px;
-                margin: 20px;
-            }
-            
-            .offline-icon {
-                font-size: 60px;
-            }
-            
-            h1 {
-                font-size: 1.5rem;
-            }
-            
-            p {
-                font-size: 1rem;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline - PetStudio</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #f8f6f2 0%, #e8e2d6 100%);
+    color: #5d4037;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  .container {
+    max-width: 500px;
+    padding: 40px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 2px solid #ffb74d;
+    z-index: 1;
+  }
+  .offline-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    color: #8d6e63;
+  }
+  h1 { color: #8d6e63; margin-bottom: 15px; font-size: 2rem; }
+  p { font-size: 1.1rem; margin-bottom: 25px; line-height: 1.5; }
+  .retry-btn {
+    background: #ffb74d;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+  }
+  .retry-btn:hover { background: #ff9800; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 183, 77, 0.4); }
+  .retry-btn:active { transform: translateY(0); }
+  .features-list { margin-top: 30px; text-align: left; max-width: 400px; }
+  .features-list ul { padding-left: 20px; }
+  .pet-paw { position: absolute; font-size: 20px; opacity: 0.3; animation: float 3s infinite ease-in-out; }
+  @keyframes float { 0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-10px) rotate(5deg);} }
+  @media (max-width: 600px) { .container { padding:30px 20px; margin:20px; } .offline-icon { font-size:60px; } h1{font-size:1.5rem;} p{font-size:1rem;} }
+</style>
 </head>
 <body>
-    <!-- Decorative floating paws -->
-    <div class="pet-paw" style="top: 10%; left: 10%;">🐾</div>
-    <div class="pet-paw" style="top: 20%; right: 15%; animation-delay: 1s;">🐾</div>
-    <div class="pet-paw" style="bottom: 15%; left: 20%; animation-delay: 2s;">🐾</div>
-    
-    <div class="container">
-        <div class="offline-icon">📶</div>
-        <h1>You're Offline</h1>
-        <p>Looks like you're not connected to the internet. Please check your connection and try again.</p>
-        <button class="retry-btn" onclick="window.location.reload()">Try Again</button>
-    </div>
 
-    <script>
-        // Simple offline page - just shows message and reload button
-        console.log("Offline page loaded");
-        // In your offline.html
-        
+<!-- Floating paws -->
+<div class="pet-paw" style="top:10%; left:10%;">🐾</div>
+<div class="pet-paw" style="top:20%; right:15%; animation-delay:1s;">🐾</div>
+<div class="pet-paw" style="bottom:15%; left:20%; animation-delay:2s;">🐾</div>
+
+<div class="container">
+  <div class="offline-icon">📶</div>
+  <h1>You're Offline</h1>
+  <p>Looks like you're not connected to the internet. Please check your connection and try again.</p>
+  <button class="retry-btn" id="retry-btn">Try Again</button>
+  <p id="auth-status"></p>
+</div>
+
+<div class="features-list">
+  <h3>You can still:</h3>
+  <ul>
+    <li>View existing profiles</li>
+    <li>Create collages</li>
+    <li>Generate QR codes</li>
+    <li>Create birthday cards</li>
+    <li>Print documents</li>
+  </ul>
+  <p class="note">Editing and saving requires internet connection</p>
+</div>
+
+<script>
+console.log("Offline page loaded");
+
+// Retry button
+document.getElementById('retry-btn').addEventListener('click', () => {
+  if (navigator.onLine) {
+    window.location.reload();
+  } else {
+    alert("Still offline. Please check your connection.");
+  }
+});
+
+// Firebase Auth token display for offline
 if (typeof firebase !== 'undefined' && firebase.auth) {
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
@@ -126,19 +102,19 @@ if (typeof firebase !== 'undefined' && firebase.auth) {
         .then(tokenResult => {
           const expiresIn = Math.round((tokenResult.expirationTime - Date.now()) / 60000);
           if (expiresIn > 0) {
-            document.getElementById('auth-status').innerHTML = 
+            document.getElementById('auth-status').textContent = 
               `Signed in (offline access for ${expiresIn} minutes)`;
           }
         });
     }
   });
 }
-        
-        // Try to reload when connection is restored
-        window.addEventListener('online', function() {
-            console.log("Connection restored, reloading...");
-            window.location.reload();
-        });
-    </script>
+
+// Auto-retry when connection is restored
+window.addEventListener('online', () => {
+  console.log("Connection restored, reloading...");
+  window.location.reload();
+});
+</script>
 </body>
 </html>
