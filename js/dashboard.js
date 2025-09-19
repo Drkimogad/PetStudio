@@ -1248,7 +1248,6 @@ async function printProfile(profile) {
 
     openPrintWindow(canvas, profile);
     // SUCCESS: After successful print window opens
-    canvas = null; // Free large canvas memory/ clean up
    if (typeof showSuccessNotification === 'function') {
      showSuccessNotification('Print started successfully!');
    }
@@ -1267,10 +1266,7 @@ async function printProfile(profile) {
     petCard.style.boxShadow = '';
     petCard.style.transition = originalTransition;
       // ✅ RESTORE ORIGINAL STYLES (guaranteed execution)
-  if (petCard) {
-    petCard.style.boxShadow = '';
-    petCard.style.transition = originalTransition;
-  }
+    canvas = null; // Free large canvas memory/ clean up
   }
 } // closes print function 
 
