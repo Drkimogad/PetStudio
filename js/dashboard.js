@@ -1723,8 +1723,25 @@ function downloadCard(canvas, petName) {
 // ===============================
 function createPetCollage(index) {
   window.currentPetIndex = index;
-  // ✅ PHASE 2 - STEP 1: Define the modal HTML as a string
-  // It has to be passed to the function from ensurecollageexists()
+
+  // 1. Resolve profile (multi-source, like printProfile)
+  let profile = window.petProfiles?.[index];
+  
+  if (!profile?.gallery?.length) {
+    // Try localStorage
+    const cachedProfiles = localStorage.getItem("petProfiles");
+    if (cachedProfiles) {
+      const parsed = JSON.parse(cachedProfiles);
+      profile = parsed[index];
+    }
+  }
+
+  if (!profile?.gallery?.length) {
+    showQRStatus("No photos available for collage.", false);
+    return;
+  }
+
+  // ✅ At this point, profile is guaranteed from cache or memory
   const collageModalHTML = `
     <div id="collage-modal" class="modal hidden">
       <div class="modal-content">
