@@ -2142,13 +2142,14 @@ function downloadCollage(canvas, petName) {
 //====================================================
 // 🌀 OPTIMIZED SHARE PET CARD FUNCTION
 //=======================================================
+//====================================================
+// 🌀 OPTIMIZED SHARE PET CARD FUNCTION (MERGED BLOB FLOW)
+//=======================================================
 async function sharePetCard(profile, event) {
-
   try {
     const petStudioLink = "https://drkimogad.github.io/PetStudio/";
 
     // ==== CHANGE 1: REORDERED LOGIC - TRY PNG SHARING FIRST FOR MOBILE ====
-    // Generate the card as PNG (mobile/tablets prefer images)
     const cardElement = document.getElementById(`pet-card-${profile.id}`);
     if (!cardElement) throw new Error("Card element not found");
 
@@ -2156,11 +2157,11 @@ async function sharePetCard(profile, event) {
     const linkElement = document.createElement('div');
     linkElement.textContent = `View more: ${petStudioLink}`;
     linkElement.style.marginTop = '10px';
-    linkElement.style.fontWeight = 'bold'; // Highlight URL
-    linkElement.style.color = '#0066cc'; // Make URL stand out
+    linkElement.style.fontWeight = 'bold';
+    linkElement.style.color = '#0066cc';
     cardElement.appendChild(linkElement);
 
-    // Capture as PNG (higher quality for sharing)
+    // Capture as PNG
     const canvas = await html2canvas(cardElement, {
       scale: 2,
       logging: true,
@@ -2171,66 +2172,73 @@ async function sharePetCard(profile, event) {
       }
     });
 
-    // ==== CHANGE 3: PRIORITIZE NATIVE SHARE WITH PNG (MOBILE/TABLETS) ====
-    if (navigator.share && navigator.canShare) {
-      canvas.toBlob(async (blob) => {
-        const file = new File([blob], `${profile.name}_profile.png`, {
-          type: 'image/png'
-        });
-        try {
-          await navigator.share({
-            title: `Meet ${profile.name}! 🐾`,
-            text: `Check out ${profile.name}'s profile!`, // Optional text
-            files: [file],
-          });
-          return; // Exit if PNG share succeeds
-        } catch (shareError) {
-          console.log("Image share failed, falling back to text/URL");
-        }
-      });
-    }
-
-    // ==== CHANGE 4: FALLBACK TO CLIPBOARD + DOWNLOAD (DESKTOP/MOBILE) ====
+    // ==== MERGED: SINGLE BLOB FOR SHARE + FALLBACK ====
     canvas.toBlob(async (blob) => {
-      try {
-        // Copy PNG to clipboard
-        const item = new ClipboardItem({
-          'image/png': blob
-        });
-        await navigator.clipboard.write([item]);
-      } catch (clipboardError) {
-        console.log("Clipboard copy failed, falling back to download");
-      }
+      if (!blob) return;
 
-      // Auto-download as fallback
+      const file = new File([blob], `${profile.name}_profile.png`, { type: 'image/png' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${profile.name}_profile.png`;
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => {
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }, 100);
 
-      // ==== CHANGE 5: DESKTOP-FRIENDLY ALERT WITH LINK ====
-      alert(`${profile.name}'s profile saved as PNG! Download it or paste the image.\n\nOr share this link: ${petStudioLink}`);
+      try {
+        // ==== CHANGE 3: PRIORITIZE NATIVE SHARE WITH PNG ====
+        if (navigator.share && navigator.canShare) {
+          try {
+            await navigator.share({
+              title: `Meet ${profile.name}! 🐾`,
+              text: `Check out ${profile.name}'s profile!`,
+              files: [file],
+            });
+            return; // Exit if PNG share succeeds
+          } catch (shareError) {
+            console.log("Image share failed, falling back");
+          }
+        }
+
+        // ==== CHANGE 4: FALLBACK TO CLIPBOARD + DOWNLOAD ====
+        try {
+          const item = new ClipboardItem({ 'image/png': blob });
+          await navigator.clipboard.write([item]);
+        } catch (clipboardError) {
+          console.log("Clipboard copy failed, falling back to download");
+        }
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${profile.name}_profile.png`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+        }, 100);
+
+        // ==== CHANGE 5: DESKTOP-FRIENDLY ALERT WITH LINK ====
+        alert(`${profile.name}'s profile saved as PNG! Download it or paste the image.\n\nOr share this link: ${petStudioLink}`);
+
+      } finally {
+        // 🔧 FIX: cleanup once
+        URL.revokeObjectURL(url);
+      }
     }, 'image/png');
 
   } catch (error) {
     console.error('Sharing failed:', error);
     // ==== CHANGE 6: FALLBACK TO TEXT SHARING IF ALL ELSE FAILS ====
-    if (navigator.share) {
-      await navigator.share({
-        title: `Meet ${profile.name}! 🐾`,
-        text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.nextBirthday}\n\nView more: ${petStudioLink}`,
-      });
-    } else {
-      alert(`Share this link manually: ${petStudioLink}`);
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `Meet ${profile.name}! 🐾`,
+          text: `🐾 Meet ${profile.name}!\nBreed: ${profile.breed}\nBirthday: ${profile.nextBirthday}\n\nView more: ${petStudioLink}`,
+        });
+      } else {
+        alert(`Share this link manually: ${petStudioLink}`);
+      }
+    } catch (finalError) {
+      showErrorToUser("Sharing failed"); // 🔧 FIX: only show here
     }
   }
 }
+
+
 
 
 
