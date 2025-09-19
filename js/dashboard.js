@@ -571,7 +571,7 @@ function openEditForm(index) {
     // ======================
     // 🔄 Loader ON (Improved visibility)
     // ======================
-    showLoader(true, "loading", "Profile details retrieved...");
+    showLoader(true, "loading", "Profile details retrieved successfully");
 
     // ======================
     // 1. INITIALIZATION & PROFILE CHECK
@@ -691,6 +691,10 @@ DOM.profileSection.classList.remove('hidden');
 window.scrollTo({ top: 0, behavior: 'smooth' });
 
 console.log("✅ Edit form ready for:", profile.name);
+// ✅ Hide loader after everything is ready
+setTimeout(() => {
+  showLoader(false);
+}, 2000);
 
 } catch (error) {
   console.error("Edit form error:", error);
