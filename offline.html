@@ -170,9 +170,9 @@
 <script>
   console.log("Offline page loaded");
 
-  function tryReconnect() {
+  function goToAuthPage() {
     if (navigator.onLine) {
-      // ✅ Go straight back to the app entry point
+      // ✅ Always go back to the app entry/auth page
       window.location.href = "/PetStudio/index.html";
     } else {
       alert("Still offline. Check your connection and try again.");
@@ -180,7 +180,7 @@
   }
 
   // Manual retry button
-  document.getElementById('retry-btn').addEventListener('click', tryReconnect);
+  document.getElementById('retry-btn').addEventListener('click', goToAuthPage);
 
   // Automatic online detection
   window.addEventListener('online', () => {
@@ -188,12 +188,12 @@
     msg.style.display = 'block';
     setTimeout(() => {
       msg.style.display = 'none';
-      tryReconnect(); // ✅ Auto redirect when back online
+      goToAuthPage(); // ✅ Redirect automatically to auth
     }, 1500);
   });
 
   window.addEventListener('offline', () => {
-    console.log("Offline detected");
+    console.log("Offline detected again");
   });
 </script>
 
