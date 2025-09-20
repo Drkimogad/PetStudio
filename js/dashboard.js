@@ -1812,7 +1812,8 @@ openLinearModal(
 
   profile.gallery.forEach((img, i) => {
     const imgElement = document.createElement('img');
-    imgElement.src = getCachedImage(typeof img === 'string' ? img : img.url); //UPDATED TO USED CACHED IMAGES
+    imgElement.src = getCachedImage(typeof img === 'string' ? img : img.url) 
+                 || (typeof img === 'string' ? img : img.url);
     imgElement.dataset.index = i;
     imgElement.addEventListener('click', toggleImageSelection);
     grid.appendChild(imgElement);
@@ -1919,16 +1920,19 @@ function toggleImageSelection(e) {
  //       img.onload = () => resolve(img);
   //      img.onerror = () => reject(new Error(`Image failed to load: ${img.src}`));
  //     }));
+      
 // THE ABOVE SECTION UPDATED
-      const cloudinaryUrl = getCloudinaryUrl(originalUrl);
+const cloudinaryUrl = getCloudinaryUrl(originalUrl);
 
 // Resolve cached image first (prefetched cachedUrl stored in profile.gallery)
 const cachedCandidate = getCachedImage(cloudinaryUrl);
 
-// Decide final src: prefer cachedCandidate if it's different OR if navigator is offline
+// Decide final src: prefer cachedCandidate if offline OR cachedCandidate exists
 let finalSrc;
-if (cachedCandidate && cachedCandidate !== cloudinaryUrl) {
-  finalSrc = cachedCandidate; // use session cached object/data URL
+if (navigator.onLine === false && cachedCandidate) {
+  finalSrc = cachedCandidate; // offline → force cached
+} else if (cachedCandidate && cachedCandidate !== cloudinaryUrl) {
+  finalSrc = cachedCandidate; // online but cached variant exists
 } else {
   // No cached version — use your worker proxy (keeps existing behavior)
   finalSrc = `${proxyBase}${encodeURIComponent(cloudinaryUrl)}&_cache=${Date.now()}`;
@@ -1947,6 +1951,7 @@ imagesToLoad.push(new Promise((resolve, reject) => {
     reject(new Error(`Image failed to load: ${finalSrc}`));
   };
 }));
+
 // END OF UPDATED SECTION 
 
 
