@@ -1872,6 +1872,8 @@ function toggleImageSelection(e) {
 
  async function generateCollagePNG(profile) {
   try {
+    showLoader(true, "loading", "Generating collage...");
+
     // 1. Improved URL handling
     const getCloudinaryUrl = (url) => {
       if (!url?.includes('res.cloudinary.com')) return url;
@@ -2069,11 +2071,14 @@ collage.style.cssText = `
     
 // Inside generateCollagePNG(), after canvas generation:
 showCollagePreview(canvas, profile);
+   showLoader(true, "success", "Collage generated successfully");
+   setTimeout(() => showLoader(false), 1000); // optional: hide after 1s
     
   } catch (error) {
-    console.error('Collage generation error:', error);
-    showQRStatus(`Failed: ${error.message}`, false);
-    throw error;
+  console.error('Collage generation error:', error);
+  showLoader(true, "error", error.message); // ✅ correct variable
+  setTimeout(() => showLoader(false), 2000);
+    
   } finally {
     // ✅ FINAL CLEANUP: Remove the temporary collage element from the DOM
     const collageEl = document.querySelector(`.collage-layout-${selectedLayout}`);
