@@ -1507,6 +1507,7 @@ async function generateBirthdayCard(index) {
 
   try {
     teardownBirthdayModal(); // Clean up any previous modal first
+    showLoader(true, "loading", "Generating birthday card..."); // ✅ SHOW LOADER EARLY
     console.log("[BirthdayCard] Starting generation for pet index:", index);
       
     // 1. Fetch the pet's profile
@@ -1576,15 +1577,19 @@ card.innerHTML = `
     
        // 5. ADD NEW PREVIEW MODAL LOGIC]
     showBirthdayCardModal(canvas, profile); // New function call
+    
+    showLoader(true, "success", "Birthday card generated successfully"); // ✅ SHOW SUCCESS
+    setTimeout(() => showLoader(false), 1200);
 
     // 6. CLEANUP]
-    document.body.removeChild(card);
+    document.body.removeChild(card); // Cleanup temporary DOM
     
-  } catch (error) {
-    console.error("Generation failed:", error);
-    Utils.showErrorToUser("Couldn't generate card. Please try again.");
+  } catch (error) {console.error("Generation failed:", error);
+    showLoader(true, "error", "Failed to generate birthday card."); // ✅ SHOW ERROR
+    Utils.showErrorToUser("Couldn't generate card. Please try again."); // optional extra feedback
+    setTimeout(() => showLoader(false), 2000);
  } 
-} // FUNCTION
+} //Closes FUNCTION
 
 //================================================================================================
 // [ADD NEW FUNCTION FOR SHARING&DOWNLOADING BIRTHDAYCARD (place near your collage modal code)]
