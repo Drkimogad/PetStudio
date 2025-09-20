@@ -323,46 +323,34 @@ function initAuthListeners() {
   const auth = firebase.auth();
 
   auth.onAuthStateChanged(async (user) => {
+    const logoutBtn = document.getElementById("logoutBtn");
+
     if (user) {
       console.log("✅ User is signed in:", user);
 
-      // Check online status first
+      // Show logout button safely
+      if (logoutBtn) {
+        logoutBtn.replaceWith(logoutBtn.cloneNode(true));
+        const freshLogoutBtn = document.getElementById("logoutBtn");
+        freshLogoutBtn.addEventListener('click', handleLogout);
+        freshLogoutBtn.style.display = "block";
+      }
+
       if (!navigator.onLine) {
         console.log("📴 Offline mode: Loading profiles from localStorage");
-        
-        // Load from localStorage when offline
+
         const cachedProfiles = localStorage.getItem("petProfiles");
-        if (cachedProfiles) {
-          window.petProfiles = JSON.parse(cachedProfiles);
-          console.log("📥 Loaded petProfiles from cache:", window.petProfiles);
-        } else {
-          window.petProfiles = [];
-          console.log("ℹ️ No cached profiles found");
-        }
-        
-        // Show dashboard with cached data
-        if (typeof showDashboard === 'function') {
-          showDashboard();
-        }
-        
-        // =============================================
-        // ✅ LOGOUT INTEGRATION POINT 1: OFFLINE MODE
-        // =============================================
-        const logoutBtn = document.getElementById("logoutBtn");
-        if (logoutBtn) {
-          logoutBtn.addEventListener('click', handleLogout);
-          logoutBtn.style.display = "block";
-        }
-        
-        // Show offline indicator if available
+        window.petProfiles = cachedProfiles ? JSON.parse(cachedProfiles) : [];
+        if (typeof showDashboard === 'function') showDashboard();
+
         if (typeof onlineStatus !== 'undefined' && onlineStatus.showTemporaryMessage) {
           onlineStatus.showTemporaryMessage("Offline mode: Using cached data", "offline");
         }
-        
-        return; // Stop here in offline mode
+
+        return; // Stop further online operations
       }
 
-      // Online mode: Fetch from Firestore
+      // ONLINE mode
       try {
         const snapshot = await firebase.firestore()
           .collection("profiles")
@@ -370,65 +358,29 @@ function initAuthListeners() {
           .get();
 
         const fetchedProfiles = snapshot.docs.map(doc => ({
-          docId: doc.id,  // ← Critical: Include document ID
+          docId: doc.id,
           ...doc.data()
         }));
 
-         // ✅ Update both global state and storage
-          window.petProfiles = fetchedProfiles;
-            // After window.petProfiles = fetchedProfiles;
-          for (const profile of window.petProfiles) {
-          prefetchProfileImages(profile); // fetch & cache session images
+        window.petProfiles = fetchedProfiles;
+
+        for (const profile of window.petProfiles) {
+          prefetchProfileImages(profile); // Cache images for offline use
         }
+
         localStorage.setItem("petProfiles", JSON.stringify(fetchedProfiles));
-        console.log("📥 Synced petProfiles from Firestore:", fetchedProfiles);
-        
-        // ✅ Wait for dashboard to be defined before calling
+
         if (typeof showDashboard === 'function') {
-          console.log("📺 Calling showDashboard()");
           showDashboard();
-            // 🔥 ADD THIS LINE: Hide the loader after dashboard shows and successful sign in
-           showLoader(false);
-        
-          // =============================================
-          // ✅ LOGOUT INTEGRATION POINT 2: ONLINE MODE  
-          // =============================================
-          const logoutBtn = document.getElementById("logoutBtn");
-          if (logoutBtn) {
-            // Remove any existing listeners to prevent duplicates
-            logoutBtn.replaceWith(logoutBtn.cloneNode(true));
-            const freshLogoutBtn = document.getElementById("logoutBtn");
-            
-            freshLogoutBtn.addEventListener('click', handleLogout);
-            freshLogoutBtn.style.display = "block";
-          }
-        } else {
-          console.warn("⚠️ showDashboard is not yet defined. Skipping call.");
-        }  
-        
+          showLoader(false); // Hide loader after dashboard is shown
+        }
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
-        
-        // Fallback to cached data if Firestore fails
+
         const cachedProfiles = localStorage.getItem("petProfiles");
-        if (cachedProfiles) {
-          window.petProfiles = JSON.parse(cachedProfiles);
-          console.log("📥 Fallback to cached profiles due to error:", window.petProfiles);
-          
-          if (typeof showDashboard === 'function') {
-            showDashboard();
-          }
-          
-          // =============================================
-          // ✅ LOGOUT INTEGRATION POINT 3: FALLBACK MODE
-          // =============================================
-          const logoutBtn = document.getElementById("logoutBtn");
-          if (logoutBtn) {
-            logoutBtn.addEventListener('click', handleLogout);
-            logoutBtn.style.display = "block";
-          }
-        }
-        
+        window.petProfiles = cachedProfiles ? JSON.parse(cachedProfiles) : [];
+        if (typeof showDashboard === 'function') showDashboard();
+
         if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
           Utils.showErrorToUser("Couldn't load your pet profiles. Using cached data.");
         }
@@ -445,30 +397,17 @@ function initAuthListeners() {
       localStorage.removeItem('petProfiles');
       if (DOM.petList) DOM.petList.innerHTML = "";
 
-      // =============================================
-      // ✅ LOGOUT INTEGRATION POINT 4: HIDE BUTTON
-      // =============================================
-      const logoutBtn = document.getElementById("logoutBtn");
-      if (logoutBtn) {
-        logoutBtn.style.display = "none";
-      }
+      if (logoutBtn) logoutBtn.style.display = "none";
 
-      // Re-render sign-in button if needed
-      if (typeof setupGoogleLoginButton === 'function') {
-        setupGoogleLoginButton();
-      }
+      if (typeof setupGoogleLoginButton === 'function') setupGoogleLoginButton();
     }
   }, error => {
     console.error("❌ Auth listener error:", error);
-    // =============================================
-    // ✅ LOGOUT INTEGRATION POINT 5: ERROR HANDLING
-    // =============================================
     const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-      logoutBtn.style.display = "none";
-    }
+    if (logoutBtn) logoutBtn.style.display = "none";
   });
 }
+
 
 // ===============================
 // SINGLE LOGOUT HANDLER FUNCTION
@@ -476,61 +415,49 @@ function initAuthListeners() {
 async function handleLogout() {
   // Show logging out state immediately
   showLoader(true, "loading", "Logging out...");
-  
+
   try {
-    // Check if online before attempting Firebase logout
     if (navigator.onLine) {
-      // ONLINE LOGOUT FLOW
+      // ✅ ONLINE LOGOUT FLOW remains unchanged
       if (typeof firebase !== 'undefined' && firebase.auth) {
         await firebase.auth().signOut();
       }
-      
       if (window.google && google.accounts && google.accounts.id) {
-        google.accounts.id.disableAutoSelect(); // ✅ Clear previous Google session
-      } 
-      
-      // Show success feedback with brief delay
-      showLoader(true, "success", "Logged out successfully!");
-      await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5s success display
-      
-    } else {
-      // OFFLINE LOGOUT FLOW - Immediate fallback
-      throw new Error("Offline: Cannot perform logout without network connection");
+        google.accounts.id.disableAutoSelect();
+      }
     }
-    
-  } catch (error) {
-    console.error("Logout failed:", error);
-    
-    // Handle offline scenario specifically
-    if (!navigator.onLine || error.message.includes("Offline")) {
-      // OFFLINE: Clear local data and let service worker handle offline.html
-      localStorage.removeItem('petProfiles');
-      window.petProfiles = [];
-      
-      // Hide loader and let natural offline handling take over
-      showLoader(false);
-      return; // Let service worker show offline.html on next navigation
-    }
-    
-    // ONLINE BUT OTHER ERROR: Show error message
-    showLoader(true, "error", "Logout failed. Please try again.");
-    setTimeout(() => {
-      showLoader(false);
-    }, 2000);
-    
-    return; // Don't proceed with reload on error
-  }
-  
-  // SUCCESSFUL ONLINE LOGOUT: Clean up and reload
-  try {
+
+    // COMMON CLEANUP FOR BOTH ONLINE & OFFLINE
+    // Clear all local caches
     localStorage.removeItem('petProfiles');
     window.petProfiles = [];
-    window.location.reload();
-  } catch (reloadError) {
-    console.error("Reload after logout failed:", reloadError);
-    showLoader(false);
+    if (window._cachedImages) window._cachedImages = {}; // gallery cache for collage
+    // Add any other offline caches if needed
+
+    // Show success feedback
+    showLoader(true, "success", "Logged out successfully!");
+    setTimeout(() => {
+      showLoader(false);
+
+      // Show auth page & hide dashboard
+      if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
+      if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
+      
+      // Hide logout button
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) logoutBtn.style.display = "none";
+
+    }, 2000);
+
+  } catch (error) {
+    console.error("Logout failed:", error);
+
+    // ONLINE errors only: show error message
+    showLoader(true, "error", "Logout failed. Please try again.");
+    setTimeout(() => showLoader(false), 2000);
   }
 }
+
 
 //==================
 // Online/Offline detection and status indicator
