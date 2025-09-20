@@ -1907,15 +1907,48 @@ function toggleImageSelection(e) {
         : profile.gallery[index]?.url;
       
       if (!originalUrl) continue;
-
-      const cloudinaryUrl = getCloudinaryUrl(originalUrl);
-      img.src = `${proxyBase}${encodeURIComponent(cloudinaryUrl)}&_cache=${Date.now()}`;
       
-      imagesToLoad.push(new Promise((resolve, reject) => {
-        img.onload = () => resolve(img);
-        img.onerror = () => reject(new Error(`Image failed to load: ${img.src}`));
-      }));
+  // THIS PART HAD TO BE UPDATED FOR COLLAGE OFFLINE FUNCTIONALITY
+  //    const cloudinaryUrl = getCloudinaryUrl(originalUrl);
+ //     img.src = `${proxyBase}${encodeURIComponent(cloudinaryUrl)}&_cache=${Date.now()}`;
+      
+ //     imagesToLoad.push(new Promise((resolve, reject) => {
+ //       img.onload = () => resolve(img);
+  //      img.onerror = () => reject(new Error(`Image failed to load: ${img.src}`));
+ //     }));
+// THE ABOVE SECTION UPDATED
+      const cloudinaryUrl = getCloudinaryUrl(originalUrl);
 
+// Resolve cached image first (prefetched cachedUrl stored in profile.gallery)
+const cachedCandidate = getCachedImage(cloudinaryUrl);
+
+// Decide final src: prefer cachedCandidate if it's different OR if navigator is offline
+let finalSrc;
+if (cachedCandidate && cachedCandidate !== cloudinaryUrl) {
+  finalSrc = cachedCandidate; // use session cached object/data URL
+} else {
+  // No cached version — use your worker proxy (keeps existing behavior)
+  finalSrc = `${proxyBase}${encodeURIComponent(cloudinaryUrl)}&_cache=${Date.now()}`;
+}
+
+// DEBUG: show which source is used (cached vs proxy)
+console.debug("[Collage] Image src resolved:", { originalUrl: cloudinaryUrl, finalSrc, cachedUsed: finalSrc !== `${proxyBase}${encodeURIComponent(cloudinaryUrl)}&_cache=${Date.now()}` });
+
+// assign and push load promise
+img.src = finalSrc;
+
+imagesToLoad.push(new Promise((resolve, reject) => {
+  img.onload = () => resolve(img);
+  img.onerror = (ev) => {
+    console.error("[Collage] Image failed to load:", finalSrc, ev);
+    reject(new Error(`Image failed to load: ${finalSrc}`));
+  };
+}));
+// END OF UPDATED SECTION 
+
+
+
+      
       collage.appendChild(img);
     }
 
