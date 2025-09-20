@@ -1866,6 +1866,9 @@ function toggleImageSelection(e) {
 //==================================
 // PHASE 2. THEN GENERATE COLLAGE PNG
 //==================================
+// ✅ — online load uses Cloudflare once, then prefetchProfileImages caches it, 
+//and all later collage/print/share use the cached form until logout.
+
  async function generateCollagePNG(profile) {
   try {
     // 1. Improved URL handling
