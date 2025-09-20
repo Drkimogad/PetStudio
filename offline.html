@@ -168,33 +168,26 @@
 <div id="online-message">🟢 Back online! You can try signing in again.</div>
 
 <script>
-  console.log("Offline page loaded");
+document.addEventListener("DOMContentLoaded", () => {
+  const retryBtn = document.getElementById("retry-btn");
 
-  function goToAuthPage() {
+  // manual retry
+  retryBtn.addEventListener("click", () => {
     if (navigator.onLine) {
-      // ✅ Always go back to the app entry/auth page
+      // always go back to auth (login) page
       window.location.href = "/PetStudio/index.html";
     } else {
-      alert("Still offline. Check your connection and try again.");
+      alert("Still offline. Check your connection.");
     }
-  }
+  });
 
-  // Manual retry button
-  document.getElementById('retry-btn').addEventListener('click', goToAuthPage);
-
-  // Automatic online detection
-  window.addEventListener('online', () => {
-    const msg = document.getElementById('online-message');
-    msg.style.display = 'block';
+  // auto redirect once internet is back
+  window.addEventListener("online", () => {
     setTimeout(() => {
-      msg.style.display = 'none';
-      goToAuthPage(); // ✅ Redirect automatically to auth
-    }, 1500);
+      window.location.href = "/PetStudio/index.html";
+    }, 1500); // small delay so connection stabilizes
   });
-
-  window.addEventListener('offline', () => {
-    console.log("Offline detected again");
-  });
+});
 </script>
 
 </body>
