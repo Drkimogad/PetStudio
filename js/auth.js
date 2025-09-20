@@ -242,7 +242,7 @@ async function setupGoogleLoginButton() {
       showLoader(false);
       
       // Redirect to offline.html
-      window.location.href = 'offline.html';
+      window.location.href = '/PetStudio/offline.html';
       return; // Stop execution
     }
               // === ONLINE FLOW ===
