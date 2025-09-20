@@ -303,59 +303,89 @@ if ('serviceWorker' in navigator) {
 }
 
 //==============================================
-// Images caching utility functions
+// Images caching utility functions (DEBUGGED)
 //==============================================
+
 // A. cacheImage(url)
 const sessionImageCache = new Map();
 
 async function cacheImage(url) {
-  if (!url) return url;
-  if (sessionImageCache.has(url)) return sessionImageCache.get(url);
+  if (!url) {
+    console.debug("🟡 cacheImage: No URL provided");
+    return url;
+  }
+
+  if (sessionImageCache.has(url)) {
+    console.debug("✅ cacheImage: Returning cached objectURL for", url);
+    return sessionImageCache.get(url);
+  }
 
   try {
+    console.debug("📥 cacheImage: Fetching image from network:", url);
     const response = await fetch(url);
     const blob = await response.blob();
     const objectURL = URL.createObjectURL(blob);
+
     sessionImageCache.set(url, objectURL);
+    console.debug("✅ cacheImage: Cached new objectURL for", url, "→", objectURL);
     return objectURL;
   } catch (err) {
-    console.warn("Image cache failed, using original URL:", url, err);
+    console.warn("❌ cacheImage: Failed, using original URL:", url, err);
     return url;
   }
 }
 
 // B. getCachedImage(url)
-// Returns the cached version of an image if available
 function getCachedImage(src) {
-  // Look through all profiles and their gallery for a match
+  console.debug("🔍 getCachedImage: Looking up cached image for", src);
+
   for (const profile of window.petProfiles || []) {
     const img = profile.gallery?.find(i => i.url === src || i === src);
-    if (img && img.cachedUrl) return img.cachedUrl; // return prefetched session image
+    if (img && img.cachedUrl) {
+      console.debug("✅ getCachedImage: Found cached URL for", src, "→", img.cachedUrl);
+      return img.cachedUrl;
+    }
   }
-  return src; // fallback to original URL if not cached
+
+  console.debug("⚠️ getCachedImage: No cached URL found for", src, "→ returning original");
+  return src;
 }
 
-
-// C.  Optional: prefetchProfileImages(profile) — prefetch all gallery images for a profile:
+// C. prefetchProfileImages(profile)
 function prefetchProfileImages(profile) {
-  if (!profile?.gallery?.length) return;
+  if (!profile?.gallery?.length) {
+    console.debug("ℹ️ prefetchProfileImages: No gallery for profile:", profile?.id || "unknown");
+    return;
+  }
 
-  profile.gallery.forEach((img) => {
+  console.debug("🚀 prefetchProfileImages: Prefetching", profile.gallery.length, "images for profile:", profile.id || "unknown");
+
+  profile.gallery.forEach((img, idx) => {
+    const originalUrl = typeof img === 'string' ? img : img.url;
+    console.debug(`   🖼️ [${idx}] Starting load →`, originalUrl);
+
     const image = new Image();
-    image.src = typeof img === 'string' ? img : img.url;
+    image.src = originalUrl;
 
-    // When loaded, store a cached URL in profile object for session use
     image.onload = () => {
+      console.debug(`   ✅ [${idx}] Loaded image:`, originalUrl);
+
       if (typeof img === 'string') {
-        // Replace string with object containing cachedUrl
         const index = profile.gallery.indexOf(img);
         profile.gallery[index] = { url: img, cachedUrl: image.src };
+        console.debug(`   🔄 [${idx}] Replaced string with object {url, cachedUrl}`, profile.gallery[index]);
       } else {
         img.cachedUrl = image.src;
+        console.debug(`   🔄 [${idx}] Added cachedUrl field to object:`, img);
       }
+    };
+
+    image.onerror = (err) => {
+      console.warn(`   ❌ [${idx}] Failed to load image:`, originalUrl, err);
     };
   });
 }
+
 
 
 
