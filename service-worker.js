@@ -85,18 +85,20 @@ if (request.mode === 'navigate') {
   event.respondWith(
     (async () => {
       try {
-        // ✅ ALWAYS TRY NETWORK FIRST
         const networkResponse = await fetch(request);
         return networkResponse;
       } catch (err) {
-        // ✅ NETWORK FAILED - CHECK IF TRULY OFFLINE
-        if (!navigator.onLine) {
-          // ✅ TRULY OFFLINE - SERVE OFFLINE.HTML
-          return await caches.match(OFFLINE_URL);
-        } else {
-          // ✅ ONLINE BUT NETWORK FAILED - SERVE INDEX.HTML
-          return await caches.match('index.html');
+        // Serve OFFLINE.HTML from cache for any navigation error
+        const cachedOfflinePage = await caches.match(OFFLINE_URL);
+        if (cachedOfflinePage) {
+          return cachedOfflinePage;
         }
+        // Fallback to index.html if offline.html isn't cached
+        const fallbackResponse = await caches.match('/PetStudio/index.html');
+        if (fallbackResponse) {
+          return fallbackResponse;
+        }
+        return Response.error();
       }
     })()
   );
@@ -147,4 +149,5 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
 
