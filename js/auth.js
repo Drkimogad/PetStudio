@@ -232,12 +232,20 @@ async function setupGoogleLoginButton() {
         try {
           console.log("🔧 Google Sign-In started");
           
-          // 🔧 Reliable online check
-      if (!navigator.onLine) {
-        showLoader(true, "error", "Sign-in requires internet connection.");
-        return; // stop execution immediately
-      }
+     // OFFLINE HANDLING: Show loader and redirect
+    if (!navigator.onLine) {
           
+      showLoader(true, "error", "Sign-in requires internet connection."); 
+      // Wait 1.5 seconds so user sees message
+      await new Promise(resolve => setTimeout(resolve, 1500));  
+      // Hide loader
+      showLoader(false);
+      
+      // Redirect to offline.html
+      window.location.href = 'offline.html';
+      return; // Stop execution
+    }
+              // === ONLINE FLOW ===
           // === CHANGE 1: Show loader immediately with signing in message ===
           showLoader(true, "loading", "Signing in with Google...");
           
