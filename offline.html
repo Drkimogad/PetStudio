@@ -170,21 +170,26 @@
 <script>
   console.log("Offline page loaded");
 
-  // Manual retry button
-  const retryBtn = document.getElementById('retry-btn');
-  retryBtn.addEventListener('click', () => {
+  function tryReconnect() {
     if (navigator.onLine) {
-      location.reload();
+      // ✅ Go straight back to the app entry point
+      window.location.href = "/PetStudio/index.html";
     } else {
       alert("Still offline. Check your connection and try again.");
     }
-  });
+  }
+
+  // Manual retry button
+  document.getElementById('retry-btn').addEventListener('click', tryReconnect);
 
   // Automatic online detection
   window.addEventListener('online', () => {
     const msg = document.getElementById('online-message');
     msg.style.display = 'block';
-    setTimeout(() => { msg.style.display = 'none'; }, 3000);
+    setTimeout(() => {
+      msg.style.display = 'none';
+      tryReconnect(); // ✅ Auto redirect when back online
+    }, 1500);
   });
 
   window.addEventListener('offline', () => {
