@@ -1,13 +1,13 @@
 // service-worker.js - Optimized Version
-const VERSION = '4.2.3';
+const VERSION = '4.2.4';
 const CACHE_NAME = `PetStudio-core-v${VERSION}`;
 
-const OFFLINE_URL = 'offline.html';
+const OFFLINE_URL = '/PetStudio/offline.html';
 const FALLBACK_IMAGE = 'banner/image.png';
 
 const CORE_ASSETS = [
   '.',
-  'index.html',
+  '/PetStudio/index.html',
   'js/auth.js',
   'js/utils.js',
   'js/dashboard.js',
@@ -147,3 +147,4 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
