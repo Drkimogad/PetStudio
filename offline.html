@@ -177,7 +177,7 @@
     <p class="note">Editing, saving, or deleting profiles requires an internet connection</p>
   </div>
 
-  <!-- ✅ Subtle notification for restored connection -->
+  <!-- ✅ Subtle notification for restored connection hidden originally in css-->
   <div id="online-notification" class="online-notification">
     🟢 Back online! Redirecting...
   </div>
@@ -236,7 +236,7 @@ async function checkAndRedirect() {
     document.getElementById('online-notification').style.display = 'block';
     
     setTimeout(() => {
-      window.location.href = "index.html?t=" + Date.now();
+     window.location.href = "index.html?offline_redirect=true&t=" + Date.now();// changed
     }, 1500);
   } else {
     console.log("❌ Still offline (manual check)");
@@ -268,7 +268,7 @@ let checkInterval = setInterval(async () => {
     document.getElementById('online-notification').style.display = 'block';
     
     setTimeout(() => {
-      window.location.href = "index.html?t=" + Date.now();
+     window.location.href = "index.html?offline_redirect=true&t=" + Date.now();// Changed 
     }, 1500);
   } else {
     console.log("📴 Still offline according to browser");
@@ -305,7 +305,7 @@ window.addEventListener("load", () => {
       document.getElementById('online-notification').style.display = 'block';
       
       setTimeout(() => {
-        window.location.href = "index.html?t=" + Date.now();
+        window.location.href = "index.html?offline_redirect=true&t=" + Date.now();// Changed 
       }, 2000);
     }
   });
