@@ -191,19 +191,43 @@ function storeOnlineTime() {
 }
 
 // --- Verify connection with real network requests ---
+// REPLACE the entire verifyConnection function with this:
 async function verifyConnection() {
   try {
-    await Promise.race([
-      fetch("https://httpbin.org/status/200", { method: "HEAD", cache: "no-store" }),
-      fetch("https://www.google.com/favicon.ico", { method: "HEAD", cache: "no-store", mode: "no-cors" })
-    ]);
+    // Simple HEAD request to Google's favicon (usually reliable)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    
+    const response = await fetch('https://www.google.com/favicon.ico?t=' + Date.now(), {
+      method: 'HEAD',
+      cache: 'no-store',
+      mode: 'no-cors',
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
     return true;
   } catch (e) {
-    console.warn("Connection verification failed", e);
+    console.log("Connection check failed:", e.message);
     return false;
   }
 }
+  
+// ADD this function right after verifyConnection:
+function isDefinitelyOnline() {
+  // Basic check first
+  if (!navigator.onLine) return false;
+  
+  // Additional checks for more reliability
+  const hasConnection = navigator.connection && 
+                       navigator.connection.effectiveType !== 'offline';
+  
+  return hasConnection || navigator.onLine;
+}
 
+// THEN update the check in your interval and manual function:
+// Change this: if (navigator.onLine && await verifyConnection())
+// To this: if (isDefinitelyOnline() && await verifyConnection())
 // --- Manual retry button ---
 // REPLACE the checkAndRedirect function with this:
 async function checkAndRedirect() {
@@ -215,7 +239,7 @@ async function checkAndRedirect() {
     btn.textContent = "Checking connection...";
   }
 
-  if (navigator.onLine && await verifyConnection()) {
+if (isDefinitelyOnline() && await verifyConnection()){
     console.log("✅ Connection restored (manual)");
     storeOnlineTime();
     
@@ -240,7 +264,7 @@ async function checkAndRedirect() {
 // REPLACE the entire setInterval section with this:
 let checkInterval = setInterval(async () => {
   console.log("⏳ Automatic connection check running...");
-  if (navigator.onLine && await verifyConnection()) {
+if (isDefinitelyOnline() && await verifyConnection()){
     console.log("✅ Connection restored (auto)");
     storeOnlineTime();
     
