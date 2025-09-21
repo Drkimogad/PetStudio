@@ -166,57 +166,73 @@
 </div>
 
 <div id="online-message">🟢 Back online! You can try signing in again.</div>
-
-<script>
-  console.log("Offline page loaded");
-  console.log("Offline page loaded. navigator.onLine is:", navigator.onLine);
-  console.log("Was the page shown from the browser's error page?");
-
-function tryReconnect() {
-  console.log("tryReconnect called. Online status:", navigator.onLine);
-  if (navigator.onLine) {
-    // ✅ Go straight back to the app entry point
-    console.log("Online detected, redirecting...");
-    window.location.href = "/PetStudio/index.html";
-  } else {
-    console.log("Still offline.");
-    alert("Still offline. Check your connection and try again.");
-  }
-}
-
-// Manual retry button
-document.getElementById('retry-btn').addEventListener('click', tryReconnect);
-
-// ✅ CRITICAL FIX: Check the status immediately on page load!
-if (navigator.onLine) {
-  console.log("Already online upon page load. Redirecting immediately.");
-  // Show the online message briefly so the user knows what's happening
-  const msg = document.getElementById('online-message');
-  if (msg) {
-    msg.style.display = 'block';
-  }
-  // Redirect after a very short delay to let the message be seen
-  setTimeout(tryReconnect, 800);
-} else {
-  console.log("Offline on page load. Waiting for connection...");
-  // If we are offline when the page loads, setup the listener for later.
-  window.addEventListener('online', () => {
-    console.log("'online' event fired!");
-    const msg = document.getElementById('online-message');
-    if (msg) {
-      msg.style.display = 'block';
-      setTimeout(() => {
-        msg.style.display = 'none';
-        tryReconnect(); // ✅ Auto redirect when back online
-      }, 1500);
-    }
-  });
-}
-
-window.addEventListener('offline', () => {
-  console.log("Offline detected");
-});
-  </script>
   
+<script>
+  console.log("✅ Offline page script loaded");
+  console.log("navigator.onLine at start:", navigator.onLine);
+
+  // =====================
+  // checkOnlineOffline()
+  // =====================
+  function checkOnlineOffline() {
+    console.log("checkOnlineOffline() called. Online?", navigator.onLine);
+
+    if (navigator.onLine) {
+      console.log("🟢 Online detected, redirecting to index.html...");
+      const msg = document.getElementById('online-message');
+      if (msg) {
+        msg.style.display = 'block';
+        msg.textContent = "Connection restored! Redirecting...";
+      }
+
+      // Wait 3 seconds before redirect
+      setTimeout(() => {
+        window.location.href = "/PetStudio/index.html";
+      }, 3000);
+    } else {
+      console.log("🔴 Still offline.");
+      alert("You are still offline. Please check your connection.");
+    }
+  }
+
+  // =====================
+  // Retry button binding
+  // =====================
+  const retryBtn = document.getElementById('retry-btn');
+  if (retryBtn) {
+    retryBtn.addEventListener('click', () => {
+      console.log("🔘 Retry button clicked");
+      checkOnlineOffline();
+    });
+  } else {
+    console.warn("⚠️ retry-btn element not found in offline.html");
+  }
+
+  // =====================
+  // Auto redirect when back online
+  // =====================
+  if (navigator.onLine) {
+    console.log("🟢 Already online at page load. Scheduling redirect...");
+    setTimeout(checkOnlineOffline, 3000);
+  } else {
+    console.log("🔴 Offline on page load. Listening for 'online' event...");
+    window.addEventListener('online', () => {
+      console.log("📡 'online' event fired!");
+      const msg = document.getElementById('online-message');
+      if (msg) {
+        msg.style.display = 'block';
+        msg.textContent = "Back online! Redirecting soon...";
+      }
+      setTimeout(checkOnlineOffline, 3000);
+    });
+  }
+
+  // Debugging offline event
+  window.addEventListener('offline', () => {
+    console.log("⚡ 'offline' event fired! Still offline.");
+  });
+</script>
+
+
 </body>
 </html>
