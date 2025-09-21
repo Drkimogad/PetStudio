@@ -1,8 +1,8 @@
 // ================================
 // SERVICE WORKER - PetStudio
-// Version: v4.2.5
+// Version: v4.2.7
 // ================================
-const CACHE_NAME = 'PetStudio-core-v4.2.6';
+const CACHE_NAME = 'PetStudio-core-v4.2.7';
 const OFFLINE_CACHE = 'PetStudio-offline-v1';
 const OFFLINE_URL = '/PetStudio/offline.html';
 const FALLBACK_IMAGE = '/PetStudio/banner/image.png';
@@ -52,17 +52,24 @@ const NO_CACHE_PATHS = [
 ];
 
 // ================================
-// INSTALL
+// INSTALL HANDLER UPDATED
 // ================================
+// REPLACE the existing install event with this improved version:
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil((async () => {
     try {
-      // 1️⃣ Cache local assets first
+      // 1️⃣ Cache local assets first (INCLUDING OFFLINE.HTML WITH PRIORITY)
       const cache = await caches.open(CACHE_NAME);
-      await cache.addAll(CORE_ASSETS.map(url => new Request(url, { mode: 'same-origin' })));
+      
+      // Cache offline.html FIRST to ensure it's always available
+      await cache.add(new Request(OFFLINE_URL, { mode: 'same-origin', cache: 'reload' }));
+      
+      // Then cache remaining assets
+      const otherAssets = CORE_ASSETS.filter(url => url !== OFFLINE_URL);
+      await cache.addAll(otherAssets.map(url => new Request(url, { mode: 'same-origin' })));
 
-      // 2️⃣ Cache external libraries safely
+      // 2️⃣ Cache external libraries safely (existing code)
       const externalCache = await caches.open(OFFLINE_CACHE);
       for (const url of EXTERNAL_LIBS) {
         try {
@@ -78,6 +85,7 @@ self.addEventListener('install', (event) => {
     }
   })());
 });
+
 
 // ================================
 // ACTIVATE
@@ -108,18 +116,36 @@ self.addEventListener('fetch', (event) => {
     return event.respondWith(fetch(request));
   }
 
-  // Navigation requests (pages)
-  if (request.mode === 'navigate') {
-    event.respondWith((async () => {
-      try {
-        return await fetch(request);
-      } catch (err) {
-        // Serve offline.html from cache
-        return await caches.match(OFFLINE_URL) || Response.error();
+// REPLACE the existing navigation request handling with this improved version:
+// Navigation requests (pages)
+if (request.mode === 'navigate') {
+  event.respondWith((async () => {
+    try {
+      // Try network first
+      const networkResponse = await fetch(request);
+      
+      // If response is valid, return it
+      if (networkResponse && networkResponse.status === 200) {
+        return networkResponse;
       }
-    })());
-    return;
-  }
+      
+      // If network fails or returns error, serve offline.html
+      throw new Error('Network response not OK');
+    } catch (err) {
+      // Serve offline.html from cache for ANY navigation failure
+      const offlinePage = await caches.match(OFFLINE_URL);
+      
+      if (offlinePage) {
+        console.log('📴 Serving offline.html for failed navigation');
+        return offlinePage;
+      }
+      
+      // Fallback to error response if offline.html not available
+      return Response.error();
+    }
+  })());
+  return;
+}
 
   // Other requests: cache-first strategy
   event.respondWith((async () => {
@@ -157,3 +183,4 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data === 'skipWaiting') self.skipWaiting();
 });
+
