@@ -316,7 +316,17 @@ Adjust in 5% increments for smooth changes.*/
     padding: 12px 15px;
     font-size: 0.9rem;
   }
+
+  .legal-links {
+    font-size: 0.7rem; /* Reduced from 0.8rem */
+    white-space: nowrap; /* Keep on one line */
+  }
+  
+  .link-separator {
+    margin: 0 4px; /* Reduce separator spacing */
+  }
 }
+
 
 /* Extra small phones */
 @media (max-width: 380px) {
@@ -338,6 +348,13 @@ Adjust in 5% increments for smooth changes.*/
   
   .quote {
     display: none;
+  }
+    .legal-links {
+    font-size: 0.65rem; /* Even smaller if needed */
+  }
+  
+  .legal-link {
+    padding: 1px 2px; /* Tighter padding */
   }
 }
 
