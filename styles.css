@@ -1207,13 +1207,13 @@ border-color: var(--accent-color); /* Mustard yellow border */
     flex: 0 1 auto;
     padding: 8px 16px;
     font-size: 0.9rem;
-    border: 1px solid #808080;
     border-radius: 10px;
     min-width: 120px;
-    background: #ffffff;
-    color: #000000;
     cursor: pointer;
     transition: all 0.3s;
+  border: 1px solid var(--input-border); /* Warm tan border */
+  background: var(--form-bg); /* Warm vanilla cream */
+  color: var(--primary-color); /* Earthy brown text */
 }
 
 /* Hover state for ALL buttons */
@@ -1224,8 +1224,9 @@ border-color: var(--accent-color); /* Mustard yellow border */
 .share-profile:hover,
 .generate-qr:hover,
 .edit-profile:hover {
-    background-color: #ffffff;
-    border-color: #808080;
+    background-color: var(--accent-color); /* Mustard yellow */
+  border-color: var(--accent-color); /* Mustard yellow */
+  color: #fff; /* White text on hover */
 }
 
 /* Delete button overrides (comes AFTER) */
@@ -1233,18 +1234,19 @@ border-color: var(--accent-color); /* Mustard yellow border */
      flex: 0 1 auto;
     padding: 8px 16px;
     font-size: 0.9rem;
-    border: 1px solid #e74c3c !important; /* Only needed for border */
     border-radius: 10px;
     min-width: 120px;
-    background: #ffffff;
     color: #e74c3c;
     cursor: pointer;
     transition: all 0.3s;
+  border: 1px solid var(--accent-color) !important; /* Mustard yellow */
+  color: var(--accent-color); /* Mustard yellow */
 }
 
 .delete-profile:hover {
-    background-color: #ffffff;
-    border-color: #e74c3c; 
+background-color: var(--accent-color); /* Mustard yellow */
+  border-color: var(--accent-color); /* Mustard yellow */
+  color: #fff; /* White text on hover */
 }
 
 /*=======================*/
@@ -1363,7 +1365,10 @@ styled to show in petcard header plus nickname */
   position: absolute;
   right: 20px;
   top: 20px;
-  background: rgba(255,255,255,0.9);
+  background: var(--form-bg); /* Warm vanilla cream */
+  opacity: 0.95; /* Maintain slight transparency */
+  box-shadow: var(--shadow); /* Subtle brown shadow */
+  
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.9rem;
@@ -1371,7 +1376,7 @@ styled to show in petcard header plus nickname */
 /* Optional: Add hover effect */
 .countdown-badge:hover {
     transform: scale(1.05);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+   box-shadow: 0 2px 8px rgba(139, 90, 43, 0.3); /* Warmer brown shadow on hover*/
 }
 
 /* END OF PETCARD CREATION STYLES*/
@@ -1392,6 +1397,20 @@ styled to show in petcard header plus nickname */
     top: 15px;
     font-size: 0.8rem;
     padding: 3px 10px;
+  }
+  /* grid like layout, 2 buttons per row*/
+    .petCard .actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* ✅ 2 buttons per row */
+    gap: 8px;
+    margin-top: 15px;
+  }
+  
+  .petCard .actions button {
+    min-width: auto; /* ✅ Remove fixed min-width */
+    width: 100%; /* ✅ Fill grid cells */
+    padding: 6px 12px; /* ✅ Slightly smaller padding */
+    font-size: 0.85rem; /* ✅ Slightly smaller text */
   }
 }
 
