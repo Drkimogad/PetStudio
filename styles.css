@@ -820,21 +820,21 @@ Adjust in 5% increments for smooth changes.*/
   border-radius: 10px;
   padding: 25px;
   margin: 20px auto;
-/*  background-color: #ffffff;*/
+  background: var(--form-bg); /* Warm vanilla cream */
   width: 90%; /* Fixed 90% width */
   max-width: 1200px; /* Preoversizing on large screens */
   position: relative;
   text-align: left;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: var(--shadow); /* Subtle brown shadow */
+  transition: transform var(--transition), box-shadow var(--transition);
   overflow: hidden; /* Contain all child elements */
 }
 
 .petCard:hover {
   transform: translateY(-3px); /* More subtle hover */
-  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 16px rgba(139, 90, 43, 0.15); /* Warmer brown shadow */
 }
 
 /*=============================*/
