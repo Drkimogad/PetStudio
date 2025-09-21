@@ -170,30 +170,38 @@
 <script>
   console.log("✅ Offline page script loaded");
   console.log("navigator.onLine at start:", navigator.onLine);
+//=====================================
+// Update checkOnlineOffline() function
+//===================================
+function checkOnlineOffline() {
+  console.log("checkOnlineOffline() called. Online?", navigator.onLine);
 
-  // =====================
-  // checkOnlineOffline()
-  // =====================
-  function checkOnlineOffline() {
-    console.log("checkOnlineOffline() called. Online?", navigator.onLine);
+  const msg = document.getElementById('online-message');
 
-    if (navigator.onLine) {
-      console.log("🟢 Online detected, redirecting to index.html...");
-      const msg = document.getElementById('online-message');
-      if (msg) {
-        msg.style.display = 'block';
-        msg.textContent = "Connection restored! Redirecting...";
-      }
+  if (navigator.onLine) {
+    console.log("🟢 Online detected, redirecting to index.html...");
 
-      // Wait 3 seconds before redirect
-      setTimeout(() => {
-        window.location.href = "/PetStudio/index.html";
-      }, 3000);
-    } else {
-      console.log("🔴 Still offline.");
-      alert("You are still offline. Please check your connection.");
+    if (msg) {
+      msg.style.display = 'block';
+      msg.textContent = "Connection restored! Redirecting...";
+    }
+
+    // Wait 3 seconds before redirect
+    setTimeout(() => {
+      if (msg) msg.style.display = 'none';
+      window.location.href = 'index.html';
+    }, 3000);
+
+  } else {
+    console.log("🔴 Still offline.");
+    if (msg) {
+      msg.style.display = 'block';
+      msg.textContent = "Still offline. Please check your connection.";
+      setTimeout(() => msg.style.display = 'none', 3000);
     }
   }
+}
+
 
   // =====================
   // Retry button binding
