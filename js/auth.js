@@ -237,7 +237,7 @@ async function setupGoogleLoginButton() {
           
       showLoader(true, "error", "Sign-in requires internet connection."); 
       // Wait 1.5 seconds so user sees message
-      await new Promise(resolve => setTimeout(resolve, 1500));  
+      await new Promise(resolve => setTimeout(resolve, 2000));   // was 1500
       // Hide loader
       showLoader(false);
       
