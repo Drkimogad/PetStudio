@@ -168,78 +168,102 @@
 <div id="online-message">🟢 Back online! You can try signing in again.</div>
   
 <script>
-  console.log("✅ Offline page script loaded");
-  console.log("navigator.onLine at start:", navigator.onLine);
-//=====================================
-// Update checkOnlineOffline() function
-//===================================
-function checkOnlineOffline() {
-  console.log("checkOnlineOffline() called. Online?", navigator.onLine);
+console.log("✅ Offline page script loaded");
+console.log("navigator.onLine at start:", navigator.onLine);
 
-  const msg = document.getElementById('online-message');
+const REDIRECT_URL = "/PetStudio/"; // Auth page URL
 
-  if (navigator.onLine) {
-    console.log("🟢 Online detected, redirecting to index.html...");
-
-    if (msg) {
-      msg.style.display = 'block';
-      msg.textContent = "Connection restored! Redirecting...";
-    }
-
-    // Wait 3 seconds before redirect
-    setTimeout(() => {
-      if (msg) msg.style.display = 'none';
-      window.location.href = 'index.html';
-    }, 3000);
-
-  } else {
-    console.log("🔴 Still offline.");
-    if (msg) {
-      msg.style.display = 'block';
-      msg.textContent = "Still offline. Please check your connection.";
-      setTimeout(() => msg.style.display = 'none', 3000);
-    }
+// =====================
+// Show friendly message
+// =====================
+function showMessage(msgText) {
+  const msgEl = document.getElementById('online-message');
+  if (msgEl) {
+    msgEl.style.display = 'block';
+    msgEl.textContent = msgText;
   }
 }
 
+// =====================
+// Reliable online check
+// =====================
+async function checkOnlineOffline(autoRedirect = false) {
+  console.log("checkOnlineOffline() called. Online?", navigator.onLine);
 
-  // =====================
-  // Retry button binding
-  // =====================
-  const retryBtn = document.getElementById('retry-btn');
-  if (retryBtn) {
-    retryBtn.addEventListener('click', () => {
-      console.log("🔘 Retry button clicked");
-      checkOnlineOffline();
-    });
-  } else {
-    console.warn("⚠️ retry-btn element not found in offline.html");
+  // Extra check: ping a lightweight resource to confirm online
+  let isOnline = navigator.onLine;
+  if (isOnline) {
+    try {
+      const response = await fetch('/PetStudio/index.html', { cache: 'no-store' });
+      isOnline = response.ok;
+    } catch {
+      isOnline = false;
+    }
   }
 
-  // =====================
-  // Auto redirect when back online
-  // =====================
-  if (navigator.onLine) {
-    console.log("🟢 Already online at page load. Scheduling redirect...");
-    setTimeout(checkOnlineOffline, 3000);
+  if (isOnline) {
+    console.log("🟢 Online confirmed");
+    showMessage("🟢 Connection restored! Redirecting...");
+    if (autoRedirect) {
+      setTimeout(() => {
+        window.location.href = REDIRECT_URL;
+      }, 3000);
+    }
   } else {
-    console.log("🔴 Offline on page load. Listening for 'online' event...");
-    window.addEventListener('online', () => {
-      console.log("📡 'online' event fired!");
-      const msg = document.getElementById('online-message');
-      if (msg) {
-        msg.style.display = 'block';
-        msg.textContent = "Back online! Redirecting soon...";
-      }
-      setTimeout(checkOnlineOffline, 3000);
-    });
+    console.log("🔴 Still offline");
+    if (!autoRedirect) showMessage("🔴 You are still offline. Try again later.");
   }
+}
 
-  // Debugging offline event
-  window.addEventListener('offline', () => {
-    console.log("⚡ 'offline' event fired! Still offline.");
+// =====================
+// Retry button
+// =====================
+const retryBtn = document.getElementById('retry-btn');
+if (retryBtn) {
+  retryBtn.addEventListener('click', () => {
+    console.log("🔘 Retry button clicked");
+    checkOnlineOffline(false);
   });
+} else {
+  console.warn("⚠️ retry-btn element not found in offline.html");
+}
+
+// =====================
+// Auto redirect when back online
+// =====================
+function setupOnlineListener() {
+  window.addEventListener('online', () => {
+    console.log("📡 'online' event fired!");
+    checkOnlineOffline(true);
+  });
+}
+
+// =====================
+// Auto periodic check every 3 seconds
+// =====================
+function startPeriodicCheck() {
+  setInterval(() => {
+    console.log("⏱️ Periodic online check");
+    checkOnlineOffline(true);
+  }, 3000);
+}
+
+// =====================
+// Initialize offline page logic
+// =====================
+(function initOfflinePage() {
+  if (navigator.onLine) {
+    console.log("🟢 Already online at page load, scheduling auto redirect...");
+    checkOnlineOffline(true);
+  } else {
+    console.log("🔴 Offline at page load, waiting for 'online' event...");
+  }
+
+  setupOnlineListener();
+  startPeriodicCheck();
+})();
 </script>
+
 
 
 </body>
