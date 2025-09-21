@@ -190,46 +190,19 @@ function storeOnlineTime() {
   updateLastOnlineTime();
 }
 
-// --- Verify connection with real network requests ---
-// REPLACE the entire verifyConnection function with this:
+// --- SIMPLE connection verification ---
 async function verifyConnection() {
-  try {
-    // Simple HEAD request to Google's favicon (usually reliable)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
-    
-    const response = await fetch('https://www.google.com/favicon.ico?t=' + Date.now(), {
-      method: 'HEAD',
-      cache: 'no-store',
-      mode: 'no-cors',
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-    return true;
-  } catch (e) {
-    console.log("Connection check failed:", e.message);
-    return false;
-  }
-}
-  
-// ADD this function right after verifyConnection:
-function isDefinitelyOnline() {
-  // Basic check first
-  if (!navigator.onLine) return false;
-  
-  // Additional checks for more reliability
-  const hasConnection = navigator.connection && 
-                       navigator.connection.effectiveType !== 'offline';
-  
-  return hasConnection || navigator.onLine;
+  return new Promise((resolve) => {
+    if (!navigator.onLine) {
+      resolve(false);
+      return;
+    }
+    // Brief timeout to let connection stabilize
+    setTimeout(() => resolve(navigator.onLine), 100);
+  });
 }
 
-// THEN update the check in your interval and manual function:
-// Change this: if (navigator.onLine && await verifyConnection())
-// To this: if (isDefinitelyOnline() && await verifyConnection())
 // --- Manual retry button ---
-// REPLACE the checkAndRedirect function with this:
 async function checkAndRedirect() {
   console.log("🔘 Retry button clicked");
 
@@ -239,20 +212,29 @@ async function checkAndRedirect() {
     btn.textContent = "Checking connection...";
   }
 
-if (isDefinitelyOnline() && await verifyConnection()){
+  if (await verifyConnection()) {
     console.log("✅ Connection restored (manual)");
     storeOnlineTime();
-    
-    // 🔥 Clear any ongoing automatic checks
     clearInterval(checkInterval);
     
-    onlineStatus.showTemporaryMessage("Back online! Redirecting...", "online");
+    // Show success message
+    const notification = document.createElement('div');
+    notification.textContent = '🟢 Connection restored! Redirecting...';
+    notification.style = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #4CAF50; color: white; padding: 15px; border-radius: 5px; z-index: 10000;';
+    document.body.appendChild(notification);
+    
     setTimeout(() => {
       window.location.href = "index.html?t=" + Date.now();
     }, 1500);
   } else {
     console.log("❌ Still offline (manual check)");
-    onlineStatus.showTemporaryMessage("Still offline, try again later.", "offline");
+    // Show offline message
+    const message = document.createElement('div');
+    message.textContent = 'Still offline, try again later.';
+    message.style = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #ff9800; color: white; padding: 15px; border-radius: 5px; z-index: 10000;';
+    document.body.appendChild(message);
+    setTimeout(() => message.remove(), 3000);
+    
     if (btn) {
       btn.disabled = false;
       btn.textContent = "Try Again";
@@ -261,35 +243,34 @@ if (isDefinitelyOnline() && await verifyConnection()){
 }
 
 // --- Automatic periodic check ---
-// REPLACE the entire setInterval section with this:
 let checkInterval = setInterval(async () => {
-  console.log("⏳ Automatic connection check running...");
-if (isDefinitelyOnline() && await verifyConnection()){
-    console.log("✅ Connection restored (auto)");
-    storeOnlineTime();
-    
-    // 🔥 CRITICAL FIX: Clear interval FIRST before any async operations
+  console.log("⏳ Checking browser online status...");
+  if (await verifyConnection()) {
+    console.log("✅ Browser reports online - redirecting");
     clearInterval(checkInterval);
     
-    onlineStatus.showTemporaryMessage("Connection restored! Redirecting...", "online");
+    // Show visual confirmation
+    const notification = document.createElement('div');
+    notification.textContent = '🟢 Connection restored! Redirecting...';
+    notification.style = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #4CAF50; color: white; padding: 15px; border-radius: 5px; z-index: 10000;';
+    document.body.appendChild(notification);
     
-    // Short delay for user to see message, then redirect
     setTimeout(() => {
       window.location.href = "index.html?t=" + Date.now();
-    }, 2000);
+    }, 1500);
   } else {
-    console.log("📴 Still offline (auto check)");
+    console.log("📴 Still offline according to browser");
   }
-}, 5000);
+}, 3000);
 
 // --- Initialize offline page ---
 window.addEventListener("load", () => {
   console.log("✅ Offline page loaded");
 
   if (navigator.onLine) {
-    storeOnlineTime(); // already online, update record
+    storeOnlineTime();
   } else {
-    updateLastOnlineTime(); // show last time
+    updateLastOnlineTime();
   }
 
   // Bind retry button
@@ -300,12 +281,17 @@ window.addEventListener("load", () => {
 
   // Listen for online/offline events
   window.addEventListener("online", async () => {
-    console.log("📡 Online event detected, verifying...");
+    console.log("📡 Online event detected");
     if (await verifyConnection()) {
       console.log("✅ Verified online after browser event");
       storeOnlineTime();
-      onlineStatus.showTemporaryMessage("Back online! Redirecting...", "online");
       clearInterval(checkInterval);
+      
+      const notification = document.createElement('div');
+      notification.textContent = '🟢 Back online! Redirecting...';
+      notification.style = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #4CAF50; color: white; padding: 15px; border-radius: 5px; z-index: 10000;';
+      document.body.appendChild(notification);
+      
       setTimeout(() => {
         window.location.href = "index.html?t=" + Date.now();
       }, 2000);
@@ -314,7 +300,11 @@ window.addEventListener("load", () => {
 
   window.addEventListener("offline", () => {
     console.log("⚡ Offline event detected");
-    onlineStatus.showTemporaryMessage("You are offline", "offline");
+    const message = document.createElement('div');
+    message.textContent = 'You are offline';
+    message.style = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #ff9800; color: white; padding: 15px; border-radius: 5px; z-index: 10000;';
+    document.body.appendChild(message);
+    setTimeout(() => message.remove(), 3000);
   });
 });
 </script>
