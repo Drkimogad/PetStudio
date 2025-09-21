@@ -258,7 +258,7 @@ Adjust in 5% increments for smooth changes.*/
 ==================== */
 @media (max-width: 600px) {
   #authContainer {
-    padding: 10px 15px; /* ✅ EQUAL SPACING ON BOTH SIDES */
+    padding: 5px 8px; /* ✅ EQUAL SPACING ON BOTH SIDES was 10px RL and 15px TB */
     background-size: cover;
   }
 
@@ -288,15 +288,27 @@ Adjust in 5% increments for smooth changes.*/
     box-sizing: border-box; /* ✅ Ensures padding+border included in width */
   }
 
-  #googleSignInWrapper {
-    width: 100%; /* ✅ Now responsive within container */
-    max-width: 280px;
-    top: 75%;
-    padding: 20px;
-    border-width: 3px;
-    box-sizing: border-box;
+#googleSignInWrapper {
+    width: 98vw; /* ✅ Contained within 98% viewport width */
+    max-width: none; /* ✅ Remove fixed max-width constraint */
+    left: 50%;
+    transform: translate(-50%, -50%); /* ✅ Proper centering */
+    box-sizing: border-box; /* ✅ Prevent border/padding overflow */
+    padding: 20px; /* ✅ Maintain inner spacing */
   }
-
+  
+  /* Ensure Google button respects container */
+    #googleSignInBtn {
+    width: 98% !important; /* ✅ Button contained within 98% of container width */
+    margin: 0 auto; /* ✅ Center within container */
+    display: block;
+  }
+  
+  #googleSignInBtn iframe {
+    width: 100% !important; /* ✅ Google button fills the 98% width */
+    max-width: 100% !important;
+  }
+  
   .quote {
     bottom: 60px;
     right: 15px;
