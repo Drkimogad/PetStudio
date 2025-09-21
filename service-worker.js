@@ -1,13 +1,17 @@
-// service-worker.js - Optimized Version
-const VERSION = '4.2.5';
-const CACHE_NAME = `PetStudio-core-v${VERSION}`;
-
+// ================================
+// SERVICE WORKER - PetStudio
+// Version: v4.2.5
+// ================================
+const CACHE_NAME = 'PetStudio-core-v4.2.6';
+const OFFLINE_CACHE = 'PetStudio-offline-v1';
 const OFFLINE_URL = '/PetStudio/offline.html';
-const FALLBACK_IMAGE = 'banner/image.png';
+const FALLBACK_IMAGE = '/PetStudio/banner/image.png';
 
+// Core app assets to cache locally
 const CORE_ASSETS = [
-  '.',
+  '.', // root
   '/PetStudio/index.html',
+  OFFLINE_URL,
   'js/auth.js',
   'js/utils.js',
   'js/dashboard.js',
@@ -19,140 +23,137 @@ const CORE_ASSETS = [
   'banner/image.png',
   'privacy.html',
   'terms.html',
-    
   'static/css/webfonts/fa-brands-400.woff2',
   'static/css/webfonts/fa-solid-900.woff2',
   'static/css/all.min.css',
-  
   'js/libs/firebase-app-compat.js',
   'js/libs/firebase-auth-compat.js',
   'js/libs/firebase-firestore-compat.js',
-  'js/libs/firebase-functions-compat.js', // Fixed path (libs not lib)
+  'js/libs/firebase-functions-compat.js',
   'js/libs/cloudinary-core-shrinkwrap.min.js',
   'js/libs/lottie-player.js',
   'js/libs/html2canvas.min.js',
-  'js/libs/qrcode.min.js',
-  
-  OFFLINE_URL,
-  FALLBACK_IMAGE
+  'js/libs/qrcode.min.js'
 ];
 
-// Paths that should NOT be cached (auth-related)
+// External libraries to cache safely
+const EXTERNAL_LIBS = [
+  'https://apis.google.com/js/api.js',
+  'https://accounts.google.com/gsi/client'
+];
+
+// Paths that should never be cached
 const NO_CACHE_PATHS = [
   /\/__\/auth\//,
   /\/identitytoolkit\//,
   /\/token$/,
-  /accounts\.google\.com\/gsi\/client/, // Google Sign-In client
-  /googleapis\.com/ // Google APIs
+  /accounts\.google\.com\/gsi\/client/,
+  /googleapis\.com/
 ];
 
-// ======== INSTALL ========
+// ================================
+// INSTALL
+// ================================
 self.addEventListener('install', (event) => {
-  console.log('[SW] Install event');
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(CORE_ASSETS))
-      .then(() => self.skipWaiting())
-  );
+  self.skipWaiting();
+  event.waitUntil((async () => {
+    try {
+      // 1️⃣ Cache local assets first
+      const cache = await caches.open(CACHE_NAME);
+      await cache.addAll(CORE_ASSETS.map(url => new Request(url, { mode: 'same-origin' })));
+
+      // 2️⃣ Cache external libraries safely
+      const externalCache = await caches.open(OFFLINE_CACHE);
+      for (const url of EXTERNAL_LIBS) {
+        try {
+          await externalCache.add(new Request(url, { mode: 'no-cors', credentials: 'omit' }));
+        } catch (err) {
+          console.warn(`⚠️ Could not cache external library: ${url}`, err);
+        }
+      }
+
+      console.log('✅ SW installed: core + external libraries cached');
+    } catch (err) {
+      console.error('❌ SW installation failed', err);
+    }
+  })());
 });
 
-// ======== ACTIVATE ========
-self.addEventListener('activate', event => {
-  console.log('[SW] Activate event');
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.filter(key => key !== CACHE_NAME)
+// ================================
+// ACTIVATE
+// ================================
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(
+      keys.filter(key => key !== CACHE_NAME && key !== OFFLINE_CACHE)
           .map(key => caches.delete(key))
-      )
-    ).then(() => self.clients.claim())
-  );
+    );
+    await self.clients.claim();
+    console.log('✅ SW activated and old caches cleared');
+  })());
 });
 
-// ======== FETCH HANDLER ========
+// ================================
+// FETCH
+// ================================
 self.addEventListener('fetch', (event) => {
-  console.log('[SW] Fetching:', event.request.url);
-
-  const request = event.request;
+  const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET and browser extensions
   if (request.method !== 'GET' || url.protocol === 'chrome-extension:') return;
 
-  // Skip caching for critical auth paths and Google APIs
+  // Network-only for auth & Google APIs
   if (NO_CACHE_PATHS.some(rx => rx.test(url.href))) {
-    return event.respondWith(fetch(request)); // Network only
+    return event.respondWith(fetch(request));
   }
 
   // Navigation requests (pages)
-if (request.mode === 'navigate') {
-  event.respondWith(
-    (async () => {
+  if (request.mode === 'navigate') {
+    event.respondWith((async () => {
       try {
-        const networkResponse = await fetch(request);
-        return networkResponse;
+        return await fetch(request);
       } catch (err) {
-        // Serve OFFLINE.HTML from cache for any navigation error
-        const cachedOfflinePage = await caches.match(OFFLINE_URL);
-        if (cachedOfflinePage) {
-          return cachedOfflinePage;
-        }
-        // Fallback to index.html if offline.html isn't cached
-        const fallbackResponse = await caches.match('/PetStudio/index.html');
-        if (fallbackResponse) {
-          return fallbackResponse;
-        }
-        return Response.error();
+        // Serve offline.html from cache
+        return await caches.match(OFFLINE_URL) || Response.error();
       }
-    })()
-  );
-  return;
-}
-
-  // For all other requests: cache first strategy
-  event.respondWith(
-    (async () => {
-      // First, try to get from cache
-      const cachedResponse = await caches.match(request);
-      if (cachedResponse) {
-        // If found in cache, return it but update cache in background
-        fetch(request)
-          .then(networkResponse => {
-            if (networkResponse && networkResponse.status === 200) {
-              caches.open(CACHE_NAME)
-                .then(cache => cache.put(request, networkResponse));
-            }
-          })
-          .catch(() => {}); // Silent fail for background update
-        return cachedResponse;
-      }
-
-      // If not in cache, try network
-      try {
-        const networkResponse = await fetch(request);
-        if (networkResponse && networkResponse.status === 200) {
-          // Cache the successful response
-          const cache = await caches.open(CACHE_NAME);
-          cache.put(request, networkResponse.clone());
-        }
-        return networkResponse;
-      } catch (err) {
-        // If image request fails, return fallback image
-        if (request.destination === 'image') {
-          return await caches.match(FALLBACK_IMAGE) || Response.error();
-        }
-        return Response.error();
-      }
-    })()
-  );
-});
-
-// ======== MESSAGE HANDLER ========
-self.addEventListener('message', (event) => {
-  if (event.data === 'skipWaiting') {
-    self.skipWaiting();
+    })());
+    return;
   }
+
+  // Other requests: cache-first strategy
+  event.respondWith((async () => {
+    const cached = await caches.match(request);
+    if (cached) {
+      // Update cache in background
+      fetch(request).then(async (networkResp) => {
+        if (networkResp && networkResp.status === 200) {
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(request, networkResp.clone());
+        }
+      }).catch(() => {});
+      return cached;
+    }
+
+    try {
+      const networkResp = await fetch(request);
+      if (networkResp && networkResp.status === 200) {
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(request, networkResp.clone());
+      }
+      return networkResp;
+    } catch (err) {
+      if (request.destination === 'image') {
+        return await caches.match(FALLBACK_IMAGE) || Response.error();
+      }
+      return Response.error();
+    }
+  })());
 });
 
-
-
+// ================================
+// MESSAGE
+// ================================
+self.addEventListener('message', (event) => {
+  if (event.data === 'skipWaiting') self.skipWaiting();
+});
