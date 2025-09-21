@@ -258,7 +258,7 @@ Adjust in 5% increments for smooth changes.*/
 ==================== */
 @media (max-width: 600px) {
   #authContainer {
-    padding: 5px 8px; /* ✅ EQUAL SPACING ON BOTH SIDES was 10px RL and 15px TB */
+    padding: 2px 5px; /* ✅ EQUAL SPACING ON BOTH SIDES was 10px RL and 15px TB */
     background-size: cover;
   }
 
