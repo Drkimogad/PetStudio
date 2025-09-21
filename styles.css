@@ -294,7 +294,7 @@ Adjust in 5% increments for smooth changes.*/
     left: 50%;
     transform: translate(-50%, -50%); /* ✅ Proper centering */
     box-sizing: border-box; /* ✅ Prevent border/padding overflow */
-    padding: 20px; /* ✅ Maintain inner spacing */
+    padding: 2px; /* ✅ Maintain inner spacing was 20px */
   }
   
   /* Ensure Google button respects container */
@@ -365,14 +365,9 @@ Adjust in 5% increments for smooth changes.*/
 /* Dashboard: Hidden by default */
 #dashboard {
   display: none;
-/*  padding: 20px; */
-  padding: 0;
+/*  padding: 20px;*/
   background-color: #ffffff; /* white background*/
-}
-
-#dashboard {
-/*  padding: 2rem 1rem; */
-  padding: 2rem 0; /* ✅ Vertical padding only, no side padding */
+  padding: 2rem 1rem; /*32 px and 16*/
   background: #fafafa;
   display: flex;
   flex-direction: column;
@@ -440,6 +435,9 @@ Adjust in 5% increments for smooth changes.*/
 
 /* sorted*/
 @media (max-width: 600px) {
+  #dashboard {
+  padding: 1px; /*on phones and test it*/
+  }
   .dashboard-actions {
     flex-direction: row; /* ✅ Keep buttons on one line */
     justify-content: center; /* ✅ Center the pair */
@@ -838,6 +836,7 @@ Adjust in 5% increments for smooth changes.*/
   transform: translateY(-3px); /* More subtle hover */
   box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
+
 /*=============================*/
 /* 1. PET CARD HEADER STYLES */
 /* petCard header INCLUDING HEADER, NICKNAME AND COUNTDOWN BADGE */
@@ -1366,6 +1365,26 @@ styled to show in petcard header plus nickname */
 }
 
 /* END OF PETCARD CREATION STYLES*/
+/* Responsive Design for phones*/
+@media (max-width: 600px) {
+  .petCard-header {
+    padding: 40px 20px 15px 20px; /* ✅ More top padding (40px) for badge + space */
+  }  
+  .petCard-header h3 {
+    font-size: 1.3rem; /* ✅ Smaller font for mobile */
+    margin-top: 15px; /* ✅ Space below badge area */
+  }  
+  .petCard-header .nickname {
+    margin-top: 5px; /* ✅ Space below header */
+  }  
+  .petCard-header .countdown-badge {
+    right: 15px;
+    top: 15px;
+    font-size: 0.8rem;
+    padding: 3px 10px;
+  }
+}
+
 
 
 /* =====COLLAGE BUTTON STYLES======= */
