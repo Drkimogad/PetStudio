@@ -254,6 +254,83 @@ Adjust in 5% increments for smooth changes.*/
 }
 
 /* ====================
+   MOBILE RESPONSIVE AUTH
+==================== */
+@media (max-width: 600px) {
+  #authContainer {
+    padding: 10px 15px; /* ✅ EQUAL SPACING ON BOTH SIDES */
+    background-size: cover;
+  }
+
+  .auth-header {
+    width: 100%; /* ✅ Now fills the container width */
+    margin: 2vh auto 0;
+    padding: 1rem;
+    border-width: 6px;
+    border-radius: 12px 12px 0 0;
+    box-sizing: border-box; /* ✅ Ensures padding+border included in width */
+  }
+
+  .auth-header h1 {
+    font-size: 2.2rem;
+    text-shadow: 1px 1px 0 #f5e7ec;
+  }
+
+  .auth-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .banner-wrapper {
+    width: 100%; /* ✅ Now fills the container width */
+    height: 45vh;
+    border-width: 6px;
+    border-radius: 0 0 12px 12px;
+    box-sizing: border-box; /* ✅ Ensures padding+border included in width */
+  }
+
+  #googleSignInWrapper {
+    width: 100%; /* ✅ Now responsive within container */
+    max-width: 280px;
+    top: 75%;
+    padding: 20px;
+    border-width: 3px;
+    box-sizing: border-box;
+  }
+
+  .quote {
+    bottom: 60px;
+    right: 15px;
+    max-width: 75%;
+    padding: 12px 15px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 380px) {
+  #authContainer {
+    padding: 10px 12px; /* ✅ Still equal spacing on smaller phones */
+  }
+  
+  .auth-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .auth-header h2 {
+    font-size: 1rem;
+  }
+  
+  #googleSignInWrapper {
+    padding: 15px;
+  }
+  
+  .quote {
+    display: none;
+  }
+}
+
+
+/* ====================
    DASHBOARD & LAYOUT
 ==================== */
 /* Dashboard: Hidden by default */
