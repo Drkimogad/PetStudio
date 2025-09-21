@@ -141,31 +141,34 @@
 </head>
 <body>
 
-<!-- Decorative floating paws -->
-<div class="pet-paw" style="top: 10%; left: 10%;">🐾</div>
-<div class="pet-paw" style="top: 20%; right: 15%; animation-delay: 1s;">🐾</div>
-<div class="pet-paw" style="bottom: 15%; left: 20%; animation-delay: 2s;">🐾</div>
+  <!-- Decorative floating paws -->
+  <div class="pet-paw" style="top: 10%; left: 10%;">🐾</div>
+  <div class="pet-paw" style="top: 20%; right: 15%; animation-delay: 1s;">🐾</div>
+  <div class="pet-paw" style="bottom: 15%; left: 20%; animation-delay: 2s;">🐾</div>
 
-<div class="container">
+  <div class="container">
     <div class="offline-icon">📶</div>
     <h1>You're Offline</h1>
     <p>It seems there’s no internet connection. Please check your network and try again.</p>
     <button class="retry-btn" id="retry-btn">Try Again</button>
-</div>
+  </div>
 
-<div class="features-list">
-  <h3>You can still:</h3>
-  <ul>
-    <li>View existing profiles</li>
-    <li>Create collages</li>
-    <li>Generate QR codes</li>
-    <li>Create birthday cards</li>
-    <li>Print documents</li>
-  </ul>
-  <p class="note">Editing, saving, or deleting profiles requires an internet connection</p>
-</div>
+  <div class="features-list">
+    <h3>You can still:</h3>
+    <ul>
+      <li>View existing profiles</li>
+      <li>Create collages</li>
+      <li>Generate QR codes</li>
+      <li>Create birthday cards</li>
+      <li>Print documents</li>
+    </ul>
+    <p class="note">Editing, saving, or deleting profiles requires an internet connection</p>
+  </div>
 
-<div id="online-message">🟢 Back online! You can try signing in again.</div>
+  <!-- ✅ Subtle notification for restored connection -->
+  <div id="online-notification" class="online-notification">
+    🟢 Connection restored! Redirecting…
+  </div>
   
 <script>
 // =========================
