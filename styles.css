@@ -857,7 +857,7 @@ Adjust in 5% increments for smooth changes.*/
 /* h3 + nickname in same div in petcard header*/
 .petCard-header h3 {
   margin: 5px 0;
-  color: #2c2730;
+  color: var(--primary-color); /* Earthy brown */
   text-align: left;
   font-size: 1.5rem;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
@@ -867,16 +867,19 @@ Adjust in 5% increments for smooth changes.*/
 .petCard-header .nickname {
   margin: 0 0 8px 0;
   font-style: italic;
-  color: #4a4a4a;
+  color: var(--primary-color); /* Earthy brown (lighter opacity if needed) */
+  opacity: 0.8; /* Optional: slight transparency for hierarchy */
   text-align: left;
 }
 
-/* Countdown badge - now properly positioned IN ITS OWN DIV IN THE HEADER */
+/* Countdown badge - now properly positioned IN ITS OWN DIV IN THE HEADER 
+to be afjusted in its styles down */
 .petCard-header .countdown-badge {
   position: absolute;
   right: 20px;
   top: 20px;
-  background: rgba(255,255,255,0.9);
+  background: var(--form-bg); /* Warm vanilla cream */
+  opacity: 0.95; /* Maintain slight transparency */
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.9rem;
@@ -885,7 +888,7 @@ Adjust in 5% increments for smooth changes.*/
 /* Optional hover effect */
 .petCard-header .countdown-badge:hover {
   transform: scale(1.05);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+box-shadow: var(--shadow); /* Subtle brown shadow */
 }
 
 /* ====================== */
@@ -893,8 +896,8 @@ Adjust in 5% increments for smooth changes.*/
 /* ====================== */
 /* Failsafe for invalid images implemented recently*/
 .petCard img {
-  background: #f5f5f5;
-  border: 1px dashed #ccc;
+background: var(--form-bg); /* Warm vanilla cream */
+border: 1px dashed var(--input-border); /* Warm tan border */
 }
 .petCard img[src=""] {
   visibility: hidden;
@@ -916,7 +919,7 @@ Adjust in 5% increments for smooth changes.*/
     margin-bottom: 15px;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow); /* Subtle brown shadow */
 }
 
 .gallery-item img {
