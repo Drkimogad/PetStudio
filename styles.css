@@ -365,12 +365,14 @@ Adjust in 5% increments for smooth changes.*/
 /* Dashboard: Hidden by default */
 #dashboard {
   display: none;
-  padding: 20px;
+/*  padding: 20px; */
+  padding: 0;
   background-color: #ffffff; /* white background*/
 }
 
 #dashboard {
-  padding: 2rem 1rem;
+/*  padding: 2rem 1rem; */
+  padding: 2rem 0; /* ✅ Vertical padding only, no side padding */
   background: #fafafa;
   display: flex;
   flex-direction: column;
