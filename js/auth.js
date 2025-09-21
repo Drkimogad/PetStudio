@@ -284,7 +284,17 @@ async function setupGoogleLoginButton() {
         shape: "circular",
         width: 250
       });  
-    }
+
+        // ✅ Prevent offline sign-in attempts
+    googleButtonContainer.addEventListener('click', function(e) {
+      if (!navigator.onLine) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        window.location.href = 'offline.html';
+        return false;
+      }
+    }, true); // capture phase
+  }
           
     // ✅ Avoid popup if already signed in
    // if (!firebase.auth().currentUser) {
