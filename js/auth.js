@@ -211,11 +211,6 @@ if (typeof loadSavedProfiles === "function" && window.petProfiles?.length > 0) {
 // ====== Google Sign-In Initialization ======
 // ====== Google Sign-In Initialization ======
 async function setupGoogleLoginButton() {
-        if (!navigator.onLine) {
-    console.warn("📴 Offline at setup time. Redirecting...");
-    window.location.href = 'offline.html';
-    return;
-        }
   // Check if Google and Firebase are loaded
   if (googleSignInInitialized || !window.google) {
     console.log("Waiting for libraries to load...");
