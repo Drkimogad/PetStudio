@@ -931,7 +931,7 @@ border: 1px dashed var(--input-border); /* Warm tan border */
     opacity: 1; /* Remove fade-in for immediate visibility */
     border-radius: 6px;
 }
-
+/* sorted*/
 /* ==================== */
 /* 3. TAGS SECTION - RENDERED PETCARDS*/
 /* using font awesome */
@@ -948,15 +948,16 @@ border: 1px dashed var(--input-border); /* Warm tan border */
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  border: 1px solid #ddd;
   border-radius: 20px;
-  background: #bfb1c9;
+  border: 1px solid var(--input-border); /* Warm tan border */
+  background: var(--accent-color); /* Mustard yellow background */
+  color: #fff; /* White text for contrast on mustard */
   font-size: 0.9em;
   transition: all 0.2s;
 }
 
 .tag-pill:hover {
-  background: #e0e0e0;
+background: #ffa726; /* Slightly darker mustard on hover */
 }
 
 /* Font Awesome icons */
@@ -1007,14 +1008,14 @@ border: 1px dashed var(--input-border); /* Warm tan border */
 }
 
 .petCard .pet-age-display strong {
-    color: #6a5acd;
+color: var(--primary-color); /* Earthy brown */
 }
 
 .petCard .pet-age-display .fa-dog { 
-    color: #6a5acd; 
+  color: var(--primary-color); /* Earthy brown */
 }
 .petCard .pet-age-display .fa-birthday-cake { 
-    color: #ff6b6b; 
+  color: var(--accent-color); /* Mustard yellow */
 }
 
 /* Ensure all child elements are properly aligned */
@@ -1031,10 +1032,10 @@ border: 1px dashed var(--input-border); /* Warm tan border */
 .petCard .profile-reminder-section {
   margin: 0.5rem 0;      /* Reduced vertical margin (external spacing) */
   padding: 0.3rem;       /* Reduced padding (internal spacing) was 0.5 */
-  background-color: #FFFFFF;  /* white background now */
+  background-color: var(--form-bg); /* Warm vanilla cream */
+  border-left: 4px solid var(--accent-color); /* Mustard yellow accent border */
+  border: 1.5px solid var(--input-border); /* Warm tan border */ 
   border-radius: 8px;
-  border-left: 4px solid #d4bff9;
-  border: 1.5px solid #101112;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
@@ -1045,14 +1046,14 @@ border: 1px dashed var(--input-border); /* Warm tan border */
   margin: 0.3rem 0;      /* Reduced vertical spacing between lines */
   gap: 6px;              /* Tighter gap between items */
   font-size: 0.9em;
-  color: #7e5bef; /* More readable purple instead of bright red */
+  color: var(--primary-color); /* Earthy brown text */
   font-weight: 500;
 }
 
 /* Optional icon styling */
 .petCard .profile-reminder .fas {
-  color: #9c7df5; /* Matching purple for icons */
-  font-size: 1em;
+color: var(--accent-color); /* Mustard yellow icons */
+font-size: 1em;
 }
 
 /*====================*/
@@ -1069,7 +1070,7 @@ border: 1px dashed var(--input-border); /* Warm tan border */
 
 .emergency-contact-section h3 {
   margin-top: 1px;
-  color: #dc3545;
+ color: var(--accent-color); /* Mustard yellow for attention */
   font-size: 1.1em;
   display: inline;
   font-weight: bold;
@@ -1084,7 +1085,7 @@ border: 1px dashed var(--input-border); /* Warm tan border */
 
 .emergency-info h4 {
   margin: 1px;
-  color: #dc3545;
+color: var(--accent-color); /* Mustard yellow for consistency */
   font-size: 1em;
   font-weight: bold;
   display: inline;
