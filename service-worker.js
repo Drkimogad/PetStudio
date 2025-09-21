@@ -1,9 +1,9 @@
 // ================================
 // SERVICE WORKER - PetStudio
-// Version: v4.2.7
+// Version: v4.2.8
 // ================================
-const CACHE_NAME = 'PetStudio-core-v4.2.7';
-const OFFLINE_CACHE = 'PetStudio-offline-v1';
+const CACHE_NAME = 'PetStudio-core-v4.2.8';
+const OFFLINE_CACHE = 'PetStudio-offline-v2';
 const OFFLINE_URL = '/PetStudio/offline.html';
 const FALLBACK_IMAGE = '/PetStudio/banner/image.png';
 
@@ -54,22 +54,28 @@ const NO_CACHE_PATHS = [
 // ================================
 // INSTALL HANDLER UPDATED
 // ================================
-// REPLACE the existing install event with this improved version:
+// REPLACE the install event with this more robust version:
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil((async () => {
     try {
-      // 1️⃣ Cache local assets first (INCLUDING OFFLINE.HTML WITH PRIORITY)
       const cache = await caches.open(CACHE_NAME);
       
-      // Cache offline.html FIRST to ensure it's always available
-      await cache.add(new Request(OFFLINE_URL, { mode: 'same-origin', cache: 'reload' }));
-      
-      // Then cache remaining assets
-      const otherAssets = CORE_ASSETS.filter(url => url !== OFFLINE_URL);
-      await cache.addAll(otherAssets.map(url => new Request(url, { mode: 'same-origin' })));
+      // Cache assets one by one with error handling
+      for (const url of CORE_ASSETS) {
+        try {
+          await cache.add(new Request(url, { 
+            mode: 'same-origin',
+            cache: 'reload'  // Force bypass HTTP cache
+          }));
+          console.log(`✅ Cached: ${url}`);
+        } catch (err) {
+          console.warn(`⚠️ Failed to cache: ${url}`, err);
+          // Continue with other assets instead of failing completely
+        }
+      }
 
-      // 2️⃣ Cache external libraries safely (existing code)
+      // External libraries (keep existing)
       const externalCache = await caches.open(OFFLINE_CACHE);
       for (const url of EXTERNAL_LIBS) {
         try {
@@ -183,4 +189,5 @@ if (request.mode === 'navigate') {
 self.addEventListener('message', (event) => {
   if (event.data === 'skipWaiting') self.skipWaiting();
 });
+
 
