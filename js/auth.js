@@ -228,49 +228,64 @@ async function setupGoogleLoginButton() {
     // Initialize Google Identity Services
     google.accounts.id.initialize({
       client_id: CLIENT_ID,
-      callback: async (response) => {
-        try {
-          console.log("🔧 Google Sign-In started");
-          
-     // OFFLINE HANDLING: Show loader and redirect
-    if (!navigator.onLine) {
-          
-      showLoader(true, "error", "Sign-in requires internet connection."); 
-      // Wait 1.5 seconds so user sees message
-      await new Promise(resolve => setTimeout(resolve, 2000));   // was 1500
-      // Hide loader
+      // REPLACE the existing Google Sign-In callback with this improved version:
+callback: async (response) => {
+  try {
+    console.log("🔧 Google Sign-In started");
+    
+    // 🔥 STRONGER OFFLINE DETECTION - Check multiple indicators
+    const isDefinitelyOffline = !navigator.onLine || 
+                               !window.firebase || 
+                               !window.firebase.auth;
+    
+    if (isDefinitelyOffline) {
+      console.log("📴 Offline detected - preventing sign-in attempt");
+      
+      // Show immediate error message
+      showLoader(true, "error", "Sign-in requires internet connection.");
+      
+      // Wait briefly so user sees message, then redirect
+      await new Promise(resolve => setTimeout(resolve, 1500));
       showLoader(false);
       
-      // Redirect to offline.html
-      window.location.href = 'offline.html';
-      return; // Stop execution
+      // Force redirect to offline.html - use absolute path to ensure reliability
+      window.location.href = '/PetStudio/offline.html';
+      return; // Stop execution completely
     }
-              // === ONLINE FLOW ===
-          // === CHANGE 1: Show loader immediately with signing in message ===
-          showLoader(true, "loading", "Signing in with Google...");
-          
-          // Using v9 compat syntax
-          const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
-          await firebase.auth().signInWithCredential(credential);
+    
+    // === ONLINE FLOW ===
+    showLoader(true, "loading", "Signing in with Google...");
+    
+    // Using v9 compat syntax
+    const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
+    await firebase.auth().signInWithCredential(credential);
 
-         console.log("✅ Google Sign-In successful");
-          // === CHANGE 2: Show success message for 2 seconds ===
-          showLoader(true, "success", "Sign-in successful");
-          
-          // === CHANGE 3: Wait minimum 2 seconds for smooth transition ===
-        //  await new Promise(resolve => setTimeout(resolve, 2000));
-          
-        } catch (error) {
-          console.error("Google Sign-In failed:", error);
-          // === CHANGE 4: Show error message in loader ===
-          showLoader(true, "error", "Sign-in failed. Please try again.");
-          
-          if (typeof Utils !== 'undefined' && Utils.showErrorToUser) {
-            Utils.showErrorToUser("Google Sign-In failed. Please try again.");
-          }
-        }
-          // 🔧 ADD THIS to see if we're reaching the end
-         console.log("🔧 Google Sign-In callback completed");      }
+    console.log("✅ Google Sign-In successful");
+    showLoader(true, "success", "Sign-in successful");
+    
+  } catch (error) {
+    console.error("Google Sign-In failed:", error);
+    
+    // Handle specific offline errors during sign-in attempt
+    if (error.code === 'auth/network-request-failed' || 
+        error.message.includes('network') ||
+        error.message.includes('offline')) {
+      
+      showLoader(true, "error", "Network error. Check connection.");
+      setTimeout(() => {
+        showLoader(false);
+        window.location.href = '/PetStudio/offline.html';
+      }, 2000);
+      
+    } else {
+      showLoader(true, "error", "Sign-in failed. Please try again.");
+      setTimeout(() => showLoader(false), 2000);
+    }
+  }
+  
+  console.log("🔧 Google Sign-In callback completed");
+}
+
     });
 
     // Render button if container exists
