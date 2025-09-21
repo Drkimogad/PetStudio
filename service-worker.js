@@ -1,5 +1,5 @@
 // service-worker.js - Optimized Version
-const VERSION = '4.2.4';
+const VERSION = '4.2.5';
 const CACHE_NAME = `PetStudio-core-v${VERSION}`;
 
 const OFFLINE_URL = '/PetStudio/offline.html';
@@ -48,6 +48,7 @@ const NO_CACHE_PATHS = [
 
 // ======== INSTALL ========
 self.addEventListener('install', (event) => {
+  console.log('[SW] Install event');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(CORE_ASSETS))
@@ -57,6 +58,7 @@ self.addEventListener('install', (event) => {
 
 // ======== ACTIVATE ========
 self.addEventListener('activate', event => {
+  console.log('[SW] Activate event');
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
@@ -69,6 +71,8 @@ self.addEventListener('activate', event => {
 
 // ======== FETCH HANDLER ========
 self.addEventListener('fetch', (event) => {
+  console.log('[SW] Fetching:', event.request.url);
+
   const request = event.request;
   const url = new URL(request.url);
 
@@ -149,5 +153,6 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
 
 
