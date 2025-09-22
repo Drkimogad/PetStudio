@@ -1408,10 +1408,11 @@ styled to show in petcard header plus nickname */
   /* ---------------- PetCards ---------------- */
  /* PetCards centralization */
   .petCard {
-    width: 95vw;          /* fits nicely with breathing space */
-    max-width: 95vw;
-    margin: 20px auto;    /* center horizontally */
+    width: 100%;
+    max-width: 95vw;       /* ensures borders are visible both sides */
+    margin: 20px auto;     /* center with breathing space */
     padding: 20px;
+    border-radius: 8px;
     box-sizing: border-box;
   }
 
@@ -1498,6 +1499,22 @@ styled to show in petcard header plus nickname */
   /* Gallery section switches to single column */
   #profileForm .gallery-preview {
     grid-template-columns: 1fr;
+  }
+  
+  /* Force theme previews to stay inside form on mobile */
+  #profileForm .theme-preview {
+    max-width: 50px;           /* reduce width on small screens */
+    width: 100%;               /* fill available space in flex container */
+    height: auto;              /* maintain aspect ratio */
+    flex: 1 1 auto;            /* allow shrinking */
+    box-sizing: border-box;    /* include borders/padding in width */
+    margin-bottom: 0.5rem;     /* small vertical gap */
+  }
+
+  /* Optional: ensure container doesn’t overflow */
+  #profileForm .theme-options {
+    width: 100%;
+    box-sizing: border-box;
   }
 }
 /* =========================
