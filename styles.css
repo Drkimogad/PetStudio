@@ -372,14 +372,14 @@ Adjust in 5% increments for smooth changes.*/
   display: none;
 /*  padding: 20px;*/
   background-color: #ffffff; /* white background*/
-  padding: 2rem 1rem; /*32 px and 16*/
+  padding: 2rem 1rem; /*32 px and 16 fine for desktop and tablets*/
   background: #fafafa;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative; /* 🔧 this is the key */
 }
-
+/*  #petList = Container that holds all the rendered pet cards */
 #petList {
   width: 100%;
   max-width: 800px;
@@ -1407,7 +1407,7 @@ styled to show in petcard header plus nickname */
   }
     #petList {
     width: 100%; /* ✅ Keep full width */
-    padding: 0 2%; /* ✅ Increased from 1% to 2%  or more ⚠️for more space */
+    padding: 0 3%; /* ✅ Increased from 1% to 2%  or more ⚠️for more space */
     }
   
   .petCard {
