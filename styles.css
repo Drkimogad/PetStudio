@@ -2770,65 +2770,7 @@ body.loader-active {
     font-size: 0.9rem;
   }
 
-  /* --------------- PetList & Containers --------------- */
-  #petList,
-  #profileSection,
-  .dashboard-actions {
-    width: 100%;
-    max-width: 95vw;       /* ✅ ensures breathing space on both sides */
-    margin: 0 auto;        /* ✅ centers horizontally */
-    box-sizing: border-box;
-    padding: 0;
-  }
-
-  /* ---------------- ProfileForm ---------------- */
-  #profileSection {
-    width: 95vw;                   
-    max-width: 95vw !important;    
-    margin: 1rem auto !important;  
-    padding: 1rem;
-    box-sizing: border-box;
-  }
-
-  #profileForm {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  /* ProfileForm buttons stacked */
-  #profileForm .button-container {
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
-  #profileForm button[type="submit"],
-  #profileForm .cancel-btn.pill {
-    width: 100%;
-    max-width: none;
-    padding: 10px 16px;
-    font-size: 0.9rem;
-  }
-
-  /* Gallery preview single column */
-  #profileForm .gallery-preview {
-    grid-template-columns: 1fr;
-  }
-
-  /* ✅ Fix theme previews to not spill outside */
-  #profileForm .theme-preview {
-    max-width: 50px;           
-    width: 100%;               
-    height: auto;              
-    flex: 1 1 auto;            
-    box-sizing: border-box;    
-    margin-bottom: 0.5rem;
-  }
-
-  #profileForm .theme-options {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
+  
   /* ---------------- PetCards ---------------- */
   .petCard {
     width: 95vw;                /* ✅ force equal breathing space */
@@ -3057,17 +2999,33 @@ body.loader-active {
     padding: 8px 14px;          /* smaller padding */
     font-size: 0.9rem;          /* adjust font for mobile */
   }
+  
+/* --------------- PetList & Containers --------------- */
+  #petList {
+    width: 100%;
+    max-width: 95vw;       /* ✅ ensures breathing space on both sides */
+    margin: 0 auto;        /* ✅ centers horizontally */
+    box-sizing: border-box;
+    padding: 0;
+  }
 
   /* ---------------- ProfileForm ---------------- */
   #profileSection {
-    width: 95vw;               /* slightly inset from screen edges */
-    margin: 1rem auto;         /* center horizontally */
-    padding: 1.2rem;           /* compact internal spacing */
+    width: 95vw;                   
+    max-width: 95vw !important;    
+    margin: 1rem auto !important;  
+    padding: 1rem;
     box-sizing: border-box;
   }
 
+  #profileForm {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ProfileForm buttons stacked */
   #profileForm .button-container {
-    flex-direction: column;    /* stack buttons vertically if needed */
+    flex-direction: column;
     gap: 0.6rem;
   }
 
@@ -3079,9 +3037,24 @@ body.loader-active {
     font-size: 0.9rem;
   }
 
-  /* Gallery section switches to single column */
+  /* Gallery preview single column */
   #profileForm .gallery-preview {
     grid-template-columns: 1fr;
+  }
+
+  /* ✅ Fix theme previews to not spill outside */
+  #profileForm .theme-preview {
+    max-width: 50px;           
+    width: 100%;               
+    height: auto;              
+    flex: 1 1 auto;            
+    box-sizing: border-box;    
+    margin-bottom: 0.5rem;
+  }
+
+  #profileForm .theme-options {
+    width: 100%;
+    box-sizing: border-box;
   }
 }
 
