@@ -296,6 +296,12 @@ Adjust in 5% increments for smooth changes.*/
     box-sizing: border-box; /* ✅ Prevent border/padding overflow */
     padding: 2px; /* ✅ Maintain inner spacing was 20px */
   }
+  /* google sigin wrapper animation added*/
+    #googleSignInWrapper {
+    /* ADD THESE ANIMATION PROPERTIES: */
+    animation: bounce 2s infinite alternate; /* ✅ Restore bounce animation */
+    z-index: 5; /* ✅ Ensure proper stacking */
+    }
   
   /* Ensure Google button respects container */
     #googleSignInBtn {
