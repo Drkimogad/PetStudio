@@ -297,11 +297,10 @@ Adjust in 5% increments for smooth changes.*/
     padding: 2px; /* ✅ Maintain inner spacing was 20px */
   }
   /* google sigin wrapper animation added*/
-    #googleSignInWrapper {
-    /* ADD THESE ANIMATION PROPERTIES: */
-    animation: bounce 2s infinite alternate; /* ✅ Restore bounce animation */
-    z-index: 5; /* ✅ Ensure proper stacking */
-    }
+  #googleSignInWrapper {
+    animation: bounce 2s infinite alternate !important; /* ✅ Force animation */
+    z-index: 5 !important; /* ✅ Force stacking */
+  }
   
   /* Ensure Google button respects container */
     #googleSignInBtn {
@@ -1407,13 +1406,13 @@ styled to show in petcard header plus nickname */
     line-height: 1.3;
   }
     #petList {
-    width: 98%; /* ✅ Ensure pet list fills dashboard was 100%*/
-    padding: 0 1%; /* ✅ Tiny padding to ensure border visibility */
+    width: 100%; /* ✅ Keep full width */
+    padding: 0 2%; /* ✅ Increased from 1% to 2%  or more ⚠️for more space */
     }
   
   .petCard {
-    width: 98vw; /* ✅ Slightly less than full viewport width */
-    margin: 20px 0; /* ✅ Remove auto margin, touch edges */
+    width: 94vw; /* ✅ Reduced from 98vw to 94vw for side space */
+    margin: 20px auto; /* ✅ Restore auto margin for centering */
     border-radius: 8px; /* ✅ Slightly smaller radius for mobile */
     padding: 20px; /* ✅ Maintain internal padding */
   }
