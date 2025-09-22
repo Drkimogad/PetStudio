@@ -814,6 +814,66 @@ Adjust in 5% increments for smooth changes.*/
 }
 
 /*sorted out*/
+/* =====================================================
+    Best-practice mobile UI for phones
+===============================================*/
+@media (max-width: 480px) {
+  /* Form container */
+  #profileSection {
+    width: 95vw;        /* 95% viewport width */
+    margin: 0 auto;     /* keep centered */
+    padding: 1rem;      /* tighter padding */
+  }
+
+  /* Section spacing (basic info, gallery, mood, etc.) */
+  #profileForm .petBasicInfo,
+  #profileForm .petGallerySection,
+  #profileForm .moodHistoryInput,
+  #profileForm .pet-tags-container,
+  #profileForm .emergency-contact-section,
+  #profileForm .theme-selection {
+    padding: 1rem;      /* reduce padding */
+    margin: 1rem 0;     /* reduce vertical spacing */
+  }
+
+  /* Headings & labels */
+  #profileSection h2 {
+    font-size: 1.5rem;   /* slightly smaller */
+  }
+
+  #profileForm label {
+    font-size: 0.9rem;   /* compact but readable */
+  }
+
+  /* Gallery thumbnails */
+  #profileForm .gallery-preview .preview-thumb {
+    max-width: 80px;     /* shrink slightly */
+    max-height: 80px;
+  }
+
+  /* Tags & themes spacing */
+  #profileForm .pet-tags-options,
+  #profileForm .theme-options {
+    gap: 0.5rem;         /* reduce gap */
+  }
+
+  /* Button container */
+  #profileForm .button-container {
+    flex-wrap: nowrap;         /* keep in one row */
+    gap: 0.6rem;               /* smaller gap */
+    justify-content: space-between;
+  }
+
+  /* Buttons */
+  #profileForm button[type="submit"],
+  #profileForm .cancel-btn.pill {
+    flex: 1;                   /* stretch evenly */
+    max-width: 50%;            /* each takes half row */
+    padding: 10px 14px;        /* compact padding */
+    font-size: 0.9rem;         /* slightly smaller text */
+    min-height: 44px;          /* accessibility: touch target */
+  }
+}
 
 /* ====================
    RENDERED PETCARD ALL STYLES  
@@ -1388,33 +1448,35 @@ styled to show in petcard header plus nickname */
 
 /* END OF PETCARD CREATION STYLES*/
 
-/* Responsive Design for phones important and optimized*/
+/*=======================================================
+  Responsive Design for phones important and optimized
+==============================================================*/
 @media (max-width: 600px) {
-    #dashboard {
-    padding: 2rem 0; /* ✅ Remove horizontal padding - background bleeds */
+  #dashboard {
+    padding: 2rem 0; /* background bleeds edge-to-edge */
   }
-  /* to remove  or adjust if it causes issues with the petcard or footer*/
+
   #dashboard h1 {
-    font-size: 1.8rem; /* ✅ Slightly smaller for mobile */
-    color: var(--primary-color); /* ✅ Earthy brown to match pet cards */
-    text-align: center; /* ✅ Center alignment */
-    margin: 0 auto 1.5rem; /* ✅ Space below, centered horizontally */
-    padding: 0 15px; /* ✅ Equal spacing on both sides */
-    width: 100%; /* ✅ Ensure proper centering */
-    max-width: 90%; /* ✅ Prevent edge touching */
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin: 0 auto 1.5rem;
+    padding: 0 15px;
+    max-width: 90%; /* prevent touching edges */
     font-weight: 600;
     line-height: 1.3;
   }
-    #petList {
-    width: 100%; /* ✅ Keep full width */
-    padding: 0 3%; /* ✅ Increased from 1% to 2%  or more ⚠️for more space */
-    }
-  
+
+  #petList {
+    width: 100%;
+    padding: 0 3%; /* breathing space for cards */
+  }
+
   .petCard {
-    width: 94vw; /* ✅ Reduced from 98vw to 94vw for side space */
-    margin: 20px auto; /* ✅ Restore auto margin for centering */
-    border-radius: 8px; /* ✅ Slightly smaller radius for mobile */
-    padding: 20px; /* ✅ Maintain internal padding */
+    width: 100%; /* fills container, avoids double spacing */
+    margin: 20px auto;
+    border-radius: 8px;
+    padding: 20px;
   }
   
   .petCard-header {
