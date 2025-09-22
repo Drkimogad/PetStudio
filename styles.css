@@ -437,11 +437,35 @@ Adjust in 5% increments for smooth changes.*/
     width: 100%;
   }
 }
-
 /* sorted*/
+
+/*==============================================
+RESPONSIVE DESIGN FOR DASHBOARD PPART PHONES
+===================================================*/
 @media (max-width: 600px) {
   #dashboard {
-  padding: 1px; /*on phones and test it*/
+    /* Dashboard spans full width with balanced padding*/
+    width: 100%;
+    padding: 1rem; /* not 1px — ensures content has breathing space */
+    box-sizing: border-box; /* prevents overflow */
+  }
+    #dashboard h1 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin: 0 auto 1.5rem;
+    padding: 0 15px;
+    max-width: 90%; /* prevent touching edges */
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+/* PetList: center content, no uneven padding */
+  #petList {
+    width: 100%;
+    max-width: 95vw;   /* same breathing as cards */
+    margin: 0 auto;    /* center it */
+    padding: 0;        /* remove side padding that caused offset */
   }
   .dashboard-actions {
     flex-direction: row; /* ✅ Keep buttons on one line */
@@ -461,6 +485,7 @@ Adjust in 5% increments for smooth changes.*/
     font-size: 0.95rem; /* ✅ Slightly smaller font */
   }
 }
+
 
 /* ==ONCE ADD PROFILE BUTTON CLICKED AND
        PETLIST OPENED===== */
@@ -819,10 +844,12 @@ Adjust in 5% increments for smooth changes.*/
 ===============================================*/
 @media (max-width: 480px) {
   /* Form container */
+  /* ProfileForm: same centralizing fix AS PETCARD */
   #profileSection {
-    width: 95vw;        /* 95% viewport width */
-    margin: 0 auto;     /* keep centered */
-    padding: 1rem;      /* tighter padding */
+    width: 95vw;       /* slightly inset from screen edges */
+    margin: 1rem auto; /* ensures equal left/right space */
+    padding: 1rem;     /* compact padding inside */
+    box-sizing: border-box;
   }
 
   /* Section spacing (basic info, gallery, mood, etc.) */
@@ -1452,29 +1479,11 @@ styled to show in petcard header plus nickname */
   Responsive Design for phones important and optimized
 ==============================================================*/
 @media (max-width: 600px) {
-  #dashboard {
-    padding: 2rem 0; /* background bleeds edge-to-edge */
-  }
-
-  #dashboard h1 {
-    font-size: 1.8rem;
-    color: var(--primary-color);
-    text-align: center;
-    margin: 0 auto 1.5rem;
-    padding: 0 15px;
-    max-width: 90%; /* prevent touching edges */
-    font-weight: 600;
-    line-height: 1.3;
-  }
-
-  #petList {
-    width: 100%;
-    padding: 0 3%; /* breathing space for cards */
-  }
-
+  /* PetCards: centralize with equal space */
   .petCard {
-    width: 100%; /* fills container, avoids double spacing */
-    margin: 20px auto;
+    width: 100%;       /* take full PetList width */
+    max-width: 95vw;   /* ensure border visible both sides */
+    margin: 20px auto; /* center horizontally */
     border-radius: 8px;
     padding: 20px;
   }
