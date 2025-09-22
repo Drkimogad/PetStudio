@@ -1405,6 +1405,7 @@ styled to show in petcard header plus nickname */
     padding: 0;            /* remove extra horizontal padding that offsets layout */
   }
 
+
   /* ---------------- PetCards ---------------- */
  /* PetCards centralization */
   .petCard {
@@ -1428,24 +1429,24 @@ styled to show in petcard header plus nickname */
 
   /* Action buttons container: force 2 per row */
   .petCard .actions {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* always 2 buttons per row */
-    gap: 8px;
-    margin-top: 12px;
+    display: grid !important;              /* force grid layout */
+    grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
+    gap: 8px;                              /* spacing between buttons */
+    margin-top: 12px;                       /* spacing from card content */
   }
 
-  /* Buttons inside card */
+  /* Buttons inside PetCard */
   .petCard .actions button {
-    width: 100%;          /* fill each column */
-    padding: 6px 10px;
-    font-size: 0.8rem;
-    text-align: center;
+    width: 100%;         /* fill grid column */
+    padding: 6px 10px;   /* small mobile-friendly padding */
+    font-size: 0.8rem;   /* fit on small screens */
+    text-align: center;  
     box-sizing: border-box;
   }
 
   /* Generate QR button spans both columns */
-  .generate-qr {
-    grid-column: 1 / -1;  /* spans full width */
+  .petCard .actions .generate-qr {
+    grid-column: 1 / -1; /* span full width */
     font-size: 0.75rem;
     padding: 5px 8px;
   }
@@ -1469,13 +1470,12 @@ styled to show in petcard header plus nickname */
   }
 
   /* ---------------- ProfileForm ---------------- */
-
-    #profileSection {
-    width: 95vw;           /* slightly inset from screen edges */
-    max-width: 95vw;       /* ensures it never exceeds 95% of viewport */
-    margin: 1rem auto;     /* center horizontally */
-    padding: 1rem;         /* compact internal padding */
-    box-sizing: border-box;
+  #profileSection {
+    width: 95vw;           /* nearly full screen, leaves breathing space */
+    max-width: 95vw !important; /* ensures it never exceeds viewport */
+    margin: 1rem auto !important;     /* center horizontally */
+    padding: 1rem;         /* internal padding */
+    box-sizing: border-box; /* ensures padding/border counted inside width */
   }
   
   #profileForm {
