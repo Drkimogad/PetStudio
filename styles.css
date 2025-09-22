@@ -1406,12 +1406,12 @@ styled to show in petcard header plus nickname */
   }
 
   /* ---------------- PetCards ---------------- */
+ /* PetCards centralization */
   .petCard {
-    width: 100%;
-    max-width: 95vw;       /* ensures borders are visible both sides */
-    margin: 20px auto;     /* center with breathing space */
+    width: 95vw;          /* fits nicely with breathing space */
+    max-width: 95vw;
+    margin: 20px auto;    /* center horizontally */
     padding: 20px;
-    border-radius: 8px;
     box-sizing: border-box;
   }
 
@@ -1425,25 +1425,28 @@ styled to show in petcard header plus nickname */
     margin-top: 10px;
   }
 
-  /* PetCard action buttons */
+  /* Action buttons container: force 2 per row */
   .petCard .actions {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
+    grid-template-columns: repeat(2, 1fr); /* always 2 buttons per row */
     gap: 8px;
     margin-top: 12px;
   }
 
-  .petCard .actions button,
-  .generate-qr {
-    width: 100%;           /* fill each column */
+  /* Buttons inside card */
+  .petCard .actions button {
+    width: 100%;          /* fill each column */
     padding: 6px 10px;
     font-size: 0.8rem;
     text-align: center;
+    box-sizing: border-box;
   }
 
   /* Generate QR button spans both columns */
   .generate-qr {
-    grid-column: 1 / -1;
+    grid-column: 1 / -1;  /* spans full width */
+    font-size: 0.75rem;
+    padding: 5px 8px;
   }
 
   /* ---------------- Dashboard Buttons ---------------- */
@@ -1465,10 +1468,17 @@ styled to show in petcard header plus nickname */
   }
 
   /* ---------------- ProfileForm ---------------- */
-  #profileSection {
-    width: 95vw;               /* slightly inset from screen edges */
-    margin: 1rem auto;         /* center horizontally */
-    padding: 1.2rem;           /* compact internal spacing */
+
+    #profileSection {
+    width: 95vw;           /* slightly inset from screen edges */
+    max-width: 95vw;       /* ensures it never exceeds 95% of viewport */
+    margin: 1rem auto;     /* center horizontally */
+    padding: 1rem;         /* compact internal padding */
+    box-sizing: border-box;
+  }
+  
+  #profileForm {
+    width: 100%;           /* fill profileSection width */
     box-sizing: border-box;
   }
 
