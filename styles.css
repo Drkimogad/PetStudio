@@ -1252,6 +1252,8 @@ background-color: var(--accent-color); /* Mustard yellow */
 /*=======================*/
 /* ===GALLERY PREVIEW CONTROLS IN FORMEDIT AND FORM CREATE WITH COVER BTN AND X REMOVE  ===== */
 /* Cover Button (Star Icon)  ON IMAGE */
+/* this part is separate in its colours from root colors used in profile form
+and petcards*/
 /*======================*/
 .cover-btn {
     position: absolute;
@@ -1346,7 +1348,7 @@ background-color: var(--accent-color); /* Mustard yellow */
   100% { box-shadow: 0 0 0 6px rgba(255,0,0,0); }
 }
 
-/* ===== MOBILE RESPONSIVENESS ===== */
+/* ===== MOBILE RESPONSIVcenterfor cover btn===== */
 @media (max-width: 768px) {
   .cover-btn {
     width: 28px;
@@ -1380,8 +1382,24 @@ styled to show in petcard header plus nickname */
 }
 
 /* END OF PETCARD CREATION STYLES*/
-/* Responsive Design for phones*/
+
+/* Responsive Design for phones important and optimized*/
 @media (max-width: 600px) {
+    #dashboard {
+    padding: 2rem 0; /* ✅ Remove horizontal padding - background bleeds */
+  }
+  
+  .petCard {
+    width: 98vw; /* ✅ Slightly less than full viewport width */
+    margin: 20px 0; /* ✅ Remove auto margin, touch edges */
+    border-radius: 8px; /* ✅ Slightly smaller radius for mobile */
+    padding: 20px; /* ✅ Maintain internal padding */
+  }
+  
+  #petList {
+    width: 100%; /* ✅ Ensure pet list fills dashboard */
+    padding: 0 1%; /* ✅ Tiny padding to ensure border visibility */
+  }
   .petCard-header {
     padding: 40px 20px 15px 20px; /* ✅ More top padding (40px) for badge + space */
   }  
@@ -1399,7 +1417,7 @@ styled to show in petcard header plus nickname */
     padding: 3px 10px;
   }
   /* grid like layout, 2 buttons per row*/
-    .petCard .actions {
+  .petCard .actions {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* ✅ 2 buttons per row */
     gap: 8px;
@@ -1407,10 +1425,19 @@ styled to show in petcard header plus nickname */
   }
   
   .petCard .actions button {
-    min-width: auto; /* ✅ Remove fixed min-width */
-    width: 100%; /* ✅ Fill grid cells */
-    padding: 6px 12px; /* ✅ Slightly smaller padding */
-    font-size: 0.85rem; /* ✅ Slightly smaller text */
+    min-width: auto;
+    width: 100%;
+    padding: 6px 8px; /* ✅ Even smaller padding for long text */
+    font-size: 0.8rem; /* ✅ Smaller font for better fit */
+    text-align: center;
+  }
+  
+  /* Force Generate QR to last row if needed */
+  .generate-qr {
+    grid-column: 1 / -1; /* ✅ Makes it span both columns */
+    order: 99; /* ✅ Pushes it to the bottom */
+    font-size: 0.75rem; /* ✅ Even smaller font if needed */
+    padding: 5px 6px; /* ✅ Tighter padding */
   }
 }
 
