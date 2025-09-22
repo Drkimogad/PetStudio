@@ -439,52 +439,6 @@ Adjust in 5% increments for smooth changes.*/
 }
 /* sorted*/
 
-/*==============================================
-RESPONSIVE DESIGN FOR DASHBOARD PPART PHONES
-===================================================*/
-@media (max-width: 600px) {
-  #dashboard {
-    /* Dashboard spans full width with balanced padding*/
-    width: 100%;
-    padding: 1rem; /* not 1px — ensures content has breathing space */
-    box-sizing: border-box; /* prevents overflow */
-  }
-    #dashboard h1 {
-    font-size: 1.8rem;
-    color: var(--primary-color);
-    text-align: center;
-    margin: 0 auto 1.5rem;
-    padding: 0 15px;
-    max-width: 90%; /* prevent touching edges */
-    font-weight: 600;
-    line-height: 1.3;
-  }
-
-/* PetList: center content, no uneven padding */
-  #petList {
-    width: 100%;
-    max-width: 95vw;   /* same breathing as cards */
-    margin: 0 auto;    /* center it */
-    padding: 0;        /* remove side padding that caused offset */
-  }
-  .dashboard-actions {
-    flex-direction: row; /* ✅ Keep buttons on one line */
-    justify-content: center; /* ✅ Center the pair */
-    gap: 0.8rem; /* ✅ Space between buttons */
-    width: 80%; /* ✅ 80% of container width */
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  #addPetProfileBtn,
-  #logoutBtn {
-    max-width: none; /* ✅ Remove max-width constraint */
-    width: auto; /* ✅ Allow natural width */
-    flex: none; /* ✅ Don't stretch */
-    padding: 8px 16px; /* ✅ Slightly smaller padding */
-    font-size: 0.95rem; /* ✅ Slightly smaller font */
-  }
-}
 
 
 /* ==ONCE ADD PROFILE BUTTON CLICKED AND
@@ -839,68 +793,6 @@ RESPONSIVE DESIGN FOR DASHBOARD PPART PHONES
 }
 
 /*sorted out*/
-/* =====================================================
-    Best-practice mobile UI for phones
-===============================================*/
-@media (max-width: 480px) {
-  /* Form container */
-  /* ProfileForm: same centralizing fix AS PETCARD */
-  #profileSection {
-    width: 95vw;       /* slightly inset from screen edges */
-    margin: 1rem auto; /* ensures equal left/right space */
-    padding: 1rem;     /* compact padding inside */
-    box-sizing: border-box;
-  }
-
-  /* Section spacing (basic info, gallery, mood, etc.) */
-  #profileForm .petBasicInfo,
-  #profileForm .petGallerySection,
-  #profileForm .moodHistoryInput,
-  #profileForm .pet-tags-container,
-  #profileForm .emergency-contact-section,
-  #profileForm .theme-selection {
-    padding: 1rem;      /* reduce padding */
-    margin: 1rem 0;     /* reduce vertical spacing */
-  }
-
-  /* Headings & labels */
-  #profileSection h2 {
-    font-size: 1.5rem;   /* slightly smaller */
-  }
-
-  #profileForm label {
-    font-size: 0.9rem;   /* compact but readable */
-  }
-
-  /* Gallery thumbnails */
-  #profileForm .gallery-preview .preview-thumb {
-    max-width: 80px;     /* shrink slightly */
-    max-height: 80px;
-  }
-
-  /* Tags & themes spacing */
-  #profileForm .pet-tags-options,
-  #profileForm .theme-options {
-    gap: 0.5rem;         /* reduce gap */
-  }
-
-  /* Button container */
-  #profileForm .button-container {
-    flex-wrap: nowrap;         /* keep in one row */
-    gap: 0.6rem;               /* smaller gap */
-    justify-content: space-between;
-  }
-
-  /* Buttons */
-  #profileForm button[type="submit"],
-  #profileForm .cancel-btn.pill {
-    flex: 1;                   /* stretch evenly */
-    max-width: 50%;            /* each takes half row */
-    padding: 10px 14px;        /* compact padding */
-    font-size: 0.9rem;         /* slightly smaller text */
-    min-height: 44px;          /* accessibility: touch target */
-  }
-}
 
 /* ====================
    RENDERED PETCARD ALL STYLES  
@@ -1478,54 +1370,198 @@ styled to show in petcard header plus nickname */
 /*=======================================================
   Responsive Design for phones important and optimized
 ==============================================================*/
+/* =========================
+   MOBILE OPTIMIZATION (≤600px)
+   ========================= */
 @media (max-width: 600px) {
-  /* PetCards: centralize with equal space */
+  /* ---------------- Dashboard ---------------- */
+  #dashboard {
+    width: 100%;                 /* Full screen width */
+    padding: 1rem;               /* breathing space inside */
+    box-sizing: border-box;      /* include padding in width */
+    flex-direction: column;      /* stack children vertically */
+    align-items: center;         /* center content */
+  }
+
+  #dashboard h1 {
+    font-size: 1.6rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin: 0 auto 1rem;
+    padding: 0 10px;
+    max-width: 90%;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  /* --------------- PetList & Containers --------------- */
+  #petList,
+  #profileSection,
+  .dashboard-actions {
+    width: 100%;
+    max-width: 95vw;       /* ensure breathing space left/right */
+    margin: 0 auto;        /* centralized horizontally */
+    box-sizing: border-box;
+    padding: 0;            /* remove extra horizontal padding that offsets layout */
+  }
+
+  /* ---------------- PetCards ---------------- */
   .petCard {
-    width: 100%;       /* take full PetList width */
-    max-width: 95vw;   /* ensure border visible both sides */
-    margin: 20px auto; /* center horizontally */
-    border-radius: 8px;
+    width: 100%;
+    max-width: 95vw;       /* ensures borders are visible both sides */
+    margin: 20px auto;     /* center with breathing space */
     padding: 20px;
+    border-radius: 8px;
+    box-sizing: border-box;
   }
-  
+
+  /* Adjust PetCard header spacing if needed */
   .petCard-header {
-    padding: 40px 20px 15px 20px; /* ✅ More top padding (40px) for badge + space */
-  }  
-  .petCard-header h3 {
-    font-size: 1.3rem; /* ✅ Smaller font for mobile */
-    margin-top: 15px; /* ✅ Space below badge area */
-  }  
-  .petCard-header .nickname {
-    margin-top: 5px; /* ✅ Space below header */
-  }  
-  .petCard-header .countdown-badge {
-    right: 15px;
-    top: 15px;
-    font-size: 0.8rem;
-    padding: 3px 10px;
+    padding: 30px 15px 15px 15px;
   }
-  /* grid like layout, 2 buttons per row*/
+
+  .petCard-header h3 {
+    font-size: 1.2rem;
+    margin-top: 10px;
+  }
+
+  /* PetCard action buttons */
   .petCard .actions {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* ✅ 2 buttons per row */
+    grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
     gap: 8px;
-    margin-top: 15px;
+    margin-top: 12px;
   }
-  
-  .petCard .actions button {
-    min-width: auto;
-    width: 100%;
-    padding: 6px 8px; /* ✅ Even smaller padding for long text */
-    font-size: 0.8rem; /* ✅ Smaller font for better fit */
+
+  .petCard .actions button,
+  .generate-qr {
+    width: 100%;           /* fill each column */
+    padding: 6px 10px;
+    font-size: 0.8rem;
     text-align: center;
   }
-  
-  /* Force Generate QR to last row if needed */
+
+  /* Generate QR button spans both columns */
   .generate-qr {
-    grid-column: 1 / -1; /* ✅ Makes it span both columns */
-    order: 99; /* ✅ Pushes it to the bottom */
-    font-size: 0.75rem; /* ✅ Even smaller font if needed */
-    padding: 5px 6px; /* ✅ Tighter padding */
+    grid-column: 1 / -1;
+  }
+
+  /* ---------------- Dashboard Buttons ---------------- */
+  .dashboard-actions {
+    flex-direction: row;        /* keep buttons on one line */
+    justify-content: center;    /* center the pair */
+    gap: 0.8rem;                /* spacing between buttons */
+    width: 90%;                 /* container width */
+    margin: 0 auto;
+  }
+
+  #addPetProfileBtn,
+  #logoutBtn {
+    flex: none;                 /* don't stretch */
+    width: auto;                /* natural width */
+    max-width: none;
+    padding: 8px 14px;          /* smaller padding */
+    font-size: 0.9rem;          /* adjust font for mobile */
+  }
+
+  /* ---------------- ProfileForm ---------------- */
+  #profileSection {
+    width: 95vw;               /* slightly inset from screen edges */
+    margin: 1rem auto;         /* center horizontally */
+    padding: 1.2rem;           /* compact internal spacing */
+    box-sizing: border-box;
+  }
+
+  #profileForm .button-container {
+    flex-direction: column;    /* stack buttons vertically if needed */
+    gap: 0.6rem;
+  }
+
+  #profileForm button[type="submit"],
+  #profileForm .cancel-btn.pill {
+    width: 100%;
+    max-width: none;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+
+  /* Gallery section switches to single column */
+  #profileForm .gallery-preview {
+    grid-template-columns: 1fr;
+  }
+}
+/* =========================
+   EXTRA-SMALL PHONES (<360px)
+   ========================= */
+@media (max-width: 360px) {
+  /* Dashboard padding slightly reduced */
+  #dashboard {
+    padding: 0.8rem;
+  }
+
+  #dashboard h1 {
+    font-size: 1.4rem;
+    padding: 0 8px;
+    max-width: 92%;
+  }
+
+  /* PetList & ProfileForm centralization */
+  #petList,
+  #profileSection {
+    max-width: 92vw;      /* slightly narrower than 95vw */
+    padding: 0.5rem;      /* reduce internal padding */
+  }
+
+  /* PetCards */
+  .petCard {
+    max-width: 92vw;
+    padding: 16px;
+    margin: 15px auto;
+  }
+
+  /* Card header adjustments */
+  .petCard-header {
+    padding: 25px 12px 12px 12px;
+  }
+
+  .petCard-header h3 {
+    font-size: 1.1rem;
+  }
+
+  /* Card action buttons */
+  .petCard .actions {
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .petCard .actions button,
+  .generate-qr {
+    font-size: 0.75rem;
+    padding: 5px 8px;
+  }
+
+  /* Dashboard buttons */
+  .dashboard-actions {
+    width: 95%;
+    gap: 0.5rem;
+  }
+
+  #addPetProfileBtn,
+  #logoutBtn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  /* ProfileForm buttons */
+  #profileForm button[type="submit"],
+  #profileForm .cancel-btn.pill {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+
+  /* Gallery single column */
+  #profileForm .gallery-preview {
+    grid-template-columns: 1fr;
   }
 }
 
