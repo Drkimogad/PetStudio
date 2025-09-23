@@ -1,9 +1,9 @@
 // ================================
 // SERVICE WORKER - PetStudio
-// Version: v4.2.8
+// Version: v4.2.9
 // ================================
-const CACHE_NAME = 'PetStudio-core-v4.2.8';
-const OFFLINE_CACHE = 'PetStudio-offline-v2';
+const CACHE_NAME = 'PetStudio-core-v4.2.9';
+const OFFLINE_CACHE = 'PetStudio-offline-v3';
 const OFFLINE_URL = '/PetStudio/offline.html';
 const FALLBACK_IMAGE = '/PetStudio/banner/image.png';
 
@@ -127,27 +127,18 @@ self.addEventListener('fetch', (event) => {
 if (request.mode === 'navigate') {
   event.respondWith((async () => {
     try {
-      // Try network first
+      // ✅ ALWAYS TRY NETWORK FIRST
       const networkResponse = await fetch(request);
-      
-      // If response is valid, return it
-      if (networkResponse && networkResponse.status === 200) {
-        return networkResponse;
-      }
-      
-      // If network fails or returns error, serve offline.html
-      throw new Error('Network response not OK');
+      return networkResponse;
     } catch (err) {
-      // Serve offline.html from cache for ANY navigation failure
-      const offlinePage = await caches.match(OFFLINE_URL);
-      
-      if (offlinePage) {
-        console.log('📴 Serving offline.html for failed navigation');
-        return offlinePage;
+      // ✅ CHECK ACTUAL ONLINE STATUS
+      if (!navigator.onLine) {
+        // ✅ TRULY OFFLINE - SERVE OFFLINE.HTML
+        return await caches.match('offline.html');
+      } else {
+        // ✅ ONLINE BUT NETWORK FAILED - SERVE INDEX.HTML
+        return await caches.match('index.html');
       }
-      
-      // Fallback to error response if offline.html not available
-      return Response.error();
     }
   })());
   return;
@@ -189,5 +180,6 @@ if (request.mode === 'navigate') {
 self.addEventListener('message', (event) => {
   if (event.data === 'skipWaiting') self.skipWaiting();
 });
+
 
 
