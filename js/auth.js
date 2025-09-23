@@ -506,7 +506,7 @@ async function handleLogout() {
     } else {
       // ✅ OFFLINE LOGOUT - SET THE FLAG
       localStorage.setItem('hadOfflineSignOut', 'true');
-    }}
+    }
 
     // COMMON CLEANUP FOR BOTH ONLINE & OFFLINE
     // Clear all local caches
