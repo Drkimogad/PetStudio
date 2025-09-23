@@ -383,19 +383,14 @@ function initAuthListeners() {
   const auth = firebase.auth();
 
   auth.onAuthStateChanged(async (user) => {
-        // ✅ ADD THIS CHECK FIRST
+    // ✅ SIMPLIFIED OFFLINE SIGNOUT CHECK
     const hadOfflineSignOut = localStorage.getItem('hadOfflineSignOut');
     
     if (!user && hadOfflineSignOut) {
-      console.log("📴 Respecting previous offline sign-out");
+      console.log("📴 Respecting offline sign-out");
       localStorage.removeItem('hadOfflineSignOut');
-      
-      // Ensure auth page is shown
-      if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
-      if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
-      if (typeof setupGoogleLoginButton === 'function') setupGoogleLoginButton();
-      
-      return; // Stop further processing
+      showAuthPage(); // Use a dedicated function
+      return;
     }
       // Clear the flag if user is actually signed in
     if (user) {
