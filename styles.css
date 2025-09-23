@@ -2860,14 +2860,14 @@ body.loader-active {
     padding: 0;
   }
 
-  /* ---------------- ProfileForm ---------------- */
-  #profileSection {
-    width: 95vw;                   
-    max-width: 95vw !important;    
-    margin: 1rem auto !important;  
+  /* ---------------- ProfileForm  CHANGED ---------------- */
+#profileSection {
+    width: 100%;                    /* Use full available width */
+    max-width: 95vw;                /* Match petList exactly */   
+    margin: 1rem auto;              /* Center with equal spacing */
     padding: 1rem;
     box-sizing: border-box;
-  }
+}
 
   #profileForm {
     width: 100%;
