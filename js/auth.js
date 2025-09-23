@@ -160,18 +160,26 @@ function initDOMReferences() {
   return true;
 }
 
-
 // ===== DOM Ready: Initialize Everything =====
 document.addEventListener("DOMContentLoaded", () => {
   const domReady = initDOMReferences();
   if (!domReady) return;
-// Initialize login button and other startup logic
+
+  // ✅ IMMEDIATE ONLINE STATUS CHECK (FROM WORKING APP)
+  checkOnlineStatus();  
+  // Listen for changes
+  window.addEventListener('online', checkOnlineStatus);
+  window.addEventListener('offline', checkOnlineStatus);
+
+  // Initialize login button and other startup logic
   if (typeof setupGoogleLoginButton === "function") {
     setupGoogleLoginButton();
   } else {
     console.warn("⚠️ setupGoogleLoginButton() not found.");
   }
-  // If needed, add more initializations here
+  
+  // ✅ CALL THE MAIN INITIALIZATION
+  initializeAuth();
 });
 // ====== Core Functions ======
 function showDashboard() {
@@ -492,103 +500,32 @@ async function handleLogout() {
 }
 
 
-//==================
-// Online/Offline detection and status indicator
-//=================
-let isOnline = navigator.onLine;
-const onlineStatus = {
-  element: null,
+//==============================================================
+// SIMPLE OFFLINE STATUS DETECTION (FROM WORKING APP)
+//===================================================================
+function checkOnlineStatus() {
+  const isOnline = navigator.onLine;
+  const statusElement = document.getElementById('online-status') || createStatusElement();
   
-  init() {
-    this.createStatusIndicator();
-    this.bindEvents();
-    this.updateStatus();
-  },
-  
-  createStatusIndicator() {
-    // Create status element
-    this.element = document.createElement('div');
-    this.element.id = 'online-status';
-    this.element.style.position = 'fixed';
-    this.element.style.top = '10px';
-    this.element.style.right = '10px';
-    this.element.style.padding = '8px 12px';
-    this.element.style.borderRadius = '20px';
-    this.element.style.fontSize = '12px';
-    this.element.style.fontWeight = 'bold';
-    this.element.style.zIndex = '10000';
-    this.element.style.transition = 'all 0.3s ease';
-    
-    // Add to document
-    document.body.appendChild(this.element);
-    this.updateStatus();
-  },
-  
-  bindEvents() {
-    window.addEventListener('online', () => {
-      isOnline = true;
-      this.updateStatus();
-      this.showTemporaryMessage('Connection restored', 'online');
-    });
-    
-    window.addEventListener('offline', () => {
-      isOnline = false;
-      this.updateStatus();
-      this.showTemporaryMessage('You are offline', 'offline');
-    });
-  },
-  
-  updateStatus() {
-    if (!this.element) return;
-    
-    if (isOnline) {
-      this.element.textContent = '🟢 Online';
-      this.element.style.background = '#d4edda';
-      this.element.style.color = '#155724';
-      this.element.style.border = '1px solid #c3e6cb';
-    } else {
-      this.element.textContent = '🔴 Offline';
-      this.element.style.background = '#f8d7da';
-      this.element.style.color = '#721c24';
-      this.element.style.border = '1px solid #f5c6cb';
-    }
-  },
-  
-  showTemporaryMessage(message, type) {
-    const msgElement = document.createElement('div');
-    msgElement.textContent = message;
-    msgElement.style.position = 'fixed';
-    msgElement.style.top = '50px';
-    msgElement.style.right = '10px';
-    msgElement.style.padding = '10px 15px';
-    msgElement.style.borderRadius = '5px';
-    msgElement.style.zIndex = '10000';
-    msgElement.style.fontWeight = 'bold';
-    
-    if (type === 'online') {
-      msgElement.style.background = '#d4edda';
-      msgElement.style.color = '#155724';
-      msgElement.style.border = '1px solid #c3e6cb';
-    } else {
-      msgElement.style.background = '#f8d7da';
-      msgElement.style.color = '#721c24';
-      msgElement.style.border = '1px solid #f5c6cb';
-    }
-    
-    document.body.appendChild(msgElement);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-      if (msgElement.parentNode) {
-        msgElement.parentNode.removeChild(msgElement);
-      }
-    }, 3000);
-  },
-  
-  checkOnline() {
-    return isOnline;
+  if (isOnline) {
+    statusElement.textContent = 'Online';
+    statusElement.className = 'online-status online';
+    console.log('✅ Online - Connected to server');
+  } else {
+    statusElement.textContent = 'Offline - Using local data';
+    statusElement.className = 'online-status offline';
+    console.log('📴 Offline - Using cached data');
   }
-};
+  
+  return isOnline;
+}
+
+function createStatusElement() {
+  const statusElement = document.createElement('div');
+  statusElement.id = 'online-status';
+  document.body.appendChild(statusElement);
+  return statusElement;
+}
 
 
 // ====== Core Initialization ======
@@ -629,40 +566,3 @@ async function initializeAuth() {
     disableUI();
   }
 }
-//==========================
-// Network utilities Helper for online offline detection logic.
-//==========================
-const networkUtils = {
-  // Check if online
-  isOnline() {
-    return onlineStatus.checkOnline();
-  },
-  
-  // Execute function with online check
-  requireOnline(callback, errorMessage = 'Internet connection required') {
-    if (!this.isOnline()) {
-      onlineStatus.showTemporaryMessage(errorMessage, 'offline');
-      return false;
-    }
-    return callback();
-  },
-  
-  // Try to sync local changes when coming online
-  async syncWhenOnline() {
-    if (this.isOnline()) {
-      console.log('Online - checking for pending changes...');
-      // We'll implement this after the onAuthStateChanged part
-    }
-  }
-};
-
-// Start initialization when everything is ready
-document.addEventListener('DOMContentLoaded', function() {
-  // Additional check for Firebase
-  if (typeof firebase === 'undefined') {
-    console.error("Firebase not loaded yet");
-    // You might want to add retry logic here
-  }
-  initializeAuth();
-  onlineStatus.init();
-});
