@@ -183,10 +183,16 @@
   </div>
   
 <script>
-// =========================
+// ============================================
 // OFFLINE.HTML SCRIPT - PetStudio
-// =========================
-
+// ==============================================
+// ✅ ADD THIS: Prevent immediate redirects
+let pageJustLoaded = true;
+setTimeout(() => { 
+  pageJustLoaded = false; 
+  console.log("✅ Page load stabilization complete - auto-checks enabled");
+}, 3000); // 3-second stabilization period
+  
 // --- Track last known online time ---
 function updateLastOnlineTime() {
   const lastOnline = localStorage.getItem("lastOnline");
@@ -258,32 +264,31 @@ async function checkAndRedirect() {
   }
 }
 
-// --- Automatic periodic check ---
-// Modify the automatic check to respect the page load delay
+// --- Conservative automatic periodic check ---
 let checkInterval = setInterval(async () => {
   if (pageJustLoaded) {
-    console.log("⏳ Skipping check - page just loaded");
+    console.log("⏳ Skipping check - page still stabilizing");
     return;
   }
   
-  console.log("⏳ Checking REAL connection status...");
+  console.log("⏳ Conservative connection check...");
   if (await verifyConnection()) {
-    console.log("✅ GENUINE connection restored - redirecting");
+    console.log("✅ GENUINE sustained connection - redirecting");
     clearInterval(checkInterval);
     
     // Show visual confirmation
-    const notification = document.createElement('div');
-    notification.textContent = '🟢 Back online! Redirecting...';
-    notification.style = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #4CAF50; color: white; padding: 15px; border-radius: 5px; z-index: 10000;';
-    document.getElementById('online-notification').style.display = 'block';
+    const notification = document.getElementById('online-notification');
+    if (notification) notification.style.display = 'block';
     
+    // Longer delay to ensure stability
     setTimeout(() => {
-     window.location.href = "index.html?offline_redirect=true&t=" + Date.now();// Changed 
-    }, 1500);
+      window.location.href = "index.html?offline_redirect=true&t=" + Date.now();
+    }, 3000); // Increased to 3 seconds
   } else {
-    console.log("📴 Still genuinely offline");
+    console.log("📴 Connection not stable enough - staying on offline page");
   }
-}, 5000); // Increased from 3s to 5s for more stability
+}, 8000); // Increased to 8 seconds between checks
+  
 
 // --- Initialize offline page ---
 window.addEventListener("load", () => {
@@ -301,24 +306,28 @@ window.addEventListener("load", () => {
     retryBtn.addEventListener("click", checkAndRedirect);
   }
 
-  // Listen for online/offline events
-  window.addEventListener("online", async () => {
-    console.log("📡 Online event detected");
+// Listen for online/offline events - MORE CONSERVATIVE
+window.addEventListener("online", async () => {
+  console.log("📡 Online event detected - waiting for stability...");
+  
+  // Wait longer before checking
+  setTimeout(async () => {
     if (await verifyConnection()) {
-      console.log("✅ Verified online after browser event");
+      console.log("✅ Sustained connection after online event");
       storeOnlineTime();
       clearInterval(checkInterval);
       
-      const notification = document.createElement('div');
-      notification.textContent = '🟢 Back online! Redirecting...';
-      notification.style = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #4CAF50; color: white; padding: 15px; border-radius: 5px; z-index: 10000;';
-      document.getElementById('online-notification').style.display = 'block';
+      const notification = document.getElementById('online-notification');
+      if (notification) notification.style.display = 'block';
       
       setTimeout(() => {
-        window.location.href = "index.html?offline_redirect=true&t=" + Date.now();// Changed 
-      }, 2000);
+        window.location.href = "index.html?offline_redirect=true&t=" + Date.now();
+      }, 2500); // 2.5 second delay
+    } else {
+      console.log("❌ Online event was temporary - staying offline");
     }
-  });
+  }, 2000); // Wait 2 seconds before even checking
+});
 
   window.addEventListener("offline", () => {
     console.log("⚡ Offline event detected");
