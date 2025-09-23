@@ -1367,233 +1367,6 @@ styled to show in petcard header plus nickname */
 
 /* END OF PETCARD CREATION STYLES*/
 
-/*=======================================================
-  Responsive Design for phones important and optimized
-==============================================================*/
-/* =========================
-   MOBILE OPTIMIZATION (≤600px)
-   ========================= */
-@media (max-width: 600px) {
-  /* ---------------- Dashboard ---------------- */
-  #dashboard {
-    width: 100%;                 /* Full screen width */
-    padding: 1rem;               /* breathing space inside */
-    box-sizing: border-box;      /* include padding in width */
-    flex-direction: column;      /* stack children vertically */
-    align-items: center;         /* center content */
-  }
-
-  #dashboard h1 {
-    font-size: 1.6rem;
-    color: var(--primary-color);
-    text-align: center;
-    margin: 0 auto 1rem;
-    padding: 0 10px;
-    max-width: 90%;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-
-  /* --------------- PetList & Containers --------------- */
-  #petList,
-  #profileSection,
-  .dashboard-actions {
-    width: 100%;
-    max-width: 95vw;       /* ensure breathing space left/right */
-    margin: 0 auto;        /* centralized horizontally */
-    box-sizing: border-box;
-    padding: 0;            /* remove extra horizontal padding that offsets layout */
-  }
-
-
-  /* ---------------- PetCards ---------------- */
- /* PetCards centralization */
-  .petCard {
-    width: 100%;
-    max-width: 95vw;       /* ensures borders are visible both sides */
-    margin: 20px auto;     /* center with breathing space */
-    padding: 20px;
-    border-radius: 8px;
-    box-sizing: border-box;
-  }
-
-  /* Adjust PetCard header spacing if needed */
-  .petCard-header {
-    padding: 30px 15px 15px 15px;
-  }
-
-  .petCard-header h3 {
-    font-size: 1.2rem;
-    margin-top: 10px;
-  }
-
-  /* Action buttons container: force 2 per row */
-  .petCard .actions {
-    display: grid !important;              /* force grid layout */
-    grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
-    gap: 8px;                              /* spacing between buttons */
-    margin-top: 12px;                       /* spacing from card content */
-  }
-
-  /* Buttons inside PetCard */
-  .petCard .actions button {
-    width: 100%;         /* fill grid column */
-    padding: 6px 10px;   /* small mobile-friendly padding */
-    font-size: 0.8rem;   /* fit on small screens */
-    text-align: center;  
-    box-sizing: border-box;
-  }
-
-  /* Generate QR button spans both columns */
-  .petCard .actions .generate-qr {
-    grid-column: 1 / -1; /* span full width */
-    font-size: 0.75rem;
-    padding: 5px 8px;
-  }
-
-  /* ---------------- Dashboard Buttons ---------------- */
-  .dashboard-actions {
-    flex-direction: row;        /* keep buttons on one line */
-    justify-content: center;    /* center the pair */
-    gap: 0.8rem;                /* spacing between buttons */
-    width: 90%;                 /* container width */
-    margin: 0 auto;
-  }
-
-  #addPetProfileBtn,
-  #logoutBtn {
-    flex: none;                 /* don't stretch */
-    width: auto;                /* natural width */
-    max-width: none;
-    padding: 8px 14px;          /* smaller padding */
-    font-size: 0.9rem;          /* adjust font for mobile */
-  }
-
-  /* ---------------- ProfileForm ---------------- */
-  #profileSection {
-    width: 95vw;           /* nearly full screen, leaves breathing space */
-    max-width: 95vw !important; /* ensures it never exceeds viewport */
-    margin: 1rem auto !important;     /* center horizontally */
-    padding: 1rem;         /* internal padding */
-    box-sizing: border-box; /* ensures padding/border counted inside width */
-  }
-  
-  #profileForm {
-    width: 100%;           /* fill profileSection width */
-    box-sizing: border-box;
-  }
-
-  #profileForm .button-container {
-    flex-direction: column;    /* stack buttons vertically if needed */
-    gap: 0.6rem;
-  }
-
-  #profileForm button[type="submit"],
-  #profileForm .cancel-btn.pill {
-    width: 100%;
-    max-width: none;
-    padding: 10px 16px;
-    font-size: 0.9rem;
-  }
-
-  /* Gallery section switches to single column */
-  #profileForm .gallery-preview {
-    grid-template-columns: 1fr;
-  }
-  
-  /* Force theme previews to stay inside form on mobile */
-  #profileForm .theme-preview {
-    max-width: 50px;           /* reduce width on small screens */
-    width: 100%;               /* fill available space in flex container */
-    height: auto;              /* maintain aspect ratio */
-    flex: 1 1 auto;            /* allow shrinking */
-    box-sizing: border-box;    /* include borders/padding in width */
-    margin-bottom: 0.5rem;     /* small vertical gap */
-  }
-
-  /* Optional: ensure container doesn’t overflow */
-  #profileForm .theme-options {
-    width: 100%;
-    box-sizing: border-box;
-  }
-}
-/* =========================
-   EXTRA-SMALL PHONES (<360px)
-   ========================= */
-@media (max-width: 360px) {
-  /* Dashboard padding slightly reduced */
-  #dashboard {
-    padding: 0.8rem;
-  }
-
-  #dashboard h1 {
-    font-size: 1.4rem;
-    padding: 0 8px;
-    max-width: 92%;
-  }
-
-  /* PetList & ProfileForm centralization */
-  #petList,
-  #profileSection {
-    max-width: 92vw;      /* slightly narrower than 95vw */
-    padding: 0.5rem;      /* reduce internal padding */
-  }
-
-  /* PetCards */
-  .petCard {
-    max-width: 92vw;
-    padding: 16px;
-    margin: 15px auto;
-  }
-
-  /* Card header adjustments */
-  .petCard-header {
-    padding: 25px 12px 12px 12px;
-  }
-
-  .petCard-header h3 {
-    font-size: 1.1rem;
-  }
-
-  /* Card action buttons */
-  .petCard .actions {
-    gap: 6px;
-    margin-top: 10px;
-  }
-
-  .petCard .actions button,
-  .generate-qr {
-    font-size: 0.75rem;
-    padding: 5px 8px;
-  }
-
-  /* Dashboard buttons */
-  .dashboard-actions {
-    width: 95%;
-    gap: 0.5rem;
-  }
-
-  #addPetProfileBtn,
-  #logoutBtn {
-    padding: 6px 12px;
-    font-size: 0.85rem;
-  }
-
-  /* ProfileForm buttons */
-  #profileForm button[type="submit"],
-  #profileForm .cancel-btn.pill {
-    font-size: 0.85rem;
-    padding: 8px 12px;
-  }
-
-  /* Gallery single column */
-  #profileForm .gallery-preview {
-    grid-template-columns: 1fr;
-  }
-}
-
-
-
 /* =====COLLAGE BUTTON STYLES======= */
 /* Critical Fix: Force visibility for modal and its parent chain as it was hidden*/
 #collage-modal,
@@ -2744,18 +2517,45 @@ body.loader-active {
   /* PetList & ProfileForm centralization */
   #petList,
   #profileSection {
-    width: 92vw;              /* ✅ explicit width, not just max-width */
-    max-width: 92vw;          /* ✅ keeps borders visible */
-    padding: 0.5rem;
-    margin: 0 auto;           /* ensure centralization */
-    box-sizing: border-box;
+    max-width: 92vw;      /* slightly narrower than 95vw */
+    padding: 0.5rem;      /* reduce internal padding */
   }
+
+  /* PetCards */
+  .petCard {
+    max-width: 92vw;
+    padding: 16px;
+    margin: 15px auto;
+  }
+
+  /* Card header adjustments */
+  .petCard-header {
+    padding: 25px 12px 12px 12px;
+  }
+
+  .petCard-header h3 {
+    font-size: 1.1rem;
+  }
+
+  /* Card action buttons */
+ .petCard .actions {
+        grid-template-columns: 1fr; /* Single column */
+        gap: 6px;
+    }
+    
+    .petCard .actions button:not(.generate-qr) {
+        grid-column: 1 / -1; /* All buttons full width */
+    }
+    
+    .petCard .actions .generate-qr {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+    }
 
   /* Dashboard buttons */
   .dashboard-actions {
-    width: 85%;               /* ✅ narrower than 90% to avoid edge-stretch */
+    width: 95%;
     gap: 0.5rem;
-    margin: 0 auto;
   }
 
   #addPetProfileBtn,
@@ -2775,41 +2575,7 @@ body.loader-active {
   #profileForm .gallery-preview {
     grid-template-columns: 1fr;
   }
-
-  /* PetCards */
-  .petCard {
-    width: 92vw;              /* ✅ enforce equal padding both sides */
-    max-width: 92vw;
-    padding: 16px;
-    margin: 15px auto;
-    box-sizing: border-box;
-  }
-
-  /* Card header adjustments */
-  .petCard-header {
-    padding: 25px 12px 12px 12px;
-  }
-
-  .petCard-header h3 {
-    font-size: 1.1rem;
-  }
-
-  /* Card action buttons */
-  .petCard .actions {
-    display: grid !important;                 /* ✅ re-enforce grid */
-    grid-template-columns: repeat(2, 1fr) !important; /* ✅ 2 per row */
-    gap: 6px;
-    margin-top: 10px;
-  }
-
-  .petCard .actions button,
-  .generate-qr {
-    font-size: 0.75rem;
-    padding: 5px 8px;
-  }
 }
-
-
 
 /* =========================
    MOBILE OPTIMIZATION (≤600px)
@@ -2928,22 +2694,37 @@ body.loader-active {
     font-size: 1.2rem;
     margin-top: 10px;
   }
-
-  /* PetCard action buttons */
-  .petCard .actions {
+  /* PetCard action buttons - NEW GRID LAYOUT */
+.petCard .actions {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
+    grid-template-columns: 1fr 1fr; /* Explicit 2 columns */
     gap: 8px;
     margin-top: 12px;
-  }
+}
 
-  .petCard .actions button,
-  .generate-qr {
-    width: 100%;           /* fill each column */
-    padding: 6px 10px;
+/* First 6 buttons - auto placement in 2-column grid */
+.petCard .actions button:not(.generate-qr) {
+    min-width: auto; /* Override the 120px min-width */
+    width: 100%;
+    padding: 8px 10px;
     font-size: 0.8rem;
     text-align: center;
-  }  
+}
+
+/* QR button - full width on new row */
+.petCard .actions .generate-qr {
+    grid-column: 1 / -1; /* Span all columns */
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    animation: pulse 2s infinite; /* Pulsing effect */
+}
+/* Pulsing animation for QR button */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
 }
 
 
