@@ -1,3 +1,9 @@
+// ====== IMMEDIATE REDIRECT CHECK ======
+// ✅ Prevent offline.html from being cached too aggressively
+if (window.location.pathname.includes('/PetStudio/offline.html') && navigator.onLine) {
+  window.location.href = '/PetStudio/index.html'; // Auto-redirect if online
+}
+
 // GLOBAL DECLARATIONS - AUTH-INITIALIZATION
 //===================================
       // UNIFIED LOADER LOGIC
