@@ -383,8 +383,26 @@ function initAuthListeners() {
   const auth = firebase.auth();
 
   auth.onAuthStateChanged(async (user) => {
+        // ✅ ADD THIS CHECK FIRST
+    const hadOfflineSignOut = localStorage.getItem('hadOfflineSignOut');
+    
+    if (!user && hadOfflineSignOut) {
+      console.log("📴 Respecting previous offline sign-out");
+      localStorage.removeItem('hadOfflineSignOut');
+      
+      // Ensure auth page is shown
+      if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
+      if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
+      if (typeof setupGoogleLoginButton === 'function') setupGoogleLoginButton();
+      
+      return; // Stop further processing
+    }
+      // Clear the flag if user is actually signed in
+    if (user) {
+      localStorage.removeItem('hadOfflineSignOut');
+    }
+    
     const logoutBtn = document.getElementById("logoutBtn");
-
     if (user) {
       console.log("✅ User is signed in:", user);
 
@@ -485,7 +503,10 @@ async function handleLogout() {
       if (window.google && google.accounts && google.accounts.id) {
         google.accounts.id.disableAutoSelect();
       }
-    }
+    } else {
+      // ✅ OFFLINE LOGOUT - SET THE FLAG
+      localStorage.setItem('hadOfflineSignOut', 'true');
+    }}
 
     // COMMON CLEANUP FOR BOTH ONLINE & OFFLINE
     // Clear all local caches
