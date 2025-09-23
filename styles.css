@@ -2727,10 +2727,27 @@ body.loader-active {
     font-size: 0.9rem;
     animation: pulse 2s infinite; /* Pulsing effect */
 }
+  
+  /* === ADD THESE NEW RULES AT THE VERY END  TO BE REMOVED IF THEY CAUSE A PROBLEM=== */
+    
+    /* Push QR button to bottom */
+    .petCard {
+        display: flex;
+        flex-direction: column;
+        min-height: 500px;
+    }
+    
+    .petCard .action-buttons {
+        margin-top: auto;
+    }
+    
+    /* Enhance QR button appearance only */
+    .petCard .action-buttons .generate-qr {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: bold;
+        border: none;
+        margin-top: 15px;
+    }
 }
-
-
-
-
-
 
