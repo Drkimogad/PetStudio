@@ -202,45 +202,19 @@ function storeOnlineTime() {
   updateLastOnlineTime();
 }
 
-// Prevent immediate redirect on page load
-let pageJustLoaded = true;
-setTimeout(() => { pageJustLoaded = false; }, 2000);
-  
-// --- ROBUST connection verification ---
+// --- SIMPLE BUT RELIABLE connection verification ---
 async function verifyConnection() {
   return new Promise((resolve) => {
-    // Step 1: Basic browser online check
     if (!navigator.onLine) {
-      console.log("❌ Browser reports offline");
       resolve(false);
       return;
     }
-
-    // Step 2: Test actual Firebase connectivity
-    const testConnection = async () => {
-      try {
-        // Test if Firebase services are reachable
-        if (typeof firebase !== 'undefined' && firebase.auth) {
-          // Try a simple auth operation that doesn't require sign-in
-          await Promise.race([
-            firebase.auth().currentUser?.getIdToken(true), // Refresh token if user exists
-            new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
-          ]);
-          console.log("✅ Firebase services are reachable");
-          resolve(true);
-        } else {
-          // Firebase not loaded yet, but browser is online - proceed cautiously
-          console.log("⚠️ Firebase not loaded, but browser online");
-          resolve(true);
-        }
-      } catch (error) {
-        console.log("❌ Firebase services unreachable:", error.message);
-        resolve(false);
-      }
-    };
-
-    // Step 3: Add small delay for network stabilization
-    setTimeout(testConnection, 500);
+    
+    // Use the same simple check as the main app
+    setTimeout(() => {
+      // Just check basic online status - let the main app handle Firebase
+      resolve(navigator.onLine);
+    }, 1000); // Increased delay for stability
   });
 }
 
