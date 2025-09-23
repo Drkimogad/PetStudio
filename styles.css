@@ -2577,6 +2577,14 @@ body.loader-active {
   }
 }
 
+
+
+/* Pulsing animation for QR button */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
 /* =========================
    MOBILE OPTIMIZATION (≤600px)
    ========================= */
@@ -2696,7 +2704,7 @@ body.loader-active {
   }
   /* PetCard action buttons - NEW GRID LAYOUT */
 .petCard .actions {
-    display: grid;
+    display: grid !important; /* Override flexbox */
     grid-template-columns: 1fr 1fr; /* Explicit 2 columns */
     gap: 8px;
     margin-top: 12px;
@@ -2704,7 +2712,7 @@ body.loader-active {
 
 /* First 6 buttons - auto placement in 2-column grid */
 .petCard .actions button:not(.generate-qr) {
-    min-width: auto; /* Override the 120px min-width */
+    min-width: auto !important; /* Override the 120px min-width */
     width: 100%;
     padding: 8px 10px;
     font-size: 0.8rem;
@@ -2713,17 +2721,11 @@ body.loader-active {
 
 /* QR button - full width on new row */
 .petCard .actions .generate-qr {
-    grid-column: 1 / -1; /* Span all columns */
+    grid-column: 1 / -1 !important; /* Span all columns */
     width: 100%;
     padding: 10px 16px;
     font-size: 0.9rem;
     animation: pulse 2s infinite; /* Pulsing effect */
-}
-/* Pulsing animation for QR button */
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
 }
 }
 
