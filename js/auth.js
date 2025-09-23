@@ -313,7 +313,7 @@ callback: async (response) => {
       if (!navigator.onLine) {
         e.preventDefault();
         e.stopImmediatePropagation();
-        window.location.href = 'offline.html';
+        window.location.href = '/PetStudio/offline.html';
         return false;
       }
     }, true); // capture phase
