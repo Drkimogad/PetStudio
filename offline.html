@@ -186,6 +186,20 @@
 // ============================================
 // OFFLINE.HTML SCRIPT - PetStudio
 // ==============================================
+  // ====== IMMEDIATE REDIRECT CHECK IN OFFLINE.HTML ======
+console.log("🔍 OFFLINE.HTML REDIRECT CHECK - Starting");
+console.log("📍 Current pathname:", window.location.pathname);
+console.log("🌐 navigator.onLine:", navigator.onLine);
+
+if (navigator.onLine) {
+  console.log("🚀 REDIRECTING: On offline.html but online - redirecting to index.html");
+  window.location.href = 'index.html';
+  // Stop all other execution
+  throw new Error("Redirecting - stop execution");
+} else {
+  console.log("🛑 STAYING: Genuinely offline - showing offline page");
+}
+  
 // ✅ ADD THIS: Prevent immediate redirects
 let pageJustLoaded = true;
 setTimeout(() => { 
