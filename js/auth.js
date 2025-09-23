@@ -1,3 +1,16 @@
+// ====== DEBUG IMMEDIATE REDIRECT CHECK ======
+console.log("🔍 OFFLINE REDIRECT DEBUG - Starting check");
+console.log("📍 Current pathname:", window.location.pathname);
+console.log("🌐 navigator.onLine:", navigator.onLine);
+console.log("📱 Includes 'offline.html':", window.location.pathname.includes('offline.html'));
+
+if (window.location.pathname.includes('offline.html') && navigator.onLine) {
+  console.log("🚀 REDIRECTING: On offline.html but online - redirecting to index.html");
+  window.location.href = 'index.html';
+} else {
+  console.log("🛑 STAYING: Conditions not met - staying on current page");
+}
+
 // ====== IMMEDIATE REDIRECT CHECK ======
 // ✅ Prevent offline.html from being cached too aggressively
 if (window.location.pathname.includes('/PetStudio/offline.html') && navigator.onLine) {
