@@ -1172,7 +1172,7 @@ border-color: var(--accent-color); /* Mustard yellow border */
 /*=================================*/
 /* 10. Action buttons container==== */
 /*=================================*/
-.petCard .actions {
+  .petCard .action-buttons { /* fixed selector*/
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
@@ -1181,7 +1181,7 @@ border-color: var(--accent-color); /* Mustard yellow border */
 }
 
 /* Base button styles (applies to ALL buttons) */
-.petCard .actions button,
+.petCard .action-buttons,
 .celebrate-btn,
 .collage-btn,
 .print-profile,
@@ -1201,7 +1201,7 @@ border-color: var(--accent-color); /* Mustard yellow border */
 }
 
 /* Hover state for ALL buttons */
-.petCard .actions button:hover,
+.petCard .action-buttons:hover,
 .celebrate-btn:hover,
 .collage-btn:hover,
 .print-profile:hover,
@@ -2703,7 +2703,7 @@ body.loader-active {
     margin-top: 10px;
   }
   /* PetCard action buttons - NEW GRID LAYOUT */
-.petCard .actions {
+    .petCard .action-buttons { /* Changed from .actions to .action-buttons */
     display: grid !important; /* Override flexbox */
     grid-template-columns: 1fr 1fr; /* Explicit 2 columns */
     gap: 8px;
@@ -2711,7 +2711,7 @@ body.loader-active {
 }
 
 /* First 6 buttons - auto placement in 2-column grid */
-.petCard .actions button:not(.generate-qr) {
+    .petCard .action-buttons button:not(.generate-qr) { /* Fixed selector */
     min-width: auto !important; /* Override the 120px min-width */
     width: 100%;
     padding: 8px 10px;
@@ -2720,7 +2720,7 @@ body.loader-active {
 }
 
 /* QR button - full width on new row */
-.petCard .actions .generate-qr {
+    .petCard .action-buttons .generate-qr { /* Fixed selector */
     grid-column: 1 / -1 !important; /* Span all columns */
     width: 100%;
     padding: 10px 16px;
