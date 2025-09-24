@@ -1106,13 +1106,35 @@ async function deleteProfile(index) {
     }
 
     // Cloudinary Images (Filter + Parallel)
+        // 🔹 Cloudinary Images (Updated logic from Pet Health Tracker)
     if (Array.isArray(profile.gallery)) {
       profile.gallery
         .filter(img => img?.public_id)
         .forEach(img => {
           deletions.push(
-            deleteImageFromCloudinary(img.public_id)
-              .catch(err => console.warn("Cloudinary deletion warning:", img.public_id, err))
+            (async () => {
+              try {
+                if (firebase.auth().currentUser) {
+                  const token = await firebase.auth().currentUser.getIdToken();
+                  const response = await fetch(
+                    "https://us-central1-petstudio-c3679.cloudfunctions.net/deleteImage",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                      },
+                      body: JSON.stringify({ public_id: img.public_id })
+                    }
+                  );
+                  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                  const result = await response.json();
+                  console.log("✅ Cloudinary delete result:", result);
+                }
+              } catch (err) {
+                console.warn("❌ Failed to delete image from Cloudinary:", img.public_id, err);
+              }
+            })()
           );
         });
     }
