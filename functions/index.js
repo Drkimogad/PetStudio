@@ -11,9 +11,10 @@ if (!admin.apps.length) {
 // Helper: Load Cloudinary Config
 // ---------------------------
 function loadCloudinaryConfig() {
-  const cfg = functions.config().cloudinary || {}; const cloud_name = process.env.CLOUDINARY_CLOUD_NAME;
-  const api_key = process.env.CLOUDINARY_API_KEY;
-  const api_secret = process.env.CLOUDINARY_API_SECRET;
+  const cfg = functions.config().cloudinary || {};
+  const cloud_name = cfg.cloud_name || process.env.CLOUDINARY_CLOUD_NAME;
+  const api_key = cfg.api_key || process.env.CLOUDINARY_API_KEY;
+  const api_secret = cfg.api_secret || process.env.CLOUDINARY_API_SECRET;
 
   if (!cloud_name || !api_key || !api_secret) {
     throw new Error("Cloudinary credentials missing");
