@@ -1140,11 +1140,16 @@ async function deleteProfile(index) {
     }
 
     // 3. Await All Deletions
-    await Promise.allSettled(deletions);
+const results = await Promise.allSettled(deletions);
+const allSuccess = results.every(r => r.status === "fulfilled");
 
-    // 4. Update Local State
-    const [deletedProfile] = petProfiles.splice(index, 1);
-    localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+// 4. Update Local State only if everything succeeded
+if (allSuccess) {
+  petProfiles.splice(index, 1);
+  localStorage.setItem("petProfiles", JSON.stringify(petProfiles));
+} else {
+  console.warn("⚠️ Some deletions failed, keeping profile locally for retry.");
+}
 
 // 5. UI Feedback with loader success message
 if (typeof showLoader === 'function') {
