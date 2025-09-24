@@ -543,21 +543,14 @@ function checkOnlineStatus() {
   const statusElement = document.getElementById('online-status') || createStatusElement();
 
   if (isOnline) {
-    statusElement.textContent = '✅ Online';
+    statusElement.textContent = 'Online';
     statusElement.className = 'online-status online';
     console.log('✅ Online - Connected to server');
   } else {
-    statusElement.textContent = '📴 Offline - Using local data';
+    statusElement.textContent = 'Offline - Using local data';
     statusElement.className = 'online-status offline';
     console.log('📴 Offline - Using cached data');
   }
-
-  // Show then auto-hide after 3s
-  statusElement.style.display = 'block';
-  clearTimeout(statusElement.hideTimeout);
-  statusElement.hideTimeout = setTimeout(() => {
-    statusElement.style.display = 'none';
-  }, 3000);
 
   return isOnline;
 }
@@ -568,7 +561,6 @@ function createStatusElement() {
   document.body.appendChild(statusElement);
   return statusElement;
 }
-
 
 
 // ====== Core Initialization ======
