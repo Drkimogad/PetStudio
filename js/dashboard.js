@@ -1159,6 +1159,7 @@ if (typeof showLoader === 'function') {
 // 6. Update UI after loader auto-hides
 setTimeout(() => {
   loadSavedProfiles();
+  showLoader(false); // ensure loader disappears
 }, 1500);
 
 } catch (error) {
@@ -1166,9 +1167,13 @@ setTimeout(() => {
   // Show error with loader
   if (typeof showLoader === 'function') {
     showLoader(true, "error", 'Delete failed: ' + error.message);
-  }
+ }// Ensure loader hides
+  setTimeout(() => {
+  showLoader(false); // hides loader after 1.5s even if deletion failed
+  }, 1500);
  }
 }
+  
 // Enhanced confirmation dialog
 function showDeleteConfirmation(petName) {
   return new Promise((resolve) => {
