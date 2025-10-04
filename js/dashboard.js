@@ -2730,18 +2730,50 @@ document.getElementById("petGallery").addEventListener("change", function() {
   
   if (files.length === 0) return;
 
+  // ✅ NEW: FILE SIZE VALIDATION
+  console.log("🔍 Checking file sizes...");
+  const MAX_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+  const oversizedFiles = files.filter(file => file.size > MAX_SIZE);
+  
+  if (oversizedFiles.length > 0) {
+    console.warn("❌ Oversized files detected:", oversizedFiles.map(f => `${f.name} (${(f.size/1024/1024).toFixed(1)}MB)`));
+    
+    // Show user error
+    alert(`Some images are too large. Please choose files under 5MB.\n\nLarge files: ${oversizedFiles.map(f => f.name).join(', ')}`);
+    
+    // Reset input to force reselection
+    this.value = '';
+    return; // Stop processing
+  }
+  
+  console.log("✅ All files under 5MB limit, proceeding...");
+  // CONTINUE WITH EXISTING LOGIC...
+
   files.forEach(file => {
     const reader = new FileReader();
     
     // ✅ CORRECT - Move inside the forEach callback
-    reader.onload = function(e) {
-        // Create temporary object but DON'T add to uploadedImageUrls yet
-        const tempImage = {
-            url: e.target.result,
-            isTemp: true,
-            file: file  // Keep reference to the actual file
-        };
-        
+reader.onload = async function(e) {
+  // ✅ NEW: COMPRESS IF LARGE
+  let processedFile = file;
+  if (file.size > 2 * 1024 * 1024) { // Compress files over 2MB
+    try {
+      processedFile = await compressImage(file);
+      console.log("🎯 Compression successful");
+    } catch (error) {
+      console.warn("⚠️ Compression failed, using original:", error);
+      // Fallback to original file
+    }
+  }
+
+  // Create temporary object with processed file
+  const tempImage = {
+    url: e.target.result, // Keep original dataURL for preview
+    isTemp: true,
+    file: processedFile  // Use compressed file for upload
+  };
+
+      
         // Use a separate array for temporary preview images
         if (!window.tempGalleryImages) window.tempGalleryImages = [];
         window.tempGalleryImages.push(tempImage);
