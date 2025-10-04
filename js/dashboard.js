@@ -1289,7 +1289,7 @@ async function printProfile(profile) {
           transform: scale(1);  /* Scale down the preview */
           transform-origin: top center;
           margin: 0 auto;
-          max-width: 95vw;
+          max-width: 90vw;
         }
       `;
       clonedDoc.head.appendChild(style);
