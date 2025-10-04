@@ -1277,28 +1277,21 @@ async function printProfile(profile) {
   // Capture with html2canvas
   try {
     const canvas = await html2canvas(petCard, {
-      scale: 1.8,
+      scale: 1.2,   //it was 1.8
       logging: true, // Helpful for debugging
       useCORS: true,
       allowTaint: true,
       onclone: (clonedDoc) => {
           // Add viewport scaling for the preview
-                 const style = document.createElement('style');
-style.textContent = `
-  body { 
-    transform: scale(1);
-    transform-origin: top center;
-    margin: 0 auto;
-    max-width: 90vw;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-  }
-  .print-container {
-    width: 100%;
-  }
-`;
- 
+    const style = document.createElement('style');
+    style.textContent = `
+      body { 
+        transform: scale(1);  // No need to scale down viewport
+        transform-origin: top center;
+        margin: 0 auto;
+        max-width: 95vw;     // Can use more width now
+      }
+    `;
       clonedDoc.head.appendChild(style);
         // Ensure any hidden elements are visible for printing
         clonedDoc.querySelectorAll('[style*="display:none"]').forEach(el => {
