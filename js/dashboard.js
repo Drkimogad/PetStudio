@@ -1284,14 +1284,19 @@ async function printProfile(profile) {
       onclone: (clonedDoc) => {
           // Add viewport scaling for the preview
       const style = document.createElement('style');
-      style.textContent = `
-        body { 
-          transform: scale(1);  /* Scale down the preview */
-          transform-origin: top center;
-          margin: 0 auto;
-          max-width: 90vw;
-        }
-      `;
+style.textContent = `
+  body { 
+    transform: scale(0.9);  /* 10% smaller */
+    transform-origin: top center;
+    width: 100vw;           /* Full viewport width */
+    margin: 0;              /* Remove auto margins */
+    padding: 0;
+  }
+  img {
+    width: 100%;            /* Make image fill container */
+    height: auto;
+  }
+`;
       clonedDoc.head.appendChild(style);
         // Ensure any hidden elements are visible for printing
         clonedDoc.querySelectorAll('[style*="display:none"]').forEach(el => {
