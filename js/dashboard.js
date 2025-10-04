@@ -1449,7 +1449,8 @@ function openPrintWindow(canvas, profile) {
       display: flex;
       justify-content: center;
       gap: 15px;
-      margin: 25px 0;
+      margin: 25px auto;
+      width: fit-content;       /* Add this */
     }
     
     .print-actions button {
