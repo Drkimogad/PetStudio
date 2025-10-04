@@ -1277,7 +1277,7 @@ async function printProfile(profile) {
   // Capture with html2canvas
   try {
     const canvas = await html2canvas(petCard, {
-      scale: 1.2,   //it was 1.8
+      scale: 1.5,   //it was 1.8
       logging: true, // Helpful for debugging
       useCORS: true,
       allowTaint: true,
@@ -1285,11 +1285,20 @@ async function printProfile(profile) {
           // Add viewport scaling for the preview
     const style = document.createElement('style');
     style.textContent = `
-      body { 
-        transform: scale(1);  // No need to scale down viewport
+     body { 
+        transform: scale(1);
         transform-origin: top center;
         margin: 0 auto;
-        max-width: 95vw;     // Can use more width now
+        max-width: 95vw;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+      }
+      .print-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
       }
     `;
       clonedDoc.head.appendChild(style);
