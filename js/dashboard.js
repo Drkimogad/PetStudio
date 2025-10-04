@@ -1283,20 +1283,22 @@ async function printProfile(profile) {
       allowTaint: true,
       onclone: (clonedDoc) => {
           // Add viewport scaling for the preview
-      const style = document.createElement('style');
+                 const style = document.createElement('style');
 style.textContent = `
   body { 
-    transform: scale(0.9);  /* 10% smaller */
+    transform: scale(1);
     transform-origin: top center;
-    width: 100vw;           /* Full viewport width */
-    margin: 0;              /* Remove auto margins */
-    padding: 0;
+    margin: 0 auto;
+    max-width: 90vw;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
   }
-  img {
-    width: 100%;            /* Make image fill container */
-    height: auto;
+  .print-container {
+    width: 100%;
   }
 `;
+ 
       clonedDoc.head.appendChild(style);
         // Ensure any hidden elements are visible for printing
         clonedDoc.querySelectorAll('[style*="display:none"]').forEach(el => {
