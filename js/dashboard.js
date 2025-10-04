@@ -3304,7 +3304,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeDashboard(); // ✅ Use the correct one
   initSessionRecovery(); // Initialize session recovery when DOM is ready
   // Call this in your dashboard initialization
-  initBirthdayAlerts();
+//  initBirthdayAlerts();
 });
 
 
