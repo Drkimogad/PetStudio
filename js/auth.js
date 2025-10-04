@@ -446,6 +446,11 @@ function initAuthListeners() {
         if (typeof showDashboard === 'function') {
           showDashboard();
           showLoader(false); // Hide loader after dashboard is shown
+          // In your auth success callback or where loader hides:
+         setTimeout(() => {
+         initBirthdayAlerts(); // Now safe to run
+        }, 500);
+
         }
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
