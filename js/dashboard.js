@@ -1286,7 +1286,7 @@ async function printProfile(profile) {
     const style = document.createElement('style');
     style.textContent = `
      body { 
-        transform: scale(0.8);   /* it works as 1*/
+        transform: scale(0.95);   /* it works as 1*/
         transform-origin: top center;
         margin: 0 auto;
         max-width: 95vw;
