@@ -93,7 +93,7 @@ if (!window.petProfiles || !Array.isArray(window.petProfiles) || window.petProfi
   // Normalize coverPhotoIndex for consistency MAPPING
   savedProfiles = savedProfiles.map(p => ({
     ...p,
-    coverPhotoIndex: Number(p.coverPhotoIndex ?? 0)
+    coverPhotoIndex: Number(p.coverPhotoIndex ?? 0),
       birthdayCelebrated: p.birthdayCelebrated || false // ← ADD THIS
   }));
   
