@@ -1277,7 +1277,7 @@ async function printProfile(profile) {
   // Capture with html2canvas
   try {
     const canvas = await html2canvas(petCard, {
-      scale: 1.5,   //it was 1.8
+      scale: 1.6,   //it was 1.8
       logging: true, // Helpful for debugging
       useCORS: true,
       allowTaint: true,
@@ -1286,7 +1286,7 @@ async function printProfile(profile) {
     const style = document.createElement('style');
     style.textContent = `
      body { 
-        transform: scale(1);
+        transform: scale(1.2);   /* it works as 1*/
         transform-origin: top center;
         margin: 0 auto;
         max-width: 95vw;
@@ -1515,7 +1515,7 @@ function openPrintWindow(canvas, profile) {
                alt="${profile.name}'s Profile Card">
           
           <p class="print-footer">
-            Printed from Pet Profile App • ${printDate}
+            Printed from PetStudio App • ${printDate}
           </p>
         </div>
 
