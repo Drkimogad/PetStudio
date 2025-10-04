@@ -1277,7 +1277,7 @@ async function printProfile(profile) {
   // Capture with html2canvas
   try {
     const canvas = await html2canvas(petCard, {
-      scale: 1.6,   //it was 1.8
+      scale: 1.5,   //it was 1.8
       logging: true, // Helpful for debugging
       useCORS: true,
       allowTaint: true,
@@ -1286,7 +1286,7 @@ async function printProfile(profile) {
     const style = document.createElement('style');
     style.textContent = `
      body { 
-        transform: scale(1);   /* it works as 1*/
+        transform: scale(0.8);   /* it works as 1*/
         transform-origin: top center;
         margin: 0 auto;
         max-width: 95vw;
