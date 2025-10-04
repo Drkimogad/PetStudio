@@ -2747,8 +2747,25 @@ document.getElementById("petGallery").addEventListener("change", function() {
   }
   
   console.log("✅ All files under 5MB limit, proceeding...");
-  // CONTINUE WITH EXISTING LOGIC...
+  
+ // Add this right after your size validation:
+  // ✅ NEW: IMAGE COUNT VALIDATION
+console.log("🔢 Checking image count...");
+const currentImageCount = (window.tempGalleryImages?.length || 0) + (uploadedImageUrls?.length || 0);
+const newTotalCount = currentImageCount + files.length;
 
+if (newTotalCount > 10) {
+    const availableSlots = 10 - currentImageCount;
+    console.warn(`❌ Too many images. Can only add ${availableSlots} more`);
+    
+    alert(`Maximum 10 images per profile.\n\nYou can add ${availableSlots} more image${availableSlots !== 1 ? 's' : ''}.`);
+    
+    this.value = '';
+    return;
+}
+
+console.log(`✅ Image count OK: ${newTotalCount}/10`);
+  
   files.forEach(file => {
     const reader = new FileReader();
     
