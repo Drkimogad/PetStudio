@@ -2413,9 +2413,7 @@ body.loader-active {
   from { transform: translateX(0); opacity: 1; }
   to { transform: translateX(100px); opacity: 0; }
 }
-/*============================================
-    ONLINE AND OFFLINE STATUS CHECK
-==============================================*/
+
 /*============================================
     ONLINE AND OFFLINE STATUS CHECK
 ==============================================*/
@@ -2431,12 +2429,12 @@ body.loader-active {
 }
 
 .online-status.online {
-  background-color: #4CAF50;
+  background-color: #4CAF50 !important;
   color: white;
 }
 
 .online-status.offline {
-  background-color: #f44336;
+  background-color: #f44336 !important;
   color: white;
 }
 /*==============================================
