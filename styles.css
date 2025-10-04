@@ -2424,19 +2424,21 @@ body.loader-active {
   padding: 5px 10px !important;
   border-radius: 4px !important;
   font-size: 12px !important;
-  z-index: 12000 !important;
+  z-index: 21000 !important;
   opacity: 0.9 !important;
   background-color: #f44336 !important; /* Default offline color */
 }
 
-.online-status.online {
+#online-status.online-status.online {
   background-color: #4CAF50 !important;
   color: white !important;
+  z-index: 21000 !important;    /* watch out for it*/
 }
 
-.online-status.offline {
+#online-status.online-status.offline {
   background-color: #f44336 !important;
   color: white !important;
+  z-index: 21000 !important;
 }
 
 /*==============================================
