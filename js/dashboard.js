@@ -90,10 +90,11 @@ function resetSessionTimer() {
 if (!window.petProfiles || !Array.isArray(window.petProfiles) || window.petProfiles.length === 0) {
   let savedProfiles = JSON.parse(localStorage.getItem('petProfiles')) || [];
   
-  // Normalize coverPhotoIndex for consistency
+  // Normalize coverPhotoIndex for consistency MAPPING
   savedProfiles = savedProfiles.map(p => ({
     ...p,
     coverPhotoIndex: Number(p.coverPhotoIndex ?? 0)
+      birthdayCelebrated: p.birthdayCelebrated || false // ← ADD THIS
   }));
   
   window.petProfiles = savedProfiles;
@@ -275,7 +276,6 @@ const coverImageObj = profile.gallery?.[coverIndex];
       const petCardHeaderStyle = coverPhotoUrl 
   ? `background-image: url('${coverPhotoUrl}')` 
   : '';
-
 
 petCard.innerHTML = `
   <!-- ==================== -->
@@ -1551,82 +1551,6 @@ function openPrintWindow(canvas, profile) {
   printWindow.document.close();
 }
 
-//========================
-// BIRTHDAY ALERT SYSTEM (self-contained)
-function initBirthdayAlerts() {
-  // Create alert HTML if not exists
-  if (!document.getElementById('birthday-alert')) {
-    const alertHTML = `
-      <div id="birthday-alert" class="birthday-alert hidden">
-        <div class="birthday-alert-content">
-          <span class="birthday-close">&times;</span>
-          <h3>🎉 Birthday Alert! 🎂</h3>
-          <p>It's <strong id="birthday-pet-name">Fluffy</strong>'s birthday today!</p>
-          <div class="birthday-actions">
-            <button class="birthday-card-btn">Generate Birthday Card</button>
-            <button class="birthday-close-btn">Celebrate Later</button>
-          </div>
-        </div>
-      </div>`;
-    document.body.insertAdjacentHTML('beforeend', alertHTML);
-  }
-
-  // Check birthdays on load
-  checkTodaysBirthdays();
-}
-
-function checkTodaysBirthdays() {
-  const today = new Date().toDateString();
-  const todaysBirthdays = petProfiles.filter(profile => {
-    const birthday = new Date(profile.nextBirthday).toDateString();
-    return birthday === today && !profile.birthdayCelebrated;
-  });
-
-  if (todaysBirthdays.length > 0) {
-    showBirthdayAlert(todaysBirthdays[0]); // Show first birthday
-  }
-}
-
-function showBirthdayAlert(profile) {
-  const alert = document.getElementById('birthday-alert');
-  const petName = document.getElementById('birthday-pet-name');
-  
-  petName.textContent = profile.name;
-  alert.classList.remove('hidden');
-  
-  // Store current profile for button action
-  alert.dataset.currentProfileId = profile.id;
-}
-
-// EVENT LISTENERS (one listener handles multiple buttons)
-document.addEventListener('click', function(e) {
-  const alert = document.getElementById('birthday-alert');
-  if (!alert) return;
-
-  if (e.target.classList.contains('birthday-card-btn')) {
-    const profileId = alert.dataset.currentProfileId;
-    const profileIndex = petProfiles.findIndex(p => p.id == profileId);
-    if (profileIndex !== -1) {
-      generateBirthdayCard(profileIndex);
-      markBirthdayCelebrated(profileId);
-      alert.classList.add('hidden');
-    }
-  }
-  
-  if (e.target.classList.contains('birthday-close-btn') || 
-      e.target.classList.contains('birthday-close')) {
-    alert.classList.add('hidden');
-  }
-});
-
-function markBirthdayCelebrated(profileId) {
-  const profileIndex = petProfiles.findIndex(p => p.id == profileId);
-  if (profileIndex !== -1) {
-    petProfiles[profileIndex].birthdayCelebrated = true;
-    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
-  }
-}
-
 
 //====================================================================
     //  🎂 Generate Birthday card() WORKS  PRODUCTION READY ✅
@@ -1853,6 +1777,84 @@ function downloadCard(canvas, petName) {
     document.body.removeChild(link);
     URL.revokeObjectURL(link.href); // Added cleanup
   }, 100);
+}
+
+
+
+//========================
+// BIRTHDAY ALERT SYSTEM (self-contained)
+function initBirthdayAlerts() {
+  // Create alert HTML if not exists
+  if (!document.getElementById('birthday-alert')) {
+    const alertHTML = `
+      <div id="birthday-alert" class="birthday-alert hidden">
+        <div class="birthday-alert-content">
+          <span class="birthday-close">&times;</span>
+          <h3>🎉 Birthday Alert! 🎂</h3>
+          <p>It's <strong id="birthday-pet-name">Fluffy</strong>'s birthday today!</p>
+          <div class="birthday-actions">
+            <button class="birthday-card-btn">Generate Birthday Card</button>
+            <button class="birthday-close-btn">Celebrate Later</button>
+          </div>
+        </div>
+      </div>`;
+    document.body.insertAdjacentHTML('beforeend', alertHTML);
+  }
+
+  // Check birthdays on load
+  checkTodaysBirthdays();
+}
+
+function checkTodaysBirthdays() {
+  const today = new Date().toDateString();
+  const todaysBirthdays = petProfiles.filter(profile => {
+    const birthday = new Date(profile.nextBirthday).toDateString();
+    return birthday === today && !profile.birthdayCelebrated;
+  });
+
+  if (todaysBirthdays.length > 0) {
+    showBirthdayAlert(todaysBirthdays[0]); // Show first birthday
+  }
+}
+
+function showBirthdayAlert(profile) {
+  const alert = document.getElementById('birthday-alert');
+  const petName = document.getElementById('birthday-pet-name');
+  
+  petName.textContent = profile.name;
+  alert.classList.remove('hidden');
+  
+  // Store current profile for button action
+  alert.dataset.currentProfileId = profile.id;
+}
+
+// EVENT LISTENERS (one listener handles multiple buttons)
+document.addEventListener('click', function(e) {
+  const alert = document.getElementById('birthday-alert');
+  if (!alert) return;
+
+  if (e.target.classList.contains('birthday-card-btn')) {
+    const profileId = alert.dataset.currentProfileId;
+    const profileIndex = petProfiles.findIndex(p => p.id == profileId);
+    if (profileIndex !== -1) {
+      generateBirthdayCard(profileIndex);
+      markBirthdayCelebrated(profileId);
+      alert.classList.add('hidden');
+    }
+  }
+  
+  if (e.target.classList.contains('birthday-close-btn') || 
+      e.target.classList.contains('birthday-close')) {
+    alert.classList.add('hidden');
+  }
+});
+
+function markBirthdayCelebrated(profileId) {
+  const profileIndex = petProfiles.findIndex(p => p.id == profileId);
+  if (profileIndex !== -1) {
+    petProfiles[profileIndex].birthdayCelebrated = true;
+    localStorage.setItem('petProfiles', JSON.stringify(petProfiles));
+  }
 }
 
 //===============================================================================================================  
