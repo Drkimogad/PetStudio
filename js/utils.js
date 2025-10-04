@@ -14,10 +14,10 @@ async function uploadToCloudinary(file, userId, petProfileId) {
   }
 
   // 2. VALIDATE FILE SIZE (10MB)
-  const maxSizeMB = 5;
-  if (file.size > maxSizeMB * 1024 * 1024) {
-    throw new Error(`File too large! Max ${maxSizeMB}MB allowed`);
-  }
+//  const maxSizeMB = 5;
+//  if (file.size > maxSizeMB * 1024 * 1024) {
+//    throw new Error(`File too large! Max ${maxSizeMB}MB allowed`);
+//  }
 
   // 3. BUILD FOLDER PATH
   const folderPath = `PetStudio/users/${encodeURIComponent(userId)}/${encodeURIComponent(petProfileId)}/gallery/`;
