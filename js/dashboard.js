@@ -1286,10 +1286,10 @@ async function printProfile(profile) {
       const style = document.createElement('style');
       style.textContent = `
         body { 
-          transform: scale(0.8);  /* Scale down the preview */
+          transform: scale(1);  /* Scale down the preview */
           transform-origin: top center;
           margin: 0 auto;
-          max-width: 90vw;
+          max-width: 95vw;
         }
       `;
       clonedDoc.head.appendChild(style);
