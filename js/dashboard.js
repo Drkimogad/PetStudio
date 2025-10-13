@@ -1342,6 +1342,32 @@ function fallbackHtmlPrint(profile) {
     <html>
       <head>
         <title>${profile.name}'s Profile</title>   
+        <style>
+  /* Responsive styles for fallback print */
+  @media screen and (max-width: 767px) {
+    body { padding: 15px; font-size: 14px; }
+    .print-header h1 { font-size: 1.5rem; }
+    .print-gallery img { max-width: 100%; height: auto; }
+    .print-actions { flex-direction: column; }
+  }
+  
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    body { padding: 25px; font-size: 15px; }
+    .print-header h1 { font-size: 1.8rem; }
+    .print-gallery img { max-width: 45%; }
+  }
+  
+  @media screen and (min-width: 1024px) {
+    body { padding: 30px; max-width: 800px; margin: 0 auto; }
+    .print-header h1 { font-size: 2.2rem; }
+    .print-gallery img { max-width: 30%; }
+  }
+  
+  @media print {
+    body { margin: 0 !important; padding: 10mm !important; }
+    .print-actions { display: none !important; }
+  }
+</style>
       </head>
       <body>
         <div class="print-header">
@@ -1434,15 +1460,94 @@ function openPrintWindow(canvas, profile) {
     <html>
       <head>
         <title>${profile.name}'s Profile</title>
-     <style>
-  /* ===== SCREEN STYLES (visible in browser) ===== */
-  @media screen {
+<style>
+  /* ===== BASE STYLES ===== */
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ===== MOBILE STYLES (default) ===== */
+  @media screen and (max-width: 767px) {
     body {
-      padding: 20px;
+      padding: 15px;
       background: #f5f5f5;
-      max-width: 90%; /* was 800px*/
-      max-height: 90%; 
+      max-width: 100%;
       margin: 0 auto;
+    }
+    
+    .print-container {
+      text-align: center;
+    }
+    
+    .print-header h1 {
+      font-size: 1.5rem;
+      margin: 10px 0;
+    }
+    
+    .print-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .print-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 20px auto;
+      max-width: 300px;
+    }
+    
+    .print-actions button {
+      padding: 12px 20px;
+      font-size: 1rem;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    
+    .print-footer {
+      font-size: 0.9rem;
+      color: #666;
+      text-align: center;
+      margin-top: 15px;
+    }
+  }
+
+  /* ===== TABLET STYLES ===== */
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    body {
+      padding: 25px;
+      background: #f5f5f5;
+      max-width: 90%;
+      margin: 0 auto;
+    }
+    
+    .print-container {
+      text-align: center;
+    }
+    
+    .print-header h1 {
+      font-size: 1.8rem;
+      margin: 15px 0;
+    }
+    
+    .print-image {
+      max-width: 85%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
     
     .print-actions {
@@ -1450,60 +1555,133 @@ function openPrintWindow(canvas, profile) {
       justify-content: center;
       gap: 15px;
       margin: 25px auto;
-      width: fit-content;       /* Add this */
     }
     
     .print-actions button {
-      padding: 10px 20px;
+      padding: 12px 25px;
+      font-size: 1.1rem;
       background: #4CAF50;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
       transition: background 0.2s;
     }
     
-    .print-actions button:hover {
-      background: #45a049;
-    }
-    
     .print-footer {
-      margin-top: 20px;
-      font-size: 1em;
+      font-size: 1rem;
       color: #666;
       text-align: center;
+      margin-top: 20px;
     }
   }
 
-  /* ===== PRINT STYLES (visible when printing) ===== */          
+  /* ===== DESKTOP STYLES ===== */
+  @media screen and (min-width: 1024px) {
+    body {
+      padding: 30px;
+      background: #f5f5f5;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .print-container {
+      text-align: center;
+    }
+    
+    .print-header h1 {
+      font-size: 2.2rem;
+      margin: 20px 0;
+    }
+    
+    .print-image {
+      max-width: 75%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+    
+    .print-actions {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px auto;
+    }
+    
+    .print-actions button {
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    
+    .print-actions button:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+    }
+    
+    .print-footer {
+      font-size: 1rem;
+      color: #666;
+      text-align: center;
+      margin-top: 25px;
+    }
+  }
+
+  /* ===== PRINT STYLES (all devices) ===== */          
   @media print {
     body { 
       margin: 0 !important;
-      padding: 5mm !important; /* Printer-safe units */
+      padding: 5mm !important;
+      background: white !important;
+      max-width: none !important;
     }
+    
     .print-container {
       height: 100vh;
       display: flex !important;
       flex-direction: column !important;
       justify-content: space-between !important;
     }
+    
     .print-header {
-      display: none !important; /* Completely remove header */
+      display: none !important;
     }
+    
     .print-image {
       flex-grow: 1;
       object-fit: contain;
-      max-height: 85vh !important; /* was ~85vh — more vertical stretch */
+      max-height: 85vh !important;
+      max-width: 100% !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
     }
-     .print-footer {
-      display: none !important; /* Completely remove footer */
+    
+    .print-footer {
+      display: none !important;
     }
+    
     .print-actions {
-      display: none !important; /* Hide buttons when printing */
+      display: none !important;
     }
   }
-   </style>
+
+  /* ===== COMMON INTERACTIVE STATES ===== */
+  .print-actions button:active {
+    transform: translateY(1px);
+  }
+  
+  .print-actions button:focus {
+    outline: 2px solid #2196F3;
+    outline-offset: 2px;
+  }
+</style>
       </head>
       <body>
         <div class="print-container">
