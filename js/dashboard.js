@@ -1277,31 +1277,11 @@ async function printProfile(profile) {
   // Capture with html2canvas
   try {
     const canvas = await html2canvas(petCard, {
-      scale: 1.5,   //it was 1.8
+      scale: 1.8,
       logging: true, // Helpful for debugging
       useCORS: true,
       allowTaint: true,
       onclone: (clonedDoc) => {
-          // Add viewport scaling for the preview
-    const style = document.createElement('style');
-    style.textContent = `
-     body { 
-        transform: scale(0.95);   /* it works as 1*/
-        transform-origin: top center;
-        margin: 0 auto;
-        max-width: 95vw;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-      }
-      .print-container {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-      }
-    `;
-      clonedDoc.head.appendChild(style);
         // Ensure any hidden elements are visible for printing
         clonedDoc.querySelectorAll('[style*="display:none"]').forEach(el => {
           el.style.display = 'block';
@@ -1449,8 +1429,7 @@ function openPrintWindow(canvas, profile) {
       display: flex;
       justify-content: center;
       gap: 15px;
-      margin: 25px auto;
-      width: fit-content;       /* Add this */
+      margin: 25px 0;
     }
     
     .print-actions button {
@@ -1516,7 +1495,7 @@ function openPrintWindow(canvas, profile) {
                alt="${profile.name}'s Profile Card">
           
           <p class="print-footer">
-            Printed from PetStudio App • ${printDate}
+            Printed from Pet Profile App • ${printDate}
           </p>
         </div>
 
@@ -1550,6 +1529,10 @@ function openPrintWindow(canvas, profile) {
   
   printWindow.document.close();
 }
+
+
+
+
 
 
 
