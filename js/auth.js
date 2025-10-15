@@ -734,8 +734,13 @@ function initAuthListeners() {
           // In your auth success callback or where loader hides:
          setTimeout(() => {
          initBirthdayAlerts(); // Now safe to run
-        }, 500);
-
+               // 🆕 ADD THIS: Start notifications after auth
+    if (window.supportManager && !window.supportManager.isInitialized) {
+      window.supportManager.isUserAuthenticated = true;
+      window.supportManager.isInitialized = true;
+      window.supportManager.startMessageTimers();
+        }
+     }, 500);
         }
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
@@ -754,13 +759,6 @@ function initAuthListeners() {
 
       if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
       if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
-      
-      // 🆕 SUPPORT MANAGER STOP - ADD THIS LINE  
-      if (window.supportManager && window.supportManager.isInitialized) {
-        window.supportManager.stopMessageTimers();
-        window.supportManager.isUserAuthenticated = false;
-        window.supportManager.isInitialized = false;
-      }
 
       // Clear profile cache and UI
       window.petProfiles = [];
