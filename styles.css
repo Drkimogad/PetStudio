@@ -2965,3 +2965,34 @@ body.loader-active {
   }
 }
 
+/* SCREEN WINDOW: PAPER-LIKE FIRST PAGE */
+.print-page-1 {
+  background: white;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  border: 1px solid #ddd;
+  margin: 20px auto;
+  padding: 30px;
+}
+
+/* INCREASE FONT SIZES FOR PRINT */
+@media print {
+  .print-page-1 {
+    font-size: 14pt;
+    line-height: 1.6;
+  }
+  
+  .print-page-1 h1 {
+    font-size: 24pt;
+  }
+  
+  .print-page-1 h3 {
+    font-size: 16pt;
+  }
+}
+
+/* CENTER THE FOOTER IN BOTH SCREEN AND PRINT */
+.print-footer {
+  text-align: center;
+  margin-top: 30px;
+  width: 100%;
+}
