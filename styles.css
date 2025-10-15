@@ -2832,6 +2832,88 @@ body.loader-active {
 
 .hidden { display: none !important; }
 
+ /* PRINTING STYLES */
+/* ===== PRINT WINDOW STYLES ===== */
+/* Screen view (what users see before printing) */
+.print-screen-container {
+  padding: 20px;
+  background: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.print-screen-container .print-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.print-screen-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.print-screen-actions button {
+  padding: 10px 20px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.print-screen-actions button:hover {
+  background: #45a049;
+}
+
+.print-screen-footer {
+  margin-top: 20px;
+  font-size: 0.9em;
+  color: #666;
+  text-align: center;
+}
+
+/* Print view (when actually printing) */
+@media print {
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+  
+  .print-screen-actions,
+  .print-screen-footer,
+  .print-screen-container .print-header {
+    display: none !important;
+  }
+  
+  .print-screen-container {
+    padding: 0 !important;
+    background: white !important;
+    box-shadow: none !important;
+  }
+  
+  .print-screen-container .print-container {
+    max-width: 100% !important;
+    padding: 10mm !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  
+  .print-image {
+    max-width: 100% !important;
+    height: auto !important;
+    page-break-inside: avoid !important;
+  }
+}
 
 
 
