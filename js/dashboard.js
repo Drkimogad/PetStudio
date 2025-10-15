@@ -1266,102 +1266,9 @@ if (typeof showSuccessNotification === 'function') {
 // ✅ RENAMED: Direct HTML template print method
 function printProfileTemplate(profile) {
   const printWindow = window.open('', '_blank');
-  const printDocument = printWindow.document;
-
-  printDocument.write(`
-  
-    <html>
-      <head>
-        <title>${profile.name}'s Profile</title>   
-      </head>
-      <body>
-        <div class="print-header">
-          <h1>${profile.name}'s Profile</h1>
-          <p><strong>Nicknames:</strong> ${profile.nicknames || 'None'}</p>
-          <p>Generated on ${new Date().toLocaleDateString()}</p>
-        </div>
-
-        <div class="print-details">
-          <p><strong>Breed:</strong> ${profile.breed}</p>
-          <p><strong>Date of Birth:</strong> ${profile.dob}</p>
-          <p><strong>Upcoming Birthday:</strong> ${profile.nextbirthday}</p>
-          <p><strong>Birthday Reminder:</strong> ${profile.birthdayReminder}</p>
-        </div>
-        
-        ${profile.tags?.length ? `
-        <div class="print-tags">
-           <h3>Tags</h3>
-           ${profile.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-        </div>
-        ` : ''}
-
-      </div>
-        <div class="print-moodlog">
-          <h3>Mood Log</h3>
-          <ul>
-          ${profile.moodHistory.map(entry => ` 
-           <li data-emoji="${
-               entry.mood === 'happy' ? '😊' : 
-               entry.mood === 'sad' ? '😞' : 
-               entry.mood === 'angry' ? '😠' : 
-               entry.mood === 'sick' ? '🤒' : '😐'
-               }">
-               ${entry.date}: ${entry.mood}
-            </li>
-          `).join('')}
-           </ul>
-        </div>
-        
-        <div class="emergency-contact">
-         <h3>Emergency Contact</h3>
-         <p><strong>Name:</strong> ${profile.emergencyContact?.name || 'Not set'}</p>
-         <p><strong>Phone:</strong> ${profile.emergencyContact?.phone || 'Not set'}</p>
-         <p><strong>Relationship:</strong> ${profile.emergencyContact?.relationship || 'Not set'}</p>
-         <p><strong>Microchip:</strong> ${profile.microchipNumber || 'Not registered'}</p>
-       </div>
-
-       <div class="print-notes">
-         <h3>Notes & Memories</h3>
-         <p>${profile.notes?.replace(/\n/g, '<br>') || 'No notes yet'}</p>
-        </div>
-
-      
-        <h3>Gallery</h3>
-        <div class="print-gallery">
-<div class="print-gallery" data-print-date="${new Date().toLocaleDateString()}">
-  ${profile.gallery.map(img => 
-    `<img src="${getCachedImage(typeof img === 'string' ? img : img.url)}" 
-          alt="Pet photo" onload="this.style.opacity = '1'">`
-  ).join('')}
-
-
-      <div class="print-actions">
-        <button onclick="window.close()">Close</button>
-        <button onclick="
-          const link = document.createElement('a');
-          link.href = location.href;
-          link.download = '${profile.name}_profile.html';
-          link.click();
-        ">
-          Save as Image
-        </button>
-      </div>
-      <script>
-        // Force print dialog when fully loaded
-        window.onload = () => setTimeout(() => window.print(), 300);
-      </script>
-      </body>
-    </html>
-  `);
-}
-
-// Handle the print window creation
-function openPrintWindow(canvas, profile) {
-  const printWindow = window.open('', '_blank');
   const printDate = new Date().toLocaleDateString();
-
-// ✅ NEW (using CSS classes from style.css)
-printWindow.document.write(`
+  
+  printWindow.document.write(`
     <!DOCTYPE html>
     <html>
       <head>
@@ -1369,41 +1276,87 @@ printWindow.document.write(`
         <link rel="stylesheet" href="styles.css">
       </head>
       <body class="print-screen-container">
-        <div class="print-container">
+        <!-- PAGE 1: PROFESSIONAL GRID -->
+        <div class="print-page-1">
           <div class="print-header">
             <h1>${profile.name}'s Profile</h1>
+            <p><strong>Nicknames:</strong> ${profile.nicknames || 'None'}</p>
             <p>Generated on ${printDate}</p>
           </div>
-          
-          <img class="print-image" src="${canvas.toDataURL()}" 
-               alt="${profile.name}'s Profile Card">
-          
-          <p class="print-screen-footer">
-            Printed from Pet Profile App • ${printDate}
-          </p>
+
+          <div class="emergency-contact">
+            <h3>Emergency Contact</h3>
+            <p><strong>Name:</strong> ${profile.emergencyContact?.name || 'Not set'}</p>
+            <p><strong>Phone:</strong> ${profile.emergencyContact?.phone || 'Not set'}</p>
+            <p><strong>Relationship:</strong> ${profile.emergencyContact?.relationship || 'Not set'}</p>
+            <p><strong>Microchip:</strong> ${profile.microchipNumber || 'Not registered'}</p>
+          </div>
+
+          <div class="print-details">
+            <h3>Pet Details</h3>
+            <p><strong>Breed:</strong> ${profile.breed || 'Not specified'}</p>
+            <p><strong>Date of Birth:</strong> ${profile.dob || 'Unknown'}</p>
+            <p><strong>Upcoming Birthday:</strong> ${profile.nextBirthday || 'Not set'}</p>
+            <p><strong>Birthday Reminder:</strong> ${profile.birthdayReminder || 'Not set'}</p>
+            
+            ${profile.tags?.length ? `
+              <div class="print-tags">
+                <strong>Tags:</strong>
+                ${profile.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="print-moodlog">
+            <h3>Mood History</h3>
+            <ul>
+            ${profile.moodHistory?.map(entry => ` 
+              <li data-emoji="${
+                  entry.mood === 'happy' ? '😊' : 
+                  entry.mood === 'sad' ? '😞' : 
+                  entry.mood === 'angry' ? '😠' : 
+                  entry.mood === 'sick' ? '🤒' : '😐'
+                  }">
+                  ${entry.date}: ${entry.mood}
+              </li>
+            `).join('') || '<li>No mood history</li>'}
+            </ul>
+          </div>
+
+          <div class="print-notes">
+            <h3>Notes & Memories</h3>
+            <p>${profile.notes?.replace(/\n/g, '<br>') || 'No notes yet'}</p>
+          </div>
+        </div>
+
+        <!-- PAGE 2: STRICT 3x3 GALLERY -->
+        <div class="print-page-2">
+          <h3>Photo Gallery</h3>
+          <div class="print-gallery">
+            ${profile.gallery?.map(img => 
+              `<img src="${getCachedImage(typeof img === 'string' ? img : img.url)}" 
+                    alt="Pet photo">`
+            ).join('') || '<p>No photos available</p>'}
+          </div>
+          <div class="print-footer">
+            <p>Generated by PetStudio App • ${printDate}</p>
+          </div>
         </div>
 
         <div class="print-screen-actions">
           <button onclick="window.print()">Print</button>
           <button onclick="window.close()">Close</button>
-          <button onclick="...">Save as Image</button>
         </div>
+
+        <script>
+          window.onload = () => setTimeout(() => window.print(), 300);
+        </script>
       </body>
     </html>
   `);
   
   printWindow.document.close();
 }
-
-
-
-
-
-
-
-
-
-
 
 
 //====================================================================
