@@ -1252,68 +1252,19 @@ async function printProfile(profile) {
   }
 
   // If profile still missing → hard fail
-  if (!validProfile) {
-    return handleOfflineError("Profile not available offline. Try again when online.");
-  }
+if (!validProfile) {
+  return handleOfflineError("Profile not available offline. Try again when online.");
+}
 
-  // 2. Locate pet card in DOM
-  const petCard = document.getElementById(`pet-card-${validProfile.id}`);
-
-  if (!petCard) {
-    console.warn("⚠️ Pet card not in DOM. Using fallback HTML print.");
-    return fallbackHtmlPrint(validProfile);
-  }
-
-  // 🔹 ADD HERE: Replace all images with cached session images
-  petCard.querySelectorAll('img').forEach(img => {
-  img.src = getCachedImage(img.src);
-  });
-  
-  // Add temporary styling for print capture
-  petCard.style.boxShadow = '0 0 0 10px white'; // Adds white border for print
-  const originalTransition = petCard.style.transition;
-  petCard.style.transition = 'none'; // Disable transitions during capture
-
-  // Capture with html2canvas
-  try {
-    const canvas = await html2canvas(petCard, {
-      scale: 1.8,
-      logging: true, // Helpful for debugging
-      useCORS: true,
-      allowTaint: true,
-      onclone: (clonedDoc) => {
-        // Ensure any hidden elements are visible for printing
-        clonedDoc.querySelectorAll('[style*="display:none"]').forEach(el => {
-          el.style.display = 'block';
-        });
-      }
-    });
-
-    openPrintWindow(canvas, profile);
-    // SUCCESS: After successful print window opens
-   if (typeof showSuccessNotification === 'function') {
-     showSuccessNotification('Print started successfully!');
-   }
-    
-  } catch (error) {
-    console.error('Canvas capture failed:', error);
-    alert('Advanced print failed, using standard version instead');
-    fallbackHtmlPrint(profile);
-    // ERROR: In catch block after fallback
-    if (typeof showErrorToUser === 'function') {
-    showErrorToUser('Print failed: ' + error.message);
-   }
-    
-  } finally {
-    // Restore original styles
-    petCard.style.boxShadow = '';
-    petCard.style.transition = originalTransition;
-  }
+// ✅ DIRECT HTML PRINT (No canvas, no DOM lookup)
+printProfileTemplate(validProfile);
+if (typeof showSuccessNotification === 'function') {
+  showSuccessNotification('Print started successfully!');
+}
 } // closes print function 
 
-
-// Fallback to original HTML method
-function fallbackHtmlPrint(profile) {
+// ✅ RENAMED: Direct HTML template print method
+function printProfileTemplate(profile) {
   const printWindow = window.open('', '_blank');
   const printDocument = printWindow.document;
 
@@ -1377,6 +1328,7 @@ function fallbackHtmlPrint(profile) {
       
         <h3>Gallery</h3>
         <div class="print-gallery">
+<div class="print-gallery" data-print-date="${new Date().toLocaleDateString()}">
   ${profile.gallery.map(img => 
     `<img src="${getCachedImage(typeof img === 'string' ? img : img.url)}" 
           alt="Pet photo" onload="this.style.opacity = '1'">`
