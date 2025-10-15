@@ -2985,4 +2985,92 @@ body.loader-active {
   }
 }
 
+/* PRINT-ONLY HARSH RULES */
+@media print {
+  /* Page 1: Two-column professional layout */
+  .print-page-1 {
+    display: grid;
+    grid-template-columns: 45% 55%;
+    grid-template-rows: auto auto auto;
+    gap: 6mm;
+    width: 210mm; /* A4 width */
+    height: 297mm; /* A4 height */
+    margin: 0;
+    padding: 15mm;
+    page-break-after: always;
+  }
+  
+  /* Explicit grid areas */
+  .print-header { grid-area: 1 / 1 / 2 / 3; }
+  .emergency-contact { grid-area: 2 / 1 / 3 / 2; }
+  .print-details { grid-area: 2 / 2 / 3 / 3; }
+  .print-moodlog { grid-area: 3 / 1 / 4 / 2; }
+  .print-notes { grid-area: 3 / 2 / 4 / 3; }
+  
+  /* Page 2: Strict 3x3 gallery */
+  .print-page-2 {
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    padding: 15mm;
+    display: grid;
+    grid-template-columns: repeat(3, 60mm);
+    grid-template-rows: repeat(3, 60mm);
+    gap: 5mm;
+    justify-content: center;
+    align-content: start;
+  }
+  
+  /* Fixed image sizes - no scaling */
+  .print-gallery img {
+    width: 60mm !important;
+    height: 60mm !important;
+    object-fit: cover;
+  }
+}
+
+/* HARSH PRINT WINDOW CONTROLS */
+@media screen {
+  .print-screen-container {
+    width: 210mm; /* A4 width */
+    min-height: 297mm; /* A4 height */
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    overflow: auto;
+  }
+  
+  /* Force specific dimensions - no browser scaling */
+  .print-page-1,
+  .print-page-2 {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 auto !important;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px !important;
+  }
+}
+
+/* PRINT-SPECIFIC (when user clicks print) */
+@media print {
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 210mm !important;
+    height: 297mm !important;
+  }
+  
+  .print-screen-container {
+    width: 210mm !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
 
