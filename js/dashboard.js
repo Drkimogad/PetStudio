@@ -1408,52 +1408,34 @@ function openPrintWindow(canvas, profile) {
   const printWindow = window.open('', '_blank');
   const printDate = new Date().toLocaleDateString();
 
-  // IN THIS HTML STRUCTURE THE HEADER AND FOOTER CAUSED PAGE BREAK AND OPTED FOR HIDING THEM
-  printWindow.document.write(`
+// ✅ NEW (using CSS classes from style.css)
+printWindow.document.write(`
     <!DOCTYPE html>
     <html>
       <head>
         <title>${profile.name}'s Profile</title>
+        <link rel="stylesheet" href="styles.css">
       </head>
-      <body>
+      <body class="print-screen-container">
         <div class="print-container">
           <div class="print-header">
             <h1>${profile.name}'s Profile</h1>
             <p>Generated on ${printDate}</p>
           </div>
           
-          <img class="print-image" src="${canvas.toDataURL('image/png')}" 
+          <img class="print-image" src="${canvas.toDataURL()}" 
                alt="${profile.name}'s Profile Card">
           
-          <p class="print-footer">
+          <p class="print-screen-footer">
             Printed from Pet Profile App • ${printDate}
           </p>
         </div>
 
-        <div class="print-actions">
+        <div class="print-screen-actions">
           <button onclick="window.print()">Print</button>
           <button onclick="window.close()">Close</button>
-          <button onclick="
-            const img = document.querySelector('.print-image');
-            if(img && img.src.startsWith('data:')) {
-              const a = document.createElement('a');
-              a.href = img.src;
-              a.download = '${profile.name.replace(/[^a-z0-9]/gi, '_')}_profile.png';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            } else {
-              alert('Please wait for image to load fully');
-            }
-          ">Save as Image</button>
+          <button onclick="...">Save as Image</button>
         </div>
-
-        <script>
-          window.onload = () => {
-            const printBtn = document.querySelector('button');
-            printBtn.focus();
-          };
-        </script>
       </body>
     </html>
   `);
