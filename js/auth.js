@@ -382,33 +382,36 @@ async function initializeFirebase() {
 // ======================
 class SupportManager {
     constructor() {
-            this.messages = [
-    // TIER 1: Core Value & Differentiation (First impressions)
-    "🌐 Works completely offline - perfect for rural areas or vet visits!",
-    "🐾 Free forever - manage vaccinations, moods & medical history without subscriptions",
-    "💬 The only app with mood tracking + community chat - understand your pet better!",
-    
-    // TIER 2: Critical Features & Navigation (Usage guidance)
-    "🔔 Push notifications coming soon! Reminders will be more reliable in the next update",
-    "💡 Tip: Download any pet profile as PDF - click 'Profile Details' then 'Save as PDF'",
-    "🔔 Set reminders for vaccinations, checkups & birthdays - never miss important dates!",
-    "🚨 Emergency ready! Generate QR codes for pet profiles - critical if pet gets lost",
-    
-    // TIER 3: Advanced Features & Benefits (Power user tips)
-    "📊 Track mood patterns over time - spot behavior changes early!",
-    "📱 Offline pet health tracking with QR emergency profiles - your pet's safety net!",
-    "🔄 Synced across devices - your pet data stays safe in the cloud!",
-    
-    // TIER 4: Action & Engagement (Community & sharing)
-    "🗣️ Feedback? Use 'Community Chat' - we respond to every message!",
-    "📋 Found all pet cards? Click 'Save All Cards' to export everything as ZIP!",
-    "🎯 Editing a profile? Click the pet card, then 'Edit Profile' to update info!",
-    
-    // TIER 5: Support & Growth (Original messages - keep for variety)
-    "Love this app? Share with other pet lovers! 🐾",
-    "Your support helps us improve faster!",
-    "Rate our app to help other pet owners find us!"
-];
+        this.messages = [
+            // TIER 1: Core Value & Differentiation
+            "🎨 Create beautiful pet cards with themes - make each profile unique!",
+            "📸 Add up to 10 photos per pet - capture all their best moments!",
+            "🖼️ Create photo collages - combine multiple images into one shareable memory!",
+            "🐾 Free - no subscription needed for mood tracking, gallery, or emergency contacts!",
+            
+            // TIER 2: Critical Features & Navigation
+            "🖨️ Print pet profiles directly - perfect for vet visits or pet sitters!",
+            "🔲 Generate QR codes for emergency profiles - critical if your pet gets lost!",
+            "🎂 Birthday reminders auto-set - never miss celebrating your pet!",
+            
+            // TIER 3: Advanced Features & Benefits
+            "😊 Track mood history - spot behavior changes and health patterns!",
+            "📱 Data syncs securely - your pet profiles are safe across devices!",
+            "🏥 Emergency contacts built-in - vital info always accessible offline!",
+            
+            // TIER 4: Action & Engagement
+            "✏️ Editing? Choose a pet card then 'Edit Petcard' to update info!",
+            "📤 Share pet cards as images - show off your furry friend anywhere!",
+            "🎉 Generate birthday cards - create celebratory images for special days!",
+            "🗑️ Need to remove? Click 'Delete Petcard' - but remember to backup first!",
+            
+            // TIER 5: Support & Growth
+            "💝 Love PetStudio? Share with other pet parents in your community!",
+            "⭐ Your feedback helps us improve - keep suggesting new features!",
+            "📚 Found all features? Explore mood tracking and collage creator!",
+            "🐶 Supporting multiple pets? Add all your furry family members!"
+        ];
+     
         this.isInitialized = false;
         this.isUserAuthenticated = false;
         this.authCheckInterval = null;
