@@ -1308,20 +1308,18 @@ function printProfileTemplate(profile) {
           </div>
 
           <div class="print-moodlog">
-            <h3>Mood History</h3>
-            <ul>
-            ${profile.moodHistory?.map(entry => ` 
-              <li data-emoji="${
-                  entry.mood === 'happy' ? '😊' : 
-                  entry.mood === 'sad' ? '😞' : 
-                  entry.mood === 'angry' ? '😠' : 
-                  entry.mood === 'sick' ? '🤒' : '😐'
-                  }">
-                  ${entry.date}: ${entry.mood}
-              </li>
-            `).join('') || '<li>No mood history</li>'}
-            </ul>
-          </div>
+  <h3>Mood History</h3>
+  <ul>
+  ${profile.moodHistory?.map(entry => ` 
+    <li>
+      ${entry.date}: ${entry.mood === 'happy' ? '😊' : 
+                      entry.mood === 'sad' ? '😞' : 
+                      entry.mood === 'angry' ? '😠' : 
+                      entry.mood === 'sick' ? '🤒' : '😐'} ${entry.mood}
+    </li>
+  `).join('') || '<li>No mood history</li>'}
+  </ul>
+</div>
 
           <div class="print-notes">
             <h3>Notes & Memories</h3>
