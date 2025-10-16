@@ -522,7 +522,7 @@ class SupportManager {
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 30000;   /* 🎯 the highest z index i think 🎯*/
+            z-index: 40000;   /* 🎯 the highest z index i think 🎯*/
             animation: fadeIn 0.3s ease-in;
         }
         .support-message {
