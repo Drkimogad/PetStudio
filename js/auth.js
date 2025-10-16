@@ -632,27 +632,17 @@ class SupportManager {
                authContainer && authContainer.classList.contains('hidden');
     }
 
-    shouldSuppressMessage() {
-    // Only suppress if user is actively editing or has a visible modal
-    const isEditing = !!window.isEditing || !!window.editingProfileId;
-    
-    // Only check for VISIBLE modals (not just existence)
-    const visibleModal = document.querySelector('.modal:not([style*="display: none"]), [class*="modal"]:not([style*="display: none"])');
-    
-    // Only check if loader is VISUALLY present
-    const loader = document.getElementById('processing-loader');
-    const isProcessing = loader && 
-                        getComputedStyle(loader).display !== 'none' &&
-                        loader.offsetHeight > 0; // Actually visible on page
-    
-    return isEditing || visibleModal || isProcessing;
-}
-    
-    // Manual initialization method (call this from dashboard.js)
-    initializeFromDashboard() {
-        console.log('🚀 Manual initialization from dashboard');
-        this.setupAuthListener();
+shouldSuppressMessage() {
+        // Don't show during form editing, modals, or critical operations
+        const isEditing = !!window.isEditing || !!window.editingProfileId;
+        const hasModal = document.querySelector('.modal, [class*="modal"], [class*="overlay"]');
+        const isProcessing = document.getElementById('processing-loader')?.style.display !== 'none';
+        
+        return isEditing || hasModal || isProcessing;
     }
+    
+    // Manual initialization takes place in onAuthStatChanged() and core initialization 
+  
     
     // Cleanup method
     destroy() {
@@ -741,14 +731,9 @@ function initAuthListeners() {
           // In your auth success callback or where loader hides:
          setTimeout(() => {
          initBirthdayAlerts(); // Now safe to run
-               // 🆕 ADD THIS: Start notifications after auth
-    if (window.supportManager && !window.supportManager.isInitialized) {
-      window.supportManager.isUserAuthenticated = true;
-      window.supportManager.isInitialized = true;
-      window.supportManager.startMessageTimers();
-        }
      }, 500);
-        }
+     }
+        
       } catch (error) {
         console.error("❌ Failed to fetch profiles:", error);
 
@@ -766,6 +751,13 @@ function initAuthListeners() {
 
       if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
       if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
+
+       // 🆕 ADD THIS: Start notifications after auth
+    if (window.supportManager && !window.supportManager.isInitialized) {
+      window.supportManager.isUserAuthenticated = true;
+      window.supportManager.isInitialized = true;
+      window.supportManager.startMessageTimers();
+        }    
 
       // Clear profile cache and UI
       window.petProfiles = [];
@@ -893,11 +885,17 @@ async function initializeAuth() {
     console.log("🔐 Firebase auth persistence set to LOCAL");
     
     // 4. Set up auth state listener
-    initAuthListeners(auth);  
+    initAuthListeners(auth); 
+
+    
     // 5. Set up Google Sign-In button (if exists)
     if (document.getElementById("googleSignInBtn")) {
       setupGoogleLoginButton();
     }   
+         
+     // 🆕 6. Create Support Manager (but don't initialize yet)
+    window.supportManager = new SupportManager();
+    console.log("✅ Support Manager created - waiting for auth state");
     
   } catch (error) {
     console.error("Auth initialization failed:", error);
