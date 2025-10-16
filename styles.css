@@ -2974,6 +2974,23 @@ body.loader-active {
   padding: 30px;
 }
 
+/* CENTERED HEADER WITH SEPARATOR */
+.print-header {
+  text-align: center;
+  border-bottom: 2px solid var(--accent-color, #ffb74d);
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.print-header h1 {
+  margin-bottom: 10px;
+  color: var(--primary-color, #8d6e63);
+}
+
+.print-header p {
+  margin: 5px 0;
+  color: var(--primary-color, #8d6e63);
+}
 /* INCREASE FONT SIZES FOR PRINT */
 @media print {
   .print-page-1 {
