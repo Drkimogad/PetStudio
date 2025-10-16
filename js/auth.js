@@ -522,7 +522,7 @@ class SupportManager {
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10000;
+            z-index: 30000;   /* 🎯 the highest z index i think 🎯*/
             animation: fadeIn 0.3s ease-in;
         }
         .support-message {
@@ -633,13 +633,20 @@ class SupportManager {
     }
 
 shouldSuppressMessage() {
-        // Don't show during form editing, modals, or critical operations
-        const isEditing = !!window.isEditing || !!window.editingProfileId;
-        const hasModal = document.querySelector('.modal, [class*="modal"], [class*="overlay"]');
-        const isProcessing = document.getElementById('processing-loader')?.style.display !== 'none';
-        
-        return isEditing || hasModal || isProcessing;
-    }
+    // Only suppress if user is actively editing or has a visible modal
+    const isEditing = !!window.isEditing || !!window.editingProfileId;
+    
+    // Only check for VISIBLE modals (not just existence)
+    const visibleModal = document.querySelector('.modal:not([style*="display: none"]), [class*="modal"]:not([style*="display: none"])');
+    
+    // Only check if loader is VISUALLY present
+    const loader = document.getElementById('processing-loader');
+    const isProcessing = loader && 
+                        getComputedStyle(loader).display !== 'none' &&
+                        loader.offsetHeight > 0; // Actually visible on page
+    
+    return isEditing || visibleModal || isProcessing;
+}
     
     // Manual initialization takes place in onAuthStatChanged() and core initialization 
   
