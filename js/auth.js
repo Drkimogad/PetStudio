@@ -732,6 +732,12 @@ function initAuthListeners() {
          setTimeout(() => {
          initBirthdayAlerts(); // Now safe to run
      }, 500);
+            // 🆕 ADD THIS: Start notifications after auth
+    if (window.supportManager && !window.supportManager.isInitialized) {
+      window.supportManager.isUserAuthenticated = true;
+      window.supportManager.isInitialized = true;
+      window.supportManager.startMessageTimers();
+        }  
      }
         
       } catch (error) {
@@ -750,14 +756,7 @@ function initAuthListeners() {
       console.log("ℹ️ No user is signed in.");
 
       if (DOM.authContainer) DOM.authContainer.classList.remove('hidden');
-      if (DOM.dashboard) DOM.dashboard.classList.add('hidden');
-
-       // 🆕 ADD THIS: Start notifications after auth
-    if (window.supportManager && !window.supportManager.isInitialized) {
-      window.supportManager.isUserAuthenticated = true;
-      window.supportManager.isInitialized = true;
-      window.supportManager.startMessageTimers();
-        }    
+      if (DOM.dashboard) DOM.dashboard.classList.add('hidden');  
 
       // Clear profile cache and UI
       window.petProfiles = [];
