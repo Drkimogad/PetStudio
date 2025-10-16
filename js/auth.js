@@ -899,12 +899,6 @@ async function initializeAuth() {
       setupGoogleLoginButton();
     }   
     
-    // 🆕 6. INITIALIZE SUPPORT MANAGER HERE (before any auth state changes)
-    if (typeof SupportManager !== 'undefined') {
-      window.supportManager = new SupportManager();
-      console.log("✅ SupportManager initialized");
-    }
-    
   } catch (error) {
     console.error("Auth initialization failed:", error);
     disableUI();
