@@ -250,7 +250,7 @@ async function setupGoogleLoginButton() {
     return;
   }
 
-  const CLIENT_ID = '480425185692-i5d0f4gi96t2ap41frgfr2dlpjpvp278.apps.googleusercontent.com';
+  const CLIENT_ID = '1031214975391-70798o21kefjkr0n7ppqecf5aa81me9p.apps.googleusercontent.com';
   try {
     // Initialize Google Identity Services
     google.accounts.id.initialize({
