@@ -1117,7 +1117,7 @@ async function deleteProfile(index) {
                 if (firebase.auth().currentUser) {
                   const token = await firebase.auth().currentUser.getIdToken();
                   const response = await fetch(
-                    "https://us-central1-petstudio-c3679.cloudfunctions.net/deleteImage",
+                      "https://deleteimage-qk5unx7rba-uc.a.run.app",
                     {
                       method: "POST",
                       headers: {
