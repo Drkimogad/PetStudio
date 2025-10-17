@@ -11,10 +11,9 @@ if (!admin.apps.length) {
 // Helper: Load Cloudinary Config
 // ---------------------------
 function loadCloudinaryConfig() {
-  const cfg = functions.config().cloudinary || {};
-  const cloud_name = cfg.cloud_name || process.env.CLOUDINARY_CLOUD_NAME;
-  const api_key = cfg.api_key || process.env.CLOUDINARY_API_KEY;
-  const api_secret = cfg.api_secret || process.env.CLOUDINARY_API_SECRET;
+  const cloud_name = process.env.CLOUDINARY_CLOUD_NAME;
+  const api_key = process.env.CLOUDINARY_API_KEY;
+  const api_secret = process.env.CLOUDINARY_API_SECRET;
 
   if (!cloud_name || !api_key || !api_secret) {
     throw new Error("Cloudinary credentials missing");
@@ -38,7 +37,9 @@ function loadCloudinaryConfig() {
 // ✅ NEW
 const allowedOrigins = [
   "https://drkimogad.github.io",  // GitHub Pages
-  "http://localhost:5000"         // Local dev
+  "http://localhost:5000",  // Local dev
+  "http://petstudio-c3679.firebaseapp.com",
+  "http://petstudio-c3679.web.app"
 ];
 
 function setCors(request, response) {
@@ -123,3 +124,5 @@ export const deleteImage = functions.https.onRequest(async (request, response) =
 //  api_secret: process.env.CLOUDINARY_API_SECRET,
 // });
 //→ This pulls values from .env automatically (no need for dotenv/config import, the Firebase CLI now handles it).
+
+
