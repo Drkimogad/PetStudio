@@ -292,8 +292,8 @@ function showErrorToUser(message, duration = 5000) {
 //======================================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/PetStudio/service-worker.js', {
-      scope: '/PetStudio/'
+    navigator.serviceWorker.register('./service-worker.js', {
+  scope: './'
     }).then(registration => {
       console.log('SW registered for scope:', registration.scope);
     }).catch(error => {
